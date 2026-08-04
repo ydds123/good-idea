@@ -7,7 +7,7 @@
   <key>ProgramArguments</key>
   <array>
     <string>/bin/zsh</string>
-    <string>/Users/apple/Documents/Claude/good-idea/scripts/run-maintenance.sh</string>
+    <string>/Users/apple/.local/share/goodidea-maintenance/run-maintenance.sh</string>
   </array>
   <key>WorkingDirectory</key>
   <string>/Users/apple/Documents/Claude/good-idea</string>
@@ -21,4 +21,3 @@
   <string>/private/tmp/goodidea-maintenance.err</string>
 </dict>
 </plist>
-
