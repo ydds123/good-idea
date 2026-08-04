@@ -135,13 +135,23 @@ def build_parser() -> argparse.ArgumentParser:
 
 def _source_preview(args: argparse.Namespace) -> dict[str, Any]:
     if args.html_file:
+        html_text = (
+            sys.stdin.read()
+            if args.html_file == "-"
+            else Path(args.html_file).read_text(encoding="utf-8")
+        )
         value = preview_from_html(
-            args.url, Path(args.html_file).read_text(encoding="utf-8")
+            args.url, html_text
         )
     elif args.markdown_file:
+        markdown_text = (
+            sys.stdin.read()
+            if args.markdown_file == "-"
+            else Path(args.markdown_file).read_text(encoding="utf-8")
+        )
         value = preview_from_markdown(
             args.url,
-            Path(args.markdown_file).read_text(encoding="utf-8"),
+            markdown_text,
             title=args.title,
             author=args.author,
             published_at=args.published_at,
@@ -150,8 +160,15 @@ def _source_preview(args: argparse.Namespace) -> dict[str, Any]:
         value = preview_from_url(args.url)
     if args.output:
         output = Path(args.output).resolve()
+        root = None
         if args.root:
             root = Path(args.root).resolve()
+        else:
+            try:
+                root = Repository.discover().root
+            except ValidationError:
+                pass
+        if root:
             if output == root or output.is_relative_to(root):
                 raise ValidationError("预读阶段禁止把 preview 写入 Good idea 仓库")
         output.parent.mkdir(parents=True, exist_ok=True)
