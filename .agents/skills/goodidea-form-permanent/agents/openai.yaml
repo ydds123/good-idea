@@ -1,0 +1,4 @@
+interface:
+  display_name: "Good idea 形成永久卡片"
+  short_description: "从中间材料生成永久、母题、行动或索引卡片候选，并保留人的判断权"
+  default_prompt: "Use $goodidea-form-permanent to propose a permanent card from these materials."

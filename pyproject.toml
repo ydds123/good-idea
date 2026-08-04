@@ -1,0 +1,19 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "goodidea"
+version = "0.1.0"
+description = "Deterministic local kernel for the Good idea personal cognition system"
+requires-python = ">=3.13,<3.14"
+dependencies = []
+
+[project.scripts]
+goodidea = "goodidea.cli:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/goodidea"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

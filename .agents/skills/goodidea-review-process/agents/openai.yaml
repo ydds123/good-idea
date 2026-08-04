@@ -1,0 +1,4 @@
+interface:
+  display_name: "Good idea 回顾处理"
+  short_description: "回顾待处理闪念、来源和任务，并按用户判断推动后续状态流转"
+  default_prompt: "Use $goodidea-review-process to review my pending Good idea materials."

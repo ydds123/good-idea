@@ -1,0 +1,4 @@
+interface:
+  display_name: "Good idea 巡检"
+  short_description: "检查快照完整性、断链、类型、状态、索引、账本及 Git 一致性"
+  default_prompt: "Use $goodidea-lint to inspect and verify this Good idea repository."

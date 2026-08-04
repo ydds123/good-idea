@@ -1,0 +1,4 @@
+interface:
+  display_name: "Good idea 连接卡片"
+  short_description: "提出有理由的语义连接候选，并在用户确认后建立正式双向链接"
+  default_prompt: "Use $goodidea-connect-cards to propose and confirm a meaningful card connection."

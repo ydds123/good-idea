@@ -1,0 +1,4 @@
+interface:
+  display_name: "Good idea 捕捉闪念"
+  short_description: "快速保存闪念、有意思内容和待办，同时保留原始表达、情境及状态"
+  default_prompt: "Use $goodidea-capture-flash to capture this thought without expanding it."
