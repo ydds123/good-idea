@@ -12,6 +12,12 @@
       "kind": "permanent",
       "path": ".goodidea/proposals/permanent/PRP-cd26b7583e59.md",
       "status": "pending"
+    },
+    "PRP-e863027285ee": {
+      "card_type": "permanent",
+      "kind": "permanent",
+      "path": ".goodidea/proposals/permanent/PRP-e863027285ee.md",
+      "status": "pending"
     }
   },
   "schema_version": "0.1",
@@ -75,6 +81,17 @@
       "summary": "用AI的这三年，想跟你分享这9条心得。 + 保存动机",
       "timestamp": "2026-08-04T21:45:02+08:00",
       "transaction_id": "e2e-wechat-20260804"
+    },
+    "e2e-wechat-permanent-propose-20260804": {
+      "action": "permanent-propose",
+      "result": {
+        "card_type": "permanent",
+        "proposal_id": "PRP-e863027285ee",
+        "proposal_path": ".goodidea/proposals/permanent/PRP-e863027285ee.md"
+      },
+      "summary": "持续生成的价值取决于创造与噪声抑制同时成立",
+      "timestamp": "2026-08-04T21:45:41+08:00",
+      "transaction_id": "e2e-wechat-permanent-propose-20260804"
     }
   }
 }
