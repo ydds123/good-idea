@@ -327,6 +327,15 @@ class GoodIdeaCoreTests(unittest.TestCase):
             git(self.root, "show", "-s", "--format=%P", rollback["revert_commit"]),
             another["commit"],
         )
+        log_text = (self.root / "log.md").read_text(encoding="utf-8")
+        self.assertIn("tx=tx-rollback-target", log_text)
+        self.assertIn(f"tx={rollback['transaction_id']}", log_text)
+        state = self.repo.read_state()
+        self.assertEqual(
+            state["transactions"]["tx-rollback-target"]["rolled_back_by"],
+            rollback["transaction_id"],
+        )
+        self.assertTrue(self.service.lint()["ok"])
 
 
 if __name__ == "__main__":

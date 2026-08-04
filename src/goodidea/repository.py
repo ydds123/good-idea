@@ -216,7 +216,11 @@ class Repository:
             + f"## [{timestamp}] {action} | {summary} | tx={transaction_id}\n\n"
         )
         final_writes[INDEX_PATH] = self.generate_index(final_writes)
-        self._atomic_apply(final_writes, transaction_id, f"{action}: {summary}")
+        self._atomic_apply(
+            final_writes,
+            transaction_id,
+            f"{action}: {summary} [tx:{transaction_id}]",
+        )
         commit_hash = _run_git(self.root, ["rev-parse", "HEAD"]).stdout.strip()
         return {
             "idempotent": False,

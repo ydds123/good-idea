@@ -1060,6 +1060,15 @@ class GoodIdeaService:
             target = self.repo.root / record.get("path", "")
             if not target.is_file():
                 issues.append(f"来源账本失效：{canonical}")
+        log_text = (self.repo.root / "log.md").read_text(encoding="utf-8")
+        git_messages = _run_git(
+            self.repo.root, ["log", "--format=%B"], check=True
+        ).stdout
+        for txid in state.get("transactions", {}):
+            if f"tx={txid}" not in log_text:
+                issues.append(f"事务账本缺少日志记录：{txid}")
+            if f"[tx:{txid}]" not in git_messages:
+                issues.append(f"事务账本缺少对应 Git 提交：{txid}")
         if verify_git:
             status = _run_git(
                 self.repo.root, ["status", "--porcelain"], check=True
@@ -1093,15 +1102,90 @@ class GoodIdeaService:
         )
         if parent.returncode != 0:
             raise ValidationError("不能回滚仓库的初始提交")
+        subject = _run_git(
+            self.repo.root, ["show", "-s", "--format=%s", resolved]
+        ).stdout.strip()
+        before_state = self.repo.read_state()
+        before_log = (self.repo.root / "log.md").read_text(encoding="utf-8")
         process = _run_git(
-            self.repo.root, ["revert", "--no-edit", resolved], check=False
+            self.repo.root, ["revert", "--no-commit", resolved], check=False
         )
         if process.returncode != 0:
             _run_git(self.repo.root, ["revert", "--abort"], check=False)
             raise GitError(process.stderr.strip() or "git revert 失败")
+        timestamp = now_iso()
+        rollback_tx = f"rollback-{resolved[:12]}"
+        try:
+            reverted_state = self.repo.read_state()
+            reverted_transactions = reverted_state.setdefault("transactions", {})
+            for txid, record in before_state.get("transactions", {}).items():
+                if txid not in reverted_transactions:
+                    preserved = copy.deepcopy(record)
+                    preserved["rolled_back_at"] = timestamp
+                    preserved["rolled_back_by"] = rollback_tx
+                    reverted_transactions[txid] = preserved
+            rollback_result = {
+                "rolled_back": resolved,
+                "strategy": "git-revert",
+            }
+            reverted_transactions[rollback_tx] = {
+                "transaction_id": rollback_tx,
+                "action": "rollback",
+                "summary": f"回滚 {resolved[:12]} {subject}",
+                "timestamp": timestamp,
+                "result": rollback_result,
+            }
+            reverted_state.setdefault("rollbacks", []).append(
+                {
+                    "transaction_id": rollback_tx,
+                    "commit": resolved,
+                    "subject": subject,
+                    "timestamp": timestamp,
+                }
+            )
+            log_text = before_log
+            if not log_text.endswith("\n"):
+                log_text += "\n"
+            log_text += (
+                f"## [{timestamp}] rollback | 回滚 {resolved[:12]} {subject} "
+                f"| tx={rollback_tx}\n\n"
+            )
+            (self.repo.root / ".goodidea/state.json").write_text(
+                json.dumps(
+                    reverted_state,
+                    ensure_ascii=False,
+                    indent=2,
+                    sort_keys=True,
+                )
+                + "\n",
+                encoding="utf-8",
+            )
+            (self.repo.root / "log.md").write_text(log_text, encoding="utf-8")
+            (self.repo.root / "index.md").write_text(
+                self.repo.generate_index({}), encoding="utf-8"
+            )
+            _run_git(
+                self.repo.root,
+                ["add", "--", ".goodidea/state.json", "log.md", "index.md"],
+            )
+            _run_git(
+                self.repo.root,
+                [
+                    "commit",
+                    "-m",
+                    (
+                        f"rollback: {subject} [tx:{rollback_tx}] "
+                        f"[reverts:{resolved}]"
+                    ),
+                ],
+            )
+        except Exception:
+            _run_git(self.repo.root, ["revert", "--abort"], check=False)
+            raise
         revert_commit = _run_git(self.repo.root, ["rev-parse", "HEAD"]).stdout.strip()
         return {
             "rolled_back": resolved,
             "revert_commit": revert_commit,
+            "transaction_id": rollback_tx,
             "strategy": "git-revert",
         }
