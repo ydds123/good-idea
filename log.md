@@ -8,3 +8,5 @@
 
 ## [2026-08-04T21:39:54+08:00] permanent-propose | AI 原生知识库如何既持续生成又保持可信？ | tx=e2e-mother-propose-20260804
 
+## [2026-08-04T21:45:02+08:00] source-commit | 用AI的这三年，想跟你分享这9条心得。 + 保存动机 | tx=e2e-wechat-20260804
+
