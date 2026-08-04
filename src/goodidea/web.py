@@ -280,7 +280,10 @@ def preview_from_html(url: str, html: str) -> dict[str, Any]:
         "author": " ".join(author.split()),
         "published_at": published_at.strip(),
         "markdown": markdown,
-        "images": parser.images,
+        "images": [
+            {**image, "referer": url}
+            for image in parser.images
+        ],
         "status": status,
         "error": error,
         "extractor": f"stdlib-html:{target}",
@@ -296,7 +299,7 @@ def preview_from_markdown(
     published_at: str = "",
 ) -> dict[str, Any]:
     images = [
-        {"alt": alt or "图片", "url": image_url}
+        {"alt": alt or "图片", "url": image_url, "referer": url}
         for alt, image_url in re.findall(
             r"!\[([^\]]*)\]\((https?://[^)]+)\)", markdown
         )

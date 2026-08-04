@@ -1,6 +1,6 @@
 import unittest
 
-from goodidea.web import canonicalize_url, preview_from_html
+from goodidea.web import canonicalize_url, preview_from_html, preview_from_markdown
 
 
 class WebPreviewTests(unittest.TestCase):
@@ -30,6 +30,27 @@ class WebPreviewTests(unittest.TestCase):
         self.assertNotIn("Do not save this navigation", result["markdown"])
         self.assertNotIn("dangerous", result["markdown"])
         self.assertEqual(result["images"][0]["url"], "https://example.com/chart.png")
+        self.assertEqual(
+            result["images"][0]["referer"],
+            "https://example.com/post?utm_source=test",
+        )
+
+    def test_markdown_preview_attaches_page_referer_to_remote_images(self):
+        result = preview_from_markdown(
+            "https://example.com/article",
+            "正文\n\n![图](https://cdn.example.com/image.png)",
+            title="文章",
+        )
+        self.assertEqual(
+            result["images"],
+            [
+                {
+                    "alt": "图",
+                    "url": "https://cdn.example.com/image.png",
+                    "referer": "https://example.com/article",
+                }
+            ],
+        )
 
     def test_canonicalizes_tracking_parameters(self):
         self.assertEqual(
@@ -42,4 +63,3 @@ class WebPreviewTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
-
