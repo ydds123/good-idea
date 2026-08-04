@@ -1,6 +1,13 @@
 {
   "connections": [],
-  "proposals": {},
+  "proposals": {
+    "PRP-5a9bfa3f1970": {
+      "card_type": "permanent",
+      "kind": "permanent",
+      "path": ".goodidea/proposals/permanent/PRP-5a9bfa3f1970.md",
+      "status": "pending"
+    }
+  },
   "schema_version": "0.1",
   "sources": {
     "https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f": {
@@ -22,6 +29,17 @@
       "summary": "LLM Wiki + 保存动机",
       "timestamp": "2026-08-04T21:35:52+08:00",
       "transaction_id": "e2e-karpathy-20260804"
+    },
+    "e2e-permanent-propose-20260804": {
+      "action": "permanent-propose",
+      "result": {
+        "card_type": "permanent",
+        "proposal_id": "PRP-5a9bfa3f1970",
+        "proposal_path": ".goodidea/proposals/permanent/PRP-5a9bfa3f1970.md"
+      },
+      "summary": "AI 原生知识库把持续生成与确定性边界分层",
+      "timestamp": "2026-08-04T21:39:23+08:00",
+      "transaction_id": "e2e-permanent-propose-20260804"
     }
   }
 }
