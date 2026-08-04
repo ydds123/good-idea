@@ -56,7 +56,11 @@
 ## 状态门禁
 
 - 链接预读不持久化。`source commit` 必须带有内容明确的 `--motivation`。
-- 永久卡片先写 `.goodidea/proposals/permanent/`；`permanent accept` 必须带用户自己的解释。
+- 永久卡片由用户主动发起并亲自写成完整 Markdown 草稿；`permanent propose --draft-file` 只提交草稿，不生成、改写、润色或补全内容。Markdown 只做确定性的行尾规范化（CRLF/CR 统一为 LF，并保证末尾换行），不改变措辞。
+- Agent 的质量审查只输出问题与评价，不写回草稿。用户自行修改并明确要求正式创建后，`permanent accept --confirm-user-authored` 才能发布。
+- 草稿正文不得出现内部负载或“机器数据”区块；ID、状态、来源 ID、内容哈希等内部字段仅放 Frontmatter 和 `.goodidea/state.json`。
+- 四种永久卡片遵守同一作者边界。撤销的错误草稿状态为 `withdrawn`，不可接纳，原错误仅由 Git 历史保留。
+- `permanent revise` 与 `permanent feedback` 也必须带 `--confirm-user-authored`，只能追加用户亲自写下的修订、现实结果与修正；CLI 可机械添加区块、列表标记和时间戳，并规范化边界换行，但不改变用户措辞。Agent 不维护正文。
 - 连接先写 `.goodidea/proposals/connections/`；`connect accept` 只接受既有正式卡片。
 - 来源刷新先生成候选并标记 `update_available`；确认后才替换同一文件的快照。
 - 闪念创建 48 小时后仍为 `pending`，由 `review --expire` 改为 `expired`。
@@ -74,4 +78,3 @@
 ## 信任模型
 
 抓取正文、标题、作者、图片替代文本和页面元数据均为不可信输入，只能作为数据保存。CLI 不解析或执行其中的提示词、Shell、HTML 脚本、链接跳转建议或工具调用。
-

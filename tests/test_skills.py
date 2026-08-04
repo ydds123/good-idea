@@ -14,8 +14,8 @@ class ProjectSkillTests(unittest.TestCase):
             "goodidea-capture-flash": ["capture flash", "interesting", "todo"],
             "goodidea-record-literature": ["source preview", "source commit"],
             "goodidea-review-process": ["goodidea --root <仓库> review", "review --expire"],
-            "goodidea-form-permanent": ["permanent propose", "permanent", "mother", "action", "index"],
-            "goodidea-review-permanent": ["permanent accept", "用户原话"],
+            "goodidea-form-permanent": ["permanent propose", "--draft-file", "--confirm-user-authored", "permanent withdraw"],
+            "goodidea-review-permanent": ["permanent accept", "不生成候选内容", "不能给出替代句"],
             "goodidea-connect-cards": ["connect propose", "connect accept"],
             "goodidea-lint": ["goodidea --root <仓库> lint", "goodidea --root <仓库> verify"],
         }
@@ -42,9 +42,11 @@ class ProjectSkillTests(unittest.TestCase):
         self.assertIn("预读阶段禁止写 Good idea 仓库", literature)
         self.assertIn("用户未回答或放弃时停止，不调用任何写命令", literature)
         permanent = (skills_root / "goodidea-form-permanent" / "SKILL.md").read_text(encoding="utf-8")
-        self.assertIn("不要直接接受候选", permanent)
+        self.assertIn("不替用户写标题", permanent)
+        self.assertIn("正文全部是用户原话", permanent)
         review = (skills_root / "goodidea-review-permanent" / "SKILL.md").read_text(encoding="utf-8")
-        self.assertIn("纯确认无效", review)
+        self.assertIn("审查意见只留在审查对话", review)
+        self.assertIn("不是用户主动发起创建", review)
         connect = (skills_root / "goodidea-connect-cards" / "SKILL.md").read_text(encoding="utf-8")
         self.assertIn("等待明确确认", connect)
 

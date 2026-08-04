@@ -24,6 +24,10 @@ def _read_json(path: str) -> dict[str, Any]:
     return value
 
 
+def _read_text(path: str) -> str:
+    return sys.stdin.read() if path == "-" else Path(path).read_text(encoding="utf-8")
+
+
 def _split_ids(value: str) -> list[str]:
     return [item.strip() for item in value.split(",") if item.strip()]
 
@@ -75,42 +79,45 @@ def build_parser() -> argparse.ArgumentParser:
     review.add_argument("--expire", action="store_true")
     review.add_argument("--transaction-id")
 
-    permanent = sub.add_parser("permanent", help="永久卡片候选与状态流转")
+    permanent = sub.add_parser("permanent", help="用户原文草稿与永久卡片状态流转")
     permanent_sub = permanent.add_subparsers(
         dest="permanent_command", required=True
     )
-    propose = permanent_sub.add_parser("propose")
+    propose = permanent_sub.add_parser("propose", help="提交用户亲自写成的草稿")
     propose.add_argument(
         "--type", required=True, choices=["permanent", "mother", "action", "index"]
     )
-    propose.add_argument("--title", required=True)
-    propose.add_argument("--claim", required=True)
-    propose.add_argument("--reason", default="")
-    propose.add_argument("--boundaries", default="")
+    propose.add_argument(
+        "--draft-file",
+        required=True,
+        help="用户原文 Markdown 草稿；传 - 从 stdin 读取",
+    )
     propose.add_argument("--source-ids", default="")
     propose.add_argument("--from-ids", default="")
-    propose.add_argument("--context", default="")
-    propose.add_argument("--judgment", default="")
-    propose.add_argument("--action", default="")
-    propose.add_argument("--result", default="")
-    propose.add_argument("--adjustment", default="")
     propose.add_argument("--transaction-id")
 
-    accept = permanent_sub.add_parser("accept")
+    accept = permanent_sub.add_parser("accept", help="按用户明确指令发布原文草稿")
     accept.add_argument("--proposal-id", required=True)
-    accept.add_argument("--explanation", required=True)
+    accept.add_argument("--confirm-user-authored", action="store_true")
     accept.add_argument("--transaction-id")
+
+    withdraw = permanent_sub.add_parser("withdraw", help="撤销待处理草稿")
+    withdraw.add_argument("--proposal-id", required=True)
+    withdraw.add_argument("--reason", required=True)
+    withdraw.add_argument("--transaction-id")
 
     revise = permanent_sub.add_parser("revise")
     revise.add_argument("--card-id", required=True)
     revise.add_argument("--note", required=True)
     revise.add_argument("--status", default="")
+    revise.add_argument("--confirm-user-authored", action="store_true")
     revise.add_argument("--transaction-id")
 
     feedback = permanent_sub.add_parser("feedback")
     feedback.add_argument("--card-id", required=True)
     feedback.add_argument("--result", required=True)
     feedback.add_argument("--adjustment", required=True)
+    feedback.add_argument("--confirm-user-authored", action="store_true")
     feedback.add_argument("--transaction-id")
 
     connect = sub.add_parser("connect", help="语义连接候选与确认")
@@ -219,29 +226,28 @@ def dispatch(args: argparse.Namespace) -> tuple[dict[str, Any], int]:
         if args.permanent_command == "propose":
             result = service.permanent_propose(
                 args.type,
-                title=args.title,
-                claim=args.claim,
-                reason=args.reason,
-                boundaries=args.boundaries,
+                draft=_read_text(args.draft_file),
                 source_ids=_split_ids(args.source_ids),
                 from_ids=_split_ids(args.from_ids),
-                context=args.context,
-                judgment=args.judgment,
-                action=args.action,
-                result_text=args.result,
-                adjustment=args.adjustment,
                 transaction_id=args.transaction_id,
             )
         elif args.permanent_command == "accept":
             result = service.permanent_accept(
                 args.proposal_id,
-                explanation=args.explanation,
+                confirmed_by_user=args.confirm_user_authored,
+                transaction_id=args.transaction_id,
+            )
+        elif args.permanent_command == "withdraw":
+            result = service.permanent_withdraw(
+                args.proposal_id,
+                reason=args.reason,
                 transaction_id=args.transaction_id,
             )
         elif args.permanent_command == "revise":
             result = service.permanent_revise(
                 args.card_id,
                 note=args.note,
+                confirmed_by_user=args.confirm_user_authored,
                 status=args.status,
                 transaction_id=args.transaction_id,
             )
@@ -250,6 +256,7 @@ def dispatch(args: argparse.Namespace) -> tuple[dict[str, Any], int]:
                 args.card_id,
                 result_text=args.result,
                 adjustment=args.adjustment,
+                confirmed_by_user=args.confirm_user_authored,
                 transaction_id=args.transaction_id,
             )
     elif args.command == "connect":

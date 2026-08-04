@@ -1,4 +1,4 @@
 interface:
   display_name: "Good idea 审查永久卡片"
-  short_description: "检查单一主张、证据、边界和反例，并执行用户重新解释的认知门禁"
-  default_prompt: "Use $goodidea-review-permanent to challenge this proposed permanent card."
+  short_description: "只评估用户草稿是否达标，不代写、改写或维护正文"
+  default_prompt: "Use $goodidea-review-permanent to evaluate my draft without rewriting any of it."

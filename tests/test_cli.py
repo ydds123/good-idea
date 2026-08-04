@@ -195,95 +195,68 @@ class GoodIdeaCliTests(unittest.TestCase):
         self.assertFalse(review_result["write"])
         self.assertGreaterEqual(review_result["count"], 1)
 
+        permanent_draft = self.base / "permanent.md"
+        permanent_body = """# 生成能力必须接受人的判断
+
+生成数量不是价值，人的解释和现实反馈决定什么值得保留。
+
+否则系统只会扩大噪声。格式维护可以自动化，价值判断不能自动接纳。
+"""
+        permanent_draft.write_text(permanent_body, encoding="utf-8")
         permanent_proposal = run_cli(
-            "--root",
-            str(self.root),
-            "permanent",
-            "propose",
-            "--type",
-            "permanent",
-            "--title",
-            "生成能力必须接受人的判断",
-            "--claim",
-            "生成数量不是价值，人的解释和现实反馈决定什么值得保留。",
-            "--reason",
-            "否则系统只会扩大噪声。",
-            "--boundaries",
-            "格式维护可以自动化，价值判断不能自动接纳。",
-            "--source-ids",
-            source_result["source_id"],
-            "--from-ids",
-            source_result["flash_id"],
-            "--transaction-id",
-            "cli-permanent-propose",
+            "--root", str(self.root), "permanent", "propose",
+            "--type", "permanent", "--draft-file", str(permanent_draft),
+            "--source-ids", source_result["source_id"],
+            "--from-ids", source_result["flash_id"],
+            "--transaction-id", "cli-permanent-propose",
         )
         self.assertEqual(permanent_proposal.returncode, 0, permanent_proposal.stderr)
         permanent_proposal_id = json.loads(permanent_proposal.stdout)["result"][
             "proposal_id"
         ]
         rejected = run_cli(
-            "--root",
-            str(self.root),
-            "permanent",
-            "accept",
-            "--proposal-id",
-            permanent_proposal_id,
-            "--explanation",
-            "同意",
-            "--transaction-id",
-            "cli-permanent-rejected",
+            "--root", str(self.root), "permanent", "accept",
+            "--proposal-id", permanent_proposal_id,
+            "--transaction-id", "cli-permanent-rejected",
         )
         self.assertEqual(rejected.returncode, 2)
         permanent_accept = run_cli(
-            "--root",
-            str(self.root),
-            "permanent",
-            "accept",
-            "--proposal-id",
-            permanent_proposal_id,
-            "--explanation",
-            "我的理解是生成只是扩展候选，只有我能解释其意义并用现实结果校正时，它才成为知识。",
-            "--transaction-id",
-            "cli-permanent-accept",
+            "--root", str(self.root), "permanent", "accept",
+            "--proposal-id", permanent_proposal_id,
+            "--confirm-user-authored",
+            "--transaction-id", "cli-permanent-accept",
         )
         self.assertEqual(permanent_accept.returncode, 0, permanent_accept.stderr)
-        permanent_id = json.loads(permanent_accept.stdout)["result"]["card_id"]
+        permanent_result = json.loads(permanent_accept.stdout)["result"]
+        permanent_id = permanent_result["card_id"]
+        formal_text = (self.root / permanent_result["card_path"]).read_text(encoding="utf-8")
+        self.assertTrue(formal_text.endswith(permanent_body))
+        self.assertNotIn("机器数据", formal_text)
 
+        mother_draft = self.base / "mother.md"
+        mother_draft.write_text(
+            """# 怎样判断持续生成产生了价值
+
+哪些可观察变化能区分认知增量与内容噪声？
+
+这个问题需要跨来源和行动反复回答。我会持续观察判断和行动是否改善。
+""",
+            encoding="utf-8",
+        )
         mother_proposal = run_cli(
-            "--root",
-            str(self.root),
-            "permanent",
-            "propose",
-            "--type",
-            "mother",
-            "--title",
-            "怎样判断持续生成产生了价值",
-            "--claim",
-            "哪些可观察变化能区分认知增量与内容噪声？",
-            "--reason",
-            "这个问题需要跨来源和行动反复回答。",
-            "--action",
-            "持续观察判断和行动是否改善。",
-            "--source-ids",
-            source_result["source_id"],
-            "--transaction-id",
-            "cli-mother-propose",
+            "--root", str(self.root), "permanent", "propose",
+            "--type", "mother", "--draft-file", str(mother_draft),
+            "--source-ids", source_result["source_id"],
+            "--transaction-id", "cli-mother-propose",
         )
         self.assertEqual(mother_proposal.returncode, 0, mother_proposal.stderr)
         mother_proposal_id = json.loads(mother_proposal.stdout)["result"][
             "proposal_id"
         ]
         mother_accept = run_cli(
-            "--root",
-            str(self.root),
-            "permanent",
-            "accept",
-            "--proposal-id",
-            mother_proposal_id,
-            "--explanation",
-            "我会看自己能否更早识别无意义输出，并把真实反馈转化为下一次生成的约束。",
-            "--transaction-id",
-            "cli-mother-accept",
+            "--root", str(self.root), "permanent", "accept",
+            "--proposal-id", mother_proposal_id, "--confirm-user-authored",
+            "--transaction-id", "cli-mother-accept",
         )
         self.assertEqual(mother_accept.returncode, 0, mother_accept.stderr)
         mother_id = json.loads(mother_accept.stdout)["result"]["card_id"]
@@ -320,41 +293,29 @@ class GoodIdeaCliTests(unittest.TestCase):
         )
         self.assertEqual(connection_accept.returncode, 0, connection_accept.stderr)
 
+        action_draft = self.base / "action.md"
+        action_draft.write_text(
+            """# 用一次输出检验噪声抑制
+
+在首次完整 CLI 生命周期里，我判断现实反馈比生成数量更能检验价值。
+
+我要选取一次 AI 输出，让一位真实读者指出无用内容，并记录结果与下一次调整。
+""",
+            encoding="utf-8",
+        )
         action_proposal = run_cli(
-            "--root",
-            str(self.root),
-            "permanent",
-            "propose",
-            "--type",
-            "action",
-            "--title",
-            "用一次输出检验噪声抑制",
-            "--claim",
-            "选取一次 AI 输出并记录现实反馈。",
-            "--context",
-            "首次完整 CLI 生命周期",
-            "--judgment",
-            "现实反馈比生成数量更能检验价值",
-            "--action",
-            "让一位真实读者指出无用内容",
-            "--transaction-id",
-            "cli-action-propose",
+            "--root", str(self.root), "permanent", "propose",
+            "--type", "action", "--draft-file", str(action_draft),
+            "--transaction-id", "cli-action-propose",
         )
         self.assertEqual(action_proposal.returncode, 0, action_proposal.stderr)
         action_proposal_id = json.loads(action_proposal.stdout)["result"][
             "proposal_id"
         ]
         action_accept = run_cli(
-            "--root",
-            str(self.root),
-            "permanent",
-            "accept",
-            "--proposal-id",
-            action_proposal_id,
-            "--explanation",
-            "我会以读者能否指出并删除无用内容作为这次行动的反馈，而不是只统计输出篇幅。",
-            "--transaction-id",
-            "cli-action-accept",
+            "--root", str(self.root), "permanent", "accept",
+            "--proposal-id", action_proposal_id, "--confirm-user-authored",
+            "--transaction-id", "cli-action-accept",
         )
         self.assertEqual(action_accept.returncode, 0, action_accept.stderr)
         action_id = json.loads(action_accept.stdout)["result"]["card_id"]
@@ -369,42 +330,34 @@ class GoodIdeaCliTests(unittest.TestCase):
             "读者指出两段内容只是重复表达，没有增加判断依据。",
             "--adjustment",
             "以后生成后先删除无法改变判断或行动的段落。",
+            "--confirm-user-authored",
             "--transaction-id",
             "cli-action-feedback",
         )
         self.assertEqual(action_feedback.returncode, 0, action_feedback.stderr)
 
+        index_draft = self.base / "index.md"
+        index_draft.write_text(
+            """# 持续生成质量入口
+
+这个入口组织持续生成、人的判断和现实反馈相关卡片，让我从长期问题进入当前判断与行动反馈，而不是按关键词堆放文件。
+""",
+            encoding="utf-8",
+        )
         index_proposal = run_cli(
-            "--root",
-            str(self.root),
-            "permanent",
-            "propose",
-            "--type",
-            "index",
-            "--title",
-            "持续生成质量入口",
-            "--claim",
-            "组织持续生成、人的判断和现实反馈相关卡片。",
-            "--source-ids",
-            f"{permanent_id},{mother_id},{action_id}",
-            "--transaction-id",
-            "cli-index-propose",
+            "--root", str(self.root), "permanent", "propose",
+            "--type", "index", "--draft-file", str(index_draft),
+            "--source-ids", f"{permanent_id},{mother_id},{action_id}",
+            "--transaction-id", "cli-index-propose",
         )
         self.assertEqual(index_proposal.returncode, 0, index_proposal.stderr)
         index_proposal_id = json.loads(index_proposal.stdout)["result"][
             "proposal_id"
         ]
         index_accept = run_cli(
-            "--root",
-            str(self.root),
-            "permanent",
-            "accept",
-            "--proposal-id",
-            index_proposal_id,
-            "--explanation",
-            "这个入口让我从长期问题进入当前判断与行动反馈，而不是按关键词堆放相关文件。",
-            "--transaction-id",
-            "cli-index-accept",
+            "--root", str(self.root), "permanent", "accept",
+            "--proposal-id", index_proposal_id, "--confirm-user-authored",
+            "--transaction-id", "cli-index-accept",
         )
         self.assertEqual(index_accept.returncode, 0, index_accept.stderr)
         index_id = json.loads(index_accept.stdout)["result"]["card_id"]
@@ -434,6 +387,7 @@ class GoodIdeaCliTests(unittest.TestCase):
                 note,
                 "--status",
                 status,
+                "--confirm-user-authored",
                 "--transaction-id",
                 txid,
             )

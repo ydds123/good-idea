@@ -14,7 +14,7 @@ from pathlib import Path
 from typing import Any
 
 from .errors import GitError, IntegrityError, ValidationError
-from .metadata import parse_document, replace_frontmatter
+from .metadata import dump_frontmatter, parse_document, replace_frontmatter
 from .notes import (
     TYPE_LOCATIONS,
     add_list_item_to_section,
@@ -42,6 +42,7 @@ PURE_CONFIRMATIONS = {
     "是",
     "没问题",
 }
+PERMANENT_CARD_TYPES = {"permanent", "mother", "action", "index"}
 PROPOSAL_START = "<!-- goodidea:proposal-json:start -->"
 PROPOSAL_END = "<!-- goodidea:proposal-json:end -->"
 
@@ -91,6 +92,47 @@ def _proposal_document(metadata: dict[str, Any], payload: dict[str, Any]) -> str
             ("机器数据", f"{PROPOSAL_START}\n{readable}\n{PROPOSAL_END}"),
         ],
     )
+
+
+def _normalize_user_draft(text: str) -> str:
+    normalized = text.replace("\r\n", "\n").replace("\r", "\n")
+    if normalized and not normalized.endswith("\n"):
+        normalized += "\n"
+    return normalized
+
+
+def _normalize_user_entry(text: str) -> str:
+    """Preserve wording while making a fragment safe to wrap in Markdown."""
+    return text.replace("\r\n", "\n").replace("\r", "\n").strip("\n")
+
+
+def _validate_user_draft(text: str) -> tuple[str, str, str]:
+    """Validate syntax only; semantic quality belongs to the human/Skill review."""
+    draft = _normalize_user_draft(text)
+    if not draft.strip():
+        raise ValidationError("用户草稿不能为空")
+    if draft.lstrip().startswith("---\n"):
+        raise ValidationError("用户草稿不要包含 Frontmatter；ID 和状态由 CLI 添加")
+    if PROPOSAL_START in draft or PROPOSAL_END in draft or "## 机器数据" in draft:
+        raise ValidationError("用户草稿不得包含内部提案数据或“机器数据”区块")
+    headings = re.findall(r"(?m)^# ([^#\n].*)$", draft)
+    if len(headings) != 1:
+        raise ValidationError("用户草稿必须且只能包含一个一级标题（# 标题）")
+    first_content = next((line for line in draft.splitlines() if line.strip()), "")
+    if first_content != f"# {headings[0]}":
+        raise ValidationError("用户草稿的第一行内容必须是一级标题")
+    title = headings[0].strip()
+    if not title:
+        raise ValidationError("用户草稿标题不能为空")
+    body_lines = [
+        line.strip()
+        for line in draft.splitlines()
+        if line.strip() and not line.lstrip().startswith(("#", "<!--"))
+    ]
+    if not _meaningful("\n".join(body_lines), minimum=12):
+        raise ValidationError("用户草稿正文过短，尚不能作为可审查的永久卡片草稿")
+    digest = hashlib.sha256(draft.encode("utf-8")).hexdigest()
+    return title, draft, digest
 
 
 def _default_status(note_type: str) -> str:
@@ -516,62 +558,48 @@ class GoodIdeaService:
         self,
         card_type: str,
         *,
-        title: str,
-        claim: str,
-        reason: str = "",
-        boundaries: str = "",
+        draft: str,
         source_ids: list[str] | None = None,
         from_ids: list[str] | None = None,
-        context: str = "",
-        judgment: str = "",
-        action: str = "",
-        result_text: str = "",
-        adjustment: str = "",
         transaction_id: str | None = None,
     ) -> dict[str, Any]:
-        if card_type not in {"permanent", "mother", "action", "index"}:
+        if card_type not in PERMANENT_CARD_TYPES:
             raise ValidationError(f"不支持的永久卡片类型：{card_type}")
-        if not title.strip() or not claim.strip():
-            raise ValidationError("卡片候选必须包含标题和中心内容")
+        title, user_draft, draft_sha256 = _validate_user_draft(draft)
         txid = transaction_id or new_transaction_id("permanent-propose")
         if existing := self._idempotent(txid):
             return existing
         proposal_id = stable_id("PRP", f"{card_type}:{txid}", dated=False)
         proposal_rel = Path(f".goodidea/proposals/permanent/{proposal_id}.md")
         timestamp = now_iso()
-        payload = {
-            "card_type": card_type,
-            "title": title.strip(),
-            "claim": claim.strip(),
-            "reason": reason.strip(),
-            "boundaries": boundaries.strip(),
-            "source_ids": source_ids or [],
-            "from_ids": from_ids or [],
-            "context": context.strip(),
-            "judgment": judgment.strip(),
-            "action": action.strip(),
-            "result": result_text.strip(),
-            "adjustment": adjustment.strip(),
-        }
-        for note_id in payload["source_ids"] + payload["from_ids"]:
+        checked_source_ids = source_ids or []
+        checked_from_ids = from_ids or []
+        for note_id in checked_source_ids + checked_from_ids:
             if not self.repo.find_note(note_id):
-                raise ValidationError(f"候选引用了不存在的对象：{note_id}")
+                raise ValidationError(f"用户草稿引用了不存在的对象：{note_id}")
         proposal_meta = {
             "id": proposal_id,
             "type": "permanent_proposal",
-            "title": f"候选：{title.strip()}",
+            "title": title,
             "status": "pending",
             "card_type": card_type,
+            "authoring_mode": "user_verbatim",
+            "draft_sha256": draft_sha256,
             "created_at": timestamp,
             "updated_at": timestamp,
         }
-        proposal_text = _proposal_document(proposal_meta, payload)
+        proposal_text = dump_frontmatter(proposal_meta) + user_draft
         state = self.repo.read_state()
         state.setdefault("proposals", {})[proposal_id] = {
             "kind": "permanent",
             "path": proposal_rel.as_posix(),
             "status": "pending",
             "card_type": card_type,
+            "authoring_mode": "user_verbatim",
+            "draft_sha256": draft_sha256,
+            "title": title,
+            "source_ids": checked_source_ids,
+            "from_ids": checked_from_ids,
         }
         result = {
             "proposal_id": proposal_id,
@@ -581,7 +609,7 @@ class GoodIdeaService:
         return self.repo.commit(
             transaction_id=txid,
             action="permanent-propose",
-            summary=title.strip(),
+            summary=title,
             writes={proposal_rel: proposal_text},
             state=state,
             result=result,
@@ -591,12 +619,12 @@ class GoodIdeaService:
         self,
         proposal_id: str,
         *,
-        explanation: str,
+        confirmed_by_user: bool,
         transaction_id: str | None = None,
     ) -> dict[str, Any]:
-        if not _meaningful(explanation, minimum=8):
+        if not confirmed_by_user:
             raise ValidationError(
-                "正式接纳永久卡片前，必须用自己的语言解释这条认识；纯确认或过短复述无效"
+                "只有用户审查自己的草稿并明确发起正式创建后，才能接纳永久卡片"
             )
         txid = transaction_id or new_transaction_id("permanent-accept")
         if existing := self._idempotent(txid):
@@ -607,18 +635,42 @@ class GoodIdeaService:
             raise ValidationError(f"找不到永久卡片候选：{proposal_id}")
         if record.get("status") != "pending":
             raise ValidationError("永久卡片候选已处理")
+        if record.get("authoring_mode") != "user_verbatim":
+            raise ValidationError("该候选不是用户原文草稿，禁止接纳；请撤销后由用户重新发起")
         proposal_rel = Path(record["path"])
         proposal_text = (self.repo.root / proposal_rel).read_text(encoding="utf-8")
-        payload = _proposal_payload(proposal_text)
-        card_type = payload["card_type"]
+        proposal_meta, user_draft = parse_document(proposal_text)
+        title, normalized_draft, draft_sha256 = _validate_user_draft(user_draft)
+        expected_sha256 = record.get("draft_sha256")
+        card_type = record.get("card_type")
+        if card_type not in PERMANENT_CARD_TYPES:
+            raise IntegrityError("永久卡片草稿类型非法")
+        mirrored_fields = {
+            "id": proposal_id,
+            "type": "permanent_proposal",
+            "status": "pending",
+            "card_type": card_type,
+            "authoring_mode": "user_verbatim",
+            "title": title,
+            "draft_sha256": expected_sha256,
+        }
+        for key, expected in mirrored_fields.items():
+            if proposal_meta.get(key) != expected:
+                raise IntegrityError(f"永久卡片草稿 Frontmatter 与账本不一致：{key}")
+        if record.get("title") != title:
+            raise IntegrityError("永久卡片草稿标题与账本不一致")
+        if (
+            not expected_sha256
+            or draft_sha256 != expected_sha256
+        ):
+            raise IntegrityError("用户草稿内容哈希异常；停止发布，需重新提交审查")
         prefix = {
             "permanent": "PER",
             "mother": "MOT",
             "action": "ACT",
             "index": "IDX",
         }[card_type]
-        card_id = stable_id(prefix, f"{proposal_id}:{explanation}")
-        title = payload["title"]
+        card_id = stable_id(prefix, f"{proposal_id}:{draft_sha256}")
         card_rel = TYPE_LOCATIONS[card_type] / (
             f"{card_id}-{safe_filename(title, card_id)}.md"
         )
@@ -631,61 +683,25 @@ class GoodIdeaService:
             "status": status,
             "created_at": timestamp,
             "updated_at": timestamp,
-            "source_ids": payload.get("source_ids", []),
-            "derived_from": payload.get("from_ids", []),
-            "summary": payload["claim"].replace("\n", " ")[:100],
+            "authoring_mode": "user_verbatim",
+            "source_ids": record.get("source_ids", []),
+            "derived_from": record.get("from_ids", []),
+            "summary": next(
+                (
+                    line.strip()[:100]
+                    for line in normalized_draft.splitlines()
+                    if line.strip() and not line.lstrip().startswith("#")
+                ),
+                title,
+            ),
         }
-        source_links: list[str] = []
-        for note_id in payload.get("source_ids", []):
-            found = self.repo.find_note(note_id)
-            if found:
-                source_links.append(wiki_link(found[0], found[2]["title"]))
-        source_text = "\n".join(f"- {link}" for link in source_links) or "_暂无_"
-        if card_type == "permanent":
-            sections = [
-                ("核心判断", payload["claim"]),
-                ("我的解释", explanation),
-                ("成立理由", payload.get("reason") or "待继续验证"),
-                ("边界与反例", payload.get("boundaries") or "待继续寻找"),
-                ("来源", source_text),
-                ("连接", "_暂无_"),
-            ]
-        elif card_type == "mother":
-            sections = [
-                ("开放问题", payload["claim"]),
-                ("当前阶段性认识", payload.get("reason") or "尚未形成"),
-                ("我的解释", explanation),
-                ("证据与矛盾", payload.get("boundaries") or "待积累"),
-                ("下一步", payload.get("action") or "继续观察与提问"),
-                ("连接", "_暂无_"),
-            ]
-        elif card_type == "action":
-            sections = [
-                ("情境", payload.get("context") or payload["claim"]),
-                ("当时信息", payload.get("reason") or "待补充"),
-                ("判断", payload.get("judgment") or payload["claim"]),
-                ("行动", payload.get("action") or "待执行"),
-                ("结果", payload.get("result") or "待反馈"),
-                ("修正", payload.get("adjustment") or "待复盘"),
-                ("我的解释", explanation),
-                ("连接", "_暂无_"),
-            ]
-        else:
-            sections = [
-                ("索引目的", payload["claim"]),
-                ("入口卡片", source_text),
-                ("我的解释", explanation),
-                ("维护说明", payload.get("boundaries") or "随卡片网络演化调整"),
-                ("连接", "_暂无_"),
-            ]
-        card_text = render_note(metadata, sections)
+        card_text = dump_frontmatter(metadata) + normalized_draft
         writes: dict[Path, str | bytes] = {card_rel: card_text}
-        proposal_meta, _ = parse_document(proposal_text)
         proposal_meta["status"] = "accepted"
         proposal_meta["accepted_card_id"] = card_id
         proposal_meta["updated_at"] = timestamp
         writes[proposal_rel] = replace_frontmatter(proposal_text, proposal_meta)
-        for from_id in payload.get("from_ids", []):
+        for from_id in record.get("from_ids", []):
             found = self.repo.find_note(from_id)
             if not found or found[2].get("type") != "flash":
                 continue
@@ -711,14 +727,81 @@ class GoodIdeaService:
             result=result,
         )
 
+    def permanent_withdraw(
+        self,
+        proposal_id: str,
+        *,
+        reason: str,
+        transaction_id: str | None = None,
+    ) -> dict[str, Any]:
+        if not _meaningful(reason, minimum=6):
+            raise ValidationError("撤销永久卡片草稿时必须记录明确原因")
+        txid = transaction_id or new_transaction_id("permanent-withdraw")
+        if existing := self._idempotent(txid):
+            return existing
+        state = self.repo.read_state()
+        record = state.get("proposals", {}).get(proposal_id)
+        if not record or record.get("kind") != "permanent":
+            raise ValidationError(f"找不到永久卡片候选：{proposal_id}")
+        if record.get("status") != "pending":
+            raise ValidationError("只有待处理的永久卡片候选可以撤销")
+        proposal_rel = Path(record["path"])
+        proposal_path = self.repo.root / proposal_rel
+        if not proposal_path.is_file():
+            raise IntegrityError(f"永久卡片候选文件不存在：{proposal_rel}")
+        proposal_text = proposal_path.read_text(encoding="utf-8")
+        proposal_meta, _ = parse_document(proposal_text)
+        timestamp = now_iso()
+        proposal_meta = {
+            "id": proposal_id,
+            "type": "permanent_proposal",
+            "title": f"已撤销候选 {proposal_id}",
+            "status": "withdrawn",
+            "card_type": record.get("card_type", "unknown"),
+            "created_at": proposal_meta.get("created_at", timestamp),
+            "updated_at": timestamp,
+            "withdrawn_at": timestamp,
+            "withdraw_reason": reason.strip(),
+        }
+        tombstone = render_note(
+            proposal_meta,
+            [("撤销记录", reason.strip())],
+        )
+        record.update(
+            {
+                "status": "withdrawn",
+                "withdrawn_at": timestamp,
+                "withdraw_reason": reason.strip(),
+            }
+        )
+        record.pop("title", None)
+        record.pop("draft_sha256", None)
+        record.pop("authoring_mode", None)
+        result = {
+            "proposal_id": proposal_id,
+            "proposal_path": proposal_rel.as_posix(),
+            "status": "withdrawn",
+        }
+        return self.repo.commit(
+            transaction_id=txid,
+            action="permanent-withdraw",
+            summary=f"撤销 {proposal_id}",
+            writes={proposal_rel: tombstone},
+            state=state,
+            result=result,
+        )
+
     def permanent_revise(
         self,
         card_id: str,
         *,
         note: str,
+        confirmed_by_user: bool,
         status: str = "",
         transaction_id: str | None = None,
     ) -> dict[str, Any]:
+        if not confirmed_by_user:
+            raise ValidationError("永久卡片修订只能逐字追加用户亲自写下的内容")
         if not _meaningful(note, minimum=8):
             raise ValidationError("演化记录必须包含用户明确的修正或新认识")
         found = self.repo.find_note(card_id)
@@ -744,9 +827,8 @@ class GoodIdeaService:
         if existing := self._idempotent(txid):
             return existing
         timestamp = now_iso()
-        text = add_list_item_to_section(
-            text, "演化记录", f"{timestamp} — {note.strip()}"
-        )
+        user_note = _normalize_user_entry(note)
+        text = add_list_item_to_section(text, "演化记录", f"{timestamp} — {user_note}")
         metadata["updated_at"] = timestamp
         metadata["status"] = status or (
             "evolving" if metadata["type"] == "mother" else "revised"
@@ -775,8 +857,11 @@ class GoodIdeaService:
         *,
         result_text: str,
         adjustment: str,
+        confirmed_by_user: bool,
         transaction_id: str | None = None,
     ) -> dict[str, Any]:
+        if not confirmed_by_user:
+            raise ValidationError("行动结果与修正只能逐字追加用户亲自写下的内容")
         if not _meaningful(result_text, minimum=4) or not _meaningful(
             adjustment, minimum=4
         ):
@@ -789,12 +874,10 @@ class GoodIdeaService:
         if existing := self._idempotent(txid):
             return existing
         timestamp = now_iso()
-        text = add_list_item_to_section(
-            text, "结果", f"{timestamp} — {result_text.strip()}"
-        )
-        text = add_list_item_to_section(
-            text, "修正", f"{timestamp} — {adjustment.strip()}"
-        )
+        user_result = _normalize_user_entry(result_text)
+        user_adjustment = _normalize_user_entry(adjustment)
+        text = add_list_item_to_section(text, "结果", f"{timestamp} — {user_result}")
+        text = add_list_item_to_section(text, "修正", f"{timestamp} — {user_adjustment}")
         metadata["status"] = "reviewed"
         metadata["updated_at"] = timestamp
         text = replace_frontmatter(text, metadata)
@@ -1060,6 +1143,38 @@ class GoodIdeaService:
             target = self.repo.root / record.get("path", "")
             if not target.is_file():
                 issues.append(f"来源账本失效：{canonical}")
+        for proposal_id, record in state.get("proposals", {}).items():
+            if record.get("kind") != "permanent":
+                continue
+            proposal_path = self.repo.root / record.get("path", "")
+            if not proposal_path.is_file():
+                issues.append(f"永久卡片草稿账本失效：{proposal_id}")
+                continue
+            try:
+                proposal_text = proposal_path.read_text(encoding="utf-8")
+                proposal_meta, proposal_body = parse_document(proposal_text)
+            except Exception as exc:
+                issues.append(f"永久卡片草稿无法解析：{proposal_id}: {exc}")
+                continue
+            if proposal_meta.get("status") != record.get("status"):
+                issues.append(f"永久卡片草稿状态不一致：{proposal_id}")
+            if record.get("status") in {"pending", "accepted"}:
+                if record.get("authoring_mode") != "user_verbatim":
+                    issues.append(f"永久卡片草稿不是用户原文：{proposal_id}")
+                    continue
+                try:
+                    _, _, actual_sha256 = _validate_user_draft(proposal_body)
+                except ValidationError as exc:
+                    issues.append(f"永久卡片草稿格式异常：{proposal_id}: {exc}")
+                    continue
+                if (
+                    actual_sha256 != record.get("draft_sha256")
+                    or actual_sha256 != proposal_meta.get("draft_sha256")
+                ):
+                    issues.append(f"永久卡片草稿哈希异常：{proposal_id}")
+            elif record.get("status") == "withdrawn":
+                if PROPOSAL_START in proposal_text or "## 机器数据" in proposal_text:
+                    issues.append(f"已撤销草稿仍暴露内部负载：{proposal_id}")
         log_text = (self.repo.root / "log.md").read_text(encoding="utf-8")
         git_messages = _run_git(
             self.repo.root, ["log", "--format=%B"], check=True

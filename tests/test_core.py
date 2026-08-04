@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import base64
+import json
 import subprocess
 import tempfile
 import unittest
@@ -8,7 +9,7 @@ from datetime import datetime, timedelta
 from pathlib import Path
 
 from goodidea.errors import IntegrityError, ValidationError
-from goodidea.metadata import parse_document
+from goodidea.metadata import parse_document, replace_frontmatter
 from goodidea.repository import Repository, initialize_vault
 from goodidea.service import GoodIdeaService
 
@@ -164,44 +165,60 @@ class GoodIdeaCoreTests(unittest.TestCase):
             transaction_id="tx-cognition-source",
         )
         ids = captured["result"]
+        permanent_draft = """# 系统成功必须包含人的能力增长
+
+如果外部系统更强但人的判断更弱，认知系统仍然失败。
+
+我认为系统目标不是答案产量，而是长期改善判断与行动。机械维护可以自动化，但价值判断不能外包。
+"""
         proposal = self.service.permanent_propose(
             "permanent",
-            title="系统成功必须包含人的能力增长",
-            claim="如果外部系统更强但人的判断更弱，认知系统仍然失败。",
-            reason="系统目标不是答案产量，而是长期改善判断与行动。",
-            boundaries="机械维护可以自动化，但价值判断不能外包。",
+            draft=permanent_draft,
             source_ids=[ids["source_id"]],
             from_ids=[ids["flash_id"]],
             transaction_id="tx-permanent-propose",
         )
+        proposal_text = (
+            self.root / proposal["result"]["proposal_path"]
+        ).read_text(encoding="utf-8")
+        proposal_meta, proposal_body = parse_document(proposal_text)
+        self.assertEqual(proposal_body, permanent_draft)
+        self.assertEqual(proposal_meta["authoring_mode"], "user_verbatim")
+        self.assertNotIn("机器数据", proposal_text)
         with self.assertRaises(ValidationError):
             self.service.permanent_accept(
                 proposal["result"]["proposal_id"],
-                explanation="同意",
+                confirmed_by_user=False,
                 transaction_id="tx-permanent-reject",
             )
         accepted = self.service.permanent_accept(
             proposal["result"]["proposal_id"],
-            explanation=(
-                "我理解它是在说，工具节省整理时间只是手段；"
-                "只有我能更清楚地解释、选择并根据结果修正，系统才算成功。"
-            ),
+            confirmed_by_user=True,
             transaction_id="tx-permanent-accept",
         )
+        formal_text = (self.root / accepted["result"]["card_path"]).read_text(
+            encoding="utf-8"
+        )
+        _, formal_body = parse_document(formal_text)
+        self.assertEqual(formal_body, permanent_draft)
+        self.assertNotIn("机器数据", formal_text)
         flash = self.repo.find_note(ids["flash_id"])
         self.assertEqual(flash[2]["status"], "processed")
 
         mother_proposal = self.service.permanent_propose(
             "mother",
-            title="怎样判断认知系统真的改善了我",
-            claim="哪些可观察变化能证明系统提高了判断与行动，而非只增加笔记？",
-            reason="这是需要跨时间和实践反复回答的问题。",
+            draft="""# 怎样判断认知系统真的改善了我
+
+哪些可观察变化能证明系统提高了判断与行动，而非只增加笔记？
+
+这是需要跨时间和实践反复回答的问题。我会观察自己是否更早发现关键问题，并能用行动结果修正旧判断。
+""",
             source_ids=[ids["source_id"]],
             transaction_id="tx-mother-propose",
         )
         mother = self.service.permanent_accept(
             mother_proposal["result"]["proposal_id"],
-            explanation="我需要观察自己是否更早发现关键问题，并能用行动结果修正旧判断。",
+            confirmed_by_user=True,
             transaction_id="tx-mother-accept",
         )
         connection = self.service.connect_propose(
@@ -222,37 +239,55 @@ class GoodIdeaCoreTests(unittest.TestCase):
 
         action_proposal = self.service.permanent_propose(
             "action",
-            title="用一次回顾检验认知转化",
-            claim="选择一条闪念，经过解释和行动反馈完成闭环。",
-            context="系统首次真实使用",
-            judgment="主动解释比自动摘要更能暴露理解缺口",
-            action="完成一次卡片形成并在次日复盘",
+            draft="""# 用一次回顾检验认知转化
+
+情境是系统首次真实使用。我的判断是主动解释比自动摘要更能暴露理解缺口。
+
+我要选择一条闪念，完成一次卡片形成并在次日复盘，以是否发现理解缺口作为反馈。
+""",
             source_ids=[ids["source_id"]],
             transaction_id="tx-action-propose",
         )
         action = self.service.permanent_accept(
             action_proposal["result"]["proposal_id"],
-            explanation="我会把是否发现理解缺口作为这次行动的反馈，而不是只看有没有生成文件。",
+            confirmed_by_user=True,
             transaction_id="tx-action-accept",
         )
+        with self.assertRaises(ValidationError):
+            self.service.action_feedback(
+                action["result"]["card_id"],
+                result_text="这段内容不能在没有用户作者确认时写入。",
+                adjustment="系统也不能替用户生成后续修正。",
+                confirmed_by_user=False,
+                transaction_id="tx-action-feedback-rejected",
+            )
         feedback = self.service.action_feedback(
             action["result"]["card_id"],
             result_text="实际复述时发现原先没有说明系统失败的判断标准。",
             adjustment="以后每张卡片都补一个可被现实否定的条件。",
+            confirmed_by_user=True,
             transaction_id="tx-action-feedback",
         )
         self.assertEqual(feedback["result"]["status"], "reviewed")
+        feedback_card = self.repo.find_note(action["result"]["card_id"])
+        self.assertIn("实际复述时发现原先没有说明系统失败的判断标准。", feedback_card[1])
+        self.assertIn("以后每张卡片都补一个可被现实否定的条件。", feedback_card[1])
         evolved = self.service.permanent_revise(
             mother["result"]["card_id"],
             note="新增判断：能否更早识别反例，是比笔记数量更可靠的变化指标。",
+            confirmed_by_user=True,
             status="evolving",
             transaction_id="tx-mother-evolve",
         )
         self.assertEqual(evolved["result"]["status"], "evolving")
+        evolved_card = self.repo.find_note(mother["result"]["card_id"])
+        self.assertIn("新增判断：能否更早识别反例，是比笔记数量更可靠的变化指标。", evolved_card[1])
         index_proposal = self.service.permanent_propose(
             "index",
-            title="判断能力增长入口",
-            claim="组织关于认知系统是否改善人的判断能力的卡片入口。",
+            draft="""# 判断能力增长入口
+
+这个入口组织关于认知系统是否改善人的判断能力的卡片，让我从衡量标准进入具体判断和长期问题，而不是按关键词堆放文件。
+""",
             source_ids=[
                 accepted["result"]["card_id"],
                 mother["result"]["card_id"],
@@ -261,18 +296,166 @@ class GoodIdeaCoreTests(unittest.TestCase):
         )
         index_card = self.service.permanent_accept(
             index_proposal["result"]["proposal_id"],
-            explanation="这个入口让我从衡量标准进入具体判断和长期问题，而不是按关键词堆放文件。",
+            confirmed_by_user=True,
             transaction_id="tx-index-accept",
         )
         revised_index = self.service.permanent_revise(
             index_card["result"]["card_id"],
             note="把完成反馈的行动卡加入入口，以便从判断追到现实校验。",
+            confirmed_by_user=True,
             status="revised",
             transaction_id="tx-index-revise",
         )
         self.assertEqual(revised_index["result"]["status"], "revised")
         lint = self.service.lint()
         self.assertTrue(lint["ok"], lint["issues"])
+
+    def test_permanent_draft_tampering_and_withdrawal_are_enforced(self):
+        proposal = self.service.permanent_propose(
+            "permanent",
+            draft="""# 这是一张由用户写成的草稿
+
+这段正文完整表达了用户自己的判断，也为后续审查保留了足够上下文和可质疑空间。
+""",
+            transaction_id="tx-user-draft",
+        )
+        proposal_id = proposal["result"]["proposal_id"]
+        proposal_path = self.root / proposal["result"]["proposal_path"]
+        proposal_path.write_text(
+            proposal_path.read_text(encoding="utf-8").replace("自己的判断", "被改写的判断"),
+            encoding="utf-8",
+        )
+        with self.assertRaises(IntegrityError):
+            self.service.permanent_accept(
+                proposal_id,
+                confirmed_by_user=True,
+                transaction_id="tx-tampered-draft-accept",
+            )
+
+        # Restore the tracked proposal before exercising a normal withdrawal.
+        subprocess.run(
+            ["git", "restore", "--", proposal["result"]["proposal_path"]],
+            cwd=self.root,
+            check=True,
+        )
+        clean_text = proposal_path.read_text(encoding="utf-8")
+        tampered_meta, _ = parse_document(clean_text)
+        tampered_meta["status"] = "withdrawn"
+        proposal_path.write_text(
+            replace_frontmatter(clean_text, tampered_meta), encoding="utf-8"
+        )
+        with self.assertRaises(IntegrityError):
+            self.service.permanent_accept(
+                proposal_id,
+                confirmed_by_user=True,
+                transaction_id="tx-frontmatter-tampered-accept",
+            )
+        subprocess.run(
+            ["git", "restore", "--", proposal["result"]["proposal_path"]],
+            cwd=self.root,
+            check=True,
+        )
+
+        state = self.repo.read_state()
+        state["proposals"][proposal_id]["card_type"] = "invalid"
+        (self.root / ".goodidea/state.json").write_text(
+            json.dumps(state, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
+            encoding="utf-8",
+        )
+        with self.assertRaises(IntegrityError):
+            self.service.permanent_accept(
+                proposal_id,
+                confirmed_by_user=True,
+                transaction_id="tx-state-tampered-accept",
+            )
+        subprocess.run(
+            ["git", "restore", "--", ".goodidea/state.json"],
+            cwd=self.root,
+            check=True,
+        )
+
+        withdrawn = self.service.permanent_withdraw(
+            proposal_id,
+            reason="用户决定撤销这份草稿，不让它进入永久空间",
+            transaction_id="tx-user-draft-withdraw",
+        )
+        self.assertEqual(withdrawn["result"]["status"], "withdrawn")
+        withdrawn_text = proposal_path.read_text(encoding="utf-8")
+        self.assertNotIn("这段正文完整表达", withdrawn_text)
+        self.assertNotIn("机器数据", withdrawn_text)
+        with self.assertRaises(ValidationError):
+            self.service.permanent_accept(
+                proposal_id,
+                confirmed_by_user=True,
+                transaction_id="tx-withdrawn-draft-accept",
+            )
+
+    def test_legacy_agent_proposal_is_rejected_and_neutralized(self):
+        proposal = self.service.permanent_propose(
+            "permanent",
+            draft="# 用户占位草稿\r\n\r\n这段由用户写成的文字没有末尾换行",
+            transaction_id="tx-before-legacy-shape",
+        )
+        proposal_id = proposal["result"]["proposal_id"]
+        proposal_path = self.root / proposal["result"]["proposal_path"]
+        _, canonical_body = parse_document(proposal_path.read_text(encoding="utf-8"))
+        self.assertEqual(
+            canonical_body,
+            "# 用户占位草稿\n\n这段由用户写成的文字没有末尾换行\n",
+        )
+
+        state = self.repo.read_state()
+        record = state["proposals"][proposal_id]
+        record.pop("authoring_mode")
+        record.pop("draft_sha256")
+        record.pop("title")
+        (self.root / ".goodidea/state.json").write_text(
+            json.dumps(state, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
+            encoding="utf-8",
+        )
+        proposal_path.write_text(
+            f'''---
+id: "{proposal_id}"
+type: "permanent_proposal"
+title: "候选：系统越权生成的旧标题"
+status: "pending"
+card_type: "permanent"
+created_at: "2026-08-04T00:00:00+08:00"
+updated_at: "2026-08-04T00:00:00+08:00"
+---
+# 候选：系统越权生成的旧标题
+
+## 候选内容
+
+这段错误正文不是用户写的。
+
+## 机器数据
+
+<!-- goodidea:proposal-json:start -->
+{{"claim": "这段错误正文不是用户写的。"}}
+<!-- goodidea:proposal-json:end -->
+''',
+            encoding="utf-8",
+        )
+        with self.assertRaises(ValidationError):
+            self.service.permanent_accept(
+                proposal_id,
+                confirmed_by_user=True,
+                transaction_id="tx-legacy-accept-rejected",
+            )
+        withdrawn = self.service.permanent_withdraw(
+            proposal_id,
+            reason="这份旧候选由系统越权生成，按用户要求撤销",
+            transaction_id="tx-legacy-withdraw",
+        )
+        self.assertEqual(withdrawn["result"]["status"], "withdrawn")
+        tombstone = proposal_path.read_text(encoding="utf-8")
+        self.assertNotIn("系统越权生成的旧标题", tombstone)
+        self.assertNotIn("这段错误正文不是用户写的", tombstone)
+        self.assertNotIn("机器数据", tombstone)
+        self.assertIn(f"# 已撤销候选 {proposal_id}", tombstone)
+        self.assertNotIn("title", self.repo.read_state()["proposals"][proposal_id])
+        self.assertTrue(self.service.lint()["ok"])
 
     def test_failed_and_partial_sources_are_explicit(self):
         failed_preview = self.preview("", status="failed")
