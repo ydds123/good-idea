@@ -12,3 +12,5 @@
 
 ## [2026-08-04T21:45:41+08:00] permanent-propose | 持续生成的价值取决于创造与噪声抑制同时成立 | tx=e2e-wechat-permanent-propose-20260804
 
+## [2026-08-04T22:23:49+08:00] permanent-withdraw | 撤销 PRP-5a9bfa3f1970 | tx=correction-withdraw-PRP-5a9bfa3f1970
+

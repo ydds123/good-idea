@@ -5,7 +5,9 @@
       "card_type": "permanent",
       "kind": "permanent",
       "path": ".goodidea/proposals/permanent/PRP-5a9bfa3f1970.md",
-      "status": "pending"
+      "status": "withdrawn",
+      "withdraw_reason": "该候选由系统越权生成，并非用户亲自撰写，现按用户要求撤销",
+      "withdrawn_at": "2026-08-04T22:23:49+08:00"
     },
     "PRP-cd26b7583e59": {
       "card_type": "mother",
@@ -34,6 +36,17 @@
     }
   },
   "transactions": {
+    "correction-withdraw-PRP-5a9bfa3f1970": {
+      "action": "permanent-withdraw",
+      "result": {
+        "proposal_id": "PRP-5a9bfa3f1970",
+        "proposal_path": ".goodidea/proposals/permanent/PRP-5a9bfa3f1970.md",
+        "status": "withdrawn"
+      },
+      "summary": "撤销 PRP-5a9bfa3f1970",
+      "timestamp": "2026-08-04T22:23:49+08:00",
+      "transaction_id": "correction-withdraw-PRP-5a9bfa3f1970"
+    },
     "e2e-karpathy-20260804": {
       "action": "source-commit",
       "result": {
