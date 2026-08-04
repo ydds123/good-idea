@@ -21,7 +21,9 @@
       "card_type": "permanent",
       "kind": "permanent",
       "path": ".goodidea/proposals/permanent/PRP-e863027285ee.md",
-      "status": "pending"
+      "status": "withdrawn",
+      "withdraw_reason": "该候选由系统越权生成，并非用户亲自撰写，现按用户要求撤销",
+      "withdrawn_at": "2026-08-04T22:24:07+08:00"
     }
   },
   "schema_version": "0.1",
@@ -59,6 +61,17 @@
       "summary": "撤销 PRP-cd26b7583e59",
       "timestamp": "2026-08-04T22:23:59+08:00",
       "transaction_id": "correction-withdraw-PRP-cd26b7583e59"
+    },
+    "correction-withdraw-PRP-e863027285ee": {
+      "action": "permanent-withdraw",
+      "result": {
+        "proposal_id": "PRP-e863027285ee",
+        "proposal_path": ".goodidea/proposals/permanent/PRP-e863027285ee.md",
+        "status": "withdrawn"
+      },
+      "summary": "撤销 PRP-e863027285ee",
+      "timestamp": "2026-08-04T22:24:07+08:00",
+      "transaction_id": "correction-withdraw-PRP-e863027285ee"
     },
     "e2e-karpathy-20260804": {
       "action": "source-commit",
