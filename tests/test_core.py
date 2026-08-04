@@ -298,6 +298,20 @@ class GoodIdeaCoreTests(unittest.TestCase):
         partial_note = self.repo.find_note(partial["result"]["source_id"])
         self.assertEqual(partial_note[2]["capture_status"], "partial")
 
+    def test_image_download_failure_is_partial_and_never_leaves_remote_dependency(self):
+        preview = self.preview("正文仍然应该可读")
+        preview["images"][0]["data_base64"] = "not-valid-base64"
+        result = self.service.source_commit(
+            preview,
+            motivation="即使图片抓取失败，我也要看到明确状态而不是静默依赖远程地址",
+            transaction_id="tx-image-failure",
+        )
+        source_note = self.repo.find_note(result["result"]["source_id"])
+        self.assertEqual(source_note[2]["capture_status"], "partial")
+        self.assertTrue(source_note[2]["image_failures"])
+        self.assertIn("图片未能保存", source_note[1])
+        self.assertNotIn("](https://example.com/image.png)", source_note[1])
+
     def test_expiry_and_non_destructive_rollback(self):
         capture = self.service.capture(
             "flash",

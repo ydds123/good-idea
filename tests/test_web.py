@@ -1,6 +1,13 @@
 import unittest
+import urllib.error
+from unittest.mock import patch
 
-from goodidea.web import canonicalize_url, preview_from_html, preview_from_markdown
+from goodidea.web import (
+    canonicalize_url,
+    preview_from_html,
+    preview_from_markdown,
+    preview_from_url,
+)
 
 
 class WebPreviewTests(unittest.TestCase):
@@ -51,6 +58,33 @@ class WebPreviewTests(unittest.TestCase):
                 }
             ],
         )
+
+    def test_login_gate_is_marked_partial_even_when_page_is_long(self):
+        html = (
+            "<html><body><main><h1>请登录后查看完整内容</h1><p>"
+            + "当前页面只展示登录提示，不是文章正文。" * 30
+            + "</p></main></body></html>"
+        )
+        result = preview_from_html("https://example.com/restricted", html)
+        self.assertEqual(result["status"], "partial")
+        self.assertIn("页面要求验证", result["error"])
+
+    def test_short_incomplete_page_is_marked_partial(self):
+        result = preview_from_html(
+            "https://example.com/incomplete",
+            "<html><body><article><p>只能取得一小段正文。</p></article></body></html>",
+        )
+        self.assertEqual(result["status"], "partial")
+        self.assertIn("正文可能不完整", result["error"])
+
+    def test_unreachable_url_is_marked_failed(self):
+        with patch(
+            "goodidea.web.urllib.request.urlopen",
+            side_effect=urllib.error.URLError("unreachable"),
+        ):
+            result = preview_from_url("https://example.invalid/article")
+        self.assertEqual(result["status"], "failed")
+        self.assertIn("unreachable", result["error"])
 
     def test_canonicalizes_tracking_parameters(self):
         self.assertEqual(

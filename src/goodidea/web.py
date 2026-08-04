@@ -263,11 +263,16 @@ def preview_from_html(url: str, html: str) -> dict[str, Any]:
     )
     status = "complete"
     error = ""
+    lowered_markdown = markdown.lower()
     suspicious = (
         "环境异常" in markdown
         or "访问过于频繁" in markdown
-        or "captcha" in markdown.lower()
-        or "verify" in markdown.lower()
+        or "请登录后" in markdown
+        or "登录后查看" in markdown
+        or "captcha" in lowered_markdown
+        or "verify" in lowered_markdown
+        or "sign in to continue" in lowered_markdown
+        or "log in to continue" in lowered_markdown
     )
     if not markdown:
         status, error = "failed", "未提取到正文"
