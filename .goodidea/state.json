@@ -6,6 +6,12 @@
       "kind": "permanent",
       "path": ".goodidea/proposals/permanent/PRP-5a9bfa3f1970.md",
       "status": "pending"
+    },
+    "PRP-cd26b7583e59": {
+      "card_type": "mother",
+      "kind": "permanent",
+      "path": ".goodidea/proposals/permanent/PRP-cd26b7583e59.md",
+      "status": "pending"
     }
   },
   "schema_version": "0.1",
@@ -29,6 +35,17 @@
       "summary": "LLM Wiki + 保存动机",
       "timestamp": "2026-08-04T21:35:52+08:00",
       "transaction_id": "e2e-karpathy-20260804"
+    },
+    "e2e-mother-propose-20260804": {
+      "action": "permanent-propose",
+      "result": {
+        "card_type": "mother",
+        "proposal_id": "PRP-cd26b7583e59",
+        "proposal_path": ".goodidea/proposals/permanent/PRP-cd26b7583e59.md"
+      },
+      "summary": "AI 原生知识库如何既持续生成又保持可信？",
+      "timestamp": "2026-08-04T21:39:54+08:00",
+      "transaction_id": "e2e-mother-propose-20260804"
     },
     "e2e-permanent-propose-20260804": {
       "action": "permanent-propose",
