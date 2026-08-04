@@ -1,8 +1,27 @@
 {
-  "schema_version": "0.1",
-  "transactions": {},
-  "sources": {},
+  "connections": [],
   "proposals": {},
-  "connections": []
+  "schema_version": "0.1",
+  "sources": {
+    "https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f": {
+      "id": "SRC-91fc906a9943",
+      "path": "溯源空间/SRC-91fc906a9943-LLM-Wiki.md",
+      "title": "LLM Wiki"
+    }
+  },
+  "transactions": {
+    "e2e-karpathy-20260804": {
+      "action": "source-commit",
+      "result": {
+        "flash_id": "FLA-20260804-ef47fdc1",
+        "flash_path": "闪念空间/FLA-20260804-ef47fdc1-区别于传统的一套基于硬代码编写的个人知识库，我觉得这是基于持续生成的-AI-原生.md",
+        "source_created": true,
+        "source_id": "SRC-91fc906a9943",
+        "source_path": "溯源空间/SRC-91fc906a9943-LLM-Wiki.md"
+      },
+      "summary": "LLM Wiki + 保存动机",
+      "timestamp": "2026-08-04T21:35:52+08:00",
+      "transaction_id": "e2e-karpathy-20260804"
+    }
+  }
 }
-
