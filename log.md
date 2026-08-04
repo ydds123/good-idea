@@ -14,3 +14,5 @@
 
 ## [2026-08-04T22:23:49+08:00] permanent-withdraw | 撤销 PRP-5a9bfa3f1970 | tx=correction-withdraw-PRP-5a9bfa3f1970
 
+## [2026-08-04T22:23:59+08:00] permanent-withdraw | 撤销 PRP-cd26b7583e59 | tx=correction-withdraw-PRP-cd26b7583e59
+
