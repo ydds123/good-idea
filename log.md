@@ -18,3 +18,5 @@
 
 ## [2026-08-04T22:24:07+08:00] permanent-withdraw | 撤销 PRP-e863027285ee | tx=correction-withdraw-PRP-e863027285ee
 
+## [2026-08-06T21:53:14+08:00] review-expire | 失效 2 条闪念 | tx=review-expire-20260806215314-b66ff66d
+

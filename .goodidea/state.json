@@ -131,6 +131,19 @@
       "summary": "持续生成的价值取决于创造与噪声抑制同时成立",
       "timestamp": "2026-08-04T21:45:41+08:00",
       "transaction_id": "e2e-wechat-permanent-propose-20260804"
+    },
+    "review-expire-20260806215314-b66ff66d": {
+      "action": "review-expire",
+      "result": {
+        "count": 2,
+        "expired": [
+          "FLA-20260804-56576c4c",
+          "FLA-20260804-ef47fdc1"
+        ]
+      },
+      "summary": "失效 2 条闪念",
+      "timestamp": "2026-08-06T21:53:14+08:00",
+      "transaction_id": "review-expire-20260806215314-b66ff66d"
     }
   }
 }
