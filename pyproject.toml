@@ -17,3 +17,8 @@ packages = ["src/goodidea"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+
+[dependency-groups]
+dev = [
+    "pyyaml>=6.0.2,<7",
+]

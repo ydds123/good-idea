@@ -34,4 +34,10 @@
 4. 用户完成必要判断后调用 `goodidea` CLI，不直接拼接或批量改写知识文件。
 5. 完成后运行 `goodidea verify`，并向用户说明创建、更新和未执行的内容。
 
+## 开发校验
+
+- 修改项目级 Skill 后运行 `uv run python scripts/validate-skills.py`，使用锁定的 PyYAML 开发依赖逐一调用 skill-creator 官方校验器。
+- 校验器默认从 Codex 标准安装位置发现；非标准安装使用 `--validator <quick_validate.py>` 或 `GOODIDEA_SKILL_VALIDATOR` 显式指定。
+- PyYAML 只属于开发与验收环境，不得加入 Good idea 的产品运行依赖。
+
 v0.1 基线位于 `.goodidea/baseline/`，目标执行期间不得随外部文档变化而漂移。
