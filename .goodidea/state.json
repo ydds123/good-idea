@@ -30,16 +30,43 @@
   "sources": {
     "https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f": {
       "id": "SRC-91fc906a9943",
-      "path": "溯源空间/SRC-91fc906a9943-LLM-Wiki.md",
+      "path": "溯源空间/2026-08-04-LLM-Wiki.md",
       "title": "LLM Wiki"
     },
     "https://mp.weixin.qq.com/s/vTv0Vu4RgrMkmLbXGvnSug": {
       "id": "SRC-ddab8c91266b",
-      "path": "溯源空间/SRC-ddab8c91266b-用AI的这三年，想跟你分享这9条心得。.md",
+      "path": "溯源空间/2026-08-04-用AI的这三年，想跟你分享这9条心得。.md",
       "title": "用AI的这三年，想跟你分享这9条心得。"
     }
   },
   "transactions": {
+    "baseline-readable-filenames-20260807": {
+      "action": "maintain-filenames",
+      "result": {
+        "count": 4,
+        "renamed": [
+          {
+            "from": "闪念空间/FLA-20260804-56576c4c-创造与幻觉警惕是一体两面。当我们利用-AI-能力进行持续生成时，也要具备相应能力.md",
+            "to": "闪念空间/2026-08-04-创造与幻觉警惕是一体两面。当我们利用-AI-能力进行持续生成时，也要具备相应能力.md"
+          },
+          {
+            "from": "闪念空间/FLA-20260804-ef47fdc1-区别于传统的一套基于硬代码编写的个人知识库，我觉得这是基于持续生成的-AI-原生.md",
+            "to": "闪念空间/2026-08-04-区别于传统的一套基于硬代码编写的个人知识库，我觉得这是基于持续生成的-AI-原生.md"
+          },
+          {
+            "from": "溯源空间/SRC-91fc906a9943-LLM-Wiki.md",
+            "to": "溯源空间/2026-08-04-LLM-Wiki.md"
+          },
+          {
+            "from": "溯源空间/SRC-ddab8c91266b-用AI的这三年，想跟你分享这9条心得。.md",
+            "to": "溯源空间/2026-08-04-用AI的这三年，想跟你分享这9条心得。.md"
+          }
+        ]
+      },
+      "summary": "将 4 个内容文件改为日期加标题",
+      "timestamp": "2026-08-07T20:44:31+08:00",
+      "transaction_id": "baseline-readable-filenames-20260807"
+    },
     "correction-withdraw-PRP-5a9bfa3f1970": {
       "action": "permanent-withdraw",
       "result": {
@@ -77,10 +104,10 @@
       "action": "source-commit",
       "result": {
         "flash_id": "FLA-20260804-ef47fdc1",
-        "flash_path": "闪念空间/FLA-20260804-ef47fdc1-区别于传统的一套基于硬代码编写的个人知识库，我觉得这是基于持续生成的-AI-原生.md",
+        "flash_path": "闪念空间/2026-08-04-区别于传统的一套基于硬代码编写的个人知识库，我觉得这是基于持续生成的-AI-原生.md",
         "source_created": true,
         "source_id": "SRC-91fc906a9943",
-        "source_path": "溯源空间/SRC-91fc906a9943-LLM-Wiki.md"
+        "source_path": "溯源空间/2026-08-04-LLM-Wiki.md"
       },
       "summary": "LLM Wiki + 保存动机",
       "timestamp": "2026-08-04T21:35:52+08:00",
@@ -112,10 +139,10 @@
       "action": "source-commit",
       "result": {
         "flash_id": "FLA-20260804-56576c4c",
-        "flash_path": "闪念空间/FLA-20260804-56576c4c-创造与幻觉警惕是一体两面。当我们利用-AI-能力进行持续生成时，也要具备相应能力.md",
+        "flash_path": "闪念空间/2026-08-04-创造与幻觉警惕是一体两面。当我们利用-AI-能力进行持续生成时，也要具备相应能力.md",
         "source_created": true,
         "source_id": "SRC-ddab8c91266b",
-        "source_path": "溯源空间/SRC-ddab8c91266b-用AI的这三年，想跟你分享这9条心得。.md"
+        "source_path": "溯源空间/2026-08-04-用AI的这三年，想跟你分享这9条心得。.md"
       },
       "summary": "用AI的这三年，想跟你分享这9条心得。 + 保存动机",
       "timestamp": "2026-08-04T21:45:02+08:00",

@@ -20,3 +20,5 @@
 
 ## [2026-08-06T21:53:14+08:00] review-expire | 失效 2 条闪念 | tx=review-expire-20260806215314-b66ff66d
 
+## [2026-08-07T20:44:31+08:00] maintain-filenames | 将 4 个内容文件改为日期加标题 | tx=baseline-readable-filenames-20260807
+
