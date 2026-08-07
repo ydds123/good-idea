@@ -94,7 +94,8 @@ Markdown Frontmatter 是 CLI 的机器控制面，不是阅读正文。Obsidian 
 - 草稿正文不得出现内部负载或“机器数据”区块；ID、状态、来源 ID、内容哈希等内部字段仅放 Frontmatter 和 `.goodidea/state.json`。
 - 四种永久卡片遵守同一作者边界。撤销的错误草稿状态为 `withdrawn`，不可接纳，原错误仅由 Git 历史保留。
 - `permanent revise` 与 `permanent feedback` 也必须带 `--confirm-user-authored`，只能追加用户亲自写下的修订、现实结果与修正；CLI 可机械添加区块、列表标记和时间戳，并规范化边界换行，但不改变用户措辞。Agent 不维护正文。
-- 连接先写 `.goodidea/proposals/connections/`；`connect accept` 只接受既有正式卡片。
+- 正式卡片被 `permanent accept` 接纳、进入永久空间、索引和状态账本时，即已成为卡片网络节点。网络允许从单个零连接节点开始；没有合适的另一张卡片时，不要求也不得强行创建语义边。
+- 两张正式卡片之间的语义连接先写 `.goodidea/proposals/connections/`；`connect accept` 只接受既有正式卡片。候选关系仍须用户确认。
 - 来源刷新先生成候选并标记 `update_available`；确认后才替换同一文件的快照。
 - 闪念创建 48 小时后仍为 `pending`，由 `review --expire` 改为 `expired`。
 

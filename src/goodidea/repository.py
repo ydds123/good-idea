@@ -407,6 +407,7 @@ def initialize_vault(path: Path) -> dict[str, Any]:
             "内部 ID 不得作为标题、文件名前缀或默认展示信息。\n\n"
             "Obsidian 是 v0.1 的默认阅读界面，读取 schema.md 后再操作。\n"
             "溯源笔记只保存规范链接，顺序为文章标题、原文快照、文献笔记、关联闪念。\n"
+            "正式卡片进入永久空间和索引即已接入卡片网络；零语义连接是有效状态。\n"
         ),
         Path("schema.md"): (
             "# Good idea v0.1 Schema\n\n## 人类可见命名\n\n"
@@ -419,7 +420,9 @@ def initialize_vault(path: Path) -> dict[str, Any]:
             "只持久化规范链接；顺序为文章标题、原文快照、文献笔记、关联闪念。"
             "Wiki 链接统一使用从仓库根目录开始的路径。\n\n## Obsidian\n\n"
             "`.obsidian/` 中的稳定设置与阅读样式属于产品基线；"
-            "工作区布局文件属于本机状态，不纳入 Git。\n"
+            "工作区布局文件属于本机状态，不纳入 Git。\n\n"
+            "## 卡片网络\n\n正式卡片被接纳并进入永久空间与索引即成为网络节点。"
+            "卡片网络允许从单个零连接节点开始；语义边只在存在有意义的另一张卡片并经用户确认后建立。\n"
         ),
         Path(".gitignore"): (
             ".venv/\n__pycache__/\n*.py[cod]\n.goodidea/transactions/*\n"

@@ -573,6 +573,19 @@ class GoodIdeaCoreTests(unittest.TestCase):
         flash = self.repo.find_note(ids["flash_id"])
         self.assertEqual(flash[2]["status"], "processed")
 
+        # Accepting the first formal card joins it to a valid zero-edge network.
+        state_without_edges = self.repo.read_state()
+        self.assertEqual(state_without_edges["connections"], [])
+        self.assertIn(
+            "零连接节点",
+            (self.root / "schema.md").read_text(encoding="utf-8"),
+        )
+        self.assertIn(
+            Path(accepted["result"]["card_path"]).with_suffix("").as_posix(),
+            (self.root / "index.md").read_text(encoding="utf-8"),
+        )
+        self.assertTrue(self.service.lint()["ok"])
+
         mother_proposal = self.service.permanent_propose(
             "mother",
             draft="""# 怎样判断认知系统真的改善了我

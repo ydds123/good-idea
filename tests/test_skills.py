@@ -16,7 +16,7 @@ class ProjectSkillTests(unittest.TestCase):
             "goodidea-review-process": ["goodidea --root <仓库> review", "review --expire"],
             "goodidea-form-permanent": ["permanent propose", "--draft-file", "一次一个问题", "--confirm-user-approved-structure", "--confirm-user-approved", "permanent withdraw"],
             "goodidea-review-permanent": ["permanent accept", "不生成正文候选内容", "完整待确认草稿", "每轮只提出一个"],
-            "goodidea-connect-cards": ["connect propose", "connect accept"],
+            "goodidea-connect-cards": ["connect propose", "connect accept", "零连接节点"],
             "goodidea-lint": ["goodidea --root <仓库> lint", "goodidea --root <仓库> verify"],
         }
         skills_root = PROJECT / ".agents" / "skills"
@@ -50,6 +50,8 @@ class ProjectSkillTests(unittest.TestCase):
         self.assertIn("不是用户主动发起创建", review)
         connect = (skills_root / "goodidea-connect-cards" / "SKILL.md").read_text(encoding="utf-8")
         self.assertIn("等待明确确认", connect)
+        self.assertIn("已入网，当前零连接", connect)
+        self.assertIn("不调用 `connect propose`", connect)
 
 
 if __name__ == "__main__":
