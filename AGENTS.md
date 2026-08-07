@@ -21,6 +21,9 @@
 8. 默认资料录入只保存来源、完整 Markdown 快照、图片和待处理文献笔记骨架，不自动生成作者观点或个人理解。
 9. `log.md` 只追加，`index.md` 由 CLI 生成。不要手工改写二者。
 10. 回滚使用 `goodidea rollback` 生成非破坏性 revert 提交，禁止 `git reset --hard`。
+11. 五个空间中的内容文件统一命名为 `YYYY-MM-DD-标题.md`。ID 只用于内部身份，不得放进标题、文件名或人类可读索引。
+12. Obsidian 是 v0.1 的正式阅读与导航界面；稳定 UI 配置进入 Git，机器 Frontmatter 默认隐藏，临时 workspace 状态不托管。
+13. 面向用户报告内容时优先使用标题和人类可读路径；除故障排查或需要复制 CLI 参数外，不展示内部 ID。
 
 ## Agent 操作顺序
 

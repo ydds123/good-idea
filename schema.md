@@ -26,6 +26,36 @@
 
 调用方可以提供 `--transaction-id`。同一事务 ID 重放必须返回原结果且不再创建文件或 Git 提交。
 
+ID 是系统内部的稳定身份，用于去重、状态关联、来源关系、事务审计和标题变更后的对象识别。ID 不属于标题，也不得出现在内容文件名或生成式索引中。
+
+## 人类可读文件名
+
+五个空间中的所有内容文件统一使用 `YYYY-MM-DD-标题.md`，日期取 `created_at` 的本地创建日期。文件名冲突时在标题后机械追加 `-2`、`-3`；不得用 ID 解决冲突。标题和文件名可以面向人调整，内部 ID 保持不变。
+
+现有文件通过 `goodidea maintain filenames` 原子重命名。该事务同时维护路径链接、来源账本、索引、日志和 Git 历史。
+
+## 内部参数
+
+Markdown Frontmatter 是 CLI 的机器控制面，不是阅读正文。Obsidian 默认隐藏它，用户正常阅读时无需理解或编辑。
+
+| 参数 | 中文含义 | 系统用途 |
+|---|---|---|
+| `id` / `type` | 稳定身份 / 对象类型 | 在改名后仍识别同一对象，并校验所在空间 |
+| `title` / `summary` | 标题 / 索引摘要 | 生成文件名、标题和索引说明 |
+| `status` | 生命周期状态 | 区分待处理、已失效、完整、待行动等状态 |
+| `created_at` / `updated_at` | 创建 / 更新时间 | 文件命名、排序和演化审计 |
+| `source_ids` / `flash_ids` / `derived_from` | 来源 / 闪念 / 生成关系 | 用 ID 维持跨文件关系，不依赖文件名 |
+| `source_url` / `canonical_url` | 原始 / 规范链接 | 来源访问与同 URL 去重 |
+| `capture_status` / `fetched_at` | 抓取结果 / 抓取时间 | 判断快照是否完整及何时取得 |
+| `content_sha256` / `snapshot_sha256` | 内容 / 快照哈希 | 检测网页变化并阻止原文快照被静默篡改 |
+| `image_failures` | 图片保存失败记录 | 明确标记不完整来源，避免静默依赖远程图片 |
+
+这些参数只能由 CLI 维护。需要排查问题时再查看 `schema.md` 和 `.goodidea/state.json`，不要把它们当成卡片正文。
+
+## Obsidian 产品基线
+
+`.obsidian/app.json`、`appearance.json`、`core-plugins.json` 和 `snippets/goodidea.css` 属于 v0.1 产品基线：默认隐藏 Frontmatter 属性、隐藏内部目录、自动维护链接，并把附件保存到 `.goodidea/assets/`。`workspace.json` 只记录本机临时窗口状态，不进入 Git。
+
 ## 溯源文件
 
 每份来源是单一 Markdown 文件，结构固定：
@@ -68,6 +98,8 @@
 ## 事务、索引与日志
 
 `.goodidea/state.json` 保存事务幂等账本、来源映射、提案与连接。每次事务先在 `.goodidea/transactions/` 建立可恢复备份，再原子替换目标文件，最后只暂存并提交该事务相关路径。
+
+Obsidian 与 CLI 生成的 Wiki 链接统一使用从仓库根目录开始的路径。`.obsidian/` 中稳定的阅读设置和样式纳入 Git；`workspace.json` 等本机布局不提交。
 
 `index.md` 每次成功事务重新生成；`log.md` 每条记录格式为：
 

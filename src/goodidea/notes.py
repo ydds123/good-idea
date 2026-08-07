@@ -38,6 +38,28 @@ INDEX_HEADINGS = {
     "index": "索引卡片",
 }
 
+STATUS_LABELS = {
+    "pending": "待处理",
+    "processed": "已处理",
+    "expired": "已失效",
+    "dismissed": "已放弃",
+    "complete": "完整",
+    "partial": "部分抓取",
+    "failed": "抓取失败",
+    "update_available": "有更新待确认",
+    "open": "进行中",
+    "done": "已完成",
+    "cancelled": "已取消",
+    "active": "有效",
+    "revised": "已修订",
+    "retired": "已停用",
+    "evolving": "演化中",
+    "planned": "待行动",
+    "acting": "行动中",
+    "observing": "待观察",
+    "reviewed": "已复盘",
+}
+
 
 def normalize_snapshot(text: str) -> str:
     return text.replace("\r\n", "\n").strip("\n") + "\n"
@@ -144,7 +166,19 @@ def validate_required_metadata(metadata: dict[str, Any]) -> list[str]:
 def safe_filename(title: str, fallback: str) -> str:
     cleaned = re.sub(r'[\\/:*?"<>|#\[\]]+', "-", title.strip())
     cleaned = re.sub(r"\s+", "-", cleaned).strip("-.")
-    return (cleaned[:64] or fallback).strip("-.")
+    cleaned = cleaned[:64] or fallback
+    while len(cleaned.encode("utf-8")) > 180:
+        cleaned = cleaned[:-1]
+    return cleaned.strip("-.") or fallback
+
+
+def dated_filename(title: str, created_at: str, *, collision: int = 1) -> str:
+    match = re.match(r"(\d{4}-\d{2}-\d{2})", created_at.strip())
+    if not match:
+        raise ValidationError("创建时间无法生成 YYYY-MM-DD 文件名前缀")
+    readable_title = safe_filename(title, "未命名")
+    suffix = "" if collision == 1 else f"-{collision}"
+    return f"{match.group(1)}-{readable_title}{suffix}.md"
 
 
 def wiki_link(path: Path, title: str) -> str:

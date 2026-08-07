@@ -8,10 +8,11 @@ import unittest
 from datetime import datetime, timedelta
 from pathlib import Path
 
-from goodidea.errors import IntegrityError, ValidationError
+from goodidea.errors import GitError, IntegrityError, TransactionError, ValidationError
 from goodidea.metadata import parse_document, replace_frontmatter
+from goodidea.notes import extract_snapshot, validate_source_note
 from goodidea.repository import Repository, initialize_vault
-from goodidea.service import GoodIdeaService
+from goodidea.service import GoodIdeaService, _rewrite_wiki_paths
 
 
 def git(root: Path, *args: str) -> str:
@@ -57,6 +58,52 @@ class GoodIdeaCoreTests(unittest.TestCase):
             "extractor": "test",
         }
 
+    def test_init_refuses_nonempty_directory_without_overwrite(self):
+        other = Path(self.temp.name) / "existing"
+        other.mkdir()
+        sentinel = other / "AGENTS.md"
+        sentinel.write_text("用户原有文件", encoding="utf-8")
+        with self.assertRaises(ValidationError):
+            initialize_vault(other)
+        self.assertEqual(sentinel.read_text(encoding="utf-8"), "用户原有文件")
+        self.assertFalse((other / ".git").exists())
+
+    def test_transaction_id_and_symlink_ancestor_cannot_escape_repository(self):
+        outside = Path(self.temp.name) / "outside"
+        outside.mkdir()
+        with self.assertRaises(ValidationError):
+            self.service.capture(
+                "flash",
+                text="非法事务编号不得在仓库外产生任何文件。",
+                transaction_id="../../escape",
+            )
+        self.assertEqual(list(outside.iterdir()), [])
+
+        assets = self.root / ".goodidea/assets"
+        assets.rmdir()
+        assets.symlink_to(outside, target_is_directory=True)
+        with self.assertRaises(TransactionError):
+            self.repo._atomic_apply(
+                {Path(".goodidea/assets/new/image.bin"): b"x"},
+                set(),
+                "safe-test",
+                "test",
+            )
+        self.assertEqual(list(outside.iterdir()), [])
+
+    def test_preseeded_backup_symlink_cannot_redirect_transaction_copy(self):
+        outside = Path(self.temp.name) / "outside-backup.txt"
+        outside.write_text("不可覆盖", encoding="utf-8")
+        planted = self.root / ".goodidea/transactions/safe-preseed/backup"
+        planted.mkdir(parents=True)
+        (planted / "log.md").symlink_to(outside)
+        self.service.capture(
+            "flash",
+            text="随机且全新的事务备份目录不会使用攻击者预先种下的链接。",
+            transaction_id="safe-preseed",
+        )
+        self.assertEqual(outside.read_text(encoding="utf-8"), "不可覆盖")
+
     def test_motivation_gate_has_zero_writes(self):
         before_head = git(self.root, "rev-parse", "HEAD")
         before_files = sorted(
@@ -85,8 +132,11 @@ class GoodIdeaCoreTests(unittest.TestCase):
         data = result["result"]
         source = (self.root / data["source_path"]).read_text(encoding="utf-8")
         flash = (self.root / data["flash_path"]).read_text(encoding="utf-8")
-        self.assertIn(data["flash_id"], source)
-        self.assertIn(data["source_id"], flash)
+        source_meta, source_body = parse_document(source)
+        flash_meta, _ = parse_document(flash)
+        self.assertIn(data["flash_id"], source_meta["flash_ids"])
+        self.assertIn(data["source_id"], flash_meta["source_ids"])
+        self.assertNotIn(data["flash_id"], source_body)
         self.assertIn("../.goodidea/assets/", source)
         self.assertNotIn("](https://example.com/image.png)", source)
         files_in_commit = git(
@@ -111,6 +161,223 @@ class GoodIdeaCoreTests(unittest.TestCase):
         self.assertFalse(second["result"]["source_created"])
         self.assertEqual(second["result"]["source_id"], data["source_id"])
         self.assertNotEqual(second["result"]["flash_id"], data["flash_id"])
+
+    def test_human_filenames_hide_ids_and_handle_same_day_collisions(self):
+        first = self.service.capture(
+            "flash",
+            text="相同标题下的第一条闪念正文，用于验证人类可读文件名。",
+            title="相同标题",
+            transaction_id="tx-readable-name-1",
+        )
+        second = self.service.capture(
+            "flash",
+            text="相同标题下的第二条闪念正文，用于验证碰撞后缀。",
+            title="相同标题",
+            transaction_id="tx-readable-name-2",
+        )
+        first_path = Path(first["result"]["path"])
+        second_path = Path(second["result"]["path"])
+        today = datetime.now().astimezone().strftime("%Y-%m-%d")
+        self.assertEqual(first_path.name, f"{today}-相同标题.md")
+        self.assertEqual(second_path.name, f"{today}-相同标题-2.md")
+        self.assertNotIn(first["result"]["id"], first_path.name)
+        self.assertNotIn(second["result"]["id"], second_path.name)
+        index = (self.root / "index.md").read_text(encoding="utf-8")
+        self.assertNotIn(first["result"]["id"], index)
+        self.assertIn("待处理", index)
+
+    def test_lint_checks_obsidian_reading_baseline(self):
+        app_path = self.root / ".obsidian/app.json"
+        app = json.loads(app_path.read_text(encoding="utf-8"))
+        app["propertiesInDocument"] = "visible"
+        app_path.write_text(
+            json.dumps(app, ensure_ascii=False, indent=2) + "\n",
+            encoding="utf-8",
+        )
+        lint = self.service.lint()
+        self.assertFalse(lint["ok"])
+        self.assertIn("Obsidian 未默认隐藏机器 Frontmatter", lint["issues"])
+
+    def test_filename_maintenance_renames_legacy_paths_and_repairs_links(self):
+        captured = self.service.source_commit(
+            self.preview(),
+            motivation="我要验证改文件名后来源和闪念仍保持双向关联",
+            transaction_id="tx-before-filename-maintenance",
+        )["result"]
+        source_rel = Path(captured["source_path"])
+        flash_rel = Path(captured["flash_path"])
+        legacy_source_rel = Path("溯源空间") / f"{captured['source_id']}-旧来源.md"
+        legacy_flash_rel = Path("闪念空间") / f"{captured['flash_id']}-旧闪念.md"
+
+        source_text = (self.root / source_rel).read_text(encoding="utf-8").replace(
+            f"[[{flash_rel.with_suffix('').as_posix()}",
+            f"[[{legacy_flash_rel.with_suffix('').as_posix()}",
+        )
+        original_snapshot = extract_snapshot(source_text)[0]
+        flash_text = (self.root / flash_rel).read_text(encoding="utf-8").replace(
+            f"[[{source_rel.with_suffix('').as_posix()}",
+            f"[[{legacy_source_rel.with_suffix('').as_posix()}",
+        )
+        (self.root / source_rel).rename(self.root / legacy_source_rel)
+        (self.root / flash_rel).rename(self.root / legacy_flash_rel)
+        (self.root / legacy_source_rel).write_text(source_text, encoding="utf-8")
+        (self.root / legacy_flash_rel).write_text(flash_text, encoding="utf-8")
+        state = self.repo.read_state()
+        state["sources"]["https://example.com/article"]["path"] = (
+            legacy_source_rel.as_posix()
+        )
+        transaction_result = state["transactions"][
+            "tx-before-filename-maintenance"
+        ]["result"]
+        transaction_result["source_path"] = legacy_source_rel.as_posix()
+        transaction_result["flash_path"] = legacy_flash_rel.as_posix()
+        (self.root / ".goodidea/state.json").write_text(
+            json.dumps(state, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
+            encoding="utf-8",
+        )
+        git(self.root, "add", "-A")
+        git(self.root, "commit", "-m", "test fixture: legacy id-prefixed filenames")
+
+        migrated = self.service.maintain_filenames(
+            transaction_id="tx-maintain-readable-filenames"
+        )
+        self.assertEqual(migrated["result"]["count"], 2)
+        self.assertFalse((self.root / legacy_source_rel).exists())
+        self.assertFalse((self.root / legacy_flash_rel).exists())
+        self.assertTrue((self.root / source_rel).is_file())
+        self.assertTrue((self.root / flash_rel).is_file())
+        repaired_source = (self.root / source_rel).read_text(encoding="utf-8")
+        repaired_flash = (self.root / flash_rel).read_text(encoding="utf-8")
+        self.assertIn(f"[[{flash_rel.with_suffix('').as_posix()}", repaired_source)
+        self.assertIn(f"[[{source_rel.with_suffix('').as_posix()}", repaired_flash)
+        validate_source_note(repaired_source, source_rel.as_posix())
+        self.assertEqual(extract_snapshot(repaired_source)[0], original_snapshot)
+        self.assertEqual(
+            self.repo.read_state()["sources"]["https://example.com/article"]["path"],
+            source_rel.as_posix(),
+        )
+        replay = self.service.source_commit(
+            self.preview(),
+            motivation="我要验证改文件名后来源和闪念仍保持双向关联",
+            transaction_id="tx-before-filename-maintenance",
+        )
+        self.assertTrue(replay["idempotent"])
+        self.assertEqual(replay["result"]["source_path"], source_rel.as_posix())
+        self.assertEqual(replay["result"]["flash_path"], flash_rel.as_posix())
+        self.assertTrue(self.service.lint()["ok"])
+        self.service.rollback(migrated["commit"], confirmed=True)
+        self.assertTrue((self.root / legacy_source_rel).is_file())
+        self.assertTrue((self.root / legacy_flash_rel).is_file())
+        restored_state = self.repo.read_state()
+        self.assertEqual(
+            restored_state["sources"]["https://example.com/article"]["path"],
+            legacy_source_rel.as_posix(),
+        )
+        self.assertIn(
+            legacy_source_rel.with_suffix("").as_posix(),
+            (self.root / legacy_flash_rel).read_text(encoding="utf-8"),
+        )
+
+    def test_filename_maintenance_plans_final_layout_without_false_suffix(self):
+        first = self.service.capture(
+            "flash", text="第一条记录将从错误的 X 文件名移动到 Y。", title="Y",
+            transaction_id="tx-layout-y",
+        )["result"]
+        second = self.service.capture(
+            "flash", text="第二条记录应当占用最终空出来的 X 文件名。", title="X",
+            transaction_id="tx-layout-x",
+        )["result"]
+        first_rel = Path(first["path"])
+        second_rel = Path(second["path"])
+        witness = self.service.capture(
+            "interesting",
+            text=(
+                f"[[{first_rel.with_suffix('').as_posix()}|Y]] 与 "
+                f"[[{second_rel.with_suffix('').as_posix()}|X]] 必须始终指向不同对象。"
+            ),
+            title="交换见证",
+            transaction_id="tx-layout-witness",
+        )["result"]
+        witness_rel = Path(witness["path"])
+        date = first_rel.name[:10]
+        wrong_x = first_rel.with_name(f"{date}-X.md")
+        legacy_x = second_rel.with_name("legacy-X.md")
+        (self.root / second_rel).rename(self.root / legacy_x)
+        (self.root / first_rel).rename(self.root / wrong_x)
+        witness_text = (self.root / witness_rel).read_text(encoding="utf-8")
+        witness_text = _rewrite_wiki_paths(
+            witness_text,
+            {
+                first_rel.with_suffix("").as_posix(): wrong_x.with_suffix("").as_posix(),
+                second_rel.with_suffix("").as_posix(): legacy_x.with_suffix("").as_posix(),
+            },
+        )
+        (self.root / witness_rel).write_text(witness_text, encoding="utf-8")
+        git(self.root, "add", "-A")
+        git(self.root, "commit", "-m", "test fixture: crossing filename migration")
+        self.service.maintain_filenames(transaction_id="tx-final-layout")
+        self.assertTrue((self.root / first_rel).is_file())
+        self.assertTrue((self.root / second_rel).is_file())
+        self.assertFalse((self.root / second_rel.with_name(f"{date}-X-2.md")).exists())
+        repaired_witness = (self.root / witness_rel).read_text(encoding="utf-8")
+        self.assertIn(f"[[{first_rel.with_suffix('').as_posix()}|Y]]", repaired_witness)
+        self.assertIn(f"[[{second_rel.with_suffix('').as_posix()}|X]]", repaired_witness)
+
+    def test_filename_maintenance_rejects_dirty_target_without_side_effects(self):
+        captured = self.service.capture(
+            "flash", text="脏文件不应被迁移事务覆盖。", transaction_id="tx-dirty-base"
+        )["result"]
+        proper = Path(captured["path"])
+        legacy = proper.with_name("legacy-dirty.md")
+        (self.root / proper).rename(self.root / legacy)
+        git(self.root, "add", "-A")
+        git(self.root, "commit", "-m", "test fixture: dirty migration target")
+        dirty_text = (self.root / legacy).read_text(encoding="utf-8") + "\n用户未提交修改\n"
+        (self.root / legacy).write_text(dirty_text, encoding="utf-8")
+        before_head = git(self.root, "rev-parse", "HEAD")
+        with self.assertRaises(GitError):
+            self.service.maintain_filenames(transaction_id="tx-dirty-rejected")
+        self.assertEqual(git(self.root, "rev-parse", "HEAD"), before_head)
+        self.assertEqual((self.root / legacy).read_text(encoding="utf-8"), dirty_text)
+        self.assertFalse((self.root / proper).exists())
+
+    def test_wiki_path_rewrite_requires_an_exact_target_boundary(self):
+        text = (
+            "[[闪念空间/foo|短目标]]\n"
+            "[[闪念空间/foo#段落|带锚点]]\n"
+            "[[闪念空间/foobar|相似但不同的目标]]\n"
+        )
+        updated = _rewrite_wiki_paths(
+            text,
+            {"闪念空间/foo": "闪念空间/2026-08-07-foo"},
+        )
+        self.assertIn("[[闪念空间/2026-08-07-foo|短目标]]", updated)
+        self.assertIn("[[闪念空间/2026-08-07-foo#段落|带锚点]]", updated)
+        self.assertIn("[[闪念空间/foobar|相似但不同的目标]]", updated)
+        swapped = _rewrite_wiki_paths(
+            "[[闪念空间/A|甲]] 与 [[闪念空间/B|乙]]",
+            {"闪念空间/A": "闪念空间/B", "闪念空间/B": "闪念空间/A"},
+        )
+        self.assertEqual(swapped, "[[闪念空间/B|甲]] 与 [[闪念空间/A|乙]]")
+
+    def test_noop_filename_maintenance_is_idempotently_recorded(self):
+        captured = self.service.capture(
+            "flash",
+            text="这条闪念已经使用符合规范的人类可读文件名。",
+            transaction_id="tx-readable-before-noop",
+        )
+        first = self.service.maintain_filenames(
+            transaction_id="tx-filename-noop"
+        )
+        self.assertTrue(first["result"]["no_change"])
+        original_rel = Path(captured["result"]["path"])
+        legacy_rel = original_rel.with_name(f"{captured['result']['id']}-旧文件.md")
+        (self.root / original_rel).rename(self.root / legacy_rel)
+        replay = self.service.maintain_filenames(
+            transaction_id="tx-filename-noop"
+        )
+        self.assertTrue(replay["idempotent"])
+        self.assertTrue((self.root / legacy_rel).is_file())
 
     def test_tampered_snapshot_blocks_all_writes(self):
         result = self.service.source_commit(
@@ -157,6 +424,35 @@ class GoodIdeaCoreTests(unittest.TestCase):
             f"{accepted['commit']}^:{initial['result']['source_path']}",
         )
         self.assertIn("正文第一版", previous)
+
+    def test_refresh_title_change_atomically_renames_and_repairs_backlink(self):
+        initial = self.service.source_commit(
+            self.preview(), motivation="我要确认来源改标题时不会留下断链。",
+            transaction_id="tx-refresh-title-source",
+        )["result"]
+        changed = self.preview("标题变化后的正文")
+        changed["title"] = "更新后的示例文章"
+        proposal = self.service.source_refresh(
+            initial["source_id"], preview=changed,
+            transaction_id="tx-refresh-title-proposal",
+        )["result"]
+        accepted = self.service.source_refresh(
+            initial["source_id"], confirm_proposal=proposal["proposal_id"],
+            transaction_id="tx-refresh-title-accept",
+        )["result"]
+        old_path = Path(initial["source_path"])
+        new_path = Path(accepted["source_path"])
+        self.assertNotEqual(old_path, new_path)
+        self.assertFalse((self.root / old_path).exists())
+        self.assertIn("更新后的示例文章", new_path.name)
+        flash = self.repo.find_note(initial["flash_id"])
+        self.assertIn(new_path.with_suffix("").as_posix(), flash[1])
+        self.assertIn(f"|更新后的示例文章]]", flash[1])
+        self.assertNotIn(f"|示例文章]]", flash[1])
+        source_record = self.repo.read_state()["sources"]["https://example.com/article"]
+        self.assertEqual(source_record["path"], new_path.as_posix())
+        self.assertEqual(source_record["title"], "更新后的示例文章")
+        self.assertTrue(self.service.lint()["ok"])
 
     def test_permanent_gate_connections_and_action_feedback(self):
         captured = self.service.source_commit(
@@ -437,6 +733,8 @@ updated_at: "2026-08-04T00:00:00+08:00"
 ''',
             encoding="utf-8",
         )
+        git(self.root, "add", ".goodidea/state.json", proposal["result"]["proposal_path"])
+        git(self.root, "commit", "-m", "test fixture: legacy agent proposal")
         with self.assertRaises(ValidationError):
             self.service.permanent_accept(
                 proposal_id,

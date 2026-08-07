@@ -8,3 +8,7 @@ __pycache__/
 .goodidea/tmp/
 
 .gstack/
+
+# Obsidian 的稳定产品配置纳入版本库；会话布局属于本机临时状态。
+.obsidian/workspace.json
+.obsidian/workspace-mobile.json

@@ -30,6 +30,38 @@ class GoodIdeaCliTests(unittest.TestCase):
         self.temp.cleanup()
 
     def test_init_capture_and_verify_public_commands(self):
+        app = json.loads((self.root / ".obsidian/app.json").read_text(encoding="utf-8"))
+        appearance = json.loads(
+            (self.root / ".obsidian/appearance.json").read_text(encoding="utf-8")
+        )
+        plugins = json.loads(
+            (self.root / ".obsidian/core-plugins.json").read_text(encoding="utf-8")
+        )
+        self.assertEqual(app["propertiesInDocument"], "hidden")
+        self.assertEqual(app["attachmentFolderPath"], ".goodidea/assets")
+        self.assertEqual(app["defaultViewMode"], "preview")
+        self.assertEqual(app["newLinkFormat"], "absolute")
+        self.assertFalse(app["showInlineTitle"])
+        self.assertIn("goodidea", appearance["enabledCssSnippets"])
+        self.assertFalse(plugins["sync"])
+        self.assertTrue((self.root / ".obsidian/snippets/goodidea.css").is_file())
+        tracked = subprocess.run(
+            ["git", "ls-files", ".obsidian"], cwd=self.root, check=True,
+            text=True, capture_output=True,
+        ).stdout
+        self.assertIn(".obsidian/app.json", tracked)
+        self.assertIn(".obsidian/snippets/goodidea.css", tracked)
+        (self.root / ".obsidian/workspace.json").write_text("{}\n", encoding="utf-8")
+        ignored = subprocess.run(
+            ["git", "check-ignore", ".obsidian/workspace.json"], cwd=self.root,
+            check=False, text=True, capture_output=True,
+        )
+        self.assertEqual(ignored.returncode, 0)
+        fresh_schema = (self.root / "schema.md").read_text(encoding="utf-8")
+        self.assertIn("YYYY-MM-DD-标题.md", fresh_schema)
+        self.assertIn("内部 ID", fresh_schema)
+        self.assertIn("Obsidian", fresh_schema)
+
         captured = run_cli(
             "--root",
             str(self.root),
@@ -43,10 +75,32 @@ class GoodIdeaCliTests(unittest.TestCase):
         self.assertEqual(captured.returncode, 0, captured.stderr)
         result = json.loads(captured.stdout)
         self.assertTrue((self.root / result["result"]["path"]).is_file())
+        path = Path(result["result"]["path"])
+        self.assertRegex(path.name, r"^\d{4}-\d{2}-\d{2}-.+\.md$")
+        self.assertNotIn(result["result"]["id"], path.name)
+
+        maintained = run_cli(
+            "--root",
+            str(self.root),
+            "maintain",
+            "filenames",
+            "--transaction-id",
+            "cli-maintain-filenames-noop",
+        )
+        self.assertEqual(maintained.returncode, 0, maintained.stderr)
+        self.assertTrue(json.loads(maintained.stdout)["result"]["no_change"])
 
         verified = run_cli("--root", str(self.root), "verify")
         self.assertEqual(verified.returncode, 0, verified.stderr)
         self.assertTrue(json.loads(verified.stdout)["ok"])
+
+        app["alwaysUpdateLinks"] = False
+        (self.root / ".obsidian/app.json").write_text(
+            json.dumps(app, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+        )
+        drifted = run_cli("--root", str(self.root), "verify")
+        self.assertEqual(drifted.returncode, 1)
+        self.assertIn("Obsidian 未启用自动更新链接", drifted.stdout)
 
     def test_preview_cannot_write_inside_repository(self):
         markdown = self.base / "article.md"
@@ -361,6 +415,17 @@ class GoodIdeaCliTests(unittest.TestCase):
         )
         self.assertEqual(index_accept.returncode, 0, index_accept.stderr)
         index_id = json.loads(index_accept.stdout)["result"]["card_id"]
+
+        for directory in (
+            "闪念空间", "溯源空间", "有意思空间", "待办空间",
+            "永久空间/永久卡片", "永久空间/母题卡片",
+            "永久空间/行动卡片", "永久空间/索引卡片",
+        ):
+            notes = list((self.root / directory).glob("*.md"))
+            self.assertTrue(notes, directory)
+            for note in notes:
+                self.assertRegex(note.name, r"^\d{4}-\d{2}-\d{2}-.+\.md$")
+                self.assertNotRegex(note.name, r"^[A-Z]+-(?:\d{8}-)?[0-9a-f]+-")
 
         for card_id, note, status, txid in [
             (

@@ -79,6 +79,13 @@ def build_parser() -> argparse.ArgumentParser:
     review.add_argument("--expire", action="store_true")
     review.add_argument("--transaction-id")
 
+    maintain = sub.add_parser("maintain", help="执行确定性的仓库机械维护")
+    maintain_sub = maintain.add_subparsers(dest="maintain_command", required=True)
+    filenames = maintain_sub.add_parser(
+        "filenames", help="把所有内容文件统一为 YYYY-MM-DD-标题.md"
+    )
+    filenames.add_argument("--transaction-id")
+
     permanent = sub.add_parser("permanent", help="用户原文草稿与永久卡片状态流转")
     permanent_sub = permanent.add_subparsers(
         dest="permanent_command", required=True
@@ -222,6 +229,8 @@ def dispatch(args: argparse.Namespace) -> tuple[dict[str, Any], int]:
         result = service.review(
             expire=args.expire, transaction_id=args.transaction_id
         )
+    elif args.command == "maintain" and args.maintain_command == "filenames":
+        result = service.maintain_filenames(transaction_id=args.transaction_id)
     elif args.command == "permanent":
         if args.permanent_command == "propose":
             result = service.permanent_propose(

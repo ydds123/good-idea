@@ -21,7 +21,6 @@ description: "记录网页或微信公众号来源并生成 Markdown 快照。�
 
        uv run goodidea --root <仓库> source commit --preview-file <preview.json> --motivation <用户原话> --transaction-id <稳定事务ID>
 
-7. 运行 goodidea verify，报告来源与闪念的 ID、路径、抓取状态和图片失败项。
+7. 运行 goodidea verify，默认报告来源与闪念的标题、路径、抓取状态和图片失败项；ID 只在排错或后续命令确实需要时提供。
 
 默认只留下来源身份、受保护原文快照、本地图片、待处理文献笔记骨架和用户保存动机。不要自动写摘要、作者观点或用户理解。刷新来源时先生成候选；只有用户明确确认后才接受更新。
-

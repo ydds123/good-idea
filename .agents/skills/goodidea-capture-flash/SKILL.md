@@ -17,7 +17,6 @@ description: "捕捉 Good idea 闪念、有意思内容或待办的轻量工作�
        uv run goodidea --root <仓库> capture flash --text <原始表达> --context <情境>
 
    将 flash 替换为 interesting 或 todo。需要幂等重试时复用同一个 transaction-id。
-5. 运行 goodidea lint，报告新建 ID、路径和状态。
+5. 运行 goodidea lint，默认报告标题、路径和状态；ID 只在排错或后续命令确实需要时提供。
 
 不要在捕捉阶段创建永久卡片，不要生成作者观点、证据或行动方案。
-

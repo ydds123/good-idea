@@ -18,10 +18,11 @@ from .metadata import dump_frontmatter, parse_document, replace_frontmatter
 from .notes import (
     TYPE_LOCATIONS,
     add_list_item_to_section,
+    dated_filename,
+    extract_snapshot,
     render_note,
     render_source_note,
     replace_source_snapshot,
-    safe_filename,
     snapshot_hash,
     validate_required_metadata,
     validate_source_note,
@@ -147,12 +148,81 @@ def _default_status(note_type: str) -> str:
     }[note_type]
 
 
+def _rewrite_wiki_paths(
+    text: str,
+    replacements: dict[str, str],
+    *,
+    protect_snapshot: bool = False,
+) -> str:
+    boundary = extract_snapshot(text)[2] if protect_snapshot else len(text)
+    editable = text[:boundary]
+    protected = text[boundary:]
+    if replacements:
+        alternatives = "|".join(
+            re.escape(old) for old in sorted(replacements, key=len, reverse=True)
+        )
+        pattern = re.compile(
+            r"\[\[(?P<target>" + alternatives + r")(?=(?:\||#|\]\]))"
+        )
+        editable = pattern.sub(
+            lambda match: f"[[{replacements[match.group('target')]}", editable
+        )
+    return editable + protected
+
+
+def _rewrite_exact_paths(value: Any, replacements: dict[str, str]) -> Any:
+    if isinstance(value, dict):
+        return {
+            key: _rewrite_exact_paths(item, replacements)
+            for key, item in value.items()
+        }
+    if isinstance(value, list):
+        return [_rewrite_exact_paths(item, replacements) for item in value]
+    if isinstance(value, str):
+        return replacements.get(value, value)
+    return value
+
+
+def _rewrite_default_alias(
+    text: str,
+    target: str,
+    old_title: str,
+    new_title: str,
+    *,
+    protect_snapshot: bool = False,
+) -> str:
+    boundary = extract_snapshot(text)[2] if protect_snapshot else len(text)
+    editable = text[:boundary].replace(
+        f"[[{target}|{old_title}]]", f"[[{target}|{new_title}]]"
+    )
+    return editable + text[boundary:]
+
+
 class GoodIdeaService:
     def __init__(self, repo: Repository):
         self.repo = repo
 
     def _idempotent(self, transaction_id: str) -> dict[str, Any] | None:
         return self.repo.transaction_result(transaction_id)
+
+    def _new_note_path(
+        self,
+        note_type: str,
+        title: str,
+        created_at: str,
+        *,
+        reserved: set[Path] | None = None,
+    ) -> Path:
+        occupied = reserved if reserved is not None else set()
+        location = TYPE_LOCATIONS[note_type]
+        collision = 1
+        while True:
+            candidate = location / dated_filename(
+                title, created_at, collision=collision
+            )
+            if candidate not in occupied and not (self.repo.root / candidate).exists():
+                return candidate
+            collision += 1
 
     def capture(
         self,
@@ -174,9 +244,8 @@ class GoodIdeaService:
         prefix = {"flash": "FLA", "interesting": "INT", "todo": "TODO"}[kind]
         note_id = stable_id(prefix, f"{txid}:{text}")
         note_title = title.strip() or text.strip().splitlines()[0][:40]
-        filename = f"{note_id}-{safe_filename(note_title, note_id)}.md"
-        rel = TYPE_LOCATIONS[kind] / filename
         timestamp = now_iso()
+        rel = self._new_note_path(kind, note_title, timestamp)
         metadata = {
             "id": note_id,
             "type": kind,
@@ -337,8 +406,7 @@ class GoodIdeaService:
             if failures and capture_status == "complete":
                 capture_status = "partial"
             snapshot = self._build_snapshot(preview, localized)
-            filename = f"{source_id}-{safe_filename(title, source_id)}.md"
-            source_rel = TYPE_LOCATIONS["source"] / filename
+            source_rel = self._new_note_path("source", title, timestamp)
             source_title = title
             source_meta = {
                 "id": source_id,
@@ -357,12 +425,11 @@ class GoodIdeaService:
                     str(preview.get("markdown", "")).encode("utf-8")
                 ).hexdigest(),
                 "image_failures": failures,
+                "flash_ids": [flash_id],
                 "summary": "原文快照，文献笔记待处理",
             }
 
-        flash_rel = TYPE_LOCATIONS["flash"] / (
-            f"{flash_id}-{safe_filename(flash_title, flash_id)}.md"
-        )
+        flash_rel = self._new_note_path("flash", flash_title, timestamp)
         source_link = wiki_link(source_rel, source_title)
         flash_meta = {
             "id": flash_id,
@@ -388,6 +455,9 @@ class GoodIdeaService:
         flash_link = wiki_link(flash_rel, flash_title)
         if source_record:
             source_meta["updated_at"] = timestamp
+            source_meta["flash_ids"] = list(
+                dict.fromkeys([*source_meta.get("flash_ids", []), flash_id])
+            )
             source_note = add_list_item_to_section(
                 source_note, "关联闪念", flash_link
             )
@@ -473,19 +543,72 @@ class GoodIdeaService:
                     "pending_update": "",
                 },
             )
+            updated_meta, _ = parse_document(updated_source)
+            new_title = str(updated_meta["title"])
+            new_source_rel = source_rel
+            if new_title != str(source_meta["title"]):
+                collision = 1
+                while True:
+                    candidate_rel = TYPE_LOCATIONS["source"] / dated_filename(
+                        new_title,
+                        str(source_meta["created_at"]),
+                        collision=collision,
+                    )
+                    if candidate_rel == source_rel or not (
+                        self.repo.root / candidate_rel
+                    ).exists():
+                        new_source_rel = candidate_rel
+                        break
+                    collision += 1
             proposal_meta, _ = parse_document(proposal_text)
             proposal_meta["status"] = "accepted"
             proposal_meta["updated_at"] = timestamp
             proposal_text = replace_frontmatter(proposal_text, proposal_meta)
             state["proposals"][confirm_proposal]["status"] = "accepted"
-            writes: dict[Path, str | bytes] = {
-                source_rel: updated_source,
-                proposal_rel: proposal_text,
-                **assets,
-            }
+            writes: dict[Path, str | bytes] = {proposal_rel: proposal_text, **assets}
+            deletes: set[Path] = set()
+            if new_source_rel != source_rel:
+                wiki_replacements = {
+                    source_rel.with_suffix("").as_posix():
+                    new_source_rel.with_suffix("").as_posix()
+                }
+                for note_type, location in TYPE_LOCATIONS.items():
+                    for path in sorted((self.repo.root / location).glob("*.md")):
+                        rel = path.relative_to(self.repo.root)
+                        note_text = (
+                            updated_source
+                            if rel == source_rel
+                            else path.read_text(encoding="utf-8")
+                        )
+                        rewritten = _rewrite_wiki_paths(
+                            note_text,
+                            wiki_replacements,
+                            protect_snapshot=note_type == "source",
+                        )
+                        rewritten = _rewrite_default_alias(
+                            rewritten,
+                            new_source_rel.with_suffix("").as_posix(),
+                            str(source_meta["title"]),
+                            new_title,
+                            protect_snapshot=note_type == "source",
+                        )
+                        target_rel = new_source_rel if rel == source_rel else rel
+                        if target_rel != rel or rewritten != note_text:
+                            writes[target_rel] = rewritten
+                deletes.add(source_rel)
+                state = _rewrite_exact_paths(
+                    state,
+                    {source_rel.as_posix(): new_source_rel.as_posix()},
+                )
+            else:
+                writes[source_rel] = updated_source
+            canonical = str(updated_meta.get("canonical_url", ""))
+            if canonical in state.get("sources", {}):
+                state["sources"][canonical]["title"] = new_title
+                state["sources"][canonical]["path"] = new_source_rel.as_posix()
             result = {
                 "source_id": source_id,
-                "source_path": source_rel.as_posix(),
+                "source_path": new_source_rel.as_posix(),
                 "proposal_id": confirm_proposal,
                 "status": capture_status,
             }
@@ -494,6 +617,7 @@ class GoodIdeaService:
                 action="source-refresh-accept",
                 summary=source_meta["title"],
                 writes=writes,
+                deletes=deletes,
                 state=state,
                 result=result,
             )
@@ -671,10 +795,8 @@ class GoodIdeaService:
             "index": "IDX",
         }[card_type]
         card_id = stable_id(prefix, f"{proposal_id}:{draft_sha256}")
-        card_rel = TYPE_LOCATIONS[card_type] / (
-            f"{card_id}-{safe_filename(title, card_id)}.md"
-        )
         timestamp = now_iso()
+        card_rel = self._new_note_path(card_type, title, timestamp)
         status = _default_status(card_type)
         metadata = {
             "id": card_id,
@@ -892,6 +1014,105 @@ class GoodIdeaService:
             action="action-feedback",
             summary=metadata["title"],
             writes={rel: text},
+            state=state,
+            result=result,
+        )
+
+    def maintain_filenames(
+        self,
+        *,
+        transaction_id: str | None = None,
+    ) -> dict[str, Any]:
+        txid = transaction_id or new_transaction_id("maintain-filenames")
+        if existing := self._idempotent(txid):
+            return existing
+        self.repo.preflight_integrity()
+        notes: list[tuple[Path, str, dict[str, Any]]] = []
+        for note_type, location in TYPE_LOCATIONS.items():
+            for path in sorted((self.repo.root / location).glob("*.md")):
+                rel = path.relative_to(self.repo.root)
+                text = path.read_text(encoding="utf-8")
+                metadata, _ = parse_document(text)
+                if metadata.get("type") != note_type:
+                    raise IntegrityError(f"{rel} 的类型与所在目录不一致")
+                notes.append((rel, text, metadata))
+
+        reserved: set[Path] = set()
+        renames: dict[Path, Path] = {}
+        for old_rel, _, metadata in sorted(
+            notes,
+            key=lambda item: (
+                str(item[2].get("created_at", "")),
+                str(item[2].get("id", "")),
+                item[0].as_posix(),
+            ),
+        ):
+            location = TYPE_LOCATIONS[str(metadata["type"])]
+            collision = 1
+            while True:
+                candidate = location / dated_filename(
+                    str(metadata["title"]),
+                    str(metadata["created_at"]),
+                    collision=collision,
+                )
+                if candidate not in reserved:
+                    break
+                collision += 1
+            reserved.add(candidate)
+            if candidate != old_rel:
+                renames[old_rel] = candidate
+
+        if not renames:
+            state = self.repo.read_state()
+            result = {"no_change": True, "renamed": [], "count": 0}
+            return self.repo.commit(
+                transaction_id=txid,
+                action="maintain-filenames",
+                summary="内容文件名已经符合日期加标题规范",
+                writes={},
+                state=state,
+                result=result,
+            )
+
+        replacements = {
+            old.with_suffix("").as_posix(): new.with_suffix("").as_posix()
+            for old, new in renames.items()
+        }
+        writes: dict[Path, str | bytes] = {}
+        deletes: set[Path] = set()
+        renamed_result: list[dict[str, str]] = []
+        for old_rel, text, metadata in notes:
+            updated = _rewrite_wiki_paths(
+                text,
+                replacements,
+                protect_snapshot=metadata.get("type") == "source",
+            )
+            new_rel = renames.get(old_rel, old_rel)
+            if new_rel != old_rel:
+                deletes.add(old_rel)
+                renamed_result.append(
+                    {
+                        "from": old_rel.as_posix(),
+                        "to": new_rel.as_posix(),
+                    }
+                )
+            if new_rel != old_rel or updated != text:
+                writes[new_rel] = updated
+
+        state = _rewrite_exact_paths(
+            self.repo.read_state(),
+            {old.as_posix(): new.as_posix() for old, new in renames.items()},
+        )
+        # Rename chains and swaps may reuse an old path as another note's final
+        # destination. Such destinations are overwritten by writes, not deleted.
+        deletes.difference_update(writes)
+        result = {"renamed": renamed_result, "count": len(renamed_result)}
+        return self.repo.commit(
+            transaction_id=txid,
+            action="maintain-filenames",
+            summary=f"将 {len(renamed_result)} 个内容文件改为日期加标题",
+            writes=writes,
+            deletes=deletes,
             state=state,
             result=result,
         )
@@ -1123,6 +1344,22 @@ class GoodIdeaService:
                 if note_id in seen_ids:
                     issues.append(f"重复 ID {note_id}: {seen_ids[note_id]}, {rel}")
                 seen_ids[note_id] = rel.as_posix()
+                try:
+                    base_name = Path(
+                        dated_filename(
+                            str(metadata.get("title", "")),
+                            str(metadata.get("created_at", "")),
+                        )
+                    ).stem
+                    filename_ok = path.stem == base_name or bool(
+                        re.fullmatch(re.escape(base_name) + r"-[2-9]\d*", path.stem)
+                    )
+                    if not filename_ok:
+                        issues.append(
+                            f"{rel}: 文件名必须使用创建日期加标题，不得使用 ID 前缀"
+                        )
+                except ValidationError as exc:
+                    issues.append(f"{rel}: 无法校验文件名：{exc}")
                 if expected_type == "source":
                     try:
                         validate_source_note(text, rel.as_posix())
@@ -1175,6 +1412,43 @@ class GoodIdeaService:
             elif record.get("status") == "withdrawn":
                 if PROPOSAL_START in proposal_text or "## 机器数据" in proposal_text:
                     issues.append(f"已撤销草稿仍暴露内部负载：{proposal_id}")
+        obsidian_root = self.repo.root / ".obsidian"
+        try:
+            app_config = json.loads(
+                (obsidian_root / "app.json").read_text(encoding="utf-8")
+            )
+            appearance_config = json.loads(
+                (obsidian_root / "appearance.json").read_text(encoding="utf-8")
+            )
+            plugin_config = json.loads(
+                (obsidian_root / "core-plugins.json").read_text(encoding="utf-8")
+            )
+            if app_config.get("propertiesInDocument") != "hidden":
+                issues.append("Obsidian 未默认隐藏机器 Frontmatter")
+            if app_config.get("alwaysUpdateLinks") is not True:
+                issues.append("Obsidian 未启用自动更新链接")
+            if app_config.get("attachmentFolderPath") != ".goodidea/assets":
+                issues.append("Obsidian 附件目录未指向 .goodidea/assets")
+            if app_config.get("defaultViewMode") != "preview":
+                issues.append("Obsidian 未默认使用阅读视图")
+            if app_config.get("newLinkFormat") != "absolute":
+                issues.append("Obsidian 链接格式必须使用仓库根路径")
+            if app_config.get("showInlineTitle") is not False:
+                issues.append("Obsidian 必须隐藏重复的行内标题")
+            if "goodidea" not in appearance_config.get("enabledCssSnippets", []):
+                issues.append("Obsidian 未启用 Good idea 阅读界面样式")
+            if plugin_config.get("sync") is not False:
+                issues.append("Obsidian Sync 必须在本机 v0.1 基线中关闭")
+            css = (obsidian_root / "snippets/goodidea.css").read_text(
+                encoding="utf-8"
+            )
+            if ".metadata-container" not in css:
+                issues.append("Obsidian 样式未隐藏机器属性区域")
+            for selector in (".goodidea", ".agents", "AGENTS.md", "schema.md"):
+                if selector not in css:
+                    issues.append(f"Obsidian 样式未隐藏内部项目：{selector}")
+        except (OSError, json.JSONDecodeError, TypeError) as exc:
+            issues.append(f"Obsidian 产品基线缺失或损坏：{exc}")
         log_text = (self.repo.root / "log.md").read_text(encoding="utf-8")
         git_messages = _run_git(
             self.repo.root, ["log", "--format=%B"], check=True
