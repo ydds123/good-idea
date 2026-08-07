@@ -176,6 +176,15 @@ class GoodIdeaCliTests(unittest.TestCase):
         result = json.loads(accepted.stdout)["result"]
         self.assertTrue((self.root / result["source_path"]).is_file())
         self.assertTrue((self.root / result["flash_path"]).is_file())
+        source_text = (self.root / result["source_path"]).read_text(encoding="utf-8")
+        self.assertNotIn("source_url:", source_text)
+        self.assertLess(source_text.index("## 原文快照"), source_text.index("## 文献笔记"))
+        maintained = run_cli(
+            "--root", str(self.root), "maintain", "sources",
+            "--transaction-id", "cli-source-layout-noop",
+        )
+        self.assertEqual(maintained.returncode, 0, maintained.stderr)
+        self.assertEqual(json.loads(maintained.stdout)["result"]["count"], 0)
 
         replay = run_cli(
             "--root",

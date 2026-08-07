@@ -20,6 +20,7 @@ from .notes import (
     add_list_item_to_section,
     dated_filename,
     extract_snapshot,
+    normalize_source_layout,
     render_note,
     render_source_note,
     replace_source_snapshot,
@@ -154,20 +155,22 @@ def _rewrite_wiki_paths(
     *,
     protect_snapshot: bool = False,
 ) -> str:
-    boundary = extract_snapshot(text)[2] if protect_snapshot else len(text)
-    editable = text[:boundary]
-    protected = text[boundary:]
-    if replacements:
+    def rewrite(editable: str) -> str:
+        if not replacements:
+            return editable
         alternatives = "|".join(
             re.escape(old) for old in sorted(replacements, key=len, reverse=True)
         )
         pattern = re.compile(
             r"\[\[(?P<target>" + alternatives + r")(?=(?:\||#|\]\]))"
         )
-        editable = pattern.sub(
+        return pattern.sub(
             lambda match: f"[[{replacements[match.group('target')]}", editable
         )
-    return editable + protected
+    if not protect_snapshot:
+        return rewrite(text)
+    _, _, start, end = extract_snapshot(text)
+    return rewrite(text[:start]) + text[start:end] + rewrite(text[end:])
 
 
 def _rewrite_exact_paths(value: Any, replacements: dict[str, str]) -> Any:
@@ -191,11 +194,14 @@ def _rewrite_default_alias(
     *,
     protect_snapshot: bool = False,
 ) -> str:
-    boundary = extract_snapshot(text)[2] if protect_snapshot else len(text)
-    editable = text[:boundary].replace(
-        f"[[{target}|{old_title}]]", f"[[{target}|{new_title}]]"
-    )
-    return editable + text[boundary:]
+    def rewrite(editable: str) -> str:
+        return editable.replace(
+            f"[[{target}|{old_title}]]", f"[[{target}|{new_title}]]"
+        )
+    if not protect_snapshot:
+        return rewrite(text)
+    _, _, start, end = extract_snapshot(text)
+    return rewrite(text[:start]) + text[start:end] + rewrite(text[end:])
 
 
 class GoodIdeaService:
@@ -349,21 +355,17 @@ class GoodIdeaService:
     def _build_snapshot(
         self, preview: dict[str, Any], localized_markdown: str
     ) -> str:
-        lines = [f"# 原文：{preview.get('title') or preview.get('canonical_url')}"]
+        lines: list[str] = []
         if preview.get("author"):
-            lines.append(f"- 作者：{preview['author']}")
+            lines.append(f"> 作者：{preview['author']}")
         if preview.get("published_at"):
-            lines.append(f"- 发布日期：{preview['published_at']}")
-        lines.extend(
-            [
-                f"- 原始链接：{preview.get('url', '')}",
-                f"- 规范链接：{preview.get('canonical_url', '')}",
-            ]
-        )
+            lines.append(f"> 发布日期：{preview['published_at']}")
         if preview.get("error"):
-            lines.append(f"- 抓取说明：{preview['error']}")
-        lines.extend(["", "---", "", localized_markdown or "> 未能取得正文。"])
-        return "\n".join(lines).strip() + "\n"
+            lines.append(f"> 抓取说明：{preview['error']}")
+        if lines:
+            lines.append("")
+        lines.append(localized_markdown or "> 未能取得正文。")
+        return "\n".join(lines).strip("\n") + "\n"
 
     def source_commit(
         self,
@@ -414,7 +416,6 @@ class GoodIdeaService:
                 "title": title,
                 "status": capture_status,
                 "capture_status": capture_status,
-                "source_url": str(preview.get("url") or canonical_url),
                 "canonical_url": canonical_url,
                 "author": str(preview.get("author") or ""),
                 "published_at": str(preview.get("published_at") or ""),
@@ -462,6 +463,7 @@ class GoodIdeaService:
                 source_note, "关联闪念", flash_link
             )
             source_note = replace_frontmatter(source_note, source_meta)
+            source_note = normalize_source_layout(source_note)
         else:
             source_note = render_source_note(source_meta, snapshot, [flash_link])
         writes[source_rel] = source_note
@@ -529,9 +531,6 @@ class GoodIdeaService:
                     "title": str(candidate.get("title") or source_meta["title"]),
                     "status": capture_status,
                     "capture_status": capture_status,
-                    "source_url": str(
-                        candidate.get("url") or source_meta.get("source_url", "")
-                    ),
                     "author": str(candidate.get("author") or ""),
                     "published_at": str(candidate.get("published_at") or ""),
                     "fetched_at": timestamp,
@@ -543,6 +542,7 @@ class GoodIdeaService:
                     "pending_update": "",
                 },
             )
+            updated_source = normalize_source_layout(updated_source)
             updated_meta, _ = parse_document(updated_source)
             new_title = str(updated_meta["title"])
             new_source_rel = source_rel
@@ -1117,6 +1117,40 @@ class GoodIdeaService:
             result=result,
         )
 
+    def maintain_sources(
+        self,
+        *,
+        transaction_id: str | None = None,
+    ) -> dict[str, Any]:
+        txid = transaction_id or new_transaction_id("maintain-sources")
+        if existing := self._idempotent(txid):
+            return existing
+        self.repo.preflight_integrity()
+        writes: dict[Path, str | bytes] = {}
+        changed: list[str] = []
+        for path in sorted((self.repo.root / TYPE_LOCATIONS["source"]).glob("*.md")):
+            rel = path.relative_to(self.repo.root)
+            original = path.read_text(encoding="utf-8")
+            normalized = normalize_source_layout(original)
+            if normalized != original:
+                writes[rel] = normalized
+                changed.append(rel.as_posix())
+        state = self.repo.read_state()
+        result = {"changed": changed, "count": len(changed)}
+        summary = (
+            f"规范化 {len(changed)} 份溯源笔记"
+            if changed
+            else "溯源笔记已经符合当前格式"
+        )
+        return self.repo.commit(
+            transaction_id=txid,
+            action="maintain-sources",
+            summary=summary,
+            writes=writes,
+            state=state,
+            result=result,
+        )
+
     def connect_propose(
         self,
         from_id: str,
@@ -1365,6 +1399,27 @@ class GoodIdeaService:
                         validate_source_note(text, rel.as_posix())
                     except IntegrityError as exc:
                         issues.append(str(exc))
+                    if metadata.get("source_url"):
+                        issues.append(f"{rel}: 不应持久化原始分享链接 source_url")
+                    if not metadata.get("canonical_url"):
+                        issues.append(f"{rel}: 缺少规范链接 canonical_url")
+                    headings = {
+                        heading: text.find(f"## {heading}\n")
+                        for heading in ("原文快照", "文献笔记", "关联闪念")
+                    }
+                    if not (
+                        -1 < headings["原文快照"] < headings["文献笔记"]
+                        < headings["关联闪念"]
+                    ):
+                        issues.append(
+                            f"{rel}: 溯源顺序必须为标题、原文快照、文献笔记、关联闪念"
+                        )
+                    try:
+                        _, snapshot_content, _, _ = extract_snapshot(text)
+                        if snapshot_content.startswith("# 原文："):
+                            issues.append(f"{rel}: 原文快照仍使用旧版重复标题包装")
+                    except IntegrityError:
+                        pass
                 all_notes.append((rel, text, metadata))
         for rel, text, _ in all_notes:
             for link in re.findall(r"\[\[([^|\]#]+)", text):

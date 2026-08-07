@@ -13,7 +13,7 @@
 | `永久空间/行动卡片/` | `action` | `planned`, `acting`, `observing`, `reviewed` |
 | `永久空间/索引卡片/` | `index` | `active`, `revised`, `retired` |
 
-所有正式笔记必须包含 JSON-compatible YAML Frontmatter：`id`、`type`、`title`、`status`、`created_at`、`updated_at`。链接资料还包含 `source_url`、`canonical_url`、`fetched_at`、`snapshot_sha256` 与 `capture_status`。
+所有正式笔记必须包含 JSON-compatible YAML Frontmatter：`id`、`type`、`title`、`status`、`created_at`、`updated_at`。链接资料还包含 `canonical_url`、`fetched_at`、`snapshot_sha256` 与 `capture_status`。用户提交的原始分享链接只用于当次抓取，不持久化。
 
 ## 稳定 ID
 
@@ -45,7 +45,7 @@ Markdown Frontmatter 是 CLI 的机器控制面，不是阅读正文。Obsidian 
 | `status` | 生命周期状态 | 区分待处理、已失效、完整、待行动等状态 |
 | `created_at` / `updated_at` | 创建 / 更新时间 | 文件命名、排序和演化审计 |
 | `source_ids` / `flash_ids` / `derived_from` | 来源 / 闪念 / 生成关系 | 用 ID 维持跨文件关系，不依赖文件名 |
-| `source_url` / `canonical_url` | 原始 / 规范链接 | 来源访问与同 URL 去重 |
+| `canonical_url` | 规范链接 | 点击来源、识别同一来源并去重；原始分享链接不持久化 |
 | `capture_status` / `fetched_at` | 抓取结果 / 抓取时间 | 判断快照是否完整及何时取得 |
 | `content_sha256` / `snapshot_sha256` | 内容 / 快照哈希 | 检测网页变化并阻止原文快照被静默篡改 |
 | `image_failures` | 图片保存失败记录 | 明确标记不完整来源，避免静默依赖远程图片 |
@@ -66,18 +66,20 @@ Markdown Frontmatter 是 CLI 的机器控制面，不是阅读正文。Obsidian 
 ---
 # 标题
 
+## 原文快照
+<!-- goodidea:snapshot:start sha256=<hash> -->
+...作者、日期、正文、本地图片...
+<!-- goodidea:snapshot:end -->
+
 ## 文献笔记
 <!-- goodidea:literature:start -->
 待处理
 <!-- goodidea:literature:end -->
 
 ## 关联闪念
-
-## 原文快照
-<!-- goodidea:snapshot:start sha256=<hash> -->
-...标题、作者、日期、正文、本地图片...
-<!-- goodidea:snapshot:end -->
 ```
+
+标题直接使用文章名称。原文快照紧随标题；用户的文献笔记和关联闪念位于原文之后。来源只永久保存规范链接，不保留带分享或追踪参数的原始链接。
 
 哈希基于两个快照标记之间规范化后的完整文本。Frontmatter 和起始标记中的哈希必须相同。任何写操作开始前都要校验所有来源快照；发现异常则停止。
 

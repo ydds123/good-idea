@@ -9,8 +9,15 @@ from datetime import datetime, timedelta
 from pathlib import Path
 
 from goodidea.errors import GitError, IntegrityError, TransactionError, ValidationError
-from goodidea.metadata import parse_document, replace_frontmatter
-from goodidea.notes import extract_snapshot, validate_source_note
+from goodidea.metadata import dump_frontmatter, parse_document, replace_frontmatter
+from goodidea.notes import (
+    LITERATURE_END,
+    LITERATURE_START,
+    SNAPSHOT_END,
+    extract_snapshot,
+    snapshot_hash,
+    validate_source_note,
+)
 from goodidea.repository import Repository, initialize_vault
 from goodidea.service import GoodIdeaService, _rewrite_wiki_paths
 
@@ -137,6 +144,12 @@ class GoodIdeaCoreTests(unittest.TestCase):
         self.assertIn(data["flash_id"], source_meta["flash_ids"])
         self.assertIn(data["source_id"], flash_meta["source_ids"])
         self.assertNotIn(data["flash_id"], source_body)
+        self.assertNotIn("source_url", source_meta)
+        self.assertEqual(source_meta["canonical_url"], "https://example.com/article")
+        self.assertNotIn("原始链接：", source)
+        self.assertNotIn("规范链接：", source_body)
+        self.assertLess(source.index("## 原文快照"), source.index("## 文献笔记"))
+        self.assertLess(source.index("## 文献笔记"), source.index("## 关联闪念"))
         self.assertIn("../.goodidea/assets/", source)
         self.assertNotIn("](https://example.com/image.png)", source)
         files_in_commit = git(
@@ -161,6 +174,65 @@ class GoodIdeaCoreTests(unittest.TestCase):
         self.assertFalse(second["result"]["source_created"])
         self.assertEqual(second["result"]["source_id"], data["source_id"])
         self.assertNotEqual(second["result"]["flash_id"], data["flash_id"])
+
+    def test_source_maintenance_migrates_legacy_wrapper_and_is_revertible(self):
+        captured = self.service.source_commit(
+            self.preview(),
+            motivation="我要验证旧溯源格式可以安全迁移到原文优先结构。",
+            transaction_id="tx-source-layout-base",
+        )["result"]
+        rel = Path(captured["source_path"])
+        current = (self.root / rel).read_text(encoding="utf-8")
+        metadata, _ = parse_document(current)
+        _, current_snapshot, _, _ = extract_snapshot(current)
+        article_body = current_snapshot.split("\n\n", 1)[1]
+        metadata["source_url"] = "https://example.com/article?utm_source=wechat"
+        legacy_snapshot = (
+            f"# 原文：{metadata['title']}\n"
+            f"- 作者：{metadata['author']}\n"
+            f"- 发布日期：{metadata['published_at']}\n"
+            "- 原始链接：https://example.com/article?utm_source=wechat\n"
+            "- 规范链接：https://example.com/article\n\n---\n\n"
+            + article_body
+        )
+        legacy_digest = snapshot_hash(legacy_snapshot)
+        metadata["snapshot_sha256"] = legacy_digest
+        literature_start = current.index(LITERATURE_START)
+        literature_end = current.index(LITERATURE_END) + len(LITERATURE_END)
+        literature = current[literature_start:literature_end]
+        links = current.split("## 关联闪念\n\n", 1)[1].strip()
+        legacy = (
+            dump_frontmatter(metadata)
+            + f"# {metadata['title']}\n\n## 文献笔记\n\n{literature}\n\n"
+            + f"## 关联闪念\n\n{links}\n\n## 原文快照\n\n"
+            + f"<!-- goodidea:snapshot:start sha256={legacy_digest} -->\n"
+            + legacy_snapshot
+            + f"{SNAPSHOT_END}\n"
+        )
+        (self.root / rel).write_text(legacy, encoding="utf-8")
+        git(self.root, "add", rel.as_posix())
+        git(self.root, "commit", "-m", "test fixture: legacy source layout")
+
+        migrated = self.service.maintain_sources(
+            transaction_id="tx-maintain-source-layout"
+        )
+        self.assertEqual(migrated["result"]["count"], 1)
+        updated = (self.root / rel).read_text(encoding="utf-8")
+        updated_meta, _ = parse_document(updated)
+        self.assertNotIn("source_url", updated_meta)
+        self.assertNotIn("原始链接：", updated)
+        self.assertLess(updated.index("## 原文快照"), updated.index("## 文献笔记"))
+        self.assertLess(updated.index("## 文献笔记"), updated.index("## 关联闪念"))
+        _, migrated_snapshot, _, _ = extract_snapshot(updated)
+        self.assertEqual(migrated_snapshot.split("\n\n", 1)[1], article_body)
+        validate_source_note(updated, rel.as_posix())
+        self.assertTrue(self.service.lint()["ok"])
+
+        self.service.rollback(migrated["commit"], confirmed=True)
+        restored = (self.root / rel).read_text(encoding="utf-8")
+        restored_meta, _ = parse_document(restored)
+        self.assertIn("source_url", restored_meta)
+        self.assertGreater(restored.index("## 原文快照"), restored.index("## 文献笔记"))
 
     def test_human_filenames_hide_ids_and_handle_same_day_collisions(self):
         first = self.service.capture(

@@ -102,16 +102,89 @@ def render_source_note(
     return (
         dump_frontmatter(metadata)
         + f"# {metadata['title']}\n\n"
+        + "## 原文快照\n\n"
+        + f"<!-- goodidea:snapshot:start sha256={digest} -->\n"
+        + normalize_snapshot(snapshot)
+        + f"{SNAPSHOT_END}\n\n"
         + "## 文献笔记\n\n"
         + f"{LITERATURE_START}\n"
         + "> 待处理：这里由用户在后续阅读与回顾中补充，不由系统自动生成观点。\n"
         + f"{LITERATURE_END}\n\n"
         + "## 关联闪念\n\n"
         + links
-        + "\n\n## 原文快照\n\n"
+        + "\n"
+    )
+
+
+def normalize_source_layout(note: str) -> str:
+    """Apply the human-facing source layout without rewriting article Markdown."""
+    validate_source_note(note)
+    metadata, _ = parse_document(note)
+    metadata = dict(metadata)
+    metadata.pop("source_url", None)
+
+    _, snapshot_content, _, _ = extract_snapshot(note)
+    snapshot_lines = normalize_snapshot(snapshot_content).splitlines()
+    if snapshot_lines and snapshot_lines[0].startswith("# 原文："):
+        try:
+            separator = snapshot_lines.index("---")
+        except ValueError:
+            separator = -1
+        if separator >= 0:
+            article_lines = snapshot_lines[separator + 1:]
+            while article_lines and not article_lines[0]:
+                article_lines.pop(0)
+            context_lines: list[str] = []
+            if metadata.get("author"):
+                context_lines.append(f"> 作者：{metadata['author']}")
+            if metadata.get("published_at"):
+                context_lines.append(f"> 发布日期：{metadata['published_at']}")
+            capture_note = next(
+                (
+                    line.removeprefix("- 抓取说明：")
+                    for line in snapshot_lines[:separator]
+                    if line.startswith("- 抓取说明：")
+                ),
+                "",
+            )
+            if capture_note:
+                context_lines.append(f"> 抓取说明：{capture_note}")
+            separator_lines = [""] if context_lines else []
+            snapshot_content = "\n".join(
+                [*context_lines, *separator_lines, *article_lines]
+            )
+    snapshot_content = normalize_snapshot(snapshot_content)
+    digest = snapshot_hash(snapshot_content)
+    metadata["snapshot_sha256"] = digest
+
+    literature_start = note.find(LITERATURE_START)
+    literature_end = note.find(LITERATURE_END, literature_start)
+    if literature_start < 0 or literature_end < 0:
+        raise IntegrityError("来源缺少受控文献笔记区域")
+    literature = note[
+        literature_start:literature_end + len(LITERATURE_END)
+    ].strip("\n")
+
+    heading = re.search(r"(?m)^## 关联闪念\s*$", note)
+    if not heading:
+        raise IntegrityError("来源缺少关联闪念区域")
+    link_start = heading.end()
+    next_heading = re.search(r"(?m)^## ", note[link_start:])
+    link_end = link_start + next_heading.start() if next_heading else len(note)
+    links = note[link_start:link_end].strip() or "_暂无_"
+
+    return (
+        dump_frontmatter(metadata)
+        + f"# {metadata['title']}\n\n"
+        + "## 原文快照\n\n"
         + f"<!-- goodidea:snapshot:start sha256={digest} -->\n"
-        + normalize_snapshot(snapshot)
-        + f"{SNAPSHOT_END}\n"
+        + snapshot_content
+        + f"{SNAPSHOT_END}\n\n"
+        + "## 文献笔记\n\n"
+        + literature
+        + "\n\n## 关联闪念\n\n"
+        + links
+        + "\n"
     )
 
 

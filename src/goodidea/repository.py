@@ -406,6 +406,7 @@ def initialize_vault(path: Path) -> dict[str, Any]:
             "CLI 负责确定性写入。\n\n内容文件统一使用 `YYYY-MM-DD-标题.md`；"
             "内部 ID 不得作为标题、文件名前缀或默认展示信息。\n\n"
             "Obsidian 是 v0.1 的默认阅读界面，读取 schema.md 后再操作。\n"
+            "溯源笔记只保存规范链接，顺序为文章标题、原文快照、文献笔记、关联闪念。\n"
         ),
         Path("schema.md"): (
             "# Good idea v0.1 Schema\n\n## 人类可见命名\n\n"
@@ -415,6 +416,7 @@ def initialize_vault(path: Path) -> dict[str, Any]:
             "来源另保存规范化 URL、抓取状态和快照哈希。它们由 CLI 维护，"
             "在 Obsidian 阅读界面默认隐藏。\n\n## 来源与链接\n\n"
             "溯源空间每份来源对应一个 Markdown 文献笔记，原文快照受哈希保护。"
+            "只持久化规范链接；顺序为文章标题、原文快照、文献笔记、关联闪念。"
             "Wiki 链接统一使用从仓库根目录开始的路径。\n\n## Obsidian\n\n"
             "`.obsidian/` 中的稳定设置与阅读样式属于产品基线；"
             "工作区布局文件属于本机状态，不纳入 Git。\n"

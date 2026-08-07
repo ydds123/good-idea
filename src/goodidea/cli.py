@@ -85,6 +85,10 @@ def build_parser() -> argparse.ArgumentParser:
         "filenames", help="把所有内容文件统一为 YYYY-MM-DD-标题.md"
     )
     filenames.add_argument("--transaction-id")
+    sources = maintain_sub.add_parser(
+        "sources", help="统一溯源笔记顺序并只保留规范链接"
+    )
+    sources.add_argument("--transaction-id")
 
     permanent = sub.add_parser("permanent", help="用户原文草稿与永久卡片状态流转")
     permanent_sub = permanent.add_subparsers(
@@ -231,6 +235,8 @@ def dispatch(args: argparse.Namespace) -> tuple[dict[str, Any], int]:
         )
     elif args.command == "maintain" and args.maintain_command == "filenames":
         result = service.maintain_filenames(transaction_id=args.transaction_id)
+    elif args.command == "maintain" and args.maintain_command == "sources":
+        result = service.maintain_sources(transaction_id=args.transaction_id)
     elif args.command == "permanent":
         if args.permanent_command == "propose":
             result = service.permanent_propose(
