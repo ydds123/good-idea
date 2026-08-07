@@ -1,4 +1,4 @@
 interface:
-  display_name: "Good idea 审查永久卡片"
-  short_description: "只评估用户草稿是否达标，不代写、改写或维护正文"
-  default_prompt: "Use $goodidea-review-permanent to evaluate my draft without rewriting any of it."
+  display_name: "Good idea 对话审查卡片"
+  short_description: "通过一次一个问题的苏格拉底式交流审查并澄清用户观点"
+  default_prompt: "Use $goodidea-review-permanent to review my idea through one Socratic question at a time."

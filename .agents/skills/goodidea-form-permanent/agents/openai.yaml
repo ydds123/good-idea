@@ -1,4 +1,4 @@
 interface:
-  display_name: "Good idea 提交用户卡片"
-  short_description: "只接收并原样提交用户亲自写成的永久卡片草稿"
-  default_prompt: "Use $goodidea-form-permanent to submit my own permanent-card draft without rewriting it."
+  display_name: "Good idea 形成永久卡片"
+  short_description: "通过苏格拉底式对话澄清用户观点并安全提交永久卡片"
+  default_prompt: "Use $goodidea-form-permanent to clarify my idea one question at a time and form my permanent card."

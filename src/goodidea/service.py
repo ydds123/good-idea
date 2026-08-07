@@ -137,6 +137,37 @@ def _validate_user_draft(text: str) -> tuple[str, str, str]:
     return title, draft, digest
 
 
+def _prepare_permanent_draft(
+    text: str, extracted_title: str = ""
+) -> tuple[str, str, str, str]:
+    """Prepare either a user-titled draft or an agent-titled user body."""
+    if not extracted_title.strip():
+        title, draft, digest = _validate_user_draft(text)
+        return title, draft, digest, "user_verbatim"
+    title = extracted_title.strip()
+    if "\n" in title or title.startswith("#") or not _meaningful(title, minimum=4):
+        raise ValidationError("从用户内容提炼的标题必须是单行且含有明确意义")
+    body = _normalize_user_draft(text)
+    if not body.strip():
+        raise ValidationError("用户正文不能为空")
+    if body.lstrip().startswith("---\n"):
+        raise ValidationError("用户正文不要包含 Frontmatter；ID 和状态由 CLI 添加")
+    if re.search(r"(?m)^# ", body):
+        raise ValidationError("使用 --title 时，用户正文不得再包含一级标题")
+    if PROPOSAL_START in body or PROPOSAL_END in body or "## 机器数据" in body:
+        raise ValidationError("用户正文不得包含内部提案数据或“机器数据”区块")
+    body_lines = [
+        line.strip()
+        for line in body.splitlines()
+        if line.strip() and not line.lstrip().startswith(("#", "<!--"))
+    ]
+    if not _meaningful("\n".join(body_lines), minimum=12):
+        raise ValidationError("用户正文过短，尚不能作为可审查的永久卡片草稿")
+    draft = f"# {title}\n\n{body}"
+    _, normalized, digest = _validate_user_draft(draft)
+    return title, normalized, digest, "user_body_agent_title"
+
+
 def _default_status(note_type: str) -> str:
     return {
         "flash": "pending",
@@ -683,13 +714,16 @@ class GoodIdeaService:
         card_type: str,
         *,
         draft: str,
+        title: str = "",
         source_ids: list[str] | None = None,
         from_ids: list[str] | None = None,
         transaction_id: str | None = None,
     ) -> dict[str, Any]:
         if card_type not in PERMANENT_CARD_TYPES:
             raise ValidationError(f"不支持的永久卡片类型：{card_type}")
-        title, user_draft, draft_sha256 = _validate_user_draft(draft)
+        title, user_draft, draft_sha256, authoring_mode = _prepare_permanent_draft(
+            draft, title
+        )
         txid = transaction_id or new_transaction_id("permanent-propose")
         if existing := self._idempotent(txid):
             return existing
@@ -707,7 +741,7 @@ class GoodIdeaService:
             "title": title,
             "status": "pending",
             "card_type": card_type,
-            "authoring_mode": "user_verbatim",
+            "authoring_mode": authoring_mode,
             "draft_sha256": draft_sha256,
             "created_at": timestamp,
             "updated_at": timestamp,
@@ -719,7 +753,7 @@ class GoodIdeaService:
             "path": proposal_rel.as_posix(),
             "status": "pending",
             "card_type": card_type,
-            "authoring_mode": "user_verbatim",
+            "authoring_mode": authoring_mode,
             "draft_sha256": draft_sha256,
             "title": title,
             "source_ids": checked_source_ids,
@@ -759,7 +793,8 @@ class GoodIdeaService:
             raise ValidationError(f"找不到永久卡片候选：{proposal_id}")
         if record.get("status") != "pending":
             raise ValidationError("永久卡片候选已处理")
-        if record.get("authoring_mode") != "user_verbatim":
+        authoring_mode = record.get("authoring_mode")
+        if authoring_mode not in {"user_verbatim", "user_body_agent_title"}:
             raise ValidationError("该候选不是用户原文草稿，禁止接纳；请撤销后由用户重新发起")
         proposal_rel = Path(record["path"])
         proposal_text = (self.repo.root / proposal_rel).read_text(encoding="utf-8")
@@ -774,7 +809,7 @@ class GoodIdeaService:
             "type": "permanent_proposal",
             "status": "pending",
             "card_type": card_type,
-            "authoring_mode": "user_verbatim",
+            "authoring_mode": authoring_mode,
             "title": title,
             "draft_sha256": expected_sha256,
         }
@@ -805,7 +840,7 @@ class GoodIdeaService:
             "status": status,
             "created_at": timestamp,
             "updated_at": timestamp,
-            "authoring_mode": "user_verbatim",
+            "authoring_mode": authoring_mode,
             "source_ids": record.get("source_ids", []),
             "derived_from": record.get("from_ids", []),
             "summary": next(
@@ -1451,7 +1486,10 @@ class GoodIdeaService:
             if proposal_meta.get("status") != record.get("status"):
                 issues.append(f"永久卡片草稿状态不一致：{proposal_id}")
             if record.get("status") in {"pending", "accepted"}:
-                if record.get("authoring_mode") != "user_verbatim":
+                if record.get("authoring_mode") not in {
+                    "user_verbatim",
+                    "user_body_agent_title",
+                }:
                     issues.append(f"永久卡片草稿不是用户原文：{proposal_id}")
                     continue
                 try:

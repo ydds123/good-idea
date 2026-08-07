@@ -99,6 +99,11 @@ def build_parser() -> argparse.ArgumentParser:
         "--type", required=True, choices=["permanent", "mother", "action", "index"]
     )
     propose.add_argument(
+        "--title",
+        default="",
+        help="Agent 从用户内容中忠实提炼的标题；使用时 draft-file 只含用户正文",
+    )
+    propose.add_argument(
         "--draft-file",
         required=True,
         help="用户原文 Markdown 草稿；传 - 从 stdin 读取",
@@ -242,6 +247,7 @@ def dispatch(args: argparse.Namespace) -> tuple[dict[str, Any], int]:
             result = service.permanent_propose(
                 args.type,
                 draft=_read_text(args.draft_file),
+                title=args.title,
                 source_ids=_split_ids(args.source_ids),
                 from_ids=_split_ids(args.from_ids),
                 transaction_id=args.transaction_id,

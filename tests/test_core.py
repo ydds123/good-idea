@@ -678,6 +678,37 @@ class GoodIdeaCoreTests(unittest.TestCase):
         lint = self.service.lint()
         self.assertTrue(lint["ok"], lint["issues"])
 
+    def test_agent_extracted_title_preserves_user_body_verbatim(self):
+        user_body = (
+            "我认为持续生成让系统能够产生预设结构之外的新内容。\n\n"
+            "这种开放性既可能扩大人的创造空间，也可能生成未经验证的错误或噪声。\n"
+        )
+        title = "持续生成让创造与幻觉成为一体两面"
+        proposal = self.service.permanent_propose(
+            "permanent",
+            title=title,
+            draft=user_body,
+            transaction_id="tx-agent-title-propose",
+        )
+        proposal_text = (
+            self.root / proposal["result"]["proposal_path"]
+        ).read_text(encoding="utf-8")
+        proposal_meta, proposal_body = parse_document(proposal_text)
+        self.assertEqual(proposal_meta["authoring_mode"], "user_body_agent_title")
+        self.assertEqual(proposal_body, f"# {title}\n\n{user_body}")
+        accepted = self.service.permanent_accept(
+            proposal["result"]["proposal_id"],
+            confirmed_by_user=True,
+            transaction_id="tx-agent-title-accept",
+        )
+        formal = (self.root / accepted["result"]["card_path"]).read_text(
+            encoding="utf-8"
+        )
+        formal_meta, formal_body = parse_document(formal)
+        self.assertEqual(formal_meta["authoring_mode"], "user_body_agent_title")
+        self.assertEqual(formal_body, f"# {title}\n\n{user_body}")
+        self.assertTrue(self.service.lint()["ok"])
+
     def test_permanent_draft_tampering_and_withdrawal_are_enforced(self):
         proposal = self.service.permanent_propose(
             "permanent",
