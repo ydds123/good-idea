@@ -22,3 +22,5 @@
 
 ## [2026-08-07T20:44:31+08:00] maintain-filenames | 将 4 个内容文件改为日期加标题 | tx=baseline-readable-filenames-20260807
 
+## [2026-08-07T20:59:59+08:00] maintain-sources | 规范化 2 份溯源笔记 | tx=baseline-source-layout-20260807
+

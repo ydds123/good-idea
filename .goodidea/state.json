@@ -67,6 +67,19 @@
       "timestamp": "2026-08-07T20:44:31+08:00",
       "transaction_id": "baseline-readable-filenames-20260807"
     },
+    "baseline-source-layout-20260807": {
+      "action": "maintain-sources",
+      "result": {
+        "changed": [
+          "溯源空间/2026-08-04-LLM-Wiki.md",
+          "溯源空间/2026-08-04-用AI的这三年，想跟你分享这9条心得。.md"
+        ],
+        "count": 2
+      },
+      "summary": "规范化 2 份溯源笔记",
+      "timestamp": "2026-08-07T20:59:59+08:00",
+      "transaction_id": "baseline-source-layout-20260807"
+    },
     "correction-withdraw-PRP-5a9bfa3f1970": {
       "action": "permanent-withdraw",
       "result": {
