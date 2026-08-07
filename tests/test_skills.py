@@ -14,8 +14,8 @@ class ProjectSkillTests(unittest.TestCase):
             "goodidea-capture-flash": ["capture flash", "interesting", "todo"],
             "goodidea-record-literature": ["source preview", "source commit"],
             "goodidea-review-process": ["goodidea --root <仓库> review", "review --expire"],
-            "goodidea-form-permanent": ["permanent propose", "--draft-file", "--title", "一次一个问题", "--confirm-user-authored", "permanent withdraw"],
-            "goodidea-review-permanent": ["permanent accept", "不生成正文候选内容", "不能给出替代句", "每轮只提出一个"],
+            "goodidea-form-permanent": ["permanent propose", "--draft-file", "一次一个问题", "--confirm-user-approved-structure", "--confirm-user-approved", "permanent withdraw"],
+            "goodidea-review-permanent": ["permanent accept", "不生成正文候选内容", "完整待确认草稿", "每轮只提出一个"],
             "goodidea-connect-cards": ["connect propose", "connect accept"],
             "goodidea-lint": ["goodidea --root <仓库> lint", "goodidea --root <仓库> verify"],
         }
@@ -43,7 +43,7 @@ class ProjectSkillTests(unittest.TestCase):
         self.assertIn("用户未回答或放弃时停止，不调用任何写命令", literature)
         permanent = (skills_root / "goodidea-form-permanent" / "SKILL.md").read_text(encoding="utf-8")
         self.assertIn("提炼一个典型标题", permanent)
-        self.assertIn("正文全部来自用户", permanent)
+        self.assertIn("不得补入用户未表达的内容", permanent)
         self.assertIn("不一次抛出问题清单", permanent)
         review = (skills_root / "goodidea-review-permanent" / "SKILL.md").read_text(encoding="utf-8")
         self.assertIn("审查意见只留在审查对话", review)

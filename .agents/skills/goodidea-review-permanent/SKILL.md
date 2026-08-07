@@ -1,6 +1,6 @@
 ---
 name: goodidea-review-permanent
-description: "以一次一个问题的苏格拉底式对话审查并澄清用户的 Good idea 永久、母题、行动或索引卡片观点；允许从用户内容中提炼标题，但不代写正文。用户口述想法、提供草稿或要求评估时使用。"
+description: "以一次一个问题的苏格拉底式对话审查并澄清 Good idea 卡片观点；经用户授权后可把用户表达结构化为待确认 Markdown，但不得新增观点。用户口述想法、提供草稿或要求评估时使用。"
 ---
 
 # 审查用户永久卡片草稿
@@ -25,14 +25,15 @@ description: "以一次一个问题的苏格拉底式对话审查并澄清用户
 - 根据回答动态选择定义、因果、证据、边界或反例，不预先倾倒完整问题清单。
 - 问题用于让用户形成自己的判断；不得在问题中暗藏 Agent 预设结论，也不得替用户回答。
 - 可以从用户已经表达的内容中提炼标题，但不能通过标题加入新主张。
+- 用户授权结构化后，可以删除口语停顿和重复、调整顺序；不得补充用户没有表达的判断。
 
 ## 输出方式
 
-交流过程中每轮只输出简短认识定位和一个问题。用户认为表达完成后，再输出是否达到标准、具体缺陷及理由。可以指出某段的问题，但不能给出替代句、补写段落或完整改稿。审查意见只留在审查对话；Agent 的反例、推断和连接建议不进入卡片正文。
+交流过程中每轮只输出简短认识定位和一个问题。用户认为表达完成且授权结构化后，可以给出完整待确认草稿；必须明确标注其尚未写入。用户确认前不得调用 CLI。审查意见只留在审查对话；Agent 的反例和推断不得混入草稿。
 
 若未达到标准，等待用户自行修改，不调用任何永久卡片写命令。若达到标准，也不能把“通过审查”视作创建授权；只有用户随后明确要求正式创建，才把最终用户原文交回 `goodidea-form-permanent`，由其调用：
 
-    uv run goodidea --root <仓库> permanent propose --type <类型> --draft-file <用户原文临时文件>
-    uv run goodidea --root <仓库> permanent accept --proposal-id <ID> --confirm-user-authored
+    uv run goodidea --root <仓库> permanent propose --type <类型> --draft-file <确认后的完整草稿> --confirm-user-approved-structure
+    uv run goodidea --root <仓库> permanent accept --proposal-id <ID> --confirm-user-approved
 
 “同意”“可以”“确认”可以是对系统问题的回答，但不是用户主动发起创建、也不是用户写成的卡片内容，不能单独触发持久化。

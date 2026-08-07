@@ -709,6 +709,41 @@ class GoodIdeaCoreTests(unittest.TestCase):
         self.assertEqual(formal_body, f"# {title}\n\n{user_body}")
         self.assertTrue(self.service.lint()["ok"])
 
+    def test_user_confirmed_agent_structure_is_explicit_and_hash_protected(self):
+        structured = """# 西西弗斯型工作交给 AI，金字塔型思考留给人
+
+烦只是提醒，真正的判断标准是一次投入能否为后续思考提供支撑。
+
+重复整理、归档和建立链接每次都会归零，属于西西弗斯型工作，可以交给 AI。围绕闪念形成自己的观点，会逐渐增加问题意识，属于聚沙成塔的思考，应当由人完成。
+"""
+        proposal = self.service.permanent_propose(
+            "permanent",
+            draft=structured,
+            user_approved_structure=True,
+            transaction_id="tx-approved-structure-propose",
+        )
+        proposal_path = self.root / proposal["result"]["proposal_path"]
+        proposal_meta, proposal_body = parse_document(
+            proposal_path.read_text(encoding="utf-8")
+        )
+        self.assertEqual(
+            proposal_meta["authoring_mode"], "user_confirmed_agent_structured"
+        )
+        self.assertEqual(proposal_body, structured)
+        accepted = self.service.permanent_accept(
+            proposal["result"]["proposal_id"],
+            confirmed_by_user=True,
+            transaction_id="tx-approved-structure-accept",
+        )
+        formal_meta, formal_body = parse_document(
+            (self.root / accepted["result"]["card_path"]).read_text(encoding="utf-8")
+        )
+        self.assertEqual(
+            formal_meta["authoring_mode"], "user_confirmed_agent_structured"
+        )
+        self.assertEqual(formal_body, structured)
+        self.assertTrue(self.service.lint()["ok"])
+
     def test_permanent_draft_tampering_and_withdrawal_are_enforced(self):
         proposal = self.service.permanent_propose(
             "permanent",

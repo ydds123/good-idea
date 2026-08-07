@@ -269,6 +269,7 @@ class GoodIdeaCliTests(unittest.TestCase):
         permanent_proposal = run_cli(
             "--root", str(self.root), "permanent", "propose",
             "--type", "permanent", "--draft-file", str(permanent_draft),
+            "--confirm-user-approved-structure",
             "--source-ids", source_result["source_id"],
             "--from-ids", source_result["flash_id"],
             "--transaction-id", "cli-permanent-propose",
@@ -286,7 +287,7 @@ class GoodIdeaCliTests(unittest.TestCase):
         permanent_accept = run_cli(
             "--root", str(self.root), "permanent", "accept",
             "--proposal-id", permanent_proposal_id,
-            "--confirm-user-authored",
+            "--confirm-user-approved",
             "--transaction-id", "cli-permanent-accept",
         )
         self.assertEqual(permanent_accept.returncode, 0, permanent_accept.stderr)

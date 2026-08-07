@@ -138,9 +138,16 @@ def _validate_user_draft(text: str) -> tuple[str, str, str]:
 
 
 def _prepare_permanent_draft(
-    text: str, extracted_title: str = ""
+    text: str,
+    extracted_title: str = "",
+    user_approved_structure: bool = False,
 ) -> tuple[str, str, str, str]:
     """Prepare either a user-titled draft or an agent-titled user body."""
+    if user_approved_structure:
+        if extracted_title.strip():
+            raise ValidationError("已确认的结构化草稿必须自带标题，不再同时传 --title")
+        title, draft, digest = _validate_user_draft(text)
+        return title, draft, digest, "user_confirmed_agent_structured"
     if not extracted_title.strip():
         title, draft, digest = _validate_user_draft(text)
         return title, draft, digest, "user_verbatim"
@@ -715,6 +722,7 @@ class GoodIdeaService:
         *,
         draft: str,
         title: str = "",
+        user_approved_structure: bool = False,
         source_ids: list[str] | None = None,
         from_ids: list[str] | None = None,
         transaction_id: str | None = None,
@@ -722,7 +730,7 @@ class GoodIdeaService:
         if card_type not in PERMANENT_CARD_TYPES:
             raise ValidationError(f"不支持的永久卡片类型：{card_type}")
         title, user_draft, draft_sha256, authoring_mode = _prepare_permanent_draft(
-            draft, title
+            draft, title, user_approved_structure
         )
         txid = transaction_id or new_transaction_id("permanent-propose")
         if existing := self._idempotent(txid):
@@ -794,7 +802,11 @@ class GoodIdeaService:
         if record.get("status") != "pending":
             raise ValidationError("永久卡片候选已处理")
         authoring_mode = record.get("authoring_mode")
-        if authoring_mode not in {"user_verbatim", "user_body_agent_title"}:
+        if authoring_mode not in {
+            "user_verbatim",
+            "user_body_agent_title",
+            "user_confirmed_agent_structured",
+        }:
             raise ValidationError("该候选不是用户原文草稿，禁止接纳；请撤销后由用户重新发起")
         proposal_rel = Path(record["path"])
         proposal_text = (self.repo.root / proposal_rel).read_text(encoding="utf-8")
@@ -1489,6 +1501,7 @@ class GoodIdeaService:
                 if record.get("authoring_mode") not in {
                     "user_verbatim",
                     "user_body_agent_title",
+                    "user_confirmed_agent_structured",
                 }:
                     issues.append(f"永久卡片草稿不是用户原文：{proposal_id}")
                     continue

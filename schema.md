@@ -88,9 +88,9 @@ Markdown Frontmatter 是 CLI 的机器控制面，不是阅读正文。Obsidian 
 ## 状态门禁
 
 - 链接预读不持久化。`source commit` 必须带有内容明确的 `--motivation`。
-- 永久卡片由用户主动发起。Agent 可以从用户表达中忠实提炼标题，并以一次一个问题的苏格拉底式交流帮助用户澄清观点；不得替用户写正文判断。
-- `permanent propose --title <提炼标题> --draft-file <用户正文>` 允许机械添加 Agent 提炼的标题；不用 `--title` 时，草稿必须自带唯一一级标题。正文只做行尾规范化，不改变措辞。
-- Agent 的质量审查一次只推进一个关键问题，不倾倒问题清单，也不写回正文。用户确认最终正文并明确要求正式创建后，`permanent accept --confirm-user-authored` 才能发布。
+- 永久卡片由用户主动发起。Agent 以一次一个问题的苏格拉底式交流帮助用户澄清观点。经用户授权后，可以删除口语停顿与重复、调整顺序、提炼标题并结构化为 Markdown，但不得增加新观点。
+- Agent 必须展示完整结构化草稿；只有用户明确确认全文后，才可调用 `permanent propose --confirm-user-approved-structure`，记录为 `user_confirmed_agent_structured`。
+- 用户确认最终草稿并明确要求正式创建后，`permanent accept --confirm-user-approved` 才能发布。旧的用户逐字草稿与 Agent 仅提炼标题模式继续兼容。
 - 草稿正文不得出现内部负载或“机器数据”区块；ID、状态、来源 ID、内容哈希等内部字段仅放 Frontmatter 和 `.goodidea/state.json`。
 - 四种永久卡片遵守同一作者边界。撤销的错误草稿状态为 `withdrawn`，不可接纳，原错误仅由 Git 历史保留。
 - `permanent revise` 与 `permanent feedback` 也必须带 `--confirm-user-authored`，只能追加用户亲自写下的修订、现实结果与修正；CLI 可机械添加区块、列表标记和时间戳，并规范化边界换行，但不改变用户措辞。Agent 不维护正文。

@@ -104,6 +104,11 @@ def build_parser() -> argparse.ArgumentParser:
         help="Agent 从用户内容中忠实提炼的标题；使用时 draft-file 只含用户正文",
     )
     propose.add_argument(
+        "--confirm-user-approved-structure",
+        action="store_true",
+        help="用户已审阅并确认 Agent 结构化后的完整 Markdown 草稿",
+    )
+    propose.add_argument(
         "--draft-file",
         required=True,
         help="用户原文 Markdown 草稿；传 - 从 stdin 读取",
@@ -114,7 +119,18 @@ def build_parser() -> argparse.ArgumentParser:
 
     accept = permanent_sub.add_parser("accept", help="按用户明确指令发布原文草稿")
     accept.add_argument("--proposal-id", required=True)
-    accept.add_argument("--confirm-user-authored", action="store_true")
+    accept.add_argument(
+        "--confirm-user-authored",
+        dest="confirm_user_approved",
+        action="store_true",
+        help="兼容旧命令：用户已确认最终草稿",
+    )
+    accept.add_argument(
+        "--confirm-user-approved",
+        dest="confirm_user_approved",
+        action="store_true",
+        help="用户已明确确认最终草稿并要求正式创建",
+    )
     accept.add_argument("--transaction-id")
 
     withdraw = permanent_sub.add_parser("withdraw", help="撤销待处理草稿")
@@ -248,6 +264,7 @@ def dispatch(args: argparse.Namespace) -> tuple[dict[str, Any], int]:
                 args.type,
                 draft=_read_text(args.draft_file),
                 title=args.title,
+                user_approved_structure=args.confirm_user_approved_structure,
                 source_ids=_split_ids(args.source_ids),
                 from_ids=_split_ids(args.from_ids),
                 transaction_id=args.transaction_id,
@@ -255,7 +272,7 @@ def dispatch(args: argparse.Namespace) -> tuple[dict[str, Any], int]:
         elif args.permanent_command == "accept":
             result = service.permanent_accept(
                 args.proposal_id,
-                confirmed_by_user=args.confirm_user_authored,
+                confirmed_by_user=args.confirm_user_approved,
                 transaction_id=args.transaction_id,
             )
         elif args.permanent_command == "withdraw":
