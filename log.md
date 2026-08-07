@@ -26,3 +26,5 @@
 
 ## [2026-08-07T21:57:41+08:00] permanent-propose | AI 原生知识工具应把西西弗斯式维护交给 AI，把金字塔式思考留给人 | tx=first-permanent-propose-20260807
 
+## [2026-08-07T21:57:47+08:00] permanent-accept | AI 原生知识工具应把西西弗斯式维护交给 AI，把金字塔式思考留给人 | tx=first-permanent-accept-20260807
+

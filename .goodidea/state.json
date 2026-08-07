@@ -11,6 +11,7 @@
     },
     "PRP-bf0f8465e315": {
       "authoring_mode": "user_confirmed_agent_structured",
+      "card_id": "PER-20260807-967418f1",
       "card_type": "permanent",
       "draft_sha256": "a622834bb93a713f34af61aa3d316e8547725fa88bd6b84cbd5594c4be828623",
       "from_ids": [
@@ -23,7 +24,7 @@
         "SRC-91fc906a9943",
         "SRC-ddab8c91266b"
       ],
-      "status": "pending",
+      "status": "accepted",
       "title": "AI 原生知识工具应把西西弗斯式维护交给 AI，把金字塔式思考留给人"
     },
     "PRP-cd26b7583e59": {
@@ -188,6 +189,18 @@
       "summary": "持续生成的价值取决于创造与噪声抑制同时成立",
       "timestamp": "2026-08-04T21:45:41+08:00",
       "transaction_id": "e2e-wechat-permanent-propose-20260804"
+    },
+    "first-permanent-accept-20260807": {
+      "action": "permanent-accept",
+      "result": {
+        "card_id": "PER-20260807-967418f1",
+        "card_path": "永久空间/永久卡片/2026-08-07-AI-原生知识工具应把西西弗斯式维护交给-AI，把金字塔式思考留给人.md",
+        "card_type": "permanent",
+        "proposal_id": "PRP-bf0f8465e315"
+      },
+      "summary": "AI 原生知识工具应把西西弗斯式维护交给 AI，把金字塔式思考留给人",
+      "timestamp": "2026-08-07T21:57:47+08:00",
+      "transaction_id": "first-permanent-accept-20260807"
     },
     "first-permanent-propose-20260807": {
       "action": "permanent-propose",
