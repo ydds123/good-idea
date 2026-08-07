@@ -24,3 +24,5 @@
 
 ## [2026-08-07T20:59:59+08:00] maintain-sources | 规范化 2 份溯源笔记 | tx=baseline-source-layout-20260807
 
+## [2026-08-07T21:57:41+08:00] permanent-propose | AI 原生知识工具应把西西弗斯式维护交给 AI，把金字塔式思考留给人 | tx=first-permanent-propose-20260807
+
