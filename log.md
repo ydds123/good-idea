@@ -32,3 +32,5 @@
 
 ## [2026-08-09T11:50:52+08:00] maintain-index | 重新生成不展示摘要的内容索引 | tx=remove-index-summaries-20260809
 
+## [2026-08-09T12:37:59+08:00] maintain-metadata | 从 5 份正式内容移除过时摘要字段 | tx=remove-content-summaries-20260809
+

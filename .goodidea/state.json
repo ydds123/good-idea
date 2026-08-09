@@ -213,6 +213,23 @@
       "timestamp": "2026-08-07T21:57:41+08:00",
       "transaction_id": "first-permanent-propose-20260807"
     },
+    "remove-content-summaries-20260809": {
+      "action": "maintain-metadata",
+      "result": {
+        "changed": [
+          "闪念空间/2026-08-04-创造与幻觉警惕是一体两面。当我们利用-AI-能力进行持续生成时，也要具备相应能力.md",
+          "闪念空间/2026-08-04-区别于传统的一套基于硬代码编写的个人知识库，我觉得这是基于持续生成的-AI-原生.md",
+          "溯源空间/2026-08-04-LLM-Wiki.md",
+          "溯源空间/2026-08-04-用AI的这三年，想跟你分享这9条心得。.md",
+          "永久空间/永久卡片/2026-08-07-AI-原生知识工具应把西西弗斯式维护交给-AI，把金字塔式思考留给人.md"
+        ],
+        "count": 5,
+        "no_change": false
+      },
+      "summary": "从 5 份正式内容移除过时摘要字段",
+      "timestamp": "2026-08-09T12:37:59+08:00",
+      "transaction_id": "remove-content-summaries-20260809"
+    },
     "remove-index-summaries-20260809": {
       "action": "maintain-index",
       "result": {
