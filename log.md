@@ -71,3 +71,5 @@
 
 ## [2026-08-10T00:30:24+08:00] capture-todo | 开源AI电影《Hell Grind》：视频领域的控制论实践学习项目 | tx=todo-hellgrind-video-practice-20260810
 
+## [2026-08-10T00:34:51+08:00] capture-interesting | 《无期迷途》游戏美术风格：AI人像创作的参考方向 | tx=interesting-path-to-nowhere-20260810
+
