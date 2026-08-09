@@ -72,7 +72,7 @@
 
 - 只读任务：给出可核对的文件或命令证据，不创建内容、提案、日志或 Git 提交。
 - 内容写入：只能通过 CLI 完成；成功事务自动生成聚焦提交。随后运行 `goodidea lint` 和 `goodidea verify`，报告人类可读标题、路径与状态，默认不突出内部 ID。
-- 项目修改：运行 `uv run python -m unittest discover -s tests -v` 和 `git diff --check`；修改 Skills 时额外运行 `uv run python scripts/validate-skills.py`；最后运行 `goodidea verify`。
+- 项目修改：运行 `uv run python -m unittest discover -s tests -v` 和 `git diff --check`；修改 Skills 时额外运行 `uv run python scripts/validate-skills.py`；修改 Skill description 或任务路由时还要运行 `uv run python scripts/evaluate-skill-routing.py`，获得用户明确外发授权后才可增加 `--codex` 模型评测；最后运行 `goodidea verify`。
 - 提交边界：每个提交只包含本任务相关文件，不带入用户已有或其他任务的未提交修改；遇到目标文件脏改动时停止并说明。
 - 完成声明：只有相关检查通过且提交范围已审计后才能声称完成。若只被无关工作区改动阻止，必须明确列出这些改动，不得清除或顺手提交。
 

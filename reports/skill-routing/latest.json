@@ -1,0 +1,314 @@
+{
+  "generated_at": "2026-08-09T13:14:40+08:00",
+  "evidence_kind": "static_description_scan",
+  "status": "static_passed",
+  "skill_count": 7,
+  "case_count": 41,
+  "skills": [
+    "goodidea-capture-flash",
+    "goodidea-connect-cards",
+    "goodidea-form-permanent",
+    "goodidea-lint",
+    "goodidea-record-literature",
+    "goodidea-review-permanent",
+    "goodidea-review-process"
+  ],
+  "description_fingerprint": "a5b055ab519f92a69af465fe5a8faaeea9ea245fbf59d53a5025cef7e9bf24bb",
+  "contract_file": "tests/fixtures/skill-routing-cases.json",
+  "contract_errors": [],
+  "semantic_risk_hypotheses": [
+    {
+      "id": "permanent-entry-cluster",
+      "severity": "high",
+      "skills": [
+        "goodidea-capture-flash",
+        "goodidea-form-permanent",
+        "goodidea-review-permanent"
+      ],
+      "hypothesis": "口述想法和草稿是共享名词；没有明确永久卡片意图时必须只由 capture 接管，form 与 review 还要按形成动作和评估动作分开。",
+      "case_ids": [
+        "form-permanent-spoken",
+        "review-permanent-standard",
+        "neighbor-capture-not-permanent",
+        "neighbor-spoken-thought-capture",
+        "neighbor-author-boundary-form"
+      ]
+    },
+    {
+      "id": "network-membership-vs-semantic-edge",
+      "severity": "medium",
+      "skills": [
+        "goodidea-connect-cards",
+        "goodidea-lint"
+      ],
+      "hypothesis": "检查卡片是否存在于永久空间、索引和账本属于 lint；只有寻找或确认支持、冲突、限定、例证等语义边才属于 connect。",
+      "case_ids": [
+        "connect-zero-edge",
+        "lint-integrity",
+        "neighbor-connect-not-review",
+        "neighbor-membership-lint-not-connect"
+      ]
+    },
+    {
+      "id": "linked-source-vs-unlinked-note",
+      "severity": "medium",
+      "skills": [
+        "goodidea-capture-flash",
+        "goodidea-record-literature"
+      ],
+      "hypothesis": "record-literature 当前只能处理可访问 URL 的来源快照；无链接报告摘录和明确不保存的网页不应触发来源写入。",
+      "case_ids": [
+        "source-public-article",
+        "neighbor-link-with-thought",
+        "neighbor-unlinked-report-capture",
+        "no-route-read-url-only",
+        "no-route-local-pdf"
+      ]
+    },
+    {
+      "id": "content-review-vs-structural-lint",
+      "severity": "medium",
+      "skills": [
+        "goodidea-review-process",
+        "goodidea-lint"
+      ],
+      "hypothesis": "逐条让用户判断中间材料去向属于 review-process；只读检查结构、快照、索引、账本和 Git 属于 lint。",
+      "case_ids": [
+        "review-pending-flashes",
+        "lint-health-audit",
+        "neighbor-review-not-lint",
+        "compound-lint-then-review"
+      ]
+    }
+  ],
+  "recall_risk_hypotheses": [
+    {
+      "skill": "goodidea-record-literature",
+      "missing_intent": "刷新或更新已经保存的网页来源",
+      "case_ids": [
+        "source-refresh"
+      ]
+    },
+    {
+      "skill": "goodidea-form-permanent",
+      "missing_intent": "为正式卡片追加用户本人修订或行动反馈",
+      "case_ids": [
+        "form-action-feedback"
+      ]
+    }
+  ],
+  "static_overlap": {
+    "ok": true,
+    "threshold": 0.55,
+    "pair_scores": [
+      {
+        "skills": [
+          "goodidea-form-permanent",
+          "goodidea-review-permanent"
+        ],
+        "similarity": 0.675,
+        "above_threshold": true,
+        "declared_overlap": true,
+        "overlap_kind": "intentional_handoff",
+        "reason": "形成卡片是入口和写入所有者，审查卡片是苏格拉底式澄清阶段；同一请求可以顺序交接，但不能同时拥有写入。"
+      },
+      {
+        "skills": [
+          "goodidea-lint",
+          "goodidea-record-literature"
+        ],
+        "similarity": 0.237,
+        "above_threshold": false,
+        "declared_overlap": false
+      },
+      {
+        "skills": [
+          "goodidea-capture-flash",
+          "goodidea-review-process"
+        ],
+        "similarity": 0.209,
+        "above_threshold": false,
+        "declared_overlap": false
+      },
+      {
+        "skills": [
+          "goodidea-lint",
+          "goodidea-review-permanent"
+        ],
+        "similarity": 0.208,
+        "above_threshold": false,
+        "declared_overlap": false
+      },
+      {
+        "skills": [
+          "goodidea-record-literature",
+          "goodidea-review-permanent"
+        ],
+        "similarity": 0.202,
+        "above_threshold": false,
+        "declared_overlap": false
+      },
+      {
+        "skills": [
+          "goodidea-form-permanent",
+          "goodidea-record-literature"
+        ],
+        "similarity": 0.195,
+        "above_threshold": false,
+        "declared_overlap": false
+      },
+      {
+        "skills": [
+          "goodidea-form-permanent",
+          "goodidea-lint"
+        ],
+        "similarity": 0.174,
+        "above_threshold": false,
+        "declared_overlap": false
+      },
+      {
+        "skills": [
+          "goodidea-connect-cards",
+          "goodidea-lint"
+        ],
+        "similarity": 0.145,
+        "above_threshold": false,
+        "declared_overlap": false
+      },
+      {
+        "skills": [
+          "goodidea-record-literature",
+          "goodidea-review-process"
+        ],
+        "similarity": 0.14,
+        "above_threshold": false,
+        "declared_overlap": false
+      },
+      {
+        "skills": [
+          "goodidea-capture-flash",
+          "goodidea-record-literature"
+        ],
+        "similarity": 0.133,
+        "above_threshold": false,
+        "declared_overlap": false
+      },
+      {
+        "skills": [
+          "goodidea-connect-cards",
+          "goodidea-record-literature"
+        ],
+        "similarity": 0.126,
+        "above_threshold": false,
+        "declared_overlap": false
+      },
+      {
+        "skills": [
+          "goodidea-connect-cards",
+          "goodidea-review-permanent"
+        ],
+        "similarity": 0.126,
+        "above_threshold": false,
+        "declared_overlap": false
+      },
+      {
+        "skills": [
+          "goodidea-connect-cards",
+          "goodidea-review-process"
+        ],
+        "similarity": 0.123,
+        "above_threshold": false,
+        "declared_overlap": false
+      },
+      {
+        "skills": [
+          "goodidea-capture-flash",
+          "goodidea-review-permanent"
+        ],
+        "similarity": 0.122,
+        "above_threshold": false,
+        "declared_overlap": false
+      },
+      {
+        "skills": [
+          "goodidea-lint",
+          "goodidea-review-process"
+        ],
+        "similarity": 0.12,
+        "above_threshold": false,
+        "declared_overlap": false
+      },
+      {
+        "skills": [
+          "goodidea-capture-flash",
+          "goodidea-connect-cards"
+        ],
+        "similarity": 0.108,
+        "above_threshold": false,
+        "declared_overlap": false
+      },
+      {
+        "skills": [
+          "goodidea-capture-flash",
+          "goodidea-form-permanent"
+        ],
+        "similarity": 0.099,
+        "above_threshold": false,
+        "declared_overlap": false
+      },
+      {
+        "skills": [
+          "goodidea-connect-cards",
+          "goodidea-form-permanent"
+        ],
+        "similarity": 0.094,
+        "above_threshold": false,
+        "declared_overlap": false
+      },
+      {
+        "skills": [
+          "goodidea-review-permanent",
+          "goodidea-review-process"
+        ],
+        "similarity": 0.085,
+        "above_threshold": false,
+        "declared_overlap": false
+      },
+      {
+        "skills": [
+          "goodidea-form-permanent",
+          "goodidea-review-process"
+        ],
+        "similarity": 0.076,
+        "above_threshold": false,
+        "declared_overlap": false
+      },
+      {
+        "skills": [
+          "goodidea-capture-flash",
+          "goodidea-lint"
+        ],
+        "similarity": 0.051,
+        "above_threshold": false,
+        "declared_overlap": false
+      }
+    ],
+    "declared_high_overlaps": [
+      {
+        "skills": [
+          "goodidea-form-permanent",
+          "goodidea-review-permanent"
+        ],
+        "similarity": 0.675,
+        "above_threshold": true,
+        "declared_overlap": true,
+        "overlap_kind": "intentional_handoff",
+        "reason": "形成卡片是入口和写入所有者，审查卡片是苏格拉底式澄清阶段；同一请求可以顺序交接，但不能同时拥有写入。"
+      }
+    ],
+    "unapproved_high_overlaps": [],
+    "duplicate_description_groups": []
+  },
+  "runner": null,
+  "model_evaluation": null
+}

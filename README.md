@@ -163,16 +163,23 @@ good-idea/
 │       └── errors.py                    # 领域错误类型
 ├── scripts/
 │   ├── validate-skills.py               # 七个 Skills 的官方结构校验
+│   ├── evaluate-skill-routing.py         # 触发重叠、场景路由与冲突评测
 │   ├── run-maintenance.sh               # 闪念过期检查和仓库验证
 │   ├── install-maintenance.sh           # 安装 macOS 定时维护任务
 │   └── com.songhai.goodidea.maintenance.plist  # LaunchAgent 的六小时间隔配置
 ├── tests/
-│   ├── fixtures/                        # 本地测试输入样本
+│   ├── fixtures/
+│   │   └── skill-routing-cases.json     # 唯一路由、近邻、串联和不触发案例
 │   ├── test_cli.py                      # 公开 CLI 端到端测试
 │   ├── test_core.py                     # 核心状态、事务和回滚测试
 │   ├── test_web.py                      # 网页清洗和失败状态测试
 │   ├── test_skills.py                   # 七个 Skills 的流程契约测试
-│   └── test_skill_validator.py          # 官方校验器调用测试
+│   ├── test_skill_validator.py          # 官方校验器调用测试
+│   └── test_skill_routing.py            # 路由契约、冲突门禁和报告时效测试
+├── reports/
+│   └── skill-routing/
+│       ├── latest.json                  # 机器可读的最新路由评测证据
+│       └── latest.md                    # 人类可读的冲突与误路由报告
 ├── pyproject.toml                      # Python 项目、命令入口和依赖声明
 ├── uv.lock                             # 可复现开发环境锁文件
 ├── .python-version                     # 项目使用的 Python 版本
@@ -270,6 +277,7 @@ Skills 只负责对话、判断和选择何时调用命令。脆弱写入、状�
 | 文件 | 作用 |
 |---|---|
 | `validate-skills.py` | 找到官方校验器并逐一验证七个项目级 Skills |
+| `evaluate-skill-routing.py` | 静态扫描 description 重叠，并可选调用只读 Codex 对中文场景做批量路由评测 |
 | `run-maintenance.sh` | 执行闪念过期检查和仓库验证 |
 | `com.songhai.goodidea.maintenance.plist` | 定义 macOS LaunchAgent：登录时运行，之后每 6 小时运行一次 |
 | `install-maintenance.sh` | 安装或更新本机 LaunchAgent 及运行脚本 |
@@ -285,6 +293,7 @@ Skills 只负责对话、判断和选择何时调用命令。脆弱写入、状�
 | `test_web.py` | URL 规范化、正文清洗、登录限制、抓取失败和提示注入隔离 |
 | `test_skills.py` | 七个 Skills 是否暴露正确流程与 CLI 契约 |
 | `test_skill_validator.py` | 官方 Skill 校验器的发现、成功和错误报告 |
+| `test_skill_routing.py` | 七个 Skill 的案例覆盖、允许交接、同阶段冲突门禁及报告是否过期 |
 | `fixtures/` | 自动化测试使用的本地输入样本 |
 
 运行全部自动化测试：
@@ -292,6 +301,20 @@ Skills 只负责对话、判断和选择何时调用命令。脆弱写入、状�
 ```bash
 uv run python -m unittest discover -s tests -v
 ```
+
+七个 Skill 的触发路由另有一套专门评测。完全本地的静态扫描运行：
+
+```bash
+uv run python scripts/evaluate-skill-routing.py
+```
+
+它会检查七个 description 的重复和高相似度，并验证 41 条案例契约是否覆盖唯一主路由、近邻排除、正常顺序协作和不应触发。需要模型语义判断时，在明确允许把七个 description 与这些合成案例发送给 Codex 后运行：
+
+```bash
+uv run python scripts/evaluate-skill-routing.py --codex
+```
+
+报告保存到 `reports/skill-routing/`。静态扫描只能证明文本重叠风险，不能冒充真实模型触发；`--codex` 当前使用一次批量只读分类，不是 Codex 原生 Skill 激活遥测，也不等同于 41 个独立会话。
 
 ### 其他环境与版本文件
 
