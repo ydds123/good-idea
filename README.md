@@ -22,7 +22,7 @@ AI 原生不等于让模型任意生成。系统只约束一个大的可能性�
 - `闪念空间/` 回答“我看到它时产生了什么念头”。
 - `永久空间/` 回答“我连接并思考这些念头后，形成了什么认识”。
 
-溯源空间不设置“文献笔记”中间层，也不自动生成摘要、作者观点或用户理解。
+溯源空间不设置“文献笔记”中间层，也不自动生成摘要、作者观点或用户理解。五个空间的正式内容都不保存 `summary` 元数据；Git 日志中的操作说明只是事务记录，不是卡片摘要。
 
 ## 认知流转
 
@@ -195,6 +195,8 @@ good-idea/
 | `index.md` | 按空间列出标题链接和中文状态，不展示摘要 | 不要手工改，由 CLI 生成 |
 | `log.md` | 记录每次成功写事务的时间、动作和事务 ID | 不要手工改，只允许 CLI 追加 |
 
+文档发生冲突时，权威顺序是：`AGENTS.md` 的人机权责高于 `schema.md` 的机器契约，项目 Skills 只能在二者边界内定义对话流程，`README.md` 只负责解释，`.goodidea/baseline/` 保存历史依据。冲突必须先交给用户决定，不能由 Agent 选择性执行。
+
 ### `.agents/skills/`：Agent 协作流程
 
 项目级 Skills 位于 `.agents/skills/<skill-name>/`。每个 Skill 的核心文件是 `SKILL.md`；`agents/openai.yaml` 保存 Codex UI 使用的名称、简介和默认提示。不要在每个 Skill 里另建 README，共享说明集中维护在本文件，具体工作流留在对应 `SKILL.md`。
@@ -344,6 +346,7 @@ uv run goodidea --root /Users/apple/Documents/Claude/good-idea <命令>
 | `goodidea maintain filenames` | 统一日期加标题文件名并修复链接 | 是，记录维护事务 |
 | `goodidea maintain sources` | 规范来源快照结构 | 是，记录维护事务 |
 | `goodidea maintain index` | 重新生成只含标题和状态的索引 | 是，记录维护事务 |
+| `goodidea maintain metadata` | 从正式内容移除已废弃的 `summary` 字段 | 是，记录维护事务 |
 | `goodidea permanent propose` | 提交用户确认后的永久卡片候选 | 是 |
 | `goodidea permanent accept` | 用户明确确认后发布正式卡片 | 是 |
 | `goodidea permanent withdraw` | 撤销错误或过时候选 | 是 |

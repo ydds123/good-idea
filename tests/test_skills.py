@@ -11,13 +11,13 @@ PROJECT = Path(__file__).resolve().parents[1]
 class ProjectSkillTests(unittest.TestCase):
     def test_all_seven_skill_packages_expose_the_expected_cli_contract(self):
         expected = {
-            "goodidea-capture-flash": ["capture flash", "interesting", "todo"],
-            "goodidea-record-literature": ["source preview", "source commit", "不创建文献笔记层"],
+            "goodidea-capture-flash": ["capture flash", "interesting", "todo", "不在 Frontmatter 保存 `summary`"],
+            "goodidea-record-literature": ["source preview", "source commit", "不创建文献笔记层", "不写内容摘要或 `summary` 元数据"],
             "goodidea-review-process": ["goodidea --root <仓库> review", "review --expire"],
             "goodidea-form-permanent": ["permanent propose", "--draft-file", "一次一个问题", "--confirm-user-approved-structure", "--confirm-user-approved", "permanent withdraw"],
             "goodidea-review-permanent": ["permanent accept", "不生成正文候选内容", "完整待确认草稿", "每轮只提出一个"],
             "goodidea-connect-cards": ["connect propose", "connect accept", "零连接节点"],
-            "goodidea-lint": ["goodidea --root <仓库> lint", "goodidea --root <仓库> verify"],
+            "goodidea-lint": ["goodidea --root <仓库> lint", "goodidea --root <仓库> verify", "goodidea maintain metadata"],
         }
         skills_root = PROJECT / ".agents" / "skills"
         discovered = {path.name for path in skills_root.iterdir() if path.is_dir()}

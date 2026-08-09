@@ -297,7 +297,6 @@ class GoodIdeaService:
             "status": _default_status(kind),
             "created_at": timestamp,
             "updated_at": timestamp,
-            "summary": text.strip().replace("\n", " ")[:100],
             "source_ids": [source_id] if source_id else [],
         }
         sections = [("原始记录", text)]
@@ -465,7 +464,6 @@ class GoodIdeaService:
                 ).hexdigest(),
                 "image_failures": failures,
                 "flash_ids": [flash_id],
-                "summary": "原文快照，关联 1 张闪念",
             }
 
         flash_rel = self._new_note_path("flash", flash_title, timestamp)
@@ -481,7 +479,6 @@ class GoodIdeaService:
                 datetime.now().astimezone() + timedelta(hours=48)
             ).isoformat(timespec="seconds"),
             "source_ids": [source_id],
-            "summary": motivation.strip().replace("\n", " ")[:100],
         }
         flash_note = render_note(
             flash_meta,
@@ -496,9 +493,6 @@ class GoodIdeaService:
             source_meta["updated_at"] = timestamp
             source_meta["flash_ids"] = list(
                 dict.fromkeys([*source_meta.get("flash_ids", []), flash_id])
-            )
-            source_meta["summary"] = (
-                f"原文快照，关联 {len(source_meta['flash_ids'])} 张闪念"
             )
             source_note = add_list_item_to_section(
                 source_note, "关联闪念", flash_link
@@ -858,14 +852,6 @@ class GoodIdeaService:
             "authoring_mode": authoring_mode,
             "source_ids": record.get("source_ids", []),
             "derived_from": record.get("from_ids", []),
-            "summary": next(
-                (
-                    line.strip()[:100]
-                    for line in normalized_draft.splitlines()
-                    if line.strip() and not line.lstrip().startswith("#")
-                ),
-                title,
-            ),
         }
         card_text = dump_frontmatter(metadata) + normalized_draft
         writes: dict[Path, str | bytes] = {card_rel: card_text}
@@ -1230,6 +1216,47 @@ class GoodIdeaService:
             result={"no_change": False},
         )
 
+    def maintain_metadata(
+        self,
+        *,
+        transaction_id: str | None = None,
+    ) -> dict[str, Any]:
+        txid = transaction_id or new_transaction_id("maintain-metadata")
+        if existing := self._idempotent(txid):
+            return existing
+        self.repo.preflight_integrity()
+        writes: dict[Path, str | bytes] = {}
+        changed: list[str] = []
+        for location in TYPE_LOCATIONS.values():
+            for path in sorted((self.repo.root / location).glob("*.md")):
+                rel = path.relative_to(self.repo.root)
+                text = path.read_text(encoding="utf-8")
+                metadata, _ = parse_document(text)
+                if "summary" not in metadata:
+                    continue
+                metadata.pop("summary")
+                writes[rel] = replace_frontmatter(text, metadata)
+                changed.append(rel.as_posix())
+        state = self.repo.read_state()
+        result = {
+            "no_change": not changed,
+            "changed": changed,
+            "count": len(changed),
+        }
+        summary = (
+            f"从 {len(changed)} 份正式内容移除过时摘要字段"
+            if changed
+            else "正式内容已经不包含摘要字段"
+        )
+        return self.repo.commit(
+            transaction_id=txid,
+            action="maintain-metadata",
+            summary=summary,
+            writes=writes,
+            state=state,
+            result=result,
+        )
+
     def connect_propose(
         self,
         from_id: str,
@@ -1449,6 +1476,8 @@ class GoodIdeaService:
                 missing = validate_required_metadata(metadata)
                 if missing:
                     issues.append(f"{rel}: 缺少字段 {missing}")
+                if "summary" in metadata:
+                    issues.append(f"{rel}: 正式内容不得包含过时字段 summary")
                 if metadata.get("type") != expected_type:
                     issues.append(
                         f"{rel}: 目录要求 {expected_type}，实际 {metadata.get('type')}"

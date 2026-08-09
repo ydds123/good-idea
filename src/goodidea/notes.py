@@ -121,6 +121,7 @@ def normalize_source_layout(note: str) -> str:
     metadata, _ = parse_document(note)
     metadata = dict(metadata)
     metadata.pop("source_url", None)
+    metadata.pop("summary", None)
 
     _, snapshot_content, _, _ = extract_snapshot(note)
     snapshot_lines = normalize_snapshot(snapshot_content).splitlines()
@@ -176,9 +177,6 @@ def normalize_source_layout(note: str) -> str:
     next_heading = re.search(r"(?m)^## ", note[link_start:])
     link_end = link_start + next_heading.start() if next_heading else len(note)
     links = note[link_start:link_end].strip() or "_暂无_"
-    link_count = len(re.findall(r"(?m)^-\s+\[\[", links))
-    metadata["summary"] = f"原文快照，关联 {link_count} 张闪念"
-
     return (
         dump_frontmatter(metadata)
         + f"# {metadata['title']}\n\n"

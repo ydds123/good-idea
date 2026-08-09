@@ -61,6 +61,7 @@ class GoodIdeaCliTests(unittest.TestCase):
         self.assertIn("YYYY-MM-DD-标题.md", fresh_schema)
         self.assertIn("内部 ID", fresh_schema)
         self.assertIn("Obsidian", fresh_schema)
+        self.assertIn("正式内容不保存 `summary`", fresh_schema)
 
         captured = run_cli(
             "--root",
@@ -78,6 +79,10 @@ class GoodIdeaCliTests(unittest.TestCase):
         path = Path(result["result"]["path"])
         self.assertRegex(path.name, r"^\d{4}-\d{2}-\d{2}-.+\.md$")
         self.assertNotIn(result["result"]["id"], path.name)
+        self.assertNotIn(
+            "summary:",
+            (self.root / path).read_text(encoding="utf-8"),
+        )
 
         maintained = run_cli(
             "--root",
@@ -101,6 +106,21 @@ class GoodIdeaCliTests(unittest.TestCase):
         self.assertEqual(maintained_index.returncode, 0, maintained_index.stderr)
         self.assertTrue(
             json.loads(maintained_index.stdout)["result"]["no_change"]
+        )
+
+        maintained_metadata = run_cli(
+            "--root",
+            str(self.root),
+            "maintain",
+            "metadata",
+            "--transaction-id",
+            "cli-maintain-metadata-noop",
+        )
+        self.assertEqual(
+            maintained_metadata.returncode, 0, maintained_metadata.stderr
+        )
+        self.assertTrue(
+            json.loads(maintained_metadata.stdout)["result"]["no_change"]
         )
 
         verified = run_cli("--root", str(self.root), "verify")

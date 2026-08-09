@@ -12,6 +12,7 @@ from goodidea.errors import GitError, IntegrityError, TransactionError, Validati
 from goodidea.metadata import dump_frontmatter, parse_document, replace_frontmatter
 from goodidea.notes import (
     SNAPSHOT_END,
+    TYPE_LOCATIONS,
     extract_snapshot,
     snapshot_hash,
     validate_source_note,
@@ -173,7 +174,7 @@ class GoodIdeaCoreTests(unittest.TestCase):
         self.assertEqual(second["result"]["source_id"], data["source_id"])
         self.assertNotEqual(second["result"]["flash_id"], data["flash_id"])
         updated_source = self.repo.find_note(data["source_id"])
-        self.assertEqual(updated_source[2]["summary"], "原文快照，关联 2 张闪念")
+        self.assertNotIn("summary", updated_source[2])
         self.assertNotIn("## 文献笔记", updated_source[1])
 
     def test_source_maintenance_migrates_legacy_wrapper_and_is_revertible(self):
@@ -226,7 +227,7 @@ class GoodIdeaCoreTests(unittest.TestCase):
         self.assertNotIn("原始链接：", updated)
         self.assertNotIn("## 文献笔记", updated)
         self.assertLess(updated.index("## 原文快照"), updated.index("## 关联闪念"))
-        self.assertEqual(updated_meta["summary"], "原文快照，关联 1 张闪念")
+        self.assertNotIn("summary", updated_meta)
         _, migrated_snapshot, _, _ = extract_snapshot(updated)
         self.assertEqual(migrated_snapshot.split("\n\n", 1)[1], article_body)
         validate_source_note(updated, rel.as_posix())
@@ -292,7 +293,7 @@ class GoodIdeaCoreTests(unittest.TestCase):
         self.assertNotIn("第一条闪念正文", index)
         self.assertNotIn("第二条闪念正文", index)
 
-    def test_index_maintenance_removes_all_visible_summaries(self):
+    def test_index_never_displays_content_body(self):
         captured = self.service.capture(
             "flash",
             text="索引中的这段摘要不应展示给读者。",
@@ -303,6 +304,11 @@ class GoodIdeaCoreTests(unittest.TestCase):
         generated = index_path.read_text(encoding="utf-8")
         self.assertIn("索引只显示标题", generated)
         self.assertNotIn("这段摘要不应展示", generated)
+        captured_text = (self.root / captured["result"]["path"]).read_text(
+            encoding="utf-8"
+        )
+        captured_meta, _ = parse_document(captured_text)
+        self.assertNotIn("summary", captured_meta)
 
         index_path.write_text("# 旧索引\n\n- 错误摘要\n", encoding="utf-8")
         git(self.root, "add", "index.md")
@@ -319,6 +325,97 @@ class GoodIdeaCoreTests(unittest.TestCase):
         )
         self.assertTrue(replay["idempotent"])
         self.assertEqual(replay["result"], maintained["result"])
+
+    def test_metadata_maintenance_removes_legacy_summaries_from_all_types(self):
+        for kind, title in (
+            ("flash", "旧闪念摘要"),
+            ("interesting", "旧有意思摘要"),
+            ("todo", "旧待办摘要"),
+        ):
+            self.service.capture(
+                kind,
+                text=f"{title}对应的用户原始内容，迁移不能改动正文。",
+                title=title,
+                transaction_id=f"tx-metadata-{kind}",
+            )
+        source = self.service.source_commit(
+            self.preview(text="来源快照必须在元数据迁移前后逐字一致。"),
+            motivation="我需要验证删除旧摘要字段不会改变受保护的来源快照。",
+            transaction_id="tx-metadata-source",
+        )["result"]
+        for card_type, title in (
+            ("permanent", "旧永久卡片摘要"),
+            ("mother", "旧母题卡片摘要"),
+            ("action", "旧行动卡片摘要"),
+            ("index", "旧索引卡片摘要"),
+        ):
+            proposal = self.service.permanent_propose(
+                card_type,
+                draft=(
+                    f"# {title}\n\n"
+                    "这是用户已经确认的完整正文，用来验证旧元数据迁移不会改动正式卡片内容。\n"
+                ),
+                transaction_id=f"tx-metadata-propose-{card_type}",
+            )
+            self.service.permanent_accept(
+                proposal["result"]["proposal_id"],
+                confirmed_by_user=True,
+                transaction_id=f"tx-metadata-accept-{card_type}",
+            )
+
+        source_rel = Path(source["source_path"])
+        source_before = (self.root / source_rel).read_text(encoding="utf-8")
+        _, snapshot_before, _, _ = extract_snapshot(source_before)
+        snapshot_digest_before = snapshot_hash(snapshot_before)
+        formal_paths: list[Path] = []
+        for location in TYPE_LOCATIONS.values():
+            for path in sorted((self.root / location).glob("*.md")):
+                rel = path.relative_to(self.root)
+                text = path.read_text(encoding="utf-8")
+                metadata, _ = parse_document(text)
+                metadata["summary"] = "旧版正式内容摘要"
+                path.write_text(replace_frontmatter(text, metadata), encoding="utf-8")
+                formal_paths.append(rel)
+        git(self.root, "add", *[path.as_posix() for path in formal_paths])
+        git(self.root, "commit", "-m", "test fixture: legacy formal summaries")
+
+        lint_before = self.service.lint()
+        self.assertFalse(lint_before["ok"])
+        self.assertTrue(
+            any("过时字段 summary" in issue for issue in lint_before["issues"])
+        )
+        migrated = self.service.maintain_metadata(
+            transaction_id="tx-maintain-metadata"
+        )
+        self.assertEqual(migrated["result"]["count"], len(formal_paths))
+        for rel in formal_paths:
+            metadata, _ = parse_document(
+                (self.root / rel).read_text(encoding="utf-8")
+            )
+            self.assertNotIn("summary", metadata, rel.as_posix())
+        _, snapshot_after, _, _ = extract_snapshot(
+            (self.root / source_rel).read_text(encoding="utf-8")
+        )
+        self.assertEqual(snapshot_after, snapshot_before)
+        self.assertEqual(snapshot_hash(snapshot_after), snapshot_digest_before)
+        self.assertTrue(self.service.lint()["ok"])
+
+        replay = self.service.maintain_metadata(
+            transaction_id="tx-maintain-metadata"
+        )
+        self.assertTrue(replay["idempotent"])
+        self.assertEqual(replay["result"], migrated["result"])
+
+        self.service.rollback(migrated["commit"], confirmed=True)
+        for rel in formal_paths:
+            metadata, _ = parse_document(
+                (self.root / rel).read_text(encoding="utf-8")
+            )
+            self.assertEqual(metadata["summary"], "旧版正式内容摘要")
+        _, restored_snapshot, _, _ = extract_snapshot(
+            (self.root / source_rel).read_text(encoding="utf-8")
+        )
+        self.assertEqual(restored_snapshot, snapshot_before)
 
     def test_lint_checks_obsidian_reading_baseline(self):
         app_path = self.root / ".obsidian/app.json"

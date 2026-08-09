@@ -93,6 +93,10 @@ def build_parser() -> argparse.ArgumentParser:
         "index", help="重新生成只展示标题和状态的内容索引"
     )
     index.add_argument("--transaction-id")
+    metadata = maintain_sub.add_parser(
+        "metadata", help="从正式内容移除已废弃的 summary 字段"
+    )
+    metadata.add_argument("--transaction-id")
 
     permanent = sub.add_parser("permanent", help="用户原文草稿与永久卡片状态流转")
     permanent_sub = permanent.add_subparsers(
@@ -264,6 +268,8 @@ def dispatch(args: argparse.Namespace) -> tuple[dict[str, Any], int]:
         result = service.maintain_sources(transaction_id=args.transaction_id)
     elif args.command == "maintain" and args.maintain_command == "index":
         result = service.maintain_index(transaction_id=args.transaction_id)
+    elif args.command == "maintain" and args.maintain_command == "metadata":
+        result = service.maintain_metadata(transaction_id=args.transaction_id)
     elif args.command == "permanent":
         if args.permanent_command == "propose":
             result = service.permanent_propose(
