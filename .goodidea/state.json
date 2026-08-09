@@ -1,49 +1,5 @@
 {
   "connections": [],
-  "proposals": {
-    "PRP-5a9bfa3f1970": {
-      "card_type": "permanent",
-      "kind": "permanent",
-      "path": ".goodidea/proposals/permanent/PRP-5a9bfa3f1970.md",
-      "status": "withdrawn",
-      "withdraw_reason": "该候选由系统越权生成，并非用户亲自撰写，现按用户要求撤销",
-      "withdrawn_at": "2026-08-04T22:23:49+08:00"
-    },
-    "PRP-bf0f8465e315": {
-      "authoring_mode": "user_confirmed_agent_structured",
-      "card_id": "PER-20260807-967418f1",
-      "card_type": "permanent",
-      "draft_sha256": "a622834bb93a713f34af61aa3d316e8547725fa88bd6b84cbd5594c4be828623",
-      "from_ids": [
-        "FLA-20260804-ef47fdc1",
-        "FLA-20260804-56576c4c"
-      ],
-      "kind": "permanent",
-      "path": ".goodidea/proposals/permanent/PRP-bf0f8465e315.md",
-      "source_ids": [
-        "SRC-91fc906a9943",
-        "SRC-ddab8c91266b"
-      ],
-      "status": "accepted",
-      "title": "AI 原生知识工具应把西西弗斯式维护交给 AI，把金字塔式思考留给人"
-    },
-    "PRP-cd26b7583e59": {
-      "card_type": "mother",
-      "kind": "permanent",
-      "path": ".goodidea/proposals/permanent/PRP-cd26b7583e59.md",
-      "status": "withdrawn",
-      "withdraw_reason": "该候选由系统越权生成，并非用户亲自撰写，现按用户要求撤销",
-      "withdrawn_at": "2026-08-04T22:23:59+08:00"
-    },
-    "PRP-e863027285ee": {
-      "card_type": "permanent",
-      "kind": "permanent",
-      "path": ".goodidea/proposals/permanent/PRP-e863027285ee.md",
-      "status": "withdrawn",
-      "withdraw_reason": "该候选由系统越权生成，并非用户亲自撰写，现按用户要求撤销",
-      "withdrawn_at": "2026-08-04T22:24:07+08:00"
-    }
-  },
   "rollbacks": [
     {
       "commit": "7e40c07c26818dfc71ee32a12a2b1bc9b2ab9c66",
@@ -53,18 +9,6 @@
     }
   ],
   "schema_version": "0.1",
-  "sources": {
-    "https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f": {
-      "id": "SRC-91fc906a9943",
-      "path": "溯源空间/2026-08-04-LLM-Wiki.md",
-      "title": "LLM Wiki"
-    },
-    "https://mp.weixin.qq.com/s/vTv0Vu4RgrMkmLbXGvnSug": {
-      "id": "SRC-ddab8c91266b",
-      "path": "溯源空间/2026-08-04-用AI的这三年，想跟你分享这9条心得。.md",
-      "title": "用AI的这三年，想跟你分享这9条心得。"
-    }
-  },
   "transactions": {
     "baseline-readable-filenames-20260807": {
       "action": "maintain-filenames",
@@ -220,6 +164,20 @@
       "summary": "AI 原生知识工具应把西西弗斯式维护交给 AI，把金字塔式思考留给人",
       "timestamp": "2026-08-07T21:57:41+08:00",
       "transaction_id": "first-permanent-propose-20260807"
+    },
+    "maintain-contracts-20260809": {
+      "action": "maintain-contracts",
+      "result": {
+        "cleaned_fields": 4,
+        "deleted_terminal_proposals": 4,
+        "removed_state_mirrors": [
+          "sources",
+          "proposals"
+        ]
+      },
+      "summary": "移除可推导状态镜像与已终结候选",
+      "timestamp": "2026-08-09T18:29:16+08:00",
+      "transaction_id": "maintain-contracts-20260809"
     },
     "remove-content-summaries-20260809": {
       "action": "maintain-metadata",
