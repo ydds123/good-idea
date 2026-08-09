@@ -34,3 +34,5 @@
 
 ## [2026-08-09T12:37:59+08:00] maintain-metadata | 从 5 份正式内容移除过时摘要字段 | tx=remove-content-summaries-20260809
 
+## [2026-08-09T14:40:53+08:00] source-commit | 控制论与科学方法论 + 保存动机 | tx=source-control-theory-20260809-v1
+
