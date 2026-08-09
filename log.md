@@ -28,3 +28,5 @@
 
 ## [2026-08-07T21:57:47+08:00] permanent-accept | AI 原生知识工具应把西西弗斯式维护交给 AI，把金字塔式思考留给人 | tx=first-permanent-accept-20260807
 
+## [2026-08-09T10:55:08+08:00] maintain-sources | 规范化 2 份来源快照 | tx=remove-literature-layer-20260809
+

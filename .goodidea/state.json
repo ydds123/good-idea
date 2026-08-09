@@ -213,6 +213,19 @@
       "timestamp": "2026-08-07T21:57:41+08:00",
       "transaction_id": "first-permanent-propose-20260807"
     },
+    "remove-literature-layer-20260809": {
+      "action": "maintain-sources",
+      "result": {
+        "changed": [
+          "溯源空间/2026-08-04-LLM-Wiki.md",
+          "溯源空间/2026-08-04-用AI的这三年，想跟你分享这9条心得。.md"
+        ],
+        "count": 2
+      },
+      "summary": "规范化 2 份来源快照",
+      "timestamp": "2026-08-09T10:55:08+08:00",
+      "transaction_id": "remove-literature-layer-20260809"
+    },
     "review-expire-20260806215314-b66ff66d": {
       "action": "review-expire",
       "result": {
