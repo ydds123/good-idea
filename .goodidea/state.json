@@ -557,6 +557,17 @@
       "timestamp": "2026-08-09T18:49:39+08:00",
       "transaction_id": "source-possibility-discussion-capture-20260809-v2"
     },
+    "todo-ai-industry-mother-20260810": {
+      "action": "capture-todo",
+      "result": {
+        "id": "TODO-20260810-b63907fe",
+        "path": "待办空间/2026-08-10-AI产业链思考沉淀：算力-模型-应用平台层级梳理-→-永久母题.md",
+        "type": "todo"
+      },
+      "summary": "AI产业链思考沉淀：算力/模型/应用平台层级梳理 → 永久母题",
+      "timestamp": "2026-08-10T01:01:44+08:00",
+      "transaction_id": "todo-ai-industry-mother-20260810"
+    },
     "todo-flash-alert-20260809": {
       "action": "capture-todo",
       "result": {

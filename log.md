@@ -81,3 +81,5 @@
 
 ## [2026-08-10T00:47:52+08:00] capture-revise | 母题级课题：AI图像/摄影与视觉叙事的 skill 化 | tx=revise-visual-narrative-v2-20260810
 
+## [2026-08-10T01:01:44+08:00] capture-todo | AI产业链思考沉淀：算力/模型/应用平台层级梳理 → 永久母题 | tx=todo-ai-industry-mother-20260810
+
