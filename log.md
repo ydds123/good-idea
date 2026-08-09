@@ -65,3 +65,5 @@
 
 ## [2026-08-10T00:08:19+08:00] capture-todo | 如何更好地使用你（Hermes精装配置研究） | tx=capture-todo-20260810000819-290076b9
 
+## [2026-08-10T00:10:15+08:00] capture-revise | 闪念卡片每晚 8 点飞书预警机制 | tx=revise-anthropomorphic-upgrade-20260810
+
