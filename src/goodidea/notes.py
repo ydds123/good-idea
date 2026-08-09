@@ -205,6 +205,38 @@ def add_list_item_to_section(note: str, heading: str, item: str) -> str:
     return note[:position] + section + note[next_heading:]
 
 
+def replace_section(note: str, heading: str, content: str) -> str:
+    marker = f"## {heading}\n"
+    position = note.find(marker)
+    replacement = f"## {heading}\n\n{content.strip()}\n"
+    if position < 0:
+        return note.rstrip() + "\n\n" + replacement
+    next_heading = note.find("\n## ", position + len(marker))
+    if next_heading < 0:
+        next_heading = len(note)
+    return note[:position] + replacement + note[next_heading:]
+
+
+def remove_section(note: str, heading: str) -> str:
+    marker = f"## {heading}\n"
+    position = note.find(marker)
+    if position < 0:
+        return note
+    next_heading = note.find("\n## ", position + len(marker))
+    if next_heading < 0:
+        return note[:position].rstrip() + "\n"
+    return note[:position].rstrip() + "\n\n" + note[next_heading + 1 :]
+
+
+def render_source_anchors(
+    anchors: list[tuple[str, str]], *, boundary: str = ""
+) -> str:
+    lines = [f"- {link}：{explanation.strip()}" for link, explanation in anchors]
+    if boundary.strip():
+        lines.extend(["", f"边界说明：{boundary.strip()}"])
+    return "\n".join(lines)
+
+
 def render_note(
     metadata: dict[str, Any], sections: list[tuple[str, str]]
 ) -> str:
@@ -221,7 +253,9 @@ def render_flash_event(metadata: dict[str, Any], event: dict[str, Any]) -> str:
     sections.append(("闪念内容", str(event["body"])))
     if event.get("activated_logic"):
         sections.append(("激活逻辑", str(event["activated_logic"])))
-    if event.get("source_anchor"):
+    if event.get("source_anchors"):
+        sections.append(("来源与论证锚点", "_来源链接将在后台维护完成后补入。_"))
+    elif event.get("source_anchor"):
         sections.append(("来源与论证锚点", str(event["source_anchor"])))
     return render_note(metadata, sections)
 

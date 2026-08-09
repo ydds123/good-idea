@@ -91,6 +91,11 @@ def build_parser() -> argparse.ArgumentParser:
     finalize_capture.add_argument("--proposal-id", required=True)
     finalize_capture.add_argument("--confirm-discussion-complete", action="store_true")
     finalize_capture.add_argument("--transaction-id", required=True)
+    revise_anchors = capture_sub.add_parser("revise-source-anchors")
+    revise_anchors.add_argument("--flash-id", required=True)
+    revise_anchors.add_argument("--manifest-file", required=True)
+    revise_anchors.add_argument("--confirm-user-correction", action="store_true")
+    revise_anchors.add_argument("--transaction-id", required=True)
     maintenance_status = capture_sub.add_parser("maintenance-status")
     maintenance_status.add_argument("--session-id", default="")
     maintenance_update = capture_sub.add_parser("maintenance-update")
@@ -126,6 +131,7 @@ def build_parser() -> argparse.ArgumentParser:
     source_commit.add_argument("--preview-file", required=True)
     source_commit.add_argument("--motivation", default="")
     source_commit.add_argument("--attach-flash-ids", default="")
+    source_commit.add_argument("--anchor-explanation", default="")
     source_commit.add_argument("--maintenance-job-id", default="")
     source_commit.add_argument("--transaction-id")
 
@@ -384,6 +390,18 @@ def dispatch(args: argparse.Namespace) -> tuple[dict[str, Any], int]:
             confirmed_by_user=args.confirm_discussion_complete,
             transaction_id=args.transaction_id,
         )
+    elif args.command == "capture" and args.capture_command == "revise-source-anchors":
+        manifest = _read_json(args.manifest_file)
+        anchors = manifest.get("anchors")
+        if not isinstance(anchors, list):
+            raise ValidationError("来源锚点 manifest 必须包含 anchors 数组")
+        result = service.revise_flash_source_anchors(
+            args.flash_id,
+            anchors=anchors,
+            boundary=str(manifest.get("boundary") or ""),
+            confirmed_by_user=args.confirm_user_correction,
+            transaction_id=args.transaction_id,
+        )
     elif args.command == "capture" and args.capture_command == "maintenance-status":
         runtime = CaptureRuntime(repo.root)
         result = runtime.maintenance_status(args.session_id)
@@ -406,6 +424,7 @@ def dispatch(args: argparse.Namespace) -> tuple[dict[str, Any], int]:
             _read_json(args.preview_file),
             motivation=args.motivation,
             attach_flash_ids=_split_ids(args.attach_flash_ids),
+            anchor_explanation=args.anchor_explanation,
             maintenance_job_id=args.maintenance_job_id,
             transaction_id=args.transaction_id,
         )

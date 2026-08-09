@@ -246,7 +246,13 @@ class GoodIdeaCoreTests(unittest.TestCase):
             )
         event = {
             **base,
-            "source_anchor": "外部作图文章的出卷人概念与用户提到的控制论原书。",
+            "source_anchors": [
+                {
+                    "context_ref": "https://example.com/article",
+                    "explanation": "提供出卷人概念及其作图实践。",
+                }
+            ],
+            "source_boundary": "跨文本关系属于用户提出的研究连接。",
             "trigger_anchor": "研究 ChatGPT 生图时突然把过去分散的阅读和讨论连了起来，并感到兴奋。",
             "activated_logic": "具体作图实践触发方法类比，再回接抽象理论底座。",
         }
@@ -263,6 +269,63 @@ class GoodIdeaCoreTests(unittest.TestCase):
         )
         for heading in ("触发情境", "闪念内容", "激活逻辑", "来源与论证锚点"):
             self.assertIn(f"## {heading}", note)
+        job_id = finalized["result"]["maintenance_job_ids"][0]
+        linked = self.service.source_commit(
+            self.preview(),
+            attach_flash_ids=[finalized["result"]["flashes"][0]["id"]],
+            maintenance_job_id=job_id,
+            transaction_id="event-v2-source",
+        )
+        note = (self.root / linked["result"]["flash_paths"][0]).read_text(
+            encoding="utf-8"
+        )
+        self.assertIn("[[溯源空间/", note)
+        self.assertIn("：提供出卷人概念及其作图实践。", note)
+        self.assertIn("边界说明：跨文本关系属于用户提出的研究连接。", note)
+        self.assertNotIn("## 关联来源", note)
+
+    def test_revise_flash_source_anchors_merges_links_and_explanations(self):
+        first = self.service.source_commit(
+            self.preview(), motivation="保存用于形成第一条闪念。",
+            transaction_id="anchor-first-source",
+        )
+        second_preview = self.local_preview(filename="第二来源.md", title="第二来源")
+        second = self.service.source_commit(
+            second_preview, motivation="保存用于形成第二条闪念。",
+            transaction_id="anchor-second-source",
+        )
+        first_flash = self.repo.find_note(first["result"]["flash_id"])
+        first_meta = first_flash[2]
+        first_meta["source_ids"].append(second["result"]["source_id"])
+        first_note = replace_frontmatter(
+            first_flash[1] + "\n## 关联来源\n\n- 旧链接\n", first_meta
+        )
+        (self.root / first_flash[0]).write_text(first_note, encoding="utf-8")
+        git(self.root, "add", first_flash[0].as_posix())
+        git(self.root, "commit", "-m", "test fixture: legacy flash links")
+
+        revised = self.service.revise_flash_source_anchors(
+            first["result"]["flash_id"],
+            anchors=[
+                {
+                    "source_id": first["result"]["source_id"],
+                    "explanation": "提供第一项论证。",
+                },
+                {
+                    "source_id": second["result"]["source_id"],
+                    "explanation": "提供第二项论证。",
+                },
+            ],
+            boundary="两份材料之间的关系属于用户解释。",
+            confirmed_by_user=True,
+            transaction_id="revise-source-anchors",
+        )
+        note = (self.root / revised["result"]["path"]).read_text(encoding="utf-8")
+        self.assertEqual(note.count("## 来源与论证锚点"), 1)
+        self.assertIn("提供第一项论证", note)
+        self.assertIn("提供第二项论证", note)
+        self.assertIn("边界说明：两份材料之间的关系属于用户解释。", note)
+        self.assertNotIn("## 关联来源", note)
 
     def test_capture_start_and_discard_are_idempotent_after_session_removal(self):
         runtime = CaptureRuntime(self.root)
@@ -687,7 +750,9 @@ class GoodIdeaCoreTests(unittest.TestCase):
         )
         flash_ids = [item["id"] for item in finalized["result"]["flashes"]]
         attached = self.service.source_commit(
-            self.preview(), attach_flash_ids=flash_ids, transaction_id="attach-source"
+            self.preview(), attach_flash_ids=flash_ids,
+            anchor_explanation="提供用于检验既有闪念的外部论证。",
+            transaction_id="attach-source"
         )
         self.assertFalse(attached["result"]["flash_created"])
         source = self.repo.find_note(attached["result"]["source_id"])
@@ -696,6 +761,9 @@ class GoodIdeaCoreTests(unittest.TestCase):
             flash = self.repo.find_note(flash_id)
             self.assertIn(attached["result"]["source_id"], flash[2]["source_ids"])
             self.assertIn(flash[0].with_suffix("").as_posix(), source[1])
+            self.assertIn("## 来源与论证锚点", flash[1])
+            self.assertIn("提供用于检验既有闪念的外部论证", flash[1])
+            self.assertNotIn("## 关联来源", flash[1])
 
     def test_maintenance_image_checkpoint_reuses_successful_asset_on_retry(self):
         runtime, session_id, _, proposal_id = self._capture_session_with_proposal(

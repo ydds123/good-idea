@@ -27,7 +27,8 @@ description: "捕捉 Good idea 闪念及多轮认知会话。用户正在表达�
 
 4. 从用户表达识别零张、一张或多张“认知激活事件”。一张闪念不等于一个孤立要点：同一次被激活的认知信号可以包含多个内容，但必须保留清晰的研究脉络或内在逻辑。先去掉口头停顿与重复、优化表述顺序，再完整展示这条脉络；不得先拆成平铺要点让用户猜结构。内部 manifest 使用 `format_version: 2`，每张候选除 `title`、`body`、用户 `entry_ids` 和 `context_refs` 外，必须记录：
 
-   - `source_anchor`：外部来源的论证过程与出处；没有外部来源时明确写“用户本轮口述，无外部来源”，不得伪造依据；
+   - 有外部上下文时使用 `source_anchors`，每项以 `context_ref` 对应一份来源，并用 `explanation` 说明该来源具体支撑什么；正式卡片中必须渲染为同一条“可点击溯源链接 + 论证说明”，不得另设纯链接的“关联来源”节；跨来源归因限制写入可选的 `source_boundary`；
+   - 没有外部来源时使用 `source_anchor`，明确写“用户本轮口述，无外部来源”，不得伪造依据；
    - `trigger_anchor`：当时的现实背景、卡点、观察到的现象与情绪；
    - `activated_logic`：这些内容为什么在此刻连起来，多个内容之间的逻辑关系是什么。
 
@@ -41,6 +42,8 @@ description: "捕捉 Good idea 闪念及多轮认知会话。用户正在表达�
        uv run goodidea --root <仓库> capture finalize --session-id <会话ID> --proposal-id <最新候选ID> --confirm-discussion-complete --transaction-id <稳定ID>
 
 7. finalize 后自动把后台来源任务交给 goodidea-record-literature；捕获阶段到此结束，绝不自动进入永久卡片。
+
+用户修正已生成闪念的来源锚点时，展示“链接 + 说明 + 边界”完整结果并确认后，调用 `capture revise-source-anchors`；不得直接编辑 Markdown。
 
 ## 暂停、恢复和放弃
 

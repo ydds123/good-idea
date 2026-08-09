@@ -41,11 +41,42 @@ def normalize_flash_event(
         ),
     }
     if format_version >= FLASH_EVENT_FORMAT_VERSION:
-        for field in ("source_anchor", "trigger_anchor", "activated_logic"):
+        for field in ("trigger_anchor", "activated_logic"):
             value = str(raw.get(field) or "").strip()
             if not value:
                 raise ValueError(f"缺少认知事件字段 {field}")
             event[field] = value
+        context_refs = event["context_refs"]
+        if context_refs:
+            anchors = raw.get("source_anchors")
+            if not isinstance(anchors, list):
+                raise ValueError("有外部上下文时必须提供 source_anchors 数组")
+            normalized_anchors: list[dict[str, str]] = []
+            seen_refs: set[str] = set()
+            for anchor in anchors:
+                if not isinstance(anchor, dict):
+                    raise ValueError("source_anchors 每项必须是对象")
+                context_ref = str(anchor.get("context_ref") or "").strip()
+                explanation = str(anchor.get("explanation") or "").strip()
+                if context_ref not in context_refs or not explanation:
+                    raise ValueError("每个来源锚点必须对应上下文并说明其论证作用")
+                if context_ref in seen_refs:
+                    raise ValueError("同一上下文不能重复维护来源锚点")
+                seen_refs.add(context_ref)
+                normalized_anchors.append(
+                    {"context_ref": context_ref, "explanation": explanation}
+                )
+            if seen_refs != set(context_refs):
+                raise ValueError("每个外部上下文都必须有且只有一个来源锚点")
+            event["source_anchors"] = normalized_anchors
+            boundary = str(raw.get("source_boundary") or "").strip()
+            if boundary:
+                event["source_boundary"] = boundary
+        else:
+            source_anchor = str(raw.get("source_anchor") or "").strip()
+            if not source_anchor:
+                raise ValueError("无外部上下文时必须说明用户口述来源")
+            event["source_anchor"] = source_anchor
     return event
 
 NOTE_SPECS: dict[str, dict[str, Any]] = {

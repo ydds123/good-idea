@@ -138,7 +138,7 @@ Markdown Frontmatter 是 CLI 的机器控制面，不是阅读正文。Obsidian 
 
 捕获状态为 `active`、`reviewing`、`paused`、`confirmed`、`finalized` 或 `abandoned`。新增用户表达会使旧候选和旧确认失效；finalize 只接受最新候选内容哈希和用户完成确认。一次会话可以原子生成零张、一张或多张正式闪念。临时会话写入只执行路径、锁、格式和幂等校验，不扫描来源快照。
 
-新候选 manifest 使用 `format_version: 2`。每张闪念以一次“认知激活事件”为单位，可以包含多个逻辑相关内容，但必须同时保存：`body`（去除口语噪声后的完整脉络）、`source_anchor`（来源论证与出处，无外部来源时明确说明）、`trigger_anchor`（现实背景、现象、卡点与情绪）和 `activated_logic`（内容在当时如何连起来）。`entry_ids` 必须全部指向用户表达；这些字段只允许忠实整理，不允许补造。旧运行时候选按 v1 完成，不强制补写或伪造缺失锚点。
+新候选 manifest 使用 `format_version: 2`。每张闪念以一次“认知激活事件”为单位，可以包含多个逻辑相关内容，但必须同时保存：`body`（去除口语噪声后的完整脉络）、`trigger_anchor`（现实背景、现象、卡点与情绪）和 `activated_logic`（内容在当时如何连起来）。有外部上下文时，`source_anchors` 必须为每个 `context_ref` 提供一条 `explanation`；后台来源维护把它渲染为同一个“可点击溯源链接 + 论证说明”单元，跨来源归因限制可写入 `source_boundary`。没有外部上下文时才使用纯文本 `source_anchor` 明确说明“用户本轮口述，无外部来源”。正式闪念不得再另设只含链接的“关联来源”节。`entry_ids` 必须全部指向用户表达；这些字段只允许忠实整理，不允许补造。旧运行时候选按 v1 完成，不强制补写或伪造缺失锚点。
 
 正式闪念的 `created_at` 取其最早相关用户表达时间，`updated_at` 取正式生成时间。finalize 成功后运行时会话进入短期恢复区；来源维护完成且至少经过 24 小时后才可清理。用户放弃则不创建正式内容并删除临时会话。
 
@@ -167,11 +167,13 @@ finalize 同时创建可恢复的运行时维护任务。任务允许 `pending`�
 | `capture start/append` | 只写运行时会话；同一幂等键不得重复记录；不运行来源、索引、Git 或全库验证 |
 | `capture propose` | 候选只能引用会话中存在的用户表达；v2 必须带来源、触发和激活逻辑锚点；新版本取代旧版本但不创建正式闪念 |
 | `capture finalize` | 必须确认最新候选覆盖本轮内容；候选之后没有新表达；一次原子生成多张闪念并创建后台任务 |
+| `capture revise-source-anchors` | 必须引用闪念已有的全部来源、逐项说明论证作用，并带用户修正确认；机械合并来源与论证锚点 |
 | `capture maintenance-check` | 比较当前上下文与讨论时指纹；变化时原子转为 `context_changed` |
 | `capture maintenance-update` | 维护任务暂停、恢复、失败或完成；重试最多三次，耗尽后转为 `failed` |
 | `capture cleanup` | 仅清理维护已终结且超过 24 小时的 Git 忽略完成会话 |
 | `capture pause/resume/discard` | pause/resume 不改变正式内容；discard 必须有用户放弃确认并产生零正式写入 |
-| `source commit --attach-flash-ids --maintenance-job-id` | 只关联已经存在的正式闪念，不额外创建保存动机闪念；按任务缓存成功图片，重试不重复下载；提交后自动回写 `complete` 或 `partial` |
+| `source commit --attach-flash-ids` | 只关联已经存在的正式闪念，不额外创建保存动机闪念；必须由维护任务提供逐卡论证说明，或显式提供 `--anchor-explanation` |
+| `source commit --attach-flash-ids --maintenance-job-id` | 按任务缓存成功图片，重试不重复下载；提交后自动回写 `complete` 或 `partial` |
 | `source refresh` | 网页和本地来源都先创建候选并保留旧快照；本地更新必须显式指定既有来源。接受时要求仍为同一个待处理候选且旧哈希一致 |
 | `permanent propose` | 输入必须是用户确认后的完整草稿；结构化模式还必须带显式结构确认；候选进入隐藏目录，不进入永久空间 |
 | `permanent accept` | 候选、Frontmatter、正文哈希和状态账本必须一致且状态为 `pending`，并带用户明确创建确认 |

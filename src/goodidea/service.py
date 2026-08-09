@@ -23,10 +23,13 @@ from .notes import (
     dated_filename,
     extract_snapshot,
     normalize_source_layout,
+    remove_section,
     render_note,
     render_flash_event,
+    render_source_anchors,
     render_source_note,
     replace_source_snapshot,
+    replace_section,
     snapshot_hash,
     validate_required_metadata,
     validate_source_note,
@@ -537,6 +540,8 @@ class GoodIdeaService:
                     "path": rel.as_posix(),
                     "title": title,
                     "context_refs": list(candidate.get("context_refs", [])),
+                    "source_anchors": list(candidate.get("source_anchors", [])),
+                    "source_boundary": str(candidate.get("source_boundary") or ""),
                 }
             )
         state = self.repo.read_state()
@@ -670,6 +675,7 @@ class GoodIdeaService:
         *,
         motivation: str = "",
         attach_flash_ids: list[str] | None = None,
+        anchor_explanation: str = "",
         maintenance_job_id: str = "",
         transaction_id: str | None = None,
     ) -> dict[str, Any]:
@@ -802,8 +808,36 @@ class GoodIdeaService:
                     dict.fromkeys([*flash_meta.get("source_ids", []), source_id])
                 )
                 flash_meta["updated_at"] = timestamp
-                flash_note = add_list_item_to_section(
-                    flash_note, "关联来源", source_link
+                explanation = (
+                    str(
+                        (job.get("anchor_explanations") or {}).get(flash_meta["id"])
+                        or "该来源是本轮闪念使用的外部上下文；旧版维护任务未记录更具体的论证说明。"
+                    ).strip()
+                    if runtime
+                    else anchor_explanation.strip()
+                )
+                if not explanation:
+                    raise ValidationError("关联正式闪念时必须提供来源的论证作用")
+                marker = "## 来源与论证锚点\n"
+                start = flash_note.find(marker)
+                current_links: list[tuple[str, str]] = []
+                if start >= 0:
+                    end = flash_note.find("\n## ", start + len(marker))
+                    section = flash_note[start : end if end >= 0 else len(flash_note)]
+                    for line in section.splitlines():
+                        match = re.match(r"^- (\[\[.+?\]\])：(.+)$", line)
+                        if match:
+                            current_links.append((match.group(1), match.group(2)))
+                current_links.append((source_link, explanation))
+                current_links = list(dict.fromkeys(current_links))
+                boundary = str(
+                    (job.get("source_boundaries") or {}).get(flash_meta["id"]) or ""
+                ) if runtime else ""
+                flash_note = remove_section(flash_note, "关联来源")
+                flash_note = replace_section(
+                    flash_note,
+                    "来源与论证锚点",
+                    render_source_anchors(current_links, boundary=boundary),
                 )
                 writes[flash_rel] = replace_frontmatter(flash_note, flash_meta)
                 flash_links.append(wiki_link(flash_rel, str(flash_meta["title"])))
@@ -825,7 +859,10 @@ class GoodIdeaService:
                 [
                     ("原始记录", motivation),
                     ("产生情境", "保存外部资料时形成的个人注意与保存动机。"),
-                    ("关联来源", source_link),
+                    (
+                        "来源与论证锚点",
+                        render_source_anchors([(source_link, motivation)]),
+                    ),
                 ],
             )
             writes[flash_rel] = flash_note
@@ -871,6 +908,54 @@ class GoodIdeaService:
                 maintenance_job_id, status="partial" if failures else "complete"
             )
         return committed
+
+    def revise_flash_source_anchors(
+        self,
+        flash_id: str,
+        *,
+        anchors: list[dict[str, Any]],
+        boundary: str = "",
+        confirmed_by_user: bool,
+        transaction_id: str,
+    ) -> dict[str, Any]:
+        if not confirmed_by_user:
+            raise ValidationError("修正闪念来源锚点前必须得到用户确认")
+        if existing := self._idempotent(transaction_id):
+            return existing
+        found = self.repo.find_note(flash_id)
+        if not found or found[2].get("type") != "flash":
+            raise ValidationError(f"找不到正式闪念：{flash_id}")
+        flash_rel, flash_note, flash_meta = found
+        rendered: list[tuple[str, str]] = []
+        source_ids: list[str] = []
+        for anchor in anchors:
+            source_id = str(anchor.get("source_id") or "").strip()
+            explanation = str(anchor.get("explanation") or "").strip()
+            source = self.repo.find_note(source_id)
+            if not source or source[2].get("type") != "source" or not explanation:
+                raise ValidationError("每个来源锚点都必须引用有效来源并说明论证作用")
+            rendered.append((wiki_link(source[0], str(source[2]["title"])), explanation))
+            source_ids.append(source_id)
+        if not rendered:
+            raise ValidationError("至少需要一个来源锚点")
+        if set(source_ids) != set(flash_meta.get("source_ids", [])):
+            raise ValidationError("来源锚点必须与闪念 Frontmatter 的来源集合一致")
+        flash_meta["updated_at"] = now_iso()
+        flash_note = remove_section(flash_note, "关联来源")
+        flash_note = replace_section(
+            flash_note,
+            "来源与论证锚点",
+            render_source_anchors(rendered, boundary=boundary),
+        )
+        flash_note = replace_frontmatter(flash_note, flash_meta)
+        return self.repo.commit(
+            transaction_id=transaction_id,
+            action="capture-revise-source-anchors",
+            summary=f"修正《{flash_meta['title']}》来源与论证锚点",
+            writes={flash_rel: flash_note},
+            state=self.repo.read_state(),
+            result={"flash_id": flash_id, "path": flash_rel.as_posix()},
+        )
 
     def source_refresh(
         self,
@@ -1863,6 +1948,29 @@ class GoodIdeaService:
                     except IntegrityError:
                         pass
                 all_notes.append((rel, text, metadata))
+        notes_by_id = {
+            str(metadata.get("id")): (rel, text, metadata)
+            for rel, text, metadata in all_notes
+        }
+        for rel, text, metadata in all_notes:
+            if metadata.get("type") != "flash":
+                continue
+            if "## 关联来源\n" in text:
+                issues.append(f"{rel}: 闪念不得另设关联来源节")
+            source_ids = list(metadata.get("source_ids", []))
+            if not source_ids:
+                continue
+            if "## 来源与论证锚点\n" not in text:
+                issues.append(f"{rel}: 有外部来源的闪念缺少来源与论证锚点")
+                continue
+            for source_id in source_ids:
+                source = notes_by_id.get(str(source_id))
+                if not source or source[2].get("type") != "source":
+                    issues.append(f"{rel}: 引用的来源不存在：{source_id}")
+                    continue
+                expected_link = source[0].with_suffix("").as_posix()
+                if f"[[{expected_link}|" not in text:
+                    issues.append(f"{rel}: 来源锚点未链接 {source[2].get('title')}")
         for rel, text, _ in all_notes:
             for link in re.findall(r"\[\[([^|\]#]+)", text):
                 target = self.repo.root / f"{link}.md"

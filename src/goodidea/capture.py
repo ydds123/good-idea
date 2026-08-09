@@ -656,6 +656,23 @@ class CaptureRuntime:
                 "session_id": session_id,
                 "context": context,
                 "flash_ids": related,
+                "anchor_explanations": {
+                    flash["id"]: next(
+                        (
+                            anchor["explanation"]
+                            for anchor in flash.get("source_anchors", [])
+                            if anchor["context_ref"] == ref
+                        ),
+                        "该来源是本轮闪念使用的外部上下文；旧版候选未记录更具体的论证说明。",
+                    )
+                    for flash in flashes
+                    if flash["id"] in related
+                },
+                "source_boundaries": {
+                    flash["id"]: flash["source_boundary"]
+                    for flash in flashes
+                    if flash["id"] in related and flash.get("source_boundary")
+                },
                 "status": "pending",
                 "attempts": 0,
                 "max_attempts": 3,
