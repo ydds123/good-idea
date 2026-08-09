@@ -33,7 +33,7 @@ class SkillRoutingTests(unittest.TestCase):
             report = json.loads((report_dir / "latest.json").read_text(encoding="utf-8"))
 
         self.assertEqual(report["skill_count"], 7)
-        self.assertEqual(report["case_count"], 41)
+        self.assertEqual(report["case_count"], 43)
         self.assertEqual(report["contract_errors"], [])
         static = report["static_overlap"]
         self.assertTrue(static["ok"])
@@ -45,7 +45,7 @@ class SkillRoutingTests(unittest.TestCase):
             {"goodidea-form-permanent", "goodidea-review-permanent"},
         )
         self.assertEqual(len(report["semantic_risk_hypotheses"]), 4)
-        self.assertEqual(len(report["recall_risk_hypotheses"]), 2)
+        self.assertEqual(len(report["recall_risk_hypotheses"]), 1)
 
     def test_prediction_gate_accepts_handoffs_and_rejects_same_stage_conflict(self):
         contract = json.loads(CASES.read_text(encoding="utf-8"))

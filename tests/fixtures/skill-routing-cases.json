@@ -61,9 +61,11 @@
         "goodidea-capture-flash",
         "goodidea-record-literature"
       ],
-      "hypothesis": "record-literature 当前只能处理可访问 URL 的来源快照；无链接报告摘录和明确不保存的网页不应触发来源写入。",
+      "hypothesis": "可访问 URL 和用户明确要作为来源的外部 Markdown/TXT 应由 record-literature 处理；随手粘贴的无链接摘录属于 capture，只读网页和本地 PDF 不应触发来源写入。",
       "case_ids": [
         "source-public-article",
+        "source-local-txt",
+        "source-local-markdown",
         "neighbor-link-with-thought",
         "neighbor-unlinked-report-capture",
         "no-route-read-url-only",
@@ -87,13 +89,6 @@
     }
   ],
   "recall_risk_hypotheses": [
-    {
-      "skill": "goodidea-record-literature",
-      "missing_intent": "刷新或更新已经保存的网页来源",
-      "case_ids": [
-        "source-refresh"
-      ]
-    },
     {
       "skill": "goodidea-form-permanent",
       "missing_intent": "为正式卡片追加用户本人修订或行动反馈",
@@ -142,7 +137,25 @@
     {
       "id": "source-report",
       "family": "unique_source",
-      "text": "我转发了一份公开报告，请把原文和图片做成 Markdown 快照。",
+      "text": "我转发了一份公开报告的网页链接，请把原文和图片做成 Markdown 快照。",
+      "expected_primary": "goodidea-record-literature",
+      "allowed_supporting": [],
+      "required_supporting": [],
+      "expected_conflict": false
+    },
+    {
+      "id": "source-local-txt",
+      "family": "unique_source",
+      "text": "把外部文件《控制论与科学方法论.txt》作为来源快照保存，先读完再问我为什么要留下它。",
+      "expected_primary": "goodidea-record-literature",
+      "allowed_supporting": [],
+      "required_supporting": [],
+      "expected_conflict": false
+    },
+    {
+      "id": "source-local-markdown",
+      "family": "unique_source",
+      "text": "这份外部文件《8 月 9 日可能性空间讨论.md》是完整材料，请导入溯源空间并和我的保存动机原子生成一张闪念。",
       "expected_primary": "goodidea-record-literature",
       "allowed_supporting": [],
       "required_supporting": [],
@@ -360,7 +373,7 @@
     {
       "id": "neighbor-unlinked-report-capture",
       "family": "near_neighbor",
-      "text": "把这段没有链接的报告摘录记成有意思内容，不要尝试抓取来源快照。",
+      "text": "我只是把一段报告文字粘贴在下面，没有链接也不是外部文件；把它记成有意思内容，不要建来源快照。",
       "expected_primary": "goodidea-capture-flash",
       "allowed_supporting": [],
       "required_supporting": [],
@@ -475,7 +488,7 @@
     {
       "id": "no-route-local-pdf",
       "family": "no_route",
-      "text": "把本地 PDF 直接保存成 Good idea 来源快照。",
+      "text": "把本地文件《控制论.pdf》直接保存成 Good idea 来源快照。",
       "expected_primary": "no_route",
       "allowed_supporting": [],
       "required_supporting": [],

@@ -1,4 +1,4 @@
 interface:
   display_name: "Good idea 保存来源"
-  short_description: "预读网页并询问保存动机，随后安全保存原文快照和人的闪念"
-  default_prompt: "Use $goodidea-record-literature to pre-read this link and ask why I want to save it."
+  short_description: "预读网页或本地文档，安全保存来源快照和人的闪念"
+  default_prompt: "Use $goodidea-record-literature to pre-read this URL or local Markdown/TXT source and ask why I want to save it."

@@ -47,6 +47,164 @@ PURE_CONFIRMATIONS = {
 PERMANENT_CARD_TYPES = {"permanent", "mother", "action", "index"}
 PROPOSAL_START = "<!-- goodidea:proposal-json:start -->"
 PROPOSAL_END = "<!-- goodidea:proposal-json:end -->"
+SHA256_RE = re.compile(r"^[0-9a-f]{64}$")
+
+
+def _origin_filename(value: Any) -> str:
+    """Return a portable basename without ever accepting a host path."""
+    filename = str(value or "").strip()
+    if (
+        not filename
+        or filename in {".", ".."}
+        or "/" in filename
+        or "\\" in filename
+        or "\x00" in filename
+    ):
+        raise ValidationError("本地来源 origin_filename 必须是文件名，不能包含路径")
+    return filename
+
+
+def _source_preview_identity(
+    preview: dict[str, Any],
+) -> tuple[str, str, str]:
+    """Return kind, state identity key, and stable source id."""
+    has_origin_field = any(
+        key in preview for key in ("origin_filename", "origin_sha256")
+    )
+    if has_origin_field:
+        if "canonical_url" in preview or "url" in preview:
+            raise ValidationError("本地来源不能同时包含 canonical_url/url")
+        _origin_filename(preview.get("origin_filename"))
+        origin_sha256 = str(preview.get("origin_sha256") or "").strip()
+        if not SHA256_RE.fullmatch(origin_sha256):
+            raise ValidationError("本地来源 origin_sha256 必须是 64 位 SHA-256")
+        actual_origin_sha256 = hashlib.sha256(
+            str(preview.get("markdown") or "").encode("utf-8")
+        ).hexdigest()
+        if origin_sha256 != actual_origin_sha256:
+            raise ValidationError(
+                "本地来源 origin_sha256 与规范化 Markdown 正文不一致"
+            )
+        identity_key = f"local:sha256:{origin_sha256}"
+        return (
+            "local",
+            identity_key,
+            stable_id("SRC", identity_key, dated=False),
+        )
+
+    canonical_url = canonicalize_url(
+        str(preview.get("canonical_url") or preview.get("url") or "")
+    )
+    if not canonical_url.startswith(("http://", "https://")):
+        raise ValidationError(
+            "网页来源必须包含有效的 http/https URL；本地来源必须包含 "
+            "origin_filename 和 origin_sha256"
+        )
+    return (
+        "web",
+        canonical_url,
+        stable_id("SRC", canonical_url, dated=False),
+    )
+
+
+def _persistable_source_preview(
+    preview: dict[str, Any],
+) -> tuple[dict[str, Any], str, str, str]:
+    """Whitelist preview data so local host paths cannot enter state/proposals."""
+    kind, identity_key, source_id = _source_preview_identity(preview)
+    kept: dict[str, Any] = {}
+    for key in (
+        "title",
+        "author",
+        "published_at",
+        "markdown",
+        "status",
+        "extractor",
+    ):
+        if key in preview:
+            kept[key] = copy.deepcopy(preview[key])
+    if kind == "web" and "error" in preview:
+        kept["error"] = copy.deepcopy(preview["error"])
+    if kind == "local":
+        title = str(kept.get("title") or "")
+        if Path(title).is_absolute() or bool(re.match(r"^[A-Za-z]:[\\/]", title)):
+            raise ValidationError("本地来源标题不能包含绝对路径")
+
+    images: list[dict[str, Any]] = []
+    for raw_image in preview.get("images") or []:
+        if not isinstance(raw_image, dict):
+            continue
+        image: dict[str, Any] = {}
+        for key in ("url", "alt", "content_type", "data_base64"):
+            if key in raw_image:
+                image[key] = copy.deepcopy(raw_image[key])
+        if "referer" in raw_image:
+            referer = str(raw_image.get("referer") or "")
+            if referer.startswith(("http://", "https://")):
+                image["referer"] = referer
+        url = str(image.get("url") or "")
+        if kind == "local" and (
+            Path(url).is_absolute()
+            or bool(re.match(r"^[A-Za-z]:[\\/]", url))
+            or url.startswith("file:")
+        ):
+            raise ValidationError("本地来源图片引用不能包含绝对路径")
+        images.append(image)
+    kept["images"] = images
+
+    if kind == "web":
+        kept["canonical_url"] = identity_key
+    else:
+        kept["origin_filename"] = _origin_filename(preview["origin_filename"])
+        kept["origin_sha256"] = identity_key.removeprefix("local:sha256:")
+    return kept, kind, identity_key, source_id
+
+
+def _source_metadata_identity(
+    metadata: dict[str, Any],
+) -> tuple[str, str, str]:
+    """Validate the mutually exclusive web/local identity stored in a source."""
+    has_canonical = "canonical_url" in metadata
+    has_origin_filename = "origin_filename" in metadata
+    has_origin_sha256 = "origin_sha256" in metadata
+    if has_canonical:
+        if has_origin_filename or has_origin_sha256:
+            raise ValidationError("网页来源不能包含本地来源身份字段")
+        canonical = str(metadata.get("canonical_url") or "").strip()
+        if not canonical.startswith(("http://", "https://")):
+            raise ValidationError("网页来源 canonical_url 无效")
+        if canonicalize_url(canonical) != canonical:
+            raise ValidationError("网页来源 canonical_url 未规范化")
+        return "web", canonical, stable_id("SRC", canonical, dated=False)
+
+    if not (has_origin_filename and has_origin_sha256):
+        raise ValidationError(
+            "来源必须二选一：canonical_url，或 origin_filename + origin_sha256"
+        )
+    _origin_filename(metadata.get("origin_filename"))
+    origin_sha256 = str(metadata.get("origin_sha256") or "").strip()
+    if not SHA256_RE.fullmatch(origin_sha256):
+        raise ValidationError("本地来源 origin_sha256 必须是 64 位 SHA-256")
+    identity_key = f"local:sha256:{origin_sha256}"
+    return "local", identity_key, stable_id("SRC", identity_key, dated=False)
+
+
+def _source_state_record_by_id(
+    state: dict[str, Any], source_id: str
+) -> tuple[str, dict[str, Any]]:
+    source_records = state.get("sources", {})
+    if not isinstance(source_records, dict):
+        raise IntegrityError("来源账本 sources 必须是对象")
+    matches = [
+        (str(identity_key), record)
+        for identity_key, record in source_records.items()
+        if isinstance(record, dict) and record.get("id") == source_id
+    ]
+    if not matches:
+        raise IntegrityError(f"来源账本缺少 ID：{source_id}")
+    if len(matches) != 1:
+        raise IntegrityError(f"来源账本中 ID 重复：{source_id}")
+    return matches[0]
 
 
 def new_transaction_id(prefix: str) -> str:
@@ -356,14 +514,18 @@ class GoodIdeaService:
             for item in preview.get("images", [])
             if item.get("url")
         }
-        urls = list(
-            dict.fromkeys(
-                match.group(2)
-                for match in re.finditer(
-                    r"!\[([^\]]*)\]\((https?://[^)]+)\)", markdown
-                )
+        remote_urls = [
+            match.group(2)
+            for match in re.finditer(
+                r"!\[([^\]]*)\]\((https?://[^)]+)\)", markdown
             )
-        )
+        ]
+        local_record_urls = [
+            url
+            for url in image_records
+            if f"]({url})" in markdown or f"](<{url}>)" in markdown
+        ]
+        urls = list(dict.fromkeys([*remote_urls, *local_record_urls]))
         writes: dict[Path, bytes] = {}
         failures: list[str] = []
         for url in urls:
@@ -375,10 +537,13 @@ class GoodIdeaService:
                 markdown = markdown.replace(
                     f"]({url})", f"](../{rel.as_posix()})"
                 )
+                markdown = markdown.replace(
+                    f"](<{url}>)", f"](../{rel.as_posix()})"
+                )
             except Exception as exc:
                 failures.append(f"{url}: {exc}")
                 pattern = re.compile(
-                    r"!\[([^\]]*)\]\(" + re.escape(url) + r"\)"
+                    r"!\[([^\]]*)\]\((?:<)?" + re.escape(url) + r"(?:>)?\)"
                 )
                 markdown = pattern.sub(
                     lambda match: (
@@ -415,28 +580,56 @@ class GoodIdeaService:
         txid = transaction_id or new_transaction_id("source-commit")
         if existing := self._idempotent(txid):
             return existing
-        canonical_url = canonicalize_url(
-            str(preview.get("canonical_url") or preview.get("url") or "")
+        preview, source_kind, identity_key, source_id = _persistable_source_preview(
+            preview
         )
-        if not canonical_url.startswith(("http://", "https://")):
-            raise ValidationError("来源必须包含有效的 http/https URL")
-        title = str(preview.get("title") or canonical_url).strip()
-        source_id = stable_id("SRC", canonical_url, dated=False)
+        fallback_title = (
+            Path(str(preview["origin_filename"])).stem
+            if source_kind == "local"
+            else identity_key
+        )
+        title = str(preview.get("title") or fallback_title).strip()
         flash_id = stable_id("FLA", f"{txid}:{motivation}")
         timestamp = now_iso()
         state = self.repo.read_state()
         writes: dict[Path, str | bytes] = {}
-        source_record = state.get("sources", {}).get(canonical_url)
+        source_records = state.setdefault("sources", {})
+        if not isinstance(source_records, dict):
+            raise IntegrityError("来源账本 sources 必须是对象")
+        source_record = source_records.get(identity_key)
         source_created = source_record is None
         flash_title = motivation.strip().splitlines()[0][:40]
 
-        if source_record:
-            source_rel = Path(source_record["path"])
+        if source_record is not None:
+            if not isinstance(source_record, dict):
+                raise IntegrityError(f"来源账本记录不是对象：{identity_key}")
+            if source_record.get("id") != source_id:
+                raise IntegrityError(f"来源账本身份异常：{identity_key}")
+            source_rel = Path(str(source_record.get("path") or ""))
+            if (
+                source_rel.is_absolute()
+                or ".." in source_rel.parts
+                or source_rel.parent != TYPE_LOCATIONS["source"]
+            ):
+                raise IntegrityError(f"来源账本路径无效：{identity_key}")
             source_path = self.repo.root / source_rel
             if not source_path.is_file():
                 raise IntegrityError(f"来源账本指向不存在的文件：{source_rel}")
             source_note = source_path.read_text(encoding="utf-8")
             source_meta, _ = parse_document(source_note)
+            if source_meta.get("id") != source_id:
+                raise IntegrityError(f"来源账本与文件 ID 不一致：{identity_key}")
+            if source_record.get("title") != source_meta.get("title"):
+                raise IntegrityError(f"来源账本与文件标题不一致：{identity_key}")
+            stored_kind, stored_identity_key, stored_source_id = (
+                _source_metadata_identity(source_meta)
+            )
+            if (
+                stored_kind != source_kind
+                or stored_identity_key != identity_key
+                or stored_source_id != source_id
+            ):
+                raise IntegrityError(f"来源账本与文件身份不一致：{identity_key}")
             source_title = source_meta["title"]
         else:
             localized, assets, failures = self._localize_images(preview)
@@ -453,7 +646,6 @@ class GoodIdeaService:
                 "title": title,
                 "status": capture_status,
                 "capture_status": capture_status,
-                "canonical_url": canonical_url,
                 "author": str(preview.get("author") or ""),
                 "published_at": str(preview.get("published_at") or ""),
                 "fetched_at": timestamp,
@@ -465,6 +657,11 @@ class GoodIdeaService:
                 "image_failures": failures,
                 "flash_ids": [flash_id],
             }
+            if source_kind == "web":
+                source_meta["canonical_url"] = identity_key
+            else:
+                source_meta["origin_filename"] = preview["origin_filename"]
+                source_meta["origin_sha256"] = preview["origin_sha256"]
 
         flash_rel = self._new_note_path("flash", flash_title, timestamp)
         source_link = wiki_link(source_rel, source_title)
@@ -489,7 +686,7 @@ class GoodIdeaService:
             ],
         )
         flash_link = wiki_link(flash_rel, flash_title)
-        if source_record:
+        if source_record is not None:
             source_meta["updated_at"] = timestamp
             source_meta["flash_ids"] = list(
                 dict.fromkeys([*source_meta.get("flash_ids", []), flash_id])
@@ -503,7 +700,7 @@ class GoodIdeaService:
             source_note = render_source_note(source_meta, snapshot, [flash_link])
         writes[source_rel] = source_note
         writes[flash_rel] = flash_note
-        state.setdefault("sources", {})[canonical_url] = {
+        source_records[identity_key] = {
             "id": source_id,
             "path": source_rel.as_posix(),
             "title": source_title,
@@ -540,6 +737,22 @@ class GoodIdeaService:
         if existing := self._idempotent(txid):
             return existing
         state = self.repo.read_state()
+        source_state_key, source_state_record = _source_state_record_by_id(
+            state, source_id
+        )
+        if source_state_record.get("path") != source_rel.as_posix():
+            raise IntegrityError(f"来源账本路径与文件不一致：{source_id}")
+        if source_state_record.get("title") != source_meta.get("title"):
+            raise IntegrityError(f"来源账本标题与文件不一致：{source_id}")
+
+        source_kind, expected_state_key, expected_source_id = (
+            _source_metadata_identity(source_meta)
+        )
+        source_is_local = source_kind == "local"
+        if source_state_key != expected_state_key:
+            raise IntegrityError(f"来源账本身份键与文件不一致：{source_id}")
+        if expected_source_id != source_id:
+            raise IntegrityError(f"来源文件 ID 与身份不一致：{source_id}")
 
         if confirm_proposal:
             proposal_record = state.get("proposals", {}).get(confirm_proposal)
@@ -547,35 +760,59 @@ class GoodIdeaService:
                 raise ValidationError(f"找不到来源更新候选：{confirm_proposal}")
             if proposal_record.get("status") != "pending":
                 raise ValidationError("来源更新候选已处理")
+            if proposal_record.get("source_id") != source_id:
+                raise IntegrityError("来源更新候选账本与目标来源不一致")
+            if source_meta.get("pending_update") != confirm_proposal:
+                raise IntegrityError("来源文件当前待处理候选与确认目标不一致")
             proposal_rel = Path(proposal_record["path"])
             proposal_text = (self.repo.root / proposal_rel).read_text(encoding="utf-8")
             payload = _proposal_payload(proposal_text)
             if payload.get("source_id") != source_id:
                 raise ValidationError("更新候选与目标来源不一致")
-            candidate = payload["preview"]
+            candidate, candidate_kind, candidate_identity_key, _ = (
+                _persistable_source_preview(payload["preview"])
+            )
+            candidate_content_sha256 = hashlib.sha256(
+                str(candidate.get("markdown", "")).encode("utf-8")
+            ).hexdigest()
+            if payload.get("old_content_sha256") != source_meta.get(
+                "content_sha256"
+            ):
+                raise IntegrityError("来源更新候选的旧内容哈希已失效")
+            if payload.get("new_content_sha256") != candidate_content_sha256:
+                raise IntegrityError("来源更新候选的新内容哈希与 preview 不一致")
+            if source_is_local != (candidate_kind == "local"):
+                raise ValidationError("更新候选的来源类型与目标来源不一致")
+            if not source_is_local and candidate_identity_key != source_state_key:
+                raise ValidationError("网页更新候选的规范链接与目标来源不一致")
             localized, assets, failures = self._localize_images(candidate)
             capture_status = str(candidate.get("status") or "complete")
             if failures and capture_status == "complete":
                 capture_status = "partial"
             snapshot = self._build_snapshot(candidate, localized)
             timestamp = now_iso()
+            metadata_updates = {
+                "title": str(candidate.get("title") or source_meta["title"]),
+                "status": capture_status,
+                "capture_status": capture_status,
+                "author": str(candidate.get("author") or ""),
+                "published_at": str(candidate.get("published_at") or ""),
+                "fetched_at": timestamp,
+                "updated_at": timestamp,
+                "content_sha256": candidate_content_sha256,
+                "image_failures": failures,
+                "pending_update": "",
+            }
+            if source_is_local:
+                # origin_sha256 is the immutable first-import identity seed.
+                # A refresh may come from changed bytes or a moved/renamed copy,
+                # but origin metadata continues to describe the first import.
+                metadata_updates["origin_filename"] = source_meta["origin_filename"]
+                metadata_updates["origin_sha256"] = source_meta["origin_sha256"]
             updated_source = replace_source_snapshot(
                 source_note,
                 snapshot,
-                {
-                    "title": str(candidate.get("title") or source_meta["title"]),
-                    "status": capture_status,
-                    "capture_status": capture_status,
-                    "author": str(candidate.get("author") or ""),
-                    "published_at": str(candidate.get("published_at") or ""),
-                    "fetched_at": timestamp,
-                    "updated_at": timestamp,
-                    "content_sha256": hashlib.sha256(
-                        str(candidate.get("markdown", "")).encode("utf-8")
-                    ).hexdigest(),
-                    "image_failures": failures,
-                    "pending_update": "",
-                },
+                metadata_updates,
             )
             updated_source = normalize_source_layout(updated_source)
             updated_meta, _ = parse_document(updated_source)
@@ -637,10 +874,13 @@ class GoodIdeaService:
                 )
             else:
                 writes[source_rel] = updated_source
-            canonical = str(updated_meta.get("canonical_url", ""))
-            if canonical in state.get("sources", {}):
-                state["sources"][canonical]["title"] = new_title
-                state["sources"][canonical]["path"] = new_source_rel.as_posix()
+            refreshed_state_key, refreshed_state_record = _source_state_record_by_id(
+                state, source_id
+            )
+            if refreshed_state_key != source_state_key:
+                raise IntegrityError(f"来源刷新时账本身份发生变化：{source_id}")
+            refreshed_state_record["title"] = new_title
+            refreshed_state_record["path"] = new_source_rel.as_posix()
             result = {
                 "source_id": source_id,
                 "source_path": new_source_rel.as_posix(),
@@ -659,6 +899,13 @@ class GoodIdeaService:
 
         if preview is None:
             raise ValidationError("生成更新候选时必须提供新的 preview")
+        preview, candidate_kind, candidate_identity_key, _ = (
+            _persistable_source_preview(preview)
+        )
+        if source_is_local != (candidate_kind == "local"):
+            raise ValidationError("更新候选的来源类型与目标来源不一致")
+        if not source_is_local and candidate_identity_key != source_state_key:
+            raise ValidationError("网页更新候选的规范链接与目标来源不一致")
         candidate_hash = hashlib.sha256(
             str(preview.get("markdown", "")).encode("utf-8")
         ).hexdigest()
@@ -1464,12 +1711,13 @@ class GoodIdeaService:
         warnings: list[str] = []
         seen_ids: dict[str, str] = {}
         all_notes: list[tuple[Path, str, dict[str, Any]]] = []
+        source_identities: dict[str, tuple[str, str, str]] = {}
         for expected_type, location in TYPE_LOCATIONS.items():
             for path in sorted((self.repo.root / location).glob("*.md")):
                 rel = path.relative_to(self.repo.root)
                 try:
                     text = path.read_text(encoding="utf-8")
-                    metadata, _ = parse_document(text)
+                    metadata, body = parse_document(text)
                 except Exception as exc:
                     issues.append(f"{rel}: 无法解析：{exc}")
                     continue
@@ -1509,8 +1757,22 @@ class GoodIdeaService:
                         issues.append(str(exc))
                     if metadata.get("source_url"):
                         issues.append(f"{rel}: 不应持久化原始分享链接 source_url")
-                    if not metadata.get("canonical_url"):
-                        issues.append(f"{rel}: 缺少规范链接 canonical_url")
+                    try:
+                        _, identity_key, expected_source_id = (
+                            _source_metadata_identity(metadata)
+                        )
+                        if note_id != expected_source_id:
+                            issues.append(f"{rel}: 来源 ID 与身份字段不一致")
+                        source_identities[note_id] = (
+                            identity_key,
+                            rel.as_posix(),
+                            str(metadata.get("title", "")),
+                        )
+                    except ValidationError as exc:
+                        issues.append(f"{rel}: {exc}")
+                    expected_h1 = f"# {metadata.get('title', '')}\n"
+                    if not body.startswith(expected_h1):
+                        issues.append(f"{rel}: 一级标题与 Frontmatter title 不一致")
                     snapshot_heading = text.find("## 原文快照\n")
                     flashes_heading = text.find("## 关联闪念\n")
                     if not (-1 < snapshot_heading < flashes_heading):
@@ -1536,10 +1798,57 @@ class GoodIdeaService:
         if expected_index != current_index:
             issues.append("index.md 与当前卡片集合不一致")
         state = self.repo.read_state()
-        for canonical, record in state.get("sources", {}).items():
-            target = self.repo.root / record.get("path", "")
+        state_source_ids: set[str] = set()
+        source_records = state.get("sources", {})
+        if not isinstance(source_records, dict):
+            issues.append("来源账本 sources 必须是对象")
+            source_records = {}
+        for identity_key, record in source_records.items():
+            if not isinstance(record, dict):
+                issues.append(f"来源账本记录不是对象：{identity_key}")
+                continue
+            raw_path = str(record.get("path") or "")
+            rel_path = Path(raw_path)
+            if (
+                not raw_path
+                or rel_path.is_absolute()
+                or ".." in rel_path.parts
+                or rel_path.parent != TYPE_LOCATIONS["source"]
+            ):
+                issues.append(f"来源账本路径无效：{identity_key}")
+                continue
+            target = self.repo.root / rel_path
             if not target.is_file():
-                issues.append(f"来源账本失效：{canonical}")
+                issues.append(f"来源账本失效：{identity_key}")
+                continue
+            try:
+                target_text = target.read_text(encoding="utf-8")
+                target_meta, _ = parse_document(target_text)
+            except Exception as exc:
+                issues.append(f"来源账本目标无法解析：{identity_key}: {exc}")
+                continue
+            record_id = str(record.get("id") or "")
+            state_source_ids.add(record_id)
+            if target_meta.get("type") != "source":
+                issues.append(f"来源账本目标类型错误：{identity_key}")
+            if record_id != target_meta.get("id"):
+                issues.append(f"来源账本 ID 与文件不一致：{identity_key}")
+            if record.get("title") != target_meta.get("title"):
+                issues.append(f"来源账本标题与文件不一致：{identity_key}")
+            expected_identity = source_identities.get(record_id)
+            if not expected_identity:
+                issues.append(f"来源账本 ID 未对应有效来源：{identity_key}")
+                continue
+            expected_key, expected_path, expected_title = expected_identity
+            if str(identity_key) != expected_key:
+                issues.append(f"来源账本 identity key 与来源不一致：{identity_key}")
+            if raw_path != expected_path:
+                issues.append(f"来源账本路径与来源不一致：{identity_key}")
+            if record.get("title") != expected_title:
+                issues.append(f"来源账本标题镜像异常：{identity_key}")
+        for note_id, (identity_key, _, _) in source_identities.items():
+            if note_id not in state_source_ids:
+                issues.append(f"来源文件缺少账本记录：{identity_key}")
         for proposal_id, record in state.get("proposals", {}).items():
             if record.get("kind") != "permanent":
                 continue

@@ -158,6 +158,136 @@ class GoodIdeaCliTests(unittest.TestCase):
         self.assertEqual(error["error"]["code"], "validation_error")
         self.assertFalse(forbidden.exists())
 
+    def test_local_file_preview_is_read_only_and_does_not_leak_source_path(self):
+        source_dir = self.base / "imports"
+        source_dir.mkdir()
+        image_data = b"cli-local-image"
+        (source_dir / "figure.png").write_bytes(image_data)
+        local_file = source_dir / "本地材料.md"
+        local_file.write_text(
+            """---
+title: 本地材料标题
+author: 本地作者
+published_at: 2026-08-09
+canonical_url: https://example.com/declared-only
+---
+# 本地材料标题
+
+这是需要保留的正文。\n\n![图](figure.png)
+""",
+            encoding="utf-8",
+        )
+        output = self.base / "local-preview.json"
+        before_head = subprocess.run(
+            ["git", "rev-parse", "HEAD"],
+            cwd=self.root,
+            check=True,
+            text=True,
+            capture_output=True,
+        ).stdout.strip()
+        before_status = subprocess.run(
+            ["git", "status", "--porcelain"],
+            cwd=self.root,
+            check=True,
+            text=True,
+            capture_output=True,
+        ).stdout
+
+        preview = run_cli(
+            "--root",
+            str(self.root),
+            "source",
+            "preview",
+            "--local-file",
+            str(local_file),
+            "--output",
+            str(output),
+        )
+
+        self.assertEqual(preview.returncode, 0, preview.stderr)
+        result = json.loads(preview.stdout)
+        payload = json.loads(output.read_text(encoding="utf-8"))
+        self.assertEqual(payload["origin_filename"], "本地材料.md")
+        self.assertEqual(payload["title"], "本地材料标题")
+        self.assertEqual(payload["markdown"], "这是需要保留的正文。\n\n![图](figure.png)")
+        self.assertNotIn("url", payload)
+        self.assertNotIn("canonical_url", payload)
+        self.assertNotIn("source", payload)
+        self.assertNotIn("source_kind", payload)
+        self.assertNotIn(str(local_file), json.dumps(payload, ensure_ascii=False))
+        self.assertEqual(result["preview_file"], str(output.resolve()))
+        self.assertTrue(payload["images"][0]["data_base64"])
+        after_head = subprocess.run(
+            ["git", "rev-parse", "HEAD"],
+            cwd=self.root,
+            check=True,
+            text=True,
+            capture_output=True,
+        ).stdout.strip()
+        after_status = subprocess.run(
+            ["git", "status", "--porcelain"],
+            cwd=self.root,
+            check=True,
+            text=True,
+            capture_output=True,
+        ).stdout
+        self.assertEqual(after_head, before_head)
+        self.assertEqual(after_status, before_status)
+
+    def test_local_file_preview_rejects_conflicting_and_invalid_inputs(self):
+        local_file = self.base / "article.md"
+        local_file.write_text("# 标题\n\n正文", encoding="utf-8")
+        markdown_file = self.base / "other.md"
+        markdown_file.write_text("正文", encoding="utf-8")
+        conflicting_identity = run_cli(
+            "source",
+            "preview",
+            "--url",
+            "https://example.com/article",
+            "--local-file",
+            str(local_file),
+        )
+        self.assertEqual(conflicting_identity.returncode, 2)
+        self.assertIn("not allowed with argument", conflicting_identity.stderr)
+
+        conflicting_input = run_cli(
+            "source",
+            "preview",
+            "--local-file",
+            str(local_file),
+            "--markdown-file",
+            str(markdown_file),
+        )
+        self.assertEqual(conflicting_input.returncode, 2)
+        error = json.loads(conflicting_input.stderr)
+        self.assertEqual(error["error"]["code"], "validation_error")
+        self.assertIn("不能与", error["error"]["message"])
+
+        missing = run_cli(
+            "source",
+            "preview",
+            "--local-file",
+            str(self.base / "missing.txt"),
+        )
+        self.assertEqual(missing.returncode, 2)
+        error = json.loads(missing.stderr)
+        self.assertEqual(error["error"]["code"], "validation_error")
+        self.assertIn("不存在", error["error"]["message"])
+
+        original = local_file.read_text(encoding="utf-8")
+        overwrite = run_cli(
+            "source",
+            "preview",
+            "--local-file",
+            str(local_file),
+            "--output",
+            str(local_file),
+        )
+        self.assertEqual(overwrite.returncode, 2)
+        error = json.loads(overwrite.stderr)
+        self.assertIn("不能覆盖", error["error"]["message"])
+        self.assertEqual(local_file.read_text(encoding="utf-8"), original)
+
     def test_source_gate_and_atomic_cli_commit(self):
         preview_file = self.base / "preview.json"
         preview_file.write_text(

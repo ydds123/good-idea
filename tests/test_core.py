@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import base64
+import hashlib
 import json
 import subprocess
 import tempfile
@@ -62,6 +63,38 @@ class GoodIdeaCoreTests(unittest.TestCase):
             "status": status,
             "error": "" if status == "complete" else "测试状态",
             "extractor": "test",
+        }
+
+    def local_preview(
+        self,
+        text: str = "本地正文第一版",
+        *,
+        filename: str = "本地资料.md",
+        title: str = "本地资料",
+        origin_text: str | None = None,
+    ):
+        image_ref = "images/local.png"
+        markdown = f"{text}\n\n![本地图]({image_ref})"
+        normalized_origin = origin_text if origin_text is not None else markdown
+        return {
+            "origin_filename": filename,
+            "origin_sha256": hashlib.sha256(
+                normalized_origin.encode("utf-8")
+            ).hexdigest(),
+            "title": title,
+            "author": "本地作者",
+            "published_at": "2026-08-09",
+            "markdown": markdown,
+            "images": [
+                {
+                    "url": image_ref,
+                    "alt": "本地图",
+                    "content_type": "image/png",
+                    "data_base64": base64.b64encode(b"local-png").decode(),
+                }
+            ],
+            "status": "complete",
+            "extractor": "local-test",
         }
 
     def test_init_refuses_nonempty_directory_without_overwrite(self):
@@ -176,6 +209,96 @@ class GoodIdeaCoreTests(unittest.TestCase):
         updated_source = self.repo.find_note(data["source_id"])
         self.assertNotIn("summary", updated_source[2])
         self.assertNotIn("## 文献笔记", updated_source[1])
+
+    def test_local_source_is_atomic_deduplicated_and_never_leaks_host_path(self):
+        preview = self.local_preview()
+        leaked_path = str(Path(self.temp.name) / "private/source/本地资料.md")
+        preview["input_path"] = leaked_path
+        preview["source_kind"] = "local"
+        first = self.service.source_commit(
+            preview,
+            motivation="这份本地资料让我意识到可能性空间需要由反馈持续校正。",
+            transaction_id="tx-local-source-1",
+        )
+        data = first["result"]
+        source_rel = Path(data["source_path"])
+        flash_rel = Path(data["flash_path"])
+        source_text = (self.root / source_rel).read_text(encoding="utf-8")
+        flash_text = (self.root / flash_rel).read_text(encoding="utf-8")
+        source_meta, _ = parse_document(source_text)
+        flash_meta, _ = parse_document(flash_text)
+        identity_key = f"local:sha256:{preview['origin_sha256']}"
+
+        self.assertTrue(data["source_created"])
+        self.assertEqual(source_meta["origin_filename"], "本地资料.md")
+        self.assertEqual(source_meta["origin_sha256"], preview["origin_sha256"])
+        self.assertNotIn("canonical_url", source_meta)
+        self.assertNotIn("source_kind", source_meta)
+        self.assertEqual(flash_meta["source_ids"], [data["source_id"]])
+        self.assertIn(
+            flash_rel.with_suffix("").as_posix(), source_text
+        )
+        self.assertIn(
+            source_rel.with_suffix("").as_posix(), flash_text
+        )
+        self.assertIn("../.goodidea/assets/", source_text)
+        self.assertNotIn("](images/local.png)", source_text)
+        state = self.repo.read_state()
+        self.assertEqual(state["sources"][identity_key]["id"], data["source_id"])
+
+        moved_copy = self.local_preview(filename="移动后的副本.md", title="副本标题")
+        second = self.service.source_commit(
+            moved_copy,
+            motivation="同一份资料也可以帮助我比较出卷人思维与考生思维。",
+            transaction_id="tx-local-source-2",
+        )["result"]
+        self.assertFalse(second["source_created"])
+        self.assertEqual(second["source_id"], data["source_id"])
+        self.assertNotEqual(second["flash_id"], data["flash_id"])
+        reused = self.repo.find_note(data["source_id"])
+        self.assertEqual(reused[2]["origin_filename"], "本地资料.md")
+        self.assertEqual(len(reused[2]["flash_ids"]), 2)
+
+        tracked_files = [
+            path
+            for path in self.root.rglob("*")
+            if path.is_file() and ".git" not in path.parts
+        ]
+        self.assertTrue(tracked_files)
+        for path in tracked_files:
+            if path.suffix in {".png", ".gif", ".jpg", ".jpeg", ".webp"}:
+                continue
+            self.assertNotIn(leaked_path, path.read_text(encoding="utf-8"))
+        committed = git(
+            self.root, "show", "--pretty=", "--name-only", first["commit"]
+        ).splitlines()
+        self.assertIn(source_rel.as_posix(), committed)
+        self.assertIn(flash_rel.as_posix(), committed)
+        self.assertTrue(self.service.lint()["ok"])
+
+    def test_local_preview_identity_hash_tampering_has_zero_writes(self):
+        preview = self.local_preview()
+        preview["origin_sha256"] = "0" * 64
+        before_head = git(self.root, "rev-parse", "HEAD")
+        before_state = (self.root / ".goodidea/state.json").read_text(
+            encoding="utf-8"
+        )
+        with self.assertRaisesRegex(
+            ValidationError, "origin_sha256 与规范化 Markdown 正文不一致"
+        ):
+            self.service.source_commit(
+                preview,
+                motivation="这条动机不能让伪造的本地来源身份进入仓库。",
+                transaction_id="tx-local-forged-identity",
+            )
+        self.assertEqual(git(self.root, "rev-parse", "HEAD"), before_head)
+        self.assertEqual(
+            (self.root / ".goodidea/state.json").read_text(encoding="utf-8"),
+            before_state,
+        )
+        self.assertIsNone(
+            self.repo.transaction_result("tx-local-forged-identity")
+        )
 
     def test_source_maintenance_migrates_legacy_wrapper_and_is_revertible(self):
         captured = self.service.source_commit(
@@ -684,6 +807,145 @@ class GoodIdeaCoreTests(unittest.TestCase):
         self.assertEqual(source_record["path"], new_path.as_posix())
         self.assertEqual(source_record["title"], "更新后的示例文章")
         self.assertTrue(self.service.lint()["ok"])
+
+    def test_local_refresh_preserves_first_identity_and_updates_snapshot_hashes(self):
+        original_preview = self.local_preview()
+        original = self.service.source_commit(
+            original_preview,
+            motivation="我要用这份本地资料持续检验 AI 生成与人的反馈关系。",
+            transaction_id="tx-local-refresh-source",
+        )["result"]
+        source_id = original["source_id"]
+        original_note = self.repo.find_note(source_id)
+        original_meta = original_note[2]
+        original_content_sha256 = original_meta["content_sha256"]
+        original_snapshot_sha256 = original_meta["snapshot_sha256"]
+        initial_identity_key = (
+            f"local:sha256:{original_preview['origin_sha256']}"
+        )
+
+        changed_preview = self.local_preview(
+            "本地正文第二版，加入了反馈回路与选择标准。",
+            filename="移动后且已修改.md",
+            title="本地资料的新标题",
+        )
+        leaked_refresh_path = str(
+            Path(self.temp.name) / "private/moved/移动后且已修改.md"
+        )
+        changed_preview["input_path"] = leaked_refresh_path
+        self.assertNotEqual(
+            changed_preview["origin_sha256"], original_preview["origin_sha256"]
+        )
+        proposal = self.service.source_refresh(
+            source_id,
+            preview=changed_preview,
+            transaction_id="tx-local-refresh-proposal",
+        )["result"]
+        before_accept = self.repo.find_note(source_id)
+        self.assertIn("本地正文第一版", before_accept[1])
+        self.assertNotIn("本地正文第二版", before_accept[1])
+
+        accepted = self.service.source_refresh(
+            source_id,
+            confirm_proposal=proposal["proposal_id"],
+            transaction_id="tx-local-refresh-accept",
+        )["result"]
+        updated = self.repo.find_note(source_id)
+        updated_meta = updated[2]
+        self.assertEqual(accepted["source_id"], source_id)
+        self.assertIn("本地正文第二版", updated[1])
+        self.assertEqual(updated_meta["origin_filename"], "本地资料.md")
+        self.assertEqual(
+            updated_meta["origin_sha256"], original_preview["origin_sha256"]
+        )
+        self.assertNotEqual(updated_meta["content_sha256"], original_content_sha256)
+        self.assertNotEqual(
+            updated_meta["snapshot_sha256"], original_snapshot_sha256
+        )
+        self.assertEqual(
+            updated_meta["content_sha256"],
+            hashlib.sha256(changed_preview["markdown"].encode("utf-8")).hexdigest(),
+        )
+        state = self.repo.read_state()
+        self.assertEqual(list(state["sources"]), [initial_identity_key])
+        self.assertEqual(state["sources"][initial_identity_key]["id"], source_id)
+        proposal_text = (
+            self.root / proposal["proposal_path"]
+        ).read_text(encoding="utf-8")
+        self.assertNotIn(leaked_refresh_path, proposal_text)
+        self.assertTrue(self.service.lint()["ok"])
+
+    def test_lint_rejects_mixed_source_fields_and_state_identity_tampering(self):
+        local_preview = self.local_preview()
+        captured = self.service.source_commit(
+            local_preview,
+            motivation="我要验证本地来源的身份字段不能被手工混用或篡改。",
+            transaction_id="tx-local-lint-base",
+        )["result"]
+        source_path = self.root / captured["source_path"]
+        original_source = source_path.read_text(encoding="utf-8")
+        original_state = (self.root / ".goodidea/state.json").read_text(
+            encoding="utf-8"
+        )
+
+        metadata, _ = parse_document(original_source)
+        metadata["canonical_url"] = "https://example.com/should-not-be-here"
+        source_path.write_text(
+            replace_frontmatter(original_source, metadata), encoding="utf-8"
+        )
+        mixed = self.service.lint()
+        self.assertFalse(mixed["ok"])
+        self.assertTrue(
+            any("网页来源不能包含本地来源身份字段" in issue for issue in mixed["issues"])
+        )
+
+        source_path.write_text(original_source, encoding="utf-8")
+        state = json.loads(original_state)
+        identity_key = f"local:sha256:{local_preview['origin_sha256']}"
+        record = state["sources"].pop(identity_key)
+        state["sources"][f"{identity_key}-tampered"] = record
+        (self.root / ".goodidea/state.json").write_text(
+            json.dumps(state, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
+            encoding="utf-8",
+        )
+        wrong_key = self.service.lint()
+        self.assertFalse(wrong_key["ok"])
+        self.assertTrue(
+            any("identity key 与来源不一致" in issue for issue in wrong_key["issues"])
+        )
+
+        (self.root / ".goodidea/state.json").write_text(
+            original_state, encoding="utf-8"
+        )
+        state = json.loads(original_state)
+        state["sources"][identity_key]["title"] = "被篡改的账本标题"
+        (self.root / ".goodidea/state.json").write_text(
+            json.dumps(state, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
+            encoding="utf-8",
+        )
+        wrong_title = self.service.lint()
+        self.assertFalse(wrong_title["ok"])
+        self.assertTrue(
+            any("标题与文件不一致" in issue for issue in wrong_title["issues"])
+        )
+
+    def test_lint_rejects_local_identity_fields_on_web_source(self):
+        captured = self.service.source_commit(
+            self.preview(),
+            motivation="我要验证网页来源不会混入本地文件身份字段。",
+            transaction_id="tx-web-local-fields-lint",
+        )["result"]
+        source_path = self.root / captured["source_path"]
+        text = source_path.read_text(encoding="utf-8")
+        metadata, _ = parse_document(text)
+        metadata["origin_filename"] = "错误.md"
+        metadata["origin_sha256"] = "0" * 64
+        source_path.write_text(replace_frontmatter(text, metadata), encoding="utf-8")
+        lint = self.service.lint()
+        self.assertFalse(lint["ok"])
+        self.assertTrue(
+            any("网页来源不能包含本地来源身份字段" in issue for issue in lint["issues"])
+        )
 
     def test_permanent_gate_connections_and_action_feedback(self):
         captured = self.service.source_commit(

@@ -9,7 +9,12 @@ from typing import Any
 from .errors import GoodIdeaError, ValidationError
 from .repository import Repository, initialize_vault
 from .service import GoodIdeaService
-from .web import preview_from_html, preview_from_markdown, preview_from_url
+from .web import (
+    preview_from_html,
+    preview_from_local_file,
+    preview_from_markdown,
+    preview_from_url,
+)
 
 
 def _json(data: Any, *, stream: Any = sys.stdout) -> None:
@@ -53,7 +58,9 @@ def build_parser() -> argparse.ArgumentParser:
     source = sub.add_parser("source", help="来源预读、录入和刷新")
     source_sub = source.add_subparsers(dest="source_command", required=True)
     preview = source_sub.add_parser("preview", help="只读生成临时来源 preview")
-    preview.add_argument("--url", required=True)
+    source_identity = preview.add_mutually_exclusive_group(required=True)
+    source_identity.add_argument("--url")
+    source_identity.add_argument("--local-file")
     input_group = preview.add_mutually_exclusive_group()
     input_group.add_argument("--html-file")
     input_group.add_argument("--markdown-file")
@@ -181,7 +188,18 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def _source_preview(args: argparse.Namespace) -> dict[str, Any]:
-    if args.html_file:
+    if args.local_file:
+        if args.html_file or args.markdown_file:
+            raise ValidationError(
+                "--local-file 不能与 --html-file 或 --markdown-file 同时使用"
+            )
+        value = preview_from_local_file(
+            args.local_file,
+            title=args.title,
+            author=args.author,
+            published_at=args.published_at,
+        )
+    elif args.html_file:
         html_text = (
             sys.stdin.read()
             if args.html_file == "-"
@@ -207,6 +225,11 @@ def _source_preview(args: argparse.Namespace) -> dict[str, Any]:
         value = preview_from_url(args.url)
     if args.output:
         output = Path(args.output).resolve()
+        if (
+            args.local_file
+            and output == Path(args.local_file).expanduser().resolve()
+        ):
+            raise ValidationError("preview 输出不能覆盖本地来源文件")
         root = None
         if args.root:
             root = Path(args.root).resolve()
