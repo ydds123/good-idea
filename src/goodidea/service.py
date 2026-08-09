@@ -1201,6 +1201,35 @@ class GoodIdeaService:
             result=result,
         )
 
+    def maintain_index(
+        self,
+        *,
+        transaction_id: str | None = None,
+    ) -> dict[str, Any]:
+        txid = transaction_id or new_transaction_id("maintain-index")
+        if existing := self._idempotent(txid):
+            return existing
+        expected = self.repo.generate_index({})
+        current = (self.repo.root / "index.md").read_text(encoding="utf-8")
+        state = self.repo.read_state()
+        if current == expected:
+            return self.repo.commit(
+                transaction_id=txid,
+                action="maintain-index",
+                summary="内容索引已经符合无摘要展示规范",
+                writes={},
+                state=state,
+                result={"no_change": True},
+            )
+        return self.repo.commit(
+            transaction_id=txid,
+            action="maintain-index",
+            summary="重新生成不展示摘要的内容索引",
+            writes={},
+            state=state,
+            result={"no_change": False},
+        )
+
     def connect_propose(
         self,
         from_id: str,

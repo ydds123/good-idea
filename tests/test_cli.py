@@ -90,6 +90,19 @@ class GoodIdeaCliTests(unittest.TestCase):
         self.assertEqual(maintained.returncode, 0, maintained.stderr)
         self.assertTrue(json.loads(maintained.stdout)["result"]["no_change"])
 
+        maintained_index = run_cli(
+            "--root",
+            str(self.root),
+            "maintain",
+            "index",
+            "--transaction-id",
+            "cli-maintain-index-noop",
+        )
+        self.assertEqual(maintained_index.returncode, 0, maintained_index.stderr)
+        self.assertTrue(
+            json.loads(maintained_index.stdout)["result"]["no_change"]
+        )
+
         verified = run_cli("--root", str(self.root), "verify")
         self.assertEqual(verified.returncode, 0, verified.stderr)
         self.assertTrue(json.loads(verified.stdout)["ok"])

@@ -89,6 +89,10 @@ def build_parser() -> argparse.ArgumentParser:
         "sources", help="统一来源快照顺序并删除空的旧版中间笔记层"
     )
     sources.add_argument("--transaction-id")
+    index = maintain_sub.add_parser(
+        "index", help="重新生成只展示标题和状态的内容索引"
+    )
+    index.add_argument("--transaction-id")
 
     permanent = sub.add_parser("permanent", help="用户原文草稿与永久卡片状态流转")
     permanent_sub = permanent.add_subparsers(
@@ -258,6 +262,8 @@ def dispatch(args: argparse.Namespace) -> tuple[dict[str, Any], int]:
         result = service.maintain_filenames(transaction_id=args.transaction_id)
     elif args.command == "maintain" and args.maintain_command == "sources":
         result = service.maintain_sources(transaction_id=args.transaction_id)
+    elif args.command == "maintain" and args.maintain_command == "index":
+        result = service.maintain_index(transaction_id=args.transaction_id)
     elif args.command == "permanent":
         if args.permanent_command == "propose":
             result = service.permanent_propose(

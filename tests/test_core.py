@@ -289,6 +289,36 @@ class GoodIdeaCoreTests(unittest.TestCase):
         index = (self.root / "index.md").read_text(encoding="utf-8")
         self.assertNotIn(first["result"]["id"], index)
         self.assertIn("待处理", index)
+        self.assertNotIn("第一条闪念正文", index)
+        self.assertNotIn("第二条闪念正文", index)
+
+    def test_index_maintenance_removes_all_visible_summaries(self):
+        captured = self.service.capture(
+            "flash",
+            text="索引中的这段摘要不应展示给读者。",
+            title="索引只显示标题",
+            transaction_id="tx-index-with-summary",
+        )
+        index_path = self.root / "index.md"
+        generated = index_path.read_text(encoding="utf-8")
+        self.assertIn("索引只显示标题", generated)
+        self.assertNotIn("这段摘要不应展示", generated)
+
+        index_path.write_text("# 旧索引\n\n- 错误摘要\n", encoding="utf-8")
+        git(self.root, "add", "index.md")
+        git(self.root, "commit", "-m", "test fixture: legacy index summaries")
+        maintained = self.service.maintain_index(
+            transaction_id="tx-maintain-index"
+        )
+        self.assertFalse(maintained["result"]["no_change"])
+        regenerated = index_path.read_text(encoding="utf-8")
+        self.assertIn(captured["result"]["path"][:-3], regenerated)
+        self.assertNotIn("错误摘要", regenerated)
+        replay = self.service.maintain_index(
+            transaction_id="tx-maintain-index"
+        )
+        self.assertTrue(replay["idempotent"])
+        self.assertEqual(replay["result"], maintained["result"])
 
     def test_lint_checks_obsidian_reading_baseline(self):
         app_path = self.root / ".obsidian/app.json"

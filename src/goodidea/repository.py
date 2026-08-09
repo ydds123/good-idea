@@ -136,28 +136,18 @@ class Repository:
         writes: dict[Path, str | bytes],
         deletes: set[Path] | None = None,
     ) -> str:
-        groups: dict[str, list[tuple[Path, dict[str, Any], str]]] = {
+        groups: dict[str, list[tuple[Path, dict[str, Any]]]] = {
             kind: [] for kind in INDEX_HEADINGS
         }
         for rel, text in self._pending_note_texts(writes, deletes).items():
             try:
-                metadata, body = parse_document(text)
+                metadata, _body = parse_document(text)
             except ValidationError:
                 continue
             note_type = str(metadata.get("type", ""))
             if note_type not in groups:
                 continue
-            summary = str(metadata.get("summary", "")).strip()
-            if not summary:
-                for line in body.splitlines():
-                    candidate = line.strip()
-                    if (
-                        candidate
-                        and not candidate.startswith(("#", ">", "<!--", "- [["))
-                    ):
-                        summary = candidate[:100]
-                        break
-            groups[note_type].append((rel, metadata, summary))
+            groups[note_type].append((rel, metadata))
 
         lines = [
             "# Good idea 索引",
@@ -178,12 +168,11 @@ class Repository:
             if not items:
                 lines.extend(["_暂无_", ""])
                 continue
-            for rel, metadata, summary in items:
+            for rel, metadata in items:
                 link = wiki_link(rel, str(metadata.get("title", rel.stem)))
                 raw_status = str(metadata.get("status", ""))
                 status = STATUS_LABELS.get(raw_status, raw_status)
-                suffix = f" — {summary}" if summary else ""
-                lines.append(f"- {link} · {status}{suffix}")
+                lines.append(f"- {link} · {status}")
             lines.append("")
         return "\n".join(lines).rstrip() + "\n"
 

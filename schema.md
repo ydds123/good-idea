@@ -102,7 +102,7 @@ Markdown Frontmatter 是 CLI 的机器控制面，不是阅读正文。Obsidian 
 
 Obsidian 与 CLI 生成的 Wiki 链接统一使用从仓库根目录开始的路径。`.obsidian/` 中稳定的阅读设置和样式纳入 Git；`workspace.json` 等本机布局不提交。
 
-`index.md` 每次成功事务重新生成；`log.md` 每条记录格式为：
+`index.md` 每次成功事务重新生成，只展示卡片标题链接和中文状态，不展示 Frontmatter 中的 `summary`。`summary` 保留为内部检索与机械处理元数据，不属于人类可读索引。`log.md` 每条记录格式为：
 
 ```text
 ## [YYYY-MM-DD HH:MM:SS +0800] <action> | <summary> | tx=<transaction-id>
