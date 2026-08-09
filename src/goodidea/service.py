@@ -2021,8 +2021,8 @@ class GoodIdeaService:
             plugin_config = json.loads(
                 (obsidian_root / "core-plugins.json").read_text(encoding="utf-8")
             )
-            if app_config.get("propertiesInDocument") != "hidden":
-                issues.append("Obsidian 未默认隐藏机器 Frontmatter")
+            if app_config.get("propertiesInDocument") != "visible":
+                issues.append("Obsidian 未默认显示卡片 Frontmatter 属性")
             if app_config.get("alwaysUpdateLinks") is not True:
                 issues.append("Obsidian 未启用自动更新链接")
             if app_config.get("attachmentFolderPath") != ".goodidea/assets":
@@ -2040,8 +2040,8 @@ class GoodIdeaService:
             css = (obsidian_root / "snippets/goodidea.css").read_text(
                 encoding="utf-8"
             )
-            if ".metadata-container" not in css:
-                issues.append("Obsidian 样式未隐藏机器属性区域")
+            if ".metadata-container" in css:
+                issues.append("Obsidian 样式仍在隐藏卡片属性区域")
             for selector in (".goodidea", ".agents", "AGENTS.md", "schema.md"):
                 if selector not in css:
                     issues.append(f"Obsidian 样式未隐藏内部项目：{selector}")

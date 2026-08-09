@@ -3,6 +3,6 @@
   "attachmentFolderPath": ".goodidea/assets",
   "defaultViewMode": "preview",
   "newLinkFormat": "absolute",
-  "propertiesInDocument": "hidden",
+  "propertiesInDocument": "visible",
   "showInlineTitle": false
 }

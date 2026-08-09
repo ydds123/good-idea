@@ -49,7 +49,7 @@ ID 是系统内部的稳定身份，用于去重、状态关联、来源关系�
 
 ## 内部参数
 
-Markdown Frontmatter 是 CLI 的机器控制面，不是阅读正文。Obsidian 默认隐藏它，用户正常阅读时无需理解或编辑。
+Markdown Frontmatter 是 CLI 的机器控制面，不是阅读正文。Obsidian 默认显示属性，方便用户查看卡片身份、状态、时间和来源关系；这些字段仍只能由 CLI 维护，不应在 Obsidian 中手工修改。
 
 | 参数 | 中文含义 | 系统用途 |
 |---|---|---|
@@ -102,7 +102,7 @@ Markdown Frontmatter 是 CLI 的机器控制面，不是阅读正文。Obsidian 
 
 ## Obsidian 产品基线
 
-`.obsidian/app.json`、`appearance.json`、`core-plugins.json` 和 `snippets/goodidea.css` 属于 v0.1 产品基线：默认隐藏 Frontmatter 属性、隐藏内部目录、自动维护链接，并把附件保存到 `.goodidea/assets/`。`workspace.json` 只记录本机临时窗口状态，不进入 Git。
+`.obsidian/app.json`、`appearance.json`、`core-plugins.json` 和 `snippets/goodidea.css` 属于 v0.1 产品基线：默认显示 Frontmatter 属性、隐藏内部目录、自动维护链接，并把附件保存到 `.goodidea/assets/`。`workspace.json` 只记录本机临时窗口状态，不进入 Git。
 
 ## 溯源文件
 

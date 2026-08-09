@@ -1260,14 +1260,14 @@ class GoodIdeaCoreTests(unittest.TestCase):
     def test_lint_checks_obsidian_reading_baseline(self):
         app_path = self.root / ".obsidian/app.json"
         app = json.loads(app_path.read_text(encoding="utf-8"))
-        app["propertiesInDocument"] = "visible"
+        app["propertiesInDocument"] = "hidden"
         app_path.write_text(
             json.dumps(app, ensure_ascii=False, indent=2) + "\n",
             encoding="utf-8",
         )
         lint = self.service.lint()
         self.assertFalse(lint["ok"])
-        self.assertIn("Obsidian 未默认隐藏机器 Frontmatter", lint["issues"])
+        self.assertIn("Obsidian 未默认显示卡片 Frontmatter 属性", lint["issues"])
 
     def test_filename_maintenance_renames_legacy_paths_and_repairs_links(self):
         captured = self.service.source_commit(

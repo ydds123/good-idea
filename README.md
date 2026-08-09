@@ -245,10 +245,10 @@ uv run python scripts/validate-skills.py
 
 | 路径 | 作用 |
 |---|---|
-| `.obsidian/app.json` | 隐藏机器属性、使用绝对库内链接、自动更新链接、指定附件目录 |
+| `.obsidian/app.json` | 显示卡片属性、使用绝对库内链接、自动更新链接、指定附件目录 |
 | `.obsidian/appearance.json` | 启用 Good Idea 样式片段和稳定阅读外观 |
 | `.obsidian/core-plugins.json` | 配置反链、图谱、搜索、页面预览等核心插件 |
-| `.obsidian/snippets/goodidea.css` | 隐藏内部目录和机器元数据等阅读样式 |
+| `.obsidian/snippets/goodidea.css` | 隐藏内部目录等阅读样式 |
 | `.obsidian/workspace*.json` | 当前窗口与布局状态，只属于本机临时状态，不纳入 Git |
 
 Obsidian 是阅读、搜索、反链和图谱导航界面，不负责绕过 CLI 修改受保护快照、状态账本或生成式索引。

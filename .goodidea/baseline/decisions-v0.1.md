@@ -43,3 +43,4 @@
 33. 来源文件的身份字段和稳定 ID 是来源身份唯一事实源；闪念的 `source_ids` 与正式卡片的 `derived_from` 是关系起点事实。来源 `flash_ids`、闪念 `converted_to` 和 `state.json.sources` 属于可推导镜像，统一废弃；人类可读反向链接由 CLI 生成。
 34. 闪念陈旧性按读取时的创建时间动态计算，不持久化 `expires_at`，不设定时任务，不自动改变认知内容状态。仓库不再提供复制整套规则模板的公开 `init` 命令；开发测试从当前权威文件搭建隔离仓库。
 35. 机器契约集中在 `src/goodidea/contracts.py`，实现、校验和测试共享类型、状态、ID、必填字段与时限定义；AGENTS、Schema、Skills 和 README 仍按不同读者保留必要说明，但不得各自创造机器规则。
+36. Obsidian 正常阅读界面默认显示卡片 Frontmatter 属性，方便用户查看 ID、类型、标题、状态、时间和来源关系；这些属性仍由 CLI 独占维护，不授权在 Obsidian 中手工修改。本项覆盖第 16 项关于“默认隐藏机器参数”的显示决定，其他稳定配置托管与临时 workspace 不托管规则保持不变。
