@@ -275,6 +275,25 @@
       "timestamp": "2026-08-09T16:42:44+08:00",
       "transaction_id": "rollback-7e40c07c2681"
     },
+    "source-control-theory-capture-20260809-v2": {
+      "action": "source-commit",
+      "result": {
+        "flash_created": false,
+        "flash_ids": [
+          "FLA-20260809-01ec2b01"
+        ],
+        "flash_paths": [
+          "闪念空间/2026-08-09-以控制论为底座，研究如何让-AI-生成超越平庸.md"
+        ],
+        "image_failures": [],
+        "source_created": true,
+        "source_id": "SRC-a288ab6df42c",
+        "source_path": "溯源空间/2026-08-09-控制论与科学方法论.md"
+      },
+      "summary": "控制论与科学方法论 + 关联 1 张闪念",
+      "timestamp": "2026-08-09T18:49:29+08:00",
+      "transaction_id": "source-control-theory-capture-20260809-v2"
+    },
     "source-lijigang-beyond-mediocrity-20260809-v1": {
       "action": "source-commit",
       "result": {

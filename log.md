@@ -41,3 +41,5 @@
 
 ## [2026-08-09T18:47:54+08:00] capture-finalize | 确认本轮 2 张闪念 | tx=capture-finalize-first-two-20260809
 
+## [2026-08-09T18:49:29+08:00] source-commit | 控制论与科学方法论 + 关联 1 张闪念 | tx=source-control-theory-capture-20260809-v2
+
