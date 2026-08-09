@@ -4,7 +4,7 @@ type: "todo"
 title: "为 Good Idea 增加用户画像/记忆摘要层（类 ChatGPT 记忆）"
 status: "open"
 created_at: "2026-08-09T21:42:30+08:00"
-updated_at: "2026-08-09T21:42:30+08:00"
+updated_at: "2026-08-09T21:54:09+08:00"
 source_ids: []
 ---
 # 为 Good Idea 增加用户画像/记忆摘要层（类 ChatGPT 记忆）
@@ -16,3 +16,7 @@ source_ids: []
 ## 产生情境
 
 用户口述（2026-08-09）：对 Good Idea 系统本身的改进想法，明确要求放入待办。
+
+## 演化记录
+
+- 2026-08-09T21:54:09+08:00 — 补充观察：该结构与 Hermes 的 memory 和 user profile 机制几乎同构，做深时可直接参考 Hermes 如何维护两类记忆（哪些进长期记忆、哪些进画像、如何更新与淘汰），是现成的设计对照样本。

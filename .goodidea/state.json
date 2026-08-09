@@ -275,6 +275,17 @@
       "timestamp": "2026-08-06T21:53:14+08:00",
       "transaction_id": "review-expire-20260806215314-b66ff66d"
     },
+    "revise-user-profile-hermes-20260809": {
+      "action": "capture-revise",
+      "result": {
+        "id": "TODO-20260809-13e2394c",
+        "path": "待办空间/2026-08-09-为-Good-Idea-增加用户画像-记忆摘要层（类-ChatGPT-记忆）.md",
+        "type": "todo"
+      },
+      "summary": "为 Good Idea 增加用户画像/记忆摘要层（类 ChatGPT 记忆）",
+      "timestamp": "2026-08-09T21:54:09+08:00",
+      "transaction_id": "revise-user-profile-hermes-20260809"
+    },
     "rollback-7e40c07c2681": {
       "action": "rollback",
       "result": {

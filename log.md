@@ -51,3 +51,5 @@
 
 ## [2026-08-09T21:42:30+08:00] capture-todo | 为 Good Idea 增加用户画像/记忆摘要层（类 ChatGPT 记忆） | tx=todo-user-profile-20260809
 
+## [2026-08-09T21:54:09+08:00] capture-revise | 为 Good Idea 增加用户画像/记忆摘要层（类 ChatGPT 记忆） | tx=revise-user-profile-hermes-20260809
+
