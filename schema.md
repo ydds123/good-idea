@@ -41,7 +41,7 @@ Markdown Frontmatter 是 CLI 的机器控制面，不是阅读正文。Obsidian 
 | 参数 | 中文含义 | 系统用途 |
 |---|---|---|
 | `id` / `type` | 稳定身份 / 对象类型 | 在改名后仍识别同一对象，并校验所在空间 |
-| `title` / `summary` | 标题 / 索引摘要 | 生成文件名、标题和索引说明 |
+| `title` / `summary` | 标题 / 内部摘要 | 生成文件名与标题；为内部检索和机械处理保留摘要 |
 | `status` | 生命周期状态 | 区分待处理、已失效、完整、待行动等状态 |
 | `created_at` / `updated_at` | 创建 / 更新时间 | 文件命名、排序和演化审计 |
 | `source_ids` / `flash_ids` / `derived_from` | 来源 / 闪念 / 生成关系 | 用 ID 维持跨文件关系，不依赖文件名 |
