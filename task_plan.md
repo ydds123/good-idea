@@ -2,7 +2,7 @@
 
 版本：v0.1-capture-iteration  
 制定日期：2026-08-09  
-状态：`in_progress`  
+状态：`complete`
 范围所有者：用户  
 
 ## 1. 目标
@@ -231,7 +231,7 @@ goodidea source commit --attach-flash-ids <ID列表>
 - [x] 七个 Skills 通过官方结构校验。
 - [x] Skill 路由静态评测和夹具通过，报告已更新。
 - [x] `goodidea lint` 通过。
-- [ ] `goodidea verify` 通过。
+- [x] `goodidea verify` 通过。
 - [x] 真实多文件、多轮、多闪念场景完成一次回归。
 
 ## 14. 实施阶段
@@ -266,11 +266,11 @@ goodidea source commit --attach-flash-ids <ID列表>
 - [x] 完成第 13 节全部测试。
 - [x] 执行真实多文件、多轮、多闪念场景。
 
-### Phase 7：逐项证据审计 — `in_progress`
+### Phase 7：逐项证据审计 — `complete`
 
 - [x] 对照本文件逐项填写证据。
 - [x] 未满足项继续修复，不以部分测试通过代替完成。
-- [ ] 审计差异、Git 范围和未修改的永久卡片边界。
+- [x] 审计差异、Git 范围和未修改的永久卡片边界。
 
 ## 15. 错误记录
 
@@ -287,7 +287,7 @@ goodidea source commit --attach-flash-ids <ID列表>
 
 ## 17. 逐项证据审计
 
-审计日期：2026-08-09。实现提交：`3c6320b`，后续审计发现的图片检查点与崩溃恢复测试将在审计修复提交中固定。
+审计日期：2026-08-09。实现提交：`3c6320b`；逐项审计修复提交：`e121dd9`。
 
 | 基准范围 | 实现证据 | 自动化或实测证据 | 审查结论 |
 |---|---|---|---|
@@ -302,4 +302,12 @@ goodidea source commit --attach-flash-ids <ID列表>
 | 性能、并发与安全 | 前台只记录 refs；会话锁；路径/符号链接门禁；外部指令按数据保存 | 60 慢图片隔离、多会话并发、runtime 越界、仓库事务越界、提示注入快照测试 | 通过 |
 | 阶段路由与七个 Skills | 5 个交界 Skill 更新；review-process/connect-cards 不改；46 个路由夹具 | 静态报告 `reports/skill-routing/latest.*`、官方校验 7/7、永久卡片/连接回归 | 通过；未增加第八个 Skill，未改永久卡片状态机 |
 | 真实场景 | 隔离临时仓库读取 4 个用户提供的 TXT/Markdown，只做指纹和按需文本读取 | 4 文件 → 2 闪念 → 4 维护任务；lint true、Git clean | 通过；没有写入当前 Good Idea 的正式内容 |
-| 项目完整性 | 全量测试、diff check、lint、verify | 76 tests、46 routes、7/7 Skills、live lint 均通过；verify 待审计提交后在干净树执行 | 除最终 clean verify 外通过 |
+| 项目完整性 | 全量测试、diff check、lint、verify | 76 tests、46 routes、7/7 Skills、live lint 均通过；`e121dd9` 干净工作区 verify 为 `ok: true` | 通过 |
+
+### 17.1 Git 范围结论
+
+- 三个可追溯提交依次为：计划冻结 `ce3a168`、主体实现 `3c6320b`、审计补漏 `e121dd9`。
+- `git diff ce3a168..e121dd9 --name-only -- 永久空间` 为空；没有改写任何正式永久卡片。
+- 永久卡片和语义连接的 service 状态机没有修改；form-permanent 与 review-permanent 只收紧 Skill 触发描述和对应 `openai.yaml`，用于避免捕获阶段误触发。
+- 没有迁移或改写现有 9 份正式内容；真实四文件回归在自动清理的隔离临时仓库执行。
+- 后台自动性边界保持透明：用户确认清单后由 Agent 按 Skill 消费持久任务，不安装常驻 daemon；任务状态、图片检查点、重试、恢复和写入仍由确定性 CLI 约束。
