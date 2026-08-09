@@ -44,17 +44,20 @@
       "withdrawn_at": "2026-08-04T22:24:07+08:00"
     }
   },
+  "rollbacks": [
+    {
+      "commit": "7e40c07c26818dfc71ee32a12a2b1bc9b2ab9c66",
+      "subject": "source-commit: 对话李继刚：让AI超越平庸表现｜“读完周报再来聊聊”闭门会第5期精华 + 保存动机 [tx:source-lijigang-beyond-mediocrity-20260809-v1]",
+      "timestamp": "2026-08-09T16:42:44+08:00",
+      "transaction_id": "rollback-7e40c07c2681"
+    }
+  ],
   "schema_version": "0.1",
   "sources": {
     "https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f": {
       "id": "SRC-91fc906a9943",
       "path": "溯源空间/2026-08-04-LLM-Wiki.md",
       "title": "LLM Wiki"
-    },
-    "https://mp.weixin.qq.com/s/tKKlPps6TCy11TOVTIMvdw": {
-      "id": "SRC-676c8d587aa6",
-      "path": "溯源空间/2026-08-09-对话李继刚：让AI超越平庸表现｜“读完周报再来聊聊”闭门会第5期精华.md",
-      "title": "对话李继刚：让AI超越平庸表现｜“读完周报再来聊聊”闭门会第5期精华"
     },
     "https://mp.weixin.qq.com/s/vTv0Vu4RgrMkmLbXGvnSug": {
       "id": "SRC-ddab8c91266b",
@@ -275,6 +278,16 @@
       "timestamp": "2026-08-06T21:53:14+08:00",
       "transaction_id": "review-expire-20260806215314-b66ff66d"
     },
+    "rollback-7e40c07c2681": {
+      "action": "rollback",
+      "result": {
+        "rolled_back": "7e40c07c26818dfc71ee32a12a2b1bc9b2ab9c66",
+        "strategy": "git-revert"
+      },
+      "summary": "回滚 7e40c07c2681 source-commit: 对话李继刚：让AI超越平庸表现｜“读完周报再来聊聊”闭门会第5期精华 + 保存动机 [tx:source-lijigang-beyond-mediocrity-20260809-v1]",
+      "timestamp": "2026-08-09T16:42:44+08:00",
+      "transaction_id": "rollback-7e40c07c2681"
+    },
     "source-control-theory-20260809-v1": {
       "action": "source-commit",
       "result": {
@@ -297,6 +310,8 @@
         "source_id": "SRC-676c8d587aa6",
         "source_path": "溯源空间/2026-08-09-对话李继刚：让AI超越平庸表现｜“读完周报再来聊聊”闭门会第5期精华.md"
       },
+      "rolled_back_at": "2026-08-09T16:42:44+08:00",
+      "rolled_back_by": "rollback-7e40c07c2681",
       "summary": "对话李继刚：让AI超越平庸表现｜“读完周报再来聊聊”闭门会第5期精华 + 保存动机",
       "timestamp": "2026-08-09T14:40:59+08:00",
       "transaction_id": "source-lijigang-beyond-mediocrity-20260809-v1"
