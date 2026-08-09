@@ -236,37 +236,37 @@ goodidea source commit --attach-flash-ids <ID列表>
 
 ## 14. 实施阶段
 
-### Phase 1：冻结契约 — `in_progress`
+### Phase 1：冻结契约 — `complete`
 
-- [ ] 将本基准同步到 AGENTS、Schema、README 和追加决策。
-- [ ] 明确与永久卡片阶段的边界。
+- [x] 将本基准同步到 AGENTS、Schema、README 和追加决策。
+- [x] 明确与永久卡片阶段的边界。
 
-### Phase 2：临时捕获内核 — `pending`
+### Phase 2：临时捕获内核 — `complete`
 
-- [ ] 实现 runtime 会话、原子写入、锁、幂等、暂停、恢复和放弃。
-- [ ] 实现上下文引用与轻量指纹。
+- [x] 实现 runtime 会话、原子写入、锁、幂等、暂停、恢复和放弃。
+- [x] 实现上下文引用与轻量指纹。
 
-### Phase 3：候选与正式转化 — `pending`
+### Phase 3：候选与正式转化 — `complete`
 
-- [ ] 实现 propose 版本、失效、确认绑定和多闪念 finalize。
-- [ ] 实现短期恢复窗口和整批回滚语义。
+- [x] 实现 propose 版本、失效、确认绑定和多闪念 finalize。
+- [x] 实现短期恢复窗口和整批回滚语义。
 
-### Phase 4：后台来源维护 — `pending`
+### Phase 4：后台来源维护 — `complete`
 
-- [ ] 实现持久化队列、已有闪念关联、上下文漂移和失败隔离。
-- [ ] 实现安全暂停、恢复、有限重试。
+- [x] 实现持久化队列、已有闪念关联、上下文漂移和失败隔离。
+- [x] 实现安全暂停、恢复、有限重试。
 
-### Phase 5：Skills 与路由 — `pending`
+### Phase 5：Skills 与路由 — `complete`
 
-- [ ] 更新 5 个相关 Skills，保持 2 个不变。
-- [ ] 更新 openai.yaml、路由夹具和评测报告。
+- [x] 更新 5 个相关 Skills，保持 2 个不变。
+- [x] 更新 openai.yaml、路由夹具和评测报告。
 
-### Phase 6：自动化与真实验收 — `pending`
+### Phase 6：自动化与真实验收 — `complete`
 
-- [ ] 完成第 13 节全部测试。
-- [ ] 执行真实多文件、多轮、多闪念场景。
+- [x] 完成第 13 节全部测试。
+- [x] 执行真实多文件、多轮、多闪念场景。
 
-### Phase 7：逐项证据审计 — `pending`
+### Phase 7：逐项证据审计 — `in_progress`
 
 - [ ] 对照本文件逐项填写证据。
 - [ ] 未满足项继续修复，不以部分测试通过代替完成。
@@ -277,6 +277,9 @@ goodidea source commit --attach-flash-ids <ID列表>
 | 错误 | 次数 | 处理 |
 |---|---:|---|
 | 误把用户“开始”理解为实施授权，提前修改代码并运行测试 | 1 | 已立即终止并用补丁撤销；仓库恢复干净。后续以本文件阶段和用户授权为准。 |
+| 新仓库初始化模板遗漏 `.goodidea/runtime/` ignore | 1 | 核心测试发现临时目录成为未跟踪文件；已同步内置 `.gitignore` 模板。 |
+| 新 CLI 测试错误地假设运行时命令返回正式事务的 `result` 包装 | 1 | 运行时命令直接返回轻量结果；测试已按公开输出契约修正。 |
+| 首次调用 Skill 校验器沿用了错误的位置参数语法 | 1 | 立即改用 `--skills-root .agents/skills`；官方校验 7/7 通过。 |
 
 ## 16. 完成声明门禁
 

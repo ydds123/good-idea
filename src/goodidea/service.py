@@ -13,6 +13,7 @@ from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Any
 
+from .capture import CaptureRuntime
 from .errors import GitError, IntegrityError, ValidationError
 from .metadata import dump_frontmatter, parse_document, replace_frontmatter
 from .notes import (
@@ -478,6 +479,106 @@ class GoodIdeaService:
             result=result,
         )
 
+    def capture_finalize(
+        self,
+        runtime: CaptureRuntime,
+        session_id: str,
+        *,
+        proposal_id: str,
+        confirmed_by_user: bool,
+        transaction_id: str,
+    ) -> dict[str, Any]:
+        if not confirmed_by_user:
+            raise ValidationError("正式生成闪念前必须确认最新清单已覆盖本轮内容")
+        if existing := self._idempotent(transaction_id):
+            record = existing.get("result", {})
+            if (
+                existing.get("action") == "capture-finalize"
+                and record.get("session_id") == session_id
+            ):
+                try:
+                    directory, session = runtime.load_for_finalize(session_id, proposal_id)
+                except ValidationError:
+                    directory = None
+                    session = None
+                if directory is not None and session is not None:
+                    runtime.enqueue_maintenance(
+                        session_id,
+                        list(session.get("contexts", [])),
+                        list(record.get("flashes", [])),
+                    )
+                    runtime.finalize_runtime(directory, session, formal_result=record)
+            return existing
+        directory, session = runtime.load_for_finalize(session_id, proposal_id)
+        proposal = session["proposal"]
+        entries = {entry["entry_id"]: entry for entry in session.get("entries", [])}
+        timestamp = now_iso()
+        expires_at = (
+            datetime.now().astimezone() + timedelta(hours=48)
+        ).isoformat(timespec="seconds")
+        writes: dict[Path, str] = {}
+        reserved: set[Path] = set()
+        formal_flashes: list[dict[str, Any]] = []
+        for index, candidate in enumerate(proposal.get("flashes", [])):
+            related_entries = [entries[item] for item in candidate["entry_ids"]]
+            if any(entry.get("role") != "user" for entry in related_entries):
+                raise ValidationError("正式闪念只能追溯到用户表达")
+            created_at = min(str(entry["recorded_at"]) for entry in related_entries)
+            flash_id = stable_id(
+                "FLA",
+                f"{session_id}:{proposal_id}:{index}:{candidate['body']}",
+            )
+            title = str(candidate["title"]).strip()
+            rel = self._new_note_path(
+                "flash", title, created_at, reserved=reserved
+            )
+            reserved.add(rel)
+            metadata = {
+                "id": flash_id,
+                "type": "flash",
+                "title": title,
+                "status": "pending",
+                "created_at": created_at,
+                "updated_at": timestamp,
+                "expires_at": expires_at,
+                "source_ids": [],
+            }
+            writes[rel] = render_note(metadata, [("原始记录", candidate["body"])])
+            formal_flashes.append(
+                {
+                    "id": flash_id,
+                    "path": rel.as_posix(),
+                    "title": title,
+                    "context_refs": list(candidate.get("context_refs", [])),
+                }
+            )
+        state = self.repo.read_state()
+        result = {
+            "session_id": session_id,
+            "proposal_id": proposal_id,
+            "flashes": formal_flashes,
+            "flash_count": len(formal_flashes),
+            "maintenance_job_ids": runtime.maintenance_job_ids(
+                session_id, list(session.get("contexts", [])), formal_flashes
+            ),
+        }
+        committed = self.repo.commit(
+            transaction_id=transaction_id,
+            action="capture-finalize",
+            summary=f"确认本轮 {len(formal_flashes)} 张闪念",
+            writes=writes,
+            state=state,
+            result=result,
+            validate_sources=False,
+        )
+        runtime.enqueue_maintenance(
+            session_id,
+            list(session.get("contexts", [])),
+            formal_flashes,
+        )
+        runtime.finalize_runtime(directory, session, formal_result=result)
+        return committed
+
     def _download_image(
         self, url: str, image: dict[str, Any] | None
     ) -> tuple[bytes, str]:
@@ -573,10 +674,15 @@ class GoodIdeaService:
         self,
         preview: dict[str, Any],
         *,
-        motivation: str,
+        motivation: str = "",
+        attach_flash_ids: list[str] | None = None,
         transaction_id: str | None = None,
     ) -> dict[str, Any]:
-        _ensure_motivation(motivation)
+        attached_ids = list(dict.fromkeys(attach_flash_ids or []))
+        if attached_ids and motivation.strip():
+            raise ValidationError("关联已有闪念时不要重复提供保存动机")
+        if not attached_ids:
+            _ensure_motivation(motivation)
         txid = transaction_id or new_transaction_id("source-commit")
         if existing := self._idempotent(txid):
             return existing
@@ -589,16 +695,23 @@ class GoodIdeaService:
             else identity_key
         )
         title = str(preview.get("title") or fallback_title).strip()
-        flash_id = stable_id("FLA", f"{txid}:{motivation}")
+        flash_ids = attached_ids or [stable_id("FLA", f"{txid}:{motivation}")]
         timestamp = now_iso()
         state = self.repo.read_state()
         writes: dict[Path, str | bytes] = {}
+        attached_flashes: list[tuple[Path, str, dict[str, Any]]] = []
+        if attached_ids:
+            for flash_id in flash_ids:
+                found = self.repo.find_note(flash_id)
+                if not found or found[2].get("type") != "flash":
+                    raise ValidationError(f"找不到要关联的正式闪念：{flash_id}")
+                attached_flashes.append(found)
         source_records = state.setdefault("sources", {})
         if not isinstance(source_records, dict):
             raise IntegrityError("来源账本 sources 必须是对象")
         source_record = source_records.get(identity_key)
         source_created = source_record is None
-        flash_title = motivation.strip().splitlines()[0][:40]
+        flash_title = motivation.strip().splitlines()[0][:40] if not attached_ids else ""
 
         if source_record is not None:
             if not isinstance(source_record, dict):
@@ -655,7 +768,7 @@ class GoodIdeaService:
                     str(preview.get("markdown", "")).encode("utf-8")
                 ).hexdigest(),
                 "image_failures": failures,
-                "flash_ids": [flash_id],
+                "flash_ids": flash_ids,
             }
             if source_kind == "web":
                 source_meta["canonical_url"] = identity_key
@@ -663,43 +776,61 @@ class GoodIdeaService:
                 source_meta["origin_filename"] = preview["origin_filename"]
                 source_meta["origin_sha256"] = preview["origin_sha256"]
 
-        flash_rel = self._new_note_path("flash", flash_title, timestamp)
         source_link = wiki_link(source_rel, source_title)
-        flash_meta = {
-            "id": flash_id,
-            "type": "flash",
-            "title": flash_title,
-            "status": "pending",
-            "created_at": timestamp,
-            "updated_at": timestamp,
-            "expires_at": (
-                datetime.now().astimezone() + timedelta(hours=48)
-            ).isoformat(timespec="seconds"),
-            "source_ids": [source_id],
-        }
-        flash_note = render_note(
-            flash_meta,
-            [
-                ("原始记录", motivation),
-                ("产生情境", "保存外部资料时形成的个人注意与保存动机。"),
-                ("关联来源", source_link),
-            ],
-        )
-        flash_link = wiki_link(flash_rel, flash_title)
+        flash_links: list[str] = []
+        flash_paths: list[str] = []
+        if attached_ids:
+            for flash_rel, flash_note, flash_meta in attached_flashes:
+                flash_meta["source_ids"] = list(
+                    dict.fromkeys([*flash_meta.get("source_ids", []), source_id])
+                )
+                flash_meta["updated_at"] = timestamp
+                flash_note = add_list_item_to_section(
+                    flash_note, "关联来源", source_link
+                )
+                writes[flash_rel] = replace_frontmatter(flash_note, flash_meta)
+                flash_links.append(wiki_link(flash_rel, str(flash_meta["title"])))
+                flash_paths.append(flash_rel.as_posix())
+        else:
+            flash_id = flash_ids[0]
+            flash_rel = self._new_note_path("flash", flash_title, timestamp)
+            flash_meta = {
+                "id": flash_id,
+                "type": "flash",
+                "title": flash_title,
+                "status": "pending",
+                "created_at": timestamp,
+                "updated_at": timestamp,
+                "expires_at": (
+                    datetime.now().astimezone() + timedelta(hours=48)
+                ).isoformat(timespec="seconds"),
+                "source_ids": [source_id],
+            }
+            flash_note = render_note(
+                flash_meta,
+                [
+                    ("原始记录", motivation),
+                    ("产生情境", "保存外部资料时形成的个人注意与保存动机。"),
+                    ("关联来源", source_link),
+                ],
+            )
+            writes[flash_rel] = flash_note
+            flash_links.append(wiki_link(flash_rel, flash_title))
+            flash_paths.append(flash_rel.as_posix())
         if source_record is not None:
             source_meta["updated_at"] = timestamp
             source_meta["flash_ids"] = list(
-                dict.fromkeys([*source_meta.get("flash_ids", []), flash_id])
+                dict.fromkeys([*source_meta.get("flash_ids", []), *flash_ids])
             )
-            source_note = add_list_item_to_section(
-                source_note, "关联闪念", flash_link
-            )
+            for flash_link in flash_links:
+                source_note = add_list_item_to_section(
+                    source_note, "关联闪念", flash_link
+                )
             source_note = replace_frontmatter(source_note, source_meta)
             source_note = normalize_source_layout(source_note)
         else:
-            source_note = render_source_note(source_meta, snapshot, [flash_link])
+            source_note = render_source_note(source_meta, snapshot, flash_links)
         writes[source_rel] = source_note
-        writes[flash_rel] = flash_note
         source_records[identity_key] = {
             "id": source_id,
             "path": source_rel.as_posix(),
@@ -709,13 +840,21 @@ class GoodIdeaService:
             "source_id": source_id,
             "source_path": source_rel.as_posix(),
             "source_created": source_created,
-            "flash_id": flash_id,
-            "flash_path": flash_rel.as_posix(),
+            "flash_ids": flash_ids,
+            "flash_paths": flash_paths,
+            "flash_created": not bool(attached_ids),
         }
+        if not attached_ids:
+            result["flash_id"] = flash_ids[0]
+            result["flash_path"] = flash_paths[0]
         return self.repo.commit(
             transaction_id=txid,
             action="source-commit",
-            summary=f"{source_title} + 保存动机",
+            summary=(
+                f"{source_title} + 关联 {len(flash_ids)} 张闪念"
+                if attached_ids
+                else f"{source_title} + 保存动机"
+            ),
             writes=writes,
             state=state,
             result=result,
@@ -2045,9 +2184,20 @@ class GoodIdeaService:
             _run_git(self.repo.root, ["revert", "--abort"], check=False)
             raise
         revert_commit = _run_git(self.repo.root, ["rev-parse", "HEAD"]).stdout.strip()
+        cancelled_jobs: list[str] = []
+        tx_match = re.search(r"\[tx:([^\]]+)\]", subject)
+        if tx_match:
+            record = before_state.get("transactions", {}).get(tx_match.group(1), {})
+            if record.get("action") == "capture-finalize":
+                session_id = str(record.get("result", {}).get("session_id") or "")
+                if session_id:
+                    cancelled_jobs = CaptureRuntime(self.repo.root).cancel_jobs_for_session(
+                        session_id
+                    )
         return {
             "rolled_back": resolved,
             "revert_commit": revert_commit,
             "transaction_id": rollback_tx,
             "strategy": "git-revert",
+            "cancelled_maintenance_jobs": cancelled_jobs,
         }

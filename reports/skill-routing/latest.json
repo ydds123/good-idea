@@ -1,9 +1,9 @@
 {
-  "generated_at": "2026-08-09T14:26:34+08:00",
+  "generated_at": "2026-08-09T16:19:35+08:00",
   "evidence_kind": "static_description_scan",
   "status": "static_passed",
   "skill_count": 7,
-  "case_count": 43,
+  "case_count": 46,
   "skills": [
     "goodidea-capture-flash",
     "goodidea-connect-cards",
@@ -13,7 +13,7 @@
     "goodidea-review-permanent",
     "goodidea-review-process"
   ],
-  "description_fingerprint": "c48f1bb7aaa622f4131a3ead1e6229929f152e7bd186794fd99e54f143d183ee",
+  "description_fingerprint": "7908cbe23594713aac49e295af698a16c0d32c5ea6a61aeb88651f16dc1f1ce6",
   "contract_file": "tests/fixtures/skill-routing-cases.json",
   "contract_errors": [],
   "semantic_risk_hypotheses": [
@@ -56,7 +56,7 @@
         "goodidea-capture-flash",
         "goodidea-record-literature"
       ],
-      "hypothesis": "可访问 URL 和用户明确要作为来源的外部 Markdown/TXT 应由 record-literature 处理；随手粘贴的无链接摘录属于 capture，只读网页和本地 PDF 不应触发来源写入。",
+      "hypothesis": "当前捕获阶段和用户认知意图优先于附件类型；想法附带 URL/Markdown/TXT 仍由 capture 主导，只有纯来源保存和捕获后的后台维护由 record-literature 处理。",
       "case_ids": [
         "source-public-article",
         "source-local-txt",
@@ -101,8 +101,8 @@
           "goodidea-form-permanent",
           "goodidea-review-permanent"
         ],
-        "similarity": 0.675,
-        "above_threshold": true,
+        "similarity": 0.331,
+        "above_threshold": false,
         "declared_overlap": true,
         "overlap_kind": "intentional_handoff",
         "reason": "形成卡片是入口和写入所有者，审查卡片是苏格拉底式澄清阶段；同一请求可以顺序交接，但不能同时拥有写入。"
@@ -112,34 +112,7 @@
           "goodidea-capture-flash",
           "goodidea-record-literature"
         ],
-        "similarity": 0.224,
-        "above_threshold": false,
-        "declared_overlap": false
-      },
-      {
-        "skills": [
-          "goodidea-capture-flash",
-          "goodidea-review-process"
-        ],
-        "similarity": 0.209,
-        "above_threshold": false,
-        "declared_overlap": false
-      },
-      {
-        "skills": [
-          "goodidea-lint",
-          "goodidea-review-permanent"
-        ],
-        "similarity": 0.208,
-        "above_threshold": false,
-        "declared_overlap": false
-      },
-      {
-        "skills": [
-          "goodidea-form-permanent",
-          "goodidea-lint"
-        ],
-        "similarity": 0.174,
+        "similarity": 0.219,
         "above_threshold": false,
         "declared_overlap": false
       },
@@ -148,16 +121,7 @@
           "goodidea-lint",
           "goodidea-record-literature"
         ],
-        "similarity": 0.155,
-        "above_threshold": false,
-        "declared_overlap": false
-      },
-      {
-        "skills": [
-          "goodidea-record-literature",
-          "goodidea-review-permanent"
-        ],
-        "similarity": 0.149,
+        "similarity": 0.166,
         "above_threshold": false,
         "declared_overlap": false
       },
@@ -172,17 +136,53 @@
       },
       {
         "skills": [
-          "goodidea-form-permanent",
-          "goodidea-record-literature"
+          "goodidea-record-literature",
+          "goodidea-review-permanent"
         ],
-        "similarity": 0.137,
+        "similarity": 0.14,
         "above_threshold": false,
         "declared_overlap": false
       },
       {
         "skills": [
-          "goodidea-connect-cards",
+          "goodidea-capture-flash",
+          "goodidea-review-process"
+        ],
+        "similarity": 0.136,
+        "above_threshold": false,
+        "declared_overlap": false
+      },
+      {
+        "skills": [
+          "goodidea-capture-flash",
+          "goodidea-lint"
+        ],
+        "similarity": 0.133,
+        "above_threshold": false,
+        "declared_overlap": false
+      },
+      {
+        "skills": [
+          "goodidea-lint",
           "goodidea-review-permanent"
+        ],
+        "similarity": 0.128,
+        "above_threshold": false,
+        "declared_overlap": false
+      },
+      {
+        "skills": [
+          "goodidea-form-permanent",
+          "goodidea-record-literature"
+        ],
+        "similarity": 0.126,
+        "above_threshold": false,
+        "declared_overlap": false
+      },
+      {
+        "skills": [
+          "goodidea-form-permanent",
+          "goodidea-review-process"
         ],
         "similarity": 0.126,
         "above_threshold": false,
@@ -199,10 +199,10 @@
       },
       {
         "skills": [
-          "goodidea-capture-flash",
-          "goodidea-review-permanent"
+          "goodidea-form-permanent",
+          "goodidea-lint"
         ],
-        "similarity": 0.122,
+        "similarity": 0.123,
         "above_threshold": false,
         "declared_overlap": false
       },
@@ -218,18 +218,18 @@
       {
         "skills": [
           "goodidea-capture-flash",
-          "goodidea-connect-cards"
+          "goodidea-review-permanent"
         ],
-        "similarity": 0.108,
+        "similarity": 0.118,
         "above_threshold": false,
         "declared_overlap": false
       },
       {
         "skills": [
-          "goodidea-record-literature",
-          "goodidea-review-process"
+          "goodidea-capture-flash",
+          "goodidea-connect-cards"
         ],
-        "similarity": 0.105,
+        "similarity": 0.113,
         "above_threshold": false,
         "declared_overlap": false
       },
@@ -238,14 +238,23 @@
           "goodidea-capture-flash",
           "goodidea-form-permanent"
         ],
-        "similarity": 0.099,
+        "similarity": 0.103,
+        "above_threshold": false,
+        "declared_overlap": false
+      },
+      {
+        "skills": [
+          "goodidea-record-literature",
+          "goodidea-review-process"
+        ],
+        "similarity": 0.101,
         "above_threshold": false,
         "declared_overlap": false
       },
       {
         "skills": [
           "goodidea-connect-cards",
-          "goodidea-form-permanent"
+          "goodidea-review-permanent"
         ],
         "similarity": 0.094,
         "above_threshold": false,
@@ -256,16 +265,16 @@
           "goodidea-review-permanent",
           "goodidea-review-process"
         ],
-        "similarity": 0.085,
+        "similarity": 0.087,
         "above_threshold": false,
         "declared_overlap": false
       },
       {
         "skills": [
-          "goodidea-form-permanent",
-          "goodidea-review-process"
+          "goodidea-connect-cards",
+          "goodidea-form-permanent"
         ],
-        "similarity": 0.076,
+        "similarity": 0.068,
         "above_threshold": false,
         "declared_overlap": false
       },
@@ -274,33 +283,12 @@
           "goodidea-connect-cards",
           "goodidea-record-literature"
         ],
-        "similarity": 0.071,
-        "above_threshold": false,
-        "declared_overlap": false
-      },
-      {
-        "skills": [
-          "goodidea-capture-flash",
-          "goodidea-lint"
-        ],
-        "similarity": 0.051,
+        "similarity": 0.057,
         "above_threshold": false,
         "declared_overlap": false
       }
     ],
-    "declared_high_overlaps": [
-      {
-        "skills": [
-          "goodidea-form-permanent",
-          "goodidea-review-permanent"
-        ],
-        "similarity": 0.675,
-        "above_threshold": true,
-        "declared_overlap": true,
-        "overlap_kind": "intentional_handoff",
-        "reason": "形成卡片是入口和写入所有者，审查卡片是苏格拉底式澄清阶段；同一请求可以顺序交接，但不能同时拥有写入。"
-      }
-    ],
+    "declared_high_overlaps": [],
     "unapproved_high_overlaps": [],
     "duplicate_description_groups": []
   },

@@ -40,7 +40,9 @@ flowchart LR
     I --> F
 ```
 
-一个链接或受支持的外部本地文档的典型保存过程是：Agent 临时预读内容，向用户提出与内容相关的保存动机问题；用户回答后，CLI 在同一个事务中创建原文快照和一张闪念，并建立双向链接。用户不回答或放弃时，不产生持久文件。随手粘贴的无链接摘录仍是闪念或有意思内容，不会因为像“资料”就自动进入溯源空间。
+捕获闪念时，用户想法是主信息，随附链接和文件只是上下文。系统先在不进入 Git 的运行时会话中保护多轮表达，只检查上下文能否读取并按需使用；随后生成一张或多张闪念候选，允许用户补充、修正、合并、拆分、删除或返回讨论。只有用户确认最新清单已经覆盖本轮该记录的内容后，CLI 才正式创建闪念，并把来源快照、图片和关系交给可恢复后台任务。
+
+用户只要求保存资料、没有发起闪念讨论时，仍使用来源流程：Agent 临时预读并询问内容相关的保存动机，用户回答后才持久化来源和保存动机闪念。两种场景不因输入都包含链接而混为一谈。
 
 永久卡片必须由用户主动发起。Agent 通过一次一个问题的苏格拉底式交流帮助澄清观点；经用户授权后，可以删除口语停顿和重复、调整已有表达顺序、提炼标题，但不能增加新观点。完整草稿必须先展示给用户，只有用户确认全文并明确要求正式创建后才能写入。
 
@@ -362,6 +364,11 @@ uv run goodidea --root /Users/apple/Documents/Claude/good-idea <命令>
 |---|---|---|
 | `goodidea init` | 初始化新的独立 Good Idea 仓库 | 是 |
 | `goodidea capture flash|interesting|todo` | 创建轻量记录 | 是 |
+| `goodidea capture start|append|propose` | 保护和推进一轮临时闪念会话 | 仅运行时，不进入 Git |
+| `goodidea capture maintenance-check|maintenance-update` | 比较上下文漂移并推进可恢复来源任务 | 不回滚已创建闪念；重试最多三次 |
+| `goodidea capture cleanup` | 清理超过恢复窗口且任务已终结的临时完成会话 | 不删除正式内容 |
+| `goodidea capture pause|resume|status|discard` | 暂停、恢复、查看或放弃临时会话 | 仅运行时 |
+| `goodidea capture finalize` | 用户确认最新清单后原子创建多张正式闪念 | 是 |
 | `goodidea source preview --url <URL>` | 在仓库外准备网页来源预览 | 否 |
 | `goodidea source preview --local-file <PATH>` | 在仓库外准备 UTF-8 `.md` / `.markdown` / `.txt` 来源预览 | 否 |
 | `goodidea source commit` | 用户给出保存动机后原子创建来源和闪念 | 是 |

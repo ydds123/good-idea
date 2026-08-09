@@ -130,6 +130,16 @@ Markdown Frontmatter 是 CLI 的机器控制面，不是阅读正文。Obsidian 
 
 ## 状态机与命令门禁
 
+### 临时捕获会话
+
+`.goodidea/runtime/captures/<session-id>/` 是 Git 忽略的运行时防丢区，不属于五个内容空间。每个会话保存角色明确的顺序记录、上下文可访问性/轻量指纹和最新闪念候选；不得进入 `index.md`、正式 `log.md` 或 Git。
+
+捕获状态为 `active`、`reviewing`、`paused`、`confirmed`、`finalized` 或 `abandoned`。新增用户表达会使旧候选和旧确认失效；finalize 只接受最新候选内容哈希和用户完成确认。一次会话可以原子生成零张、一张或多张正式闪念。临时会话写入只执行路径、锁、格式和幂等校验，不扫描来源快照。
+
+正式闪念的 `created_at` 取其最早相关用户表达时间，`updated_at` 取正式生成时间，`expires_at` 取正式生成时间加 48 小时。finalize 成功后运行时会话进入短期恢复区；来源维护完成且至少经过 24 小时后才可清理。用户放弃则不创建正式内容并删除临时会话。
+
+finalize 同时创建可恢复的运行时维护任务。任务允许 `pending`、`processing`、`maintenance_paused`、`retry_pending`、`partial`、`failed`、`complete`、`cancelled` 或 `context_changed`。来源处理失败不得回滚正式闪念。
+
 ### 可执行状态转换
 
 | 类型 | 创建状态 | CLI 可以执行的转换 |
@@ -150,6 +160,14 @@ Markdown Frontmatter 是 CLI 的机器控制面，不是阅读正文。Obsidian 
 |---|---|
 | `source preview` | `--url` 和 `--local-file` 二选一；本地文档限 UTF-8 `.md` / `.markdown` / `.txt`。只在仓库外生成临时预览，对 Good idea 仓库零写入 |
 | `source commit` | 必须提供有实际内容的用户保存动机；纯确认文本无效 |
+| `capture start/append` | 只写运行时会话；同一幂等键不得重复记录；不运行来源、索引、Git 或全库验证 |
+| `capture propose` | 候选只能引用会话中存在的用户表达；新版本取代旧版本但不创建正式闪念 |
+| `capture finalize` | 必须确认最新候选覆盖本轮内容；候选之后没有新表达；一次原子生成多张闪念并创建后台任务 |
+| `capture maintenance-check` | 比较当前上下文与讨论时指纹；变化时原子转为 `context_changed` |
+| `capture maintenance-update` | 维护任务暂停、恢复、失败或完成；重试最多三次，耗尽后转为 `failed` |
+| `capture cleanup` | 仅清理维护已终结且超过 24 小时的 Git 忽略完成会话 |
+| `capture pause/resume/discard` | pause/resume 不改变正式内容；discard 必须有用户放弃确认并产生零正式写入 |
+| `source commit --attach-flash-ids` | 只关联已经存在的正式闪念，不额外创建保存动机闪念；用于捕获结束后的后台维护 |
 | `source refresh` | 网页和本地来源都先创建候选并保留旧快照；本地更新必须显式指定既有来源。接受时要求仍为同一个待处理候选且旧哈希一致 |
 | `permanent propose` | 输入必须是用户确认后的完整草稿；结构化模式还必须带显式结构确认；候选进入隐藏目录，不进入永久空间 |
 | `permanent accept` | 候选、Frontmatter、正文哈希和状态账本必须一致且状态为 `pending`，并带用户明确创建确认 |

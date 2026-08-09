@@ -61,7 +61,7 @@
         "goodidea-capture-flash",
         "goodidea-record-literature"
       ],
-      "hypothesis": "可访问 URL 和用户明确要作为来源的外部 Markdown/TXT 应由 record-literature 处理；随手粘贴的无链接摘录属于 capture，只读网页和本地 PDF 不应触发来源写入。",
+      "hypothesis": "当前捕获阶段和用户认知意图优先于附件类型；想法附带 URL/Markdown/TXT 仍由 capture 主导，只有纯来源保存和捕获后的后台维护由 record-literature 处理。",
       "case_ids": [
         "source-public-article",
         "source-local-txt",
@@ -102,7 +102,7 @@
       "id": "capture-flash-idea",
       "family": "unique_capture",
       "text": "记一下：AI 原生工具的关键不是自动生成更多内容，而是帮助我持续形成判断。",
-      "expected_primary": "goodidea-capture-flash",
+      "expected_primary": "goodidea-record-literature",
       "allowed_supporting": [],
       "required_supporting": [],
       "expected_conflict": false
@@ -129,7 +129,7 @@
       "id": "source-public-article",
       "family": "unique_source",
       "text": "保存这篇公众号文章 https://example.com/article，先读完再问我为什么想保存。",
-      "expected_primary": "goodidea-record-literature",
+      "expected_primary": "goodidea-capture-flash",
       "allowed_supporting": [],
       "required_supporting": [],
       "expected_conflict": false
@@ -311,7 +311,7 @@
       "id": "neighbor-link-with-thought",
       "family": "near_neighbor",
       "text": "保存这篇文章 https://example.com/ai，我的想法是持续生成同时带来创造和幻觉。",
-      "expected_primary": "goodidea-record-literature",
+      "expected_primary": "goodidea-capture-flash",
       "allowed_supporting": [],
       "required_supporting": [],
       "expected_conflict": false
@@ -447,6 +447,33 @@
       "required_supporting": [
         "goodidea-review-process"
       ],
+      "expected_conflict": false
+    },
+    {
+      "id": "capture-active-mentions-future-permanent",
+      "family": "stage_priority",
+      "text": "我们还在继续记录这轮闪念，这个观点以后也许能形成永久卡片，但现在先继续聊。",
+      "expected_primary": "goodidea-capture-flash",
+      "allowed_supporting": [],
+      "required_supporting": [],
+      "expected_conflict": false
+    },
+    {
+      "id": "capture-review-current-list",
+      "family": "stage_priority",
+      "text": "这是本轮捕获产生的闪念清单，把前两项合并，第三项继续讨论；我还没有发起永久卡片。",
+      "expected_primary": "goodidea-capture-flash",
+      "allowed_supporting": [],
+      "required_supporting": [],
+      "expected_conflict": false
+    },
+    {
+      "id": "capture-local-context-with-thought",
+      "family": "stage_priority",
+      "text": "我结合这份本地 Markdown 突然想到，控制可能性空间比穷举提示步骤更重要；文件只是这轮想法的上下文。",
+      "expected_primary": "goodidea-capture-flash",
+      "allowed_supporting": [],
+      "required_supporting": [],
       "expected_conflict": false
     },
     {

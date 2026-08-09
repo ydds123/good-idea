@@ -33,17 +33,13 @@ class SkillRoutingTests(unittest.TestCase):
             report = json.loads((report_dir / "latest.json").read_text(encoding="utf-8"))
 
         self.assertEqual(report["skill_count"], 7)
-        self.assertEqual(report["case_count"], 43)
+        self.assertEqual(report["case_count"], 46)
         self.assertEqual(report["contract_errors"], [])
         static = report["static_overlap"]
         self.assertTrue(static["ok"])
         self.assertEqual(static["unapproved_high_overlaps"], [])
         declared = static["declared_high_overlaps"]
-        self.assertEqual(len(declared), 1)
-        self.assertEqual(
-            set(declared[0]["skills"]),
-            {"goodidea-form-permanent", "goodidea-review-permanent"},
-        )
+        self.assertEqual(declared, [])
         self.assertEqual(len(report["semantic_risk_hypotheses"]), 4)
         self.assertEqual(len(report["recall_risk_hypotheses"]), 1)
 

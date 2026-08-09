@@ -158,6 +158,101 @@ class GoodIdeaCliTests(unittest.TestCase):
         self.assertEqual(error["error"]["code"], "validation_error")
         self.assertFalse(forbidden.exists())
 
+    def test_multi_turn_capture_public_cli_and_discard_paths(self):
+        before_head = subprocess.run(
+            ["git", "rev-parse", "HEAD"], cwd=self.root, check=True,
+            text=True, capture_output=True,
+        ).stdout.strip()
+        started = run_cli(
+            "--root", str(self.root), "capture", "start",
+            "--text", "第一条用户想法。",
+            "--context-ref", "https://example.com/context",
+            "--transaction-id", "cli-session-start",
+        )
+        self.assertEqual(started.returncode, 0, started.stderr)
+        start_data = json.loads(started.stdout)
+        session_id = start_data["session_id"]
+        appended = run_cli(
+            "--root", str(self.root), "capture", "append",
+            "--session-id", session_id,
+            "--text", "第二条用户想法。",
+            "--transaction-id", "cli-session-append",
+        )
+        self.assertEqual(appended.returncode, 0, appended.stderr)
+        append_data = json.loads(appended.stdout)
+        self.assertEqual(append_data["entry_count"], 2)
+        self.assertEqual(
+            subprocess.run(
+                ["git", "rev-parse", "HEAD"], cwd=self.root, check=True,
+                text=True, capture_output=True,
+            ).stdout.strip(),
+            before_head,
+        )
+        manifest = self.base / "capture-manifest.json"
+        manifest.write_text(
+            json.dumps(
+                {
+                    "flashes": [
+                        {
+                            "title": "第一条用户想法",
+                            "body": "第一条用户想法。",
+                            "entry_ids": [start_data["entry_id"]],
+                            "context_refs": ["https://example.com/context"],
+                        },
+                        {
+                            "title": "第二条用户想法",
+                            "body": "第二条用户想法。",
+                            "entry_ids": [append_data["entry_id"]],
+                            "context_refs": [],
+                        },
+                    ]
+                },
+                ensure_ascii=False,
+            ),
+            encoding="utf-8",
+        )
+        proposed = run_cli(
+            "--root", str(self.root), "capture", "propose",
+            "--session-id", session_id,
+            "--manifest-file", str(manifest),
+            "--transaction-id", "cli-session-propose",
+        )
+        self.assertEqual(proposed.returncode, 0, proposed.stderr)
+        proposal_id = json.loads(proposed.stdout)["proposal_id"]
+        rejected = run_cli(
+            "--root", str(self.root), "capture", "finalize",
+            "--session-id", session_id,
+            "--proposal-id", proposal_id,
+            "--transaction-id", "cli-session-finalize-rejected",
+        )
+        self.assertEqual(rejected.returncode, 2)
+        finalized = run_cli(
+            "--root", str(self.root), "capture", "finalize",
+            "--session-id", session_id,
+            "--proposal-id", proposal_id,
+            "--confirm-discussion-complete",
+            "--transaction-id", "cli-session-finalize",
+        )
+        self.assertEqual(finalized.returncode, 0, finalized.stderr)
+        final_data = json.loads(finalized.stdout)["result"]
+        self.assertEqual(final_data["flash_count"], 2)
+        self.assertEqual(len(final_data["maintenance_job_ids"]), 1)
+
+        discarded_start = run_cli(
+            "--root", str(self.root), "capture", "start",
+            "--text", "这轮最后放弃。",
+            "--transaction-id", "cli-discard-start",
+        )
+        discarded_id = json.loads(discarded_start.stdout)["session_id"]
+        discarded = run_cli(
+            "--root", str(self.root), "capture", "discard",
+            "--session-id", discarded_id,
+            "--confirm-user-abandoned",
+            "--transaction-id", "cli-discard",
+        )
+        self.assertEqual(discarded.returncode, 0, discarded.stderr)
+        self.assertEqual(json.loads(discarded.stdout)["status"], "abandoned")
+
     def test_local_file_preview_is_read_only_and_does_not_leak_source_path(self):
         source_dir = self.base / "imports"
         source_dir.mkdir()

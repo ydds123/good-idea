@@ -4,6 +4,7 @@ __pycache__/
 .pytest_cache/
 .DS_Store
 .goodidea/transactions/*
+.goodidea/runtime/
 !.goodidea/transactions/.gitkeep
 .goodidea/tmp/
 

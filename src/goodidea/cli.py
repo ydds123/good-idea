@@ -6,6 +6,7 @@ import sys
 from pathlib import Path
 from typing import Any
 
+from .capture import CaptureRuntime
 from .errors import GoodIdeaError, ValidationError
 from .repository import Repository, initialize_vault
 from .service import GoodIdeaService
@@ -47,13 +48,68 @@ def build_parser() -> argparse.ArgumentParser:
     init = sub.add_parser("init", help="初始化一个独立 Good idea 仓库")
     init.add_argument("path", nargs="?", default=".")
 
-    capture = sub.add_parser("capture", help="捕捉轻量记录")
-    capture.add_argument("kind", choices=["flash", "interesting", "todo"])
-    capture.add_argument("--text", required=True)
-    capture.add_argument("--title", default="")
-    capture.add_argument("--context", default="")
-    capture.add_argument("--source-id", default="")
-    capture.add_argument("--transaction-id")
+    capture = sub.add_parser("capture", help="捕捉轻量记录或多轮闪念会话")
+    capture_sub = capture.add_subparsers(dest="capture_command", required=True)
+    for kind in ("flash", "interesting", "todo"):
+        create = capture_sub.add_parser(kind)
+        create.add_argument("--text", required=True)
+        create.add_argument("--title", default="")
+        create.add_argument("--context", default="")
+        create.add_argument("--source-id", default="")
+        create.add_argument("--transaction-id")
+    start = capture_sub.add_parser("start")
+    start.add_argument("--text", required=True)
+    start.add_argument("--context-ref", action="append", default=[])
+    start.add_argument("--transaction-id", required=True)
+    append = capture_sub.add_parser("append")
+    append.add_argument("--session-id", required=True)
+    append.add_argument("--text", required=True)
+    append.add_argument("--context-ref", action="append", default=[])
+    append.add_argument("--transaction-id", required=True)
+    propose_capture = capture_sub.add_parser("propose")
+    propose_capture.add_argument("--session-id", required=True)
+    propose_capture.add_argument("--manifest-file", required=True)
+    propose_capture.add_argument("--transaction-id", required=True)
+    context_check = capture_sub.add_parser("context-check")
+    context_check.add_argument("--session-id", required=True)
+    context_check.add_argument("--ref", required=True)
+    context_check.add_argument(
+        "--status", required=True, choices=["readable", "unreadable", "partial"]
+    )
+    context_check.add_argument("--fingerprint-file")
+    context_check.add_argument("--transaction-id", required=True)
+    for action in ("pause", "resume"):
+        transition = capture_sub.add_parser(action)
+        transition.add_argument("--session-id", required=True)
+        transition.add_argument("--transaction-id", required=True)
+    status_capture = capture_sub.add_parser("status")
+    status_capture.add_argument("--session-id", default="")
+    discard = capture_sub.add_parser("discard")
+    discard.add_argument("--session-id", required=True)
+    discard.add_argument("--confirm-user-abandoned", action="store_true")
+    discard.add_argument("--transaction-id", required=True)
+    finalize_capture = capture_sub.add_parser("finalize")
+    finalize_capture.add_argument("--session-id", required=True)
+    finalize_capture.add_argument("--proposal-id", required=True)
+    finalize_capture.add_argument("--confirm-discussion-complete", action="store_true")
+    finalize_capture.add_argument("--transaction-id", required=True)
+    maintenance_status = capture_sub.add_parser("maintenance-status")
+    maintenance_status.add_argument("--session-id", default="")
+    maintenance_update = capture_sub.add_parser("maintenance-update")
+    maintenance_update.add_argument("--job-id", required=True)
+    maintenance_update.add_argument(
+        "--status",
+        required=True,
+        choices=[
+            "pending", "processing", "maintenance_paused", "retry_pending",
+            "partial", "failed", "complete", "cancelled", "context_changed",
+        ],
+    )
+    maintenance_update.add_argument("--error", default="")
+    maintenance_check = capture_sub.add_parser("maintenance-check")
+    maintenance_check.add_argument("--job-id", required=True)
+    maintenance_check.add_argument("--fingerprint-file", required=True, type=Path)
+    capture_sub.add_parser("cleanup")
 
     source = sub.add_parser("source", help="来源预读、录入和刷新")
     source_sub = source.add_subparsers(dest="source_command", required=True)
@@ -73,7 +129,8 @@ def build_parser() -> argparse.ArgumentParser:
         "commit", help="在用户说明保存动机后录入来源和闪念"
     )
     source_commit.add_argument("--preview-file", required=True)
-    source_commit.add_argument("--motivation", required=True)
+    source_commit.add_argument("--motivation", default="")
+    source_commit.add_argument("--attach-flash-ids", default="")
     source_commit.add_argument("--transaction-id")
 
     refresh = source_sub.add_parser("refresh", help="生成或接受来源更新候选")
@@ -258,19 +315,100 @@ def dispatch(args: argparse.Namespace) -> tuple[dict[str, Any], int]:
 
     repo = Repository.discover(args.root)
     service = GoodIdeaService(repo)
-    if args.command == "capture":
+    if args.command == "capture" and args.capture_command in {"flash", "interesting", "todo"}:
         result = service.capture(
-            args.kind,
+            args.capture_command,
             text=args.text,
             title=args.title,
             context=args.context,
             source_id=args.source_id,
             transaction_id=args.transaction_id,
         )
+    elif args.command == "capture" and args.capture_command == "start":
+        runtime = CaptureRuntime(repo.root)
+        result = runtime.start(
+            text=args.text,
+            context_refs=args.context_ref,
+            transaction_id=args.transaction_id,
+        )
+    elif args.command == "capture" and args.capture_command == "append":
+        runtime = CaptureRuntime(repo.root)
+        result = runtime.append(
+            args.session_id,
+            text=args.text,
+            context_refs=args.context_ref,
+            transaction_id=args.transaction_id,
+        )
+    elif args.command == "capture" and args.capture_command == "propose":
+        runtime = CaptureRuntime(repo.root)
+        manifest = _read_json(args.manifest_file)
+        flashes = manifest.get("flashes")
+        if not isinstance(flashes, list):
+            raise ValidationError("候选清单必须包含 flashes 数组")
+        result = runtime.propose(
+            args.session_id,
+            flashes=flashes,
+            transaction_id=args.transaction_id,
+        )
+    elif args.command == "capture" and args.capture_command == "context-check":
+        runtime = CaptureRuntime(repo.root)
+        fingerprint = _read_json(args.fingerprint_file) if args.fingerprint_file else {}
+        result = runtime.update_context(
+            args.session_id,
+            ref=args.ref,
+            status=args.status,
+            fingerprint=fingerprint,
+            transaction_id=args.transaction_id,
+        )
+    elif args.command == "capture" and args.capture_command in {"pause", "resume"}:
+        runtime = CaptureRuntime(repo.root)
+        result = runtime.transition(
+            args.session_id,
+            action=args.capture_command,
+            transaction_id=args.transaction_id,
+        )
+    elif args.command == "capture" and args.capture_command == "status":
+        runtime = CaptureRuntime(repo.root)
+        result = runtime.status(args.session_id)
+    elif args.command == "capture" and args.capture_command == "discard":
+        runtime = CaptureRuntime(repo.root)
+        result = runtime.transition(
+            args.session_id,
+            action="discard",
+            transaction_id=args.transaction_id,
+            confirmed=args.confirm_user_abandoned,
+        )
+    elif args.command == "capture" and args.capture_command == "finalize":
+        runtime = CaptureRuntime(repo.root)
+        result = service.capture_finalize(
+            runtime,
+            args.session_id,
+            proposal_id=args.proposal_id,
+            confirmed_by_user=args.confirm_discussion_complete,
+            transaction_id=args.transaction_id,
+        )
+    elif args.command == "capture" and args.capture_command == "maintenance-status":
+        runtime = CaptureRuntime(repo.root)
+        result = runtime.maintenance_status(args.session_id)
+    elif args.command == "capture" and args.capture_command == "maintenance-update":
+        runtime = CaptureRuntime(repo.root)
+        result = runtime.update_maintenance_job(
+            args.job_id, status=args.status, error=args.error
+        )
+    elif args.command == "capture" and args.capture_command == "maintenance-check":
+        runtime = CaptureRuntime(repo.root)
+        result = runtime.check_maintenance_context(
+            args.job_id, fingerprint=_read_json(args.fingerprint_file)
+        )
+    elif args.command == "capture" and args.capture_command == "cleanup":
+        runtime = CaptureRuntime(repo.root)
+        removed = runtime.cleanup_completed()
+        result = {"removed": removed, "count": len(removed)}
     elif args.command == "source" and args.source_command == "commit":
         result = service.source_commit(
             _read_json(args.preview_file),
             motivation=args.motivation,
+            attach_flash_ids=_split_ids(args.attach_flash_ids),
             transaction_id=args.transaction_id,
         )
     elif args.command == "source" and args.source_command == "refresh":

@@ -6,9 +6,12 @@ import json
 import subprocess
 import tempfile
 import unittest
+from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timedelta
 from pathlib import Path
+from unittest import mock
 
+from goodidea.capture import CaptureRuntime
 from goodidea.errors import GitError, IntegrityError, TransactionError, ValidationError
 from goodidea.metadata import dump_frontmatter, parse_document, replace_frontmatter
 from goodidea.notes import (
@@ -161,6 +164,462 @@ class GoodIdeaCoreTests(unittest.TestCase):
             if path.is_file() and ".git/" not in path.as_posix()
         )
         self.assertEqual(after_files, before_files)
+
+    def _capture_session_with_proposal(self, *, contexts=None, flashes=None):
+        runtime = CaptureRuntime(self.root)
+        started = runtime.start(
+            text="生成是一个新变量，它可能形成新的增长机制。",
+            context_refs=contexts or [],
+            transaction_id="runtime-start",
+        )
+        session_id = started["session_id"]
+        status = runtime.status(session_id)["sessions"][0]
+        entry_id = status["proposal"] if False else json.loads(
+            (self.root / ".goodidea/runtime/captures" / session_id / "session.json").read_text(
+                encoding="utf-8"
+            )
+        )["entries"][0]["entry_id"]
+        proposed = runtime.propose(
+            session_id,
+            flashes=flashes
+            or [
+                {
+                    "title": "生成可能形成新的增长机制",
+                    "body": "生成是一个新变量，它可能形成新的增长机制。",
+                    "entry_ids": [entry_id],
+                    "context_refs": contexts or [],
+                }
+            ],
+            transaction_id="runtime-propose",
+        )
+        return runtime, session_id, entry_id, proposed["proposal_id"]
+
+    def test_capture_runtime_is_git_ignored_ordered_idempotent_and_resumable(self):
+        before_head = git(self.root, "rev-parse", "HEAD")
+        before_index = (self.root / "index.md").read_text(encoding="utf-8")
+        runtime = CaptureRuntime(self.root)
+        started = runtime.start(
+            text="第一段想法",
+            context_refs=["/tmp/context.md"],
+            transaction_id="capture-runtime-start",
+        )
+        session_id = started["session_id"]
+        appended = runtime.append(
+            session_id,
+            text="第二段想法",
+            context_refs=[],
+            transaction_id="capture-runtime-append",
+        )
+        replay = runtime.append(
+            session_id,
+            text="第二段想法",
+            context_refs=[],
+            transaction_id="capture-runtime-append",
+        )
+        self.assertTrue(replay["idempotent"])
+        self.assertEqual(appended["entry_count"], 2)
+        session = json.loads(
+            (self.root / ".goodidea/runtime/captures" / session_id / "session.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        self.assertEqual([entry["text"] for entry in session["entries"]], ["第一段想法", "第二段想法"])
+        runtime.transition(
+            session_id, action="pause", transaction_id="capture-runtime-pause"
+        )
+        runtime.transition(
+            session_id, action="resume", transaction_id="capture-runtime-resume"
+        )
+        self.assertEqual(runtime.status(session_id)["sessions"][0]["status"], "active")
+        self.assertEqual(git(self.root, "rev-parse", "HEAD"), before_head)
+        self.assertEqual((self.root / "index.md").read_text(encoding="utf-8"), before_index)
+        self.assertEqual(git(self.root, "status", "--short"), "")
+
+    def test_capture_start_and_discard_are_idempotent_after_session_removal(self):
+        runtime = CaptureRuntime(self.root)
+        started = runtime.start(
+            text="不能丢失的第一段",
+            context_refs=[],
+            transaction_id="idempotent-start",
+        )
+        replay = runtime.start(
+            text="重放时不应替换原文",
+            context_refs=[],
+            transaction_id="idempotent-start",
+        )
+        self.assertTrue(replay["idempotent"])
+        self.assertEqual(replay["session_id"], started["session_id"])
+        discarded = runtime.transition(
+            started["session_id"],
+            action="discard",
+            transaction_id="idempotent-discard",
+            confirmed=True,
+        )
+        replay_discard = runtime.transition(
+            started["session_id"],
+            action="discard",
+            transaction_id="idempotent-discard",
+            confirmed=True,
+        )
+        self.assertEqual(discarded["status"], "abandoned")
+        self.assertTrue(replay_discard["idempotent"])
+
+    def test_capture_concurrent_appends_do_not_cross_or_drop_entries(self):
+        runtime = CaptureRuntime(self.root)
+        first = runtime.start(text="会话甲", context_refs=[], transaction_id="concurrent-a")
+        second = runtime.start(text="会话乙", context_refs=[], transaction_id="concurrent-b")
+
+        def append(index: int):
+            target = first["session_id"] if index % 2 == 0 else second["session_id"]
+            return runtime.append(
+                target,
+                text=f"追加-{index}",
+                context_refs=[],
+                transaction_id=f"concurrent-append-{index}",
+            )
+
+        with ThreadPoolExecutor(max_workers=4) as pool:
+            list(pool.map(append, range(12)))
+        state_a = runtime.status(first["session_id"])["sessions"][0]
+        state_b = runtime.status(second["session_id"])["sessions"][0]
+        self.assertEqual(state_a["entry_count"], 7)
+        self.assertEqual(state_b["entry_count"], 7)
+
+    def test_capture_foreground_ignores_slow_assets_and_unfinished_session_never_expires(self):
+        runtime = CaptureRuntime(self.root)
+        refs = [f"https://example.com/slow-image-{index}.png" for index in range(60)]
+        with mock.patch.object(
+            self.service, "_download_image", side_effect=AssertionError("不得处理图片")
+        ):
+            started = runtime.start(
+                text="先保存认知现场",
+                context_refs=refs,
+                transaction_id="sixty-assets-start",
+            )
+            runtime.append(
+                started["session_id"],
+                text="继续讨论",
+                context_refs=[],
+                transaction_id="sixty-assets-append",
+            )
+        self.assertEqual(runtime.status(started["session_id"])["sessions"][0]["entry_count"], 2)
+        self.assertEqual(list((self.root / ".goodidea/assets").iterdir()), [])
+        reviewed = self.service.review(
+            expire=True,
+            current_time=datetime.now().astimezone() + timedelta(days=30),
+            transaction_id="unfinished-must-not-expire",
+        )
+        self.assertTrue(reviewed["no_change"])
+        self.assertEqual(runtime.status(started["session_id"])["sessions"][0]["status"], "active")
+
+    def test_capture_runtime_rejects_traversal_and_symlink_boundary(self):
+        runtime = CaptureRuntime(self.root)
+        with self.assertRaises(ValidationError):
+            runtime.status("../../outside")
+        outside = self.root.parent / "runtime-outside"
+        outside.mkdir()
+        runtime.captures.rmdir()
+        runtime.captures.symlink_to(outside, target_is_directory=True)
+        with self.assertRaises(IntegrityError):
+            CaptureRuntime(self.root)
+        self.assertEqual(list(outside.iterdir()), [])
+
+    def test_capture_new_entry_invalidates_proposal_and_discard_writes_nothing_formal(self):
+        runtime, session_id, _, proposal_id = self._capture_session_with_proposal()
+        runtime.append(
+            session_id,
+            text="清单让我又产生了一个新想法。",
+            context_refs=[],
+            transaction_id="runtime-after-proposal",
+        )
+        with self.assertRaises(ValidationError):
+            runtime.load_for_finalize(session_id, proposal_id)
+        before = list((self.root / "闪念空间").glob("*.md"))
+        runtime.transition(
+            session_id,
+            action="discard",
+            transaction_id="runtime-discard",
+            confirmed=True,
+        )
+        self.assertEqual(list((self.root / "闪念空间").glob("*.md")), before)
+        self.assertFalse((self.root / ".goodidea/runtime/captures" / session_id).exists())
+
+    def test_capture_finalize_failure_leaves_no_partial_cards_and_keeps_proposal(self):
+        runtime, session_id, _, proposal_id = self._capture_session_with_proposal()
+        before = set((self.root / "闪念空间").glob("*.md"))
+        with mock.patch.object(self.repo, "commit", side_effect=TransactionError("模拟失败")):
+            with self.assertRaises(TransactionError):
+                self.service.capture_finalize(
+                    runtime,
+                    session_id,
+                    proposal_id=proposal_id,
+                    confirmed_by_user=True,
+                    transaction_id="failed-finalize",
+                )
+        self.assertEqual(set((self.root / "闪念空间").glob("*.md")), before)
+        self.assertEqual(runtime.status(session_id)["sessions"][0]["status"], "reviewing")
+        self.assertEqual(runtime.maintenance_status(session_id)["count"], 0)
+
+    def test_capture_finalize_creates_multiple_flashes_and_maintenance_jobs(self):
+        runtime = CaptureRuntime(self.root)
+        started = runtime.start(
+            text="第一个想法。",
+            context_refs=["https://example.com/context"],
+            transaction_id="multi-start",
+        )
+        session_id = started["session_id"]
+        first_id = started["entry_id"]
+        second = runtime.append(
+            session_id,
+            text="第二个想法。",
+            context_refs=[],
+            transaction_id="multi-append",
+        )
+        proposal = runtime.propose(
+            session_id,
+            flashes=[
+                {
+                    "title": "第一个想法",
+                    "body": "第一个想法。",
+                    "entry_ids": [first_id],
+                    "context_refs": ["https://example.com/context"],
+                },
+                {
+                    "title": "第二个想法",
+                    "body": "第二个想法。",
+                    "entry_ids": [second["entry_id"]],
+                    "context_refs": [],
+                },
+            ],
+            transaction_id="multi-propose",
+        )
+        result = self.service.capture_finalize(
+            runtime,
+            session_id,
+            proposal_id=proposal["proposal_id"],
+            confirmed_by_user=True,
+            transaction_id="multi-finalize",
+        )
+        data = result["result"]
+        self.assertEqual(data["flash_count"], 2)
+        self.assertEqual(len(data["maintenance_job_ids"]), 1)
+        for flash in data["flashes"]:
+            self.assertTrue((self.root / flash["path"]).is_file())
+        self.assertFalse((self.root / ".goodidea/runtime/captures" / session_id).exists())
+        self.assertTrue((self.root / ".goodidea/runtime/completed-captures" / session_id).is_dir())
+        replay = self.service.capture_finalize(
+            runtime,
+            session_id,
+            proposal_id=proposal["proposal_id"],
+            confirmed_by_user=True,
+            transaction_id="multi-finalize",
+        )
+        self.assertTrue(replay["idempotent"])
+        self.assertEqual(replay["result"]["maintenance_job_ids"], data["maintenance_job_ids"])
+        self.assertEqual(runtime.maintenance_status(session_id)["count"], 1)
+
+    def test_maintenance_detects_context_drift_and_has_finite_retries(self):
+        runtime, session_id, _, proposal_id = self._capture_session_with_proposal(
+            contexts=["/tmp/context.txt"]
+        )
+        runtime.update_context(
+            session_id,
+            ref="/tmp/context.txt",
+            status="readable",
+            fingerprint={"sha256": "a" * 64, "size": 20},
+            transaction_id="drift-context",
+        )
+        finalized = self.service.capture_finalize(
+            runtime,
+            session_id,
+            proposal_id=proposal_id,
+            confirmed_by_user=True,
+            transaction_id="drift-finalize",
+        )
+        job_id = finalized["result"]["maintenance_job_ids"][0]
+        checked = runtime.check_maintenance_context(
+            job_id, fingerprint={"sha256": "b" * 64, "size": 20}
+        )
+        self.assertTrue(checked["changed"])
+        self.assertEqual(checked["status"], "context_changed")
+        runtime.update_maintenance_job(job_id, status="pending")
+        runtime.update_maintenance_job(job_id, status="processing")
+        runtime.update_maintenance_job(job_id, status="retry_pending")
+        runtime.update_maintenance_job(job_id, status="processing")
+        runtime.update_maintenance_job(job_id, status="retry_pending")
+        runtime.update_maintenance_job(job_id, status="processing")
+        exhausted = runtime.update_maintenance_job(job_id, status="retry_pending")
+        self.assertEqual(exhausted["status"], "failed")
+        flash_path = finalized["result"]["flashes"][0]["path"]
+        self.assertTrue((self.root / flash_path).is_file())
+
+    def test_new_capture_preempts_processing_maintenance_at_atomic_boundary(self):
+        runtime, session_id, _, proposal_id = self._capture_session_with_proposal(
+            contexts=["https://example.com/background"]
+        )
+        finalized = self.service.capture_finalize(
+            runtime,
+            session_id,
+            proposal_id=proposal_id,
+            confirmed_by_user=True,
+            transaction_id="preempt-finalize",
+        )
+        job_id = finalized["result"]["maintenance_job_ids"][0]
+        runtime.update_maintenance_job(job_id, status="processing")
+        runtime.start(
+            text="新的强闪念必须先捕获",
+            context_refs=[],
+            transaction_id="preempt-new-capture",
+        )
+        job = runtime.maintenance_status(session_id)["jobs"][0]
+        self.assertEqual(job["status"], "maintenance_paused")
+
+    def test_repropose_supports_merge_split_edit_delete_and_unreadable_context_keeps_text(self):
+        runtime = CaptureRuntime(self.root)
+        started = runtime.start(
+            text="甲和乙可能是两个念头",
+            context_refs=["/missing/context.md"],
+            transaction_id="revision-start",
+        )
+        runtime.update_context(
+            started["session_id"],
+            ref="/missing/context.md",
+            status="unreadable",
+            fingerprint={},
+            transaction_id="revision-context",
+        )
+        first = runtime.propose(
+            started["session_id"],
+            flashes=[
+                {"title": "甲", "body": "甲", "entry_ids": [started["entry_id"]]},
+                {"title": "乙", "body": "乙", "entry_ids": [started["entry_id"]]},
+            ],
+            transaction_id="revision-propose-1",
+        )
+        revised = runtime.propose(
+            started["session_id"],
+            flashes=[
+                {"title": "合并后的甲乙", "body": "甲乙形成一个完整念头", "entry_ids": [started["entry_id"]]},
+            ],
+            transaction_id="revision-propose-2",
+        )
+        self.assertEqual(first["version"], 1)
+        self.assertEqual(revised["version"], 2)
+        status = runtime.status(started["session_id"])["sessions"][0]
+        self.assertEqual(status["entry_count"], 1)
+        self.assertEqual(status["contexts"][0]["status"], "unreadable")
+        self.assertEqual(status["proposal"]["flashes"][0]["title"], "合并后的甲乙")
+
+    def test_capture_context_fingerprint_zero_flash_cleanup_and_finalize_rollback(self):
+        runtime = CaptureRuntime(self.root)
+        started = runtime.start(
+            text="这轮讨论后决定不形成任何正式闪念。",
+            context_refs=["/tmp/context.txt"],
+            transaction_id="zero-start",
+        )
+        session_id = started["session_id"]
+        checked = runtime.update_context(
+            session_id,
+            ref="/tmp/context.txt",
+            status="readable",
+            fingerprint={"sha256": "a" * 64, "size": 12, "secret": "discard"},
+            transaction_id="zero-context",
+        )
+        self.assertEqual(checked["status"], "readable")
+        context = runtime.status(session_id)["sessions"][0]["contexts"][0]
+        self.assertNotIn("secret", context["fingerprint"])
+        proposal = runtime.propose(
+            session_id, flashes=[], transaction_id="zero-propose"
+        )
+        finalized = self.service.capture_finalize(
+            runtime,
+            session_id,
+            proposal_id=proposal["proposal_id"],
+            confirmed_by_user=True,
+            transaction_id="zero-finalize",
+        )
+        self.assertEqual(finalized["result"]["flash_count"], 0)
+        rolled_back = self.service.rollback(finalized["commit"], confirmed=True)
+        self.assertEqual(rolled_back["cancelled_maintenance_jobs"], [])
+        completed_state = json.loads(
+            (self.root / ".goodidea/runtime/completed-captures" / session_id / "session.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        self.assertEqual(completed_state["status"], "reverted")
+
+    def test_capture_finalize_rollback_cancels_pending_jobs_and_cleanup_waits(self):
+        runtime, session_id, _, proposal_id = self._capture_session_with_proposal(
+            contexts=["https://example.com/context"]
+        )
+        finalized = self.service.capture_finalize(
+            runtime,
+            session_id,
+            proposal_id=proposal_id,
+            confirmed_by_user=True,
+            transaction_id="rollback-capture-finalize",
+        )
+        job_id = finalized["result"]["maintenance_job_ids"][0]
+        rolled_back = self.service.rollback(finalized["commit"], confirmed=True)
+        self.assertEqual(rolled_back["cancelled_maintenance_jobs"], [job_id])
+        job = runtime.maintenance_status(session_id)["jobs"][0]
+        self.assertEqual(job["status"], "cancelled")
+        removed = runtime.cleanup_completed(
+            current_time=datetime.now().astimezone() + timedelta(days=2)
+        )
+        self.assertEqual(removed, [session_id])
+
+    def test_tampered_source_does_not_block_runtime_or_flash_finalize(self):
+        captured = self.service.source_commit(
+            self.preview(), motivation="这不是纯确认文本", transaction_id="capture-before-tamper"
+        )
+        source_path = self.root / captured["result"]["source_path"]
+        source_path.write_text(
+            source_path.read_text(encoding="utf-8").replace("正文第一版", "被篡改正文"),
+            encoding="utf-8",
+        )
+        runtime, session_id, _, proposal_id = self._capture_session_with_proposal()
+        finalized = self.service.capture_finalize(
+            runtime,
+            session_id,
+            proposal_id=proposal_id,
+            confirmed_by_user=True,
+            transaction_id="finalize-with-tampered-source",
+        )
+        self.assertEqual(finalized["result"]["flash_count"], 1)
+
+    def test_source_can_attach_to_multiple_existing_flashes_without_creating_another(self):
+        runtime = CaptureRuntime(self.root)
+        started = runtime.start(
+            text="想法一",
+            context_refs=["https://example.com/article"],
+            transaction_id="attach-start",
+        )
+        second = runtime.append(
+            started["session_id"], text="想法二", context_refs=[], transaction_id="attach-append"
+        )
+        proposal = runtime.propose(
+            started["session_id"],
+            flashes=[
+                {"title": "想法一", "body": "想法一", "entry_ids": [started["entry_id"]], "context_refs": ["https://example.com/article"]},
+                {"title": "想法二", "body": "想法二", "entry_ids": [second["entry_id"]], "context_refs": ["https://example.com/article"]},
+            ],
+            transaction_id="attach-propose",
+        )
+        finalized = self.service.capture_finalize(
+            runtime, started["session_id"], proposal_id=proposal["proposal_id"],
+            confirmed_by_user=True, transaction_id="attach-finalize",
+        )
+        flash_ids = [item["id"] for item in finalized["result"]["flashes"]]
+        attached = self.service.source_commit(
+            self.preview(), attach_flash_ids=flash_ids, transaction_id="attach-source"
+        )
+        self.assertFalse(attached["result"]["flash_created"])
+        source = self.repo.find_note(attached["result"]["source_id"])
+        self.assertEqual(set(source[2]["flash_ids"]), set(flash_ids))
+        for flash_id in flash_ids:
+            flash = self.repo.find_note(flash_id)
+            self.assertIn(attached["result"]["source_id"], flash[2]["source_ids"])
 
     def test_source_and_flash_are_atomic_linked_local_and_idempotent(self):
         result = self.service.source_commit(

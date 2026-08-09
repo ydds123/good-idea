@@ -82,11 +82,13 @@ class Repository:
             return None
         return {"idempotent": True, **record}
 
-    def preflight_integrity(self) -> None:
+    def preflight_integrity(self, *, validate_sources: bool = True) -> None:
         for location in TYPE_LOCATIONS.values():
             directory = self.root / location
             if directory.is_symlink():
                 raise IntegrityError(f"内容目录不得为符号链接：{location}")
+        if not validate_sources:
+            return
         source_dir = self.root / TYPE_LOCATIONS["source"]
         for path in sorted(source_dir.glob("*.md")):
             if path.is_symlink():
@@ -186,11 +188,12 @@ class Repository:
         state: dict[str, Any],
         result: dict[str, Any],
         deletes: set[Path] | None = None,
+        validate_sources: bool = True,
     ) -> dict[str, Any]:
         existing = self.transaction_result(transaction_id)
         if existing:
             return existing
-        self.preflight_integrity()
+        self.preflight_integrity(validate_sources=validate_sources)
         staged_before = _run_git(
             self.root, ["diff", "--cached", "--name-only"], check=True
         ).stdout.strip()
@@ -418,6 +421,7 @@ def initialize_vault(path: Path) -> dict[str, Any]:
         ),
         Path(".gitignore"): (
             ".venv/\n__pycache__/\n*.py[cod]\n.goodidea/transactions/*\n"
+            ".goodidea/runtime/\n"
             ".obsidian/workspace.json\n.obsidian/workspace-mobile.json\n"
         ),
         Path(".obsidian/app.json"): (
