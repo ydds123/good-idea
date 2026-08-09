@@ -79,3 +79,5 @@
 
 ## [2026-08-10T00:44:55+08:00] capture-flash | 母题级课题：AI图像/摄影与视觉叙事的 skill 化 | tx=flash-visual-narrative-20260810
 
+## [2026-08-10T00:47:52+08:00] capture-revise | 母题级课题：AI图像/摄影与视觉叙事的 skill 化 | tx=revise-visual-narrative-v2-20260810
+

@@ -393,6 +393,17 @@
       "timestamp": "2026-08-09T21:54:09+08:00",
       "transaction_id": "revise-user-profile-hermes-20260809"
     },
+    "revise-visual-narrative-v2-20260810": {
+      "action": "capture-revise",
+      "result": {
+        "id": "FLA-20260810-b4aaff57",
+        "path": "闪念空间/2026-08-10-母题级课题：AI图像-摄影与视觉叙事的-skill-化.md",
+        "type": "flash"
+      },
+      "summary": "母题级课题：AI图像/摄影与视觉叙事的 skill 化",
+      "timestamp": "2026-08-10T00:47:52+08:00",
+      "transaction_id": "revise-visual-narrative-v2-20260810"
+    },
     "rollback-240893db82aa": {
       "action": "rollback",
       "result": {
