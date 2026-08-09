@@ -51,6 +51,11 @@
       "path": "溯源空间/2026-08-04-LLM-Wiki.md",
       "title": "LLM Wiki"
     },
+    "https://mp.weixin.qq.com/s/tKKlPps6TCy11TOVTIMvdw": {
+      "id": "SRC-676c8d587aa6",
+      "path": "溯源空间/2026-08-09-对话李继刚：让AI超越平庸表现｜“读完周报再来聊聊”闭门会第5期精华.md",
+      "title": "对话李继刚：让AI超越平庸表现｜“读完周报再来聊聊”闭门会第5期精华"
+    },
     "https://mp.weixin.qq.com/s/vTv0Vu4RgrMkmLbXGvnSug": {
       "id": "SRC-ddab8c91266b",
       "path": "溯源空间/2026-08-04-用AI的这三年，想跟你分享这9条心得。.md",
@@ -282,6 +287,19 @@
       "summary": "控制论与科学方法论 + 保存动机",
       "timestamp": "2026-08-09T14:40:53+08:00",
       "transaction_id": "source-control-theory-20260809-v1"
+    },
+    "source-lijigang-beyond-mediocrity-20260809-v1": {
+      "action": "source-commit",
+      "result": {
+        "flash_id": "FLA-20260809-243c9a94",
+        "flash_path": "闪念空间/2026-08-09-让-AI-超越平庸表现里还有哪些观点可以围绕作图领域展开，这个可以继续讨论；为了.md",
+        "source_created": true,
+        "source_id": "SRC-676c8d587aa6",
+        "source_path": "溯源空间/2026-08-09-对话李继刚：让AI超越平庸表现｜“读完周报再来聊聊”闭门会第5期精华.md"
+      },
+      "summary": "对话李继刚：让AI超越平庸表现｜“读完周报再来聊聊”闭门会第5期精华 + 保存动机",
+      "timestamp": "2026-08-09T14:40:59+08:00",
+      "transaction_id": "source-lijigang-beyond-mediocrity-20260809-v1"
     }
   }
 }
