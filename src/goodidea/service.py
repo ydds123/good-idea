@@ -23,6 +23,7 @@ from .notes import (
     dated_filename,
     extract_snapshot,
     normalize_source_layout,
+    remove_list_item_from_section,
     remove_section,
     render_note,
     render_flash_event,
@@ -469,6 +470,98 @@ class GoodIdeaService:
             action=f"capture-{kind}",
             summary=note_title,
             writes={rel: note},
+            state=state,
+            result=result,
+        )
+
+    def capture_revise(
+        self,
+        note_id: str,
+        *,
+        note: str,
+        confirmed_by_user: bool,
+        transaction_id: str | None = None,
+    ) -> dict[str, Any]:
+        if not confirmed_by_user:
+            raise ValidationError("轻量记录修订只能逐字追加用户亲自写下的内容")
+        if not _meaningful(note, minimum=8):
+            raise ValidationError("演化记录必须包含用户明确的补充或修正")
+        found = self.repo.find_note(note_id)
+        if not found or found[2].get("type") not in {
+            "flash",
+            "interesting",
+            "todo",
+        }:
+            raise ValidationError(f"找不到轻量记录：{note_id}")
+        rel, text, metadata = found
+        txid = transaction_id or new_transaction_id("capture-revise")
+        if existing := self._idempotent(txid):
+            return existing
+        timestamp = now_iso()
+        user_note = _normalize_user_entry(note)
+        text = add_list_item_to_section(
+            text, "演化记录", f"{timestamp} — {user_note}"
+        )
+        metadata["updated_at"] = timestamp
+        text = replace_frontmatter(text, metadata)
+        state = self.repo.read_state()
+        result = {
+            "id": note_id,
+            "path": rel.as_posix(),
+            "type": metadata["type"],
+        }
+        return self.repo.commit(
+            transaction_id=txid,
+            action="capture-revise",
+            summary=metadata["title"],
+            writes={rel: text},
+            state=state,
+            result=result,
+        )
+
+    def capture_transition(
+        self,
+        note_id: str,
+        *,
+        status: str,
+        transaction_id: str | None = None,
+    ) -> dict[str, Any]:
+        found = self.repo.find_note(note_id)
+        if not found or found[2].get("type") not in {
+            "flash",
+            "interesting",
+            "todo",
+        }:
+            raise ValidationError(f"找不到轻量记录：{note_id}")
+        rel, text, metadata = found
+        note_type = metadata["type"]
+        allowed = set(NOTE_SPECS[note_type]["statuses"])
+        if note_type == "flash":
+            # processed 由系统在永久卡片接纳时自动设置，不开放手动流转
+            allowed.discard("processed")
+        if status not in allowed:
+            raise ValidationError(
+                f"{note_type} 不允许状态 {status}；可选：{sorted(allowed)}"
+            )
+        txid = transaction_id or new_transaction_id("capture-transition")
+        if existing := self._idempotent(txid):
+            return existing
+        timestamp = now_iso()
+        metadata["status"] = status
+        metadata["updated_at"] = timestamp
+        text = replace_frontmatter(text, metadata)
+        state = self.repo.read_state()
+        result = {
+            "id": note_id,
+            "path": rel.as_posix(),
+            "type": note_type,
+            "status": status,
+        }
+        return self.repo.commit(
+            transaction_id=txid,
+            action="capture-transition",
+            summary=metadata["title"],
+            writes={rel: text},
             state=state,
             result=result,
         )
@@ -1825,6 +1918,105 @@ class GoodIdeaService:
                 right[0]: right_text,
             },
             deletes={proposal_rel},
+            state=state,
+            result=result,
+        )
+
+    def connect_withdraw(
+        self,
+        proposal_id: str,
+        *,
+        reason: str,
+        transaction_id: str | None = None,
+    ) -> dict[str, Any]:
+        if not _meaningful(reason, minimum=6):
+            raise ValidationError("撤回连接候选时必须记录明确原因")
+        txid = transaction_id or new_transaction_id("connect-withdraw")
+        if existing := self._idempotent(txid):
+            return existing
+        state = self.repo.read_state()
+        proposal_rel, _, _ = _pending_proposal(
+            self.repo.root, "connections", proposal_id, "connection_proposal"
+        )
+        result = {
+            "proposal_id": proposal_id,
+            "status": "withdrawn",
+            "reason": reason.strip(),
+        }
+        return self.repo.commit(
+            transaction_id=txid,
+            action="connect-withdraw",
+            summary=f"撤回 {proposal_id}",
+            writes={},
+            deletes={proposal_rel},
+            state=state,
+            result=result,
+        )
+
+    def connect_disconnect(
+        self,
+        proposal_id: str,
+        *,
+        reason: str,
+        transaction_id: str | None = None,
+    ) -> dict[str, Any]:
+        if not _meaningful(reason, minimum=6):
+            raise ValidationError("断开语义连接时必须记录明确原因")
+        txid = transaction_id or new_transaction_id("connect-disconnect")
+        if existing := self._idempotent(txid):
+            return existing
+        state = self.repo.read_state()
+        connections = state.get("connections", [])
+        target = next(
+            (
+                conn
+                for conn in connections
+                if conn.get("proposal_id") == proposal_id
+            ),
+            None,
+        )
+        if target is None:
+            raise ValidationError(f"找不到已接受的连接：{proposal_id}")
+        left = self.repo.find_note(target["from_id"])
+        right = self.repo.find_note(target["to_id"])
+        if not left or not right:
+            raise IntegrityError("连接引用的卡片已不存在")
+        relation = target["relation"]
+        rationale = target["rationale"]
+        left_item = (
+            f"{relation} → {wiki_link(right[0], right[2]['title'])}：{rationale}"
+        )
+        right_item = (
+            f"{relation} ← {wiki_link(left[0], left[2]['title'])}：{rationale}"
+        )
+        timestamp = now_iso()
+        left_meta = copy.deepcopy(left[2])
+        right_meta = copy.deepcopy(right[2])
+        left_meta["updated_at"] = timestamp
+        right_meta["updated_at"] = timestamp
+        left_text = replace_frontmatter(
+            remove_list_item_from_section(left[1], "连接", left_item), left_meta
+        )
+        right_text = replace_frontmatter(
+            remove_list_item_from_section(right[1], "连接", right_item), right_meta
+        )
+        state["connections"] = [
+            conn
+            for conn in connections
+            if conn.get("proposal_id") != proposal_id
+        ]
+        result = {
+            "proposal_id": proposal_id,
+            "from_id": target["from_id"],
+            "to_id": target["to_id"],
+            "status": "disconnected",
+            "reason": reason.strip(),
+        }
+        return self.repo.commit(
+            transaction_id=txid,
+            action="connect-disconnect",
+            summary=f"断开 {left[2]['title']} ↔ {right[2]['title']}",
+            writes={left[0]: left_text, right[0]: right_text},
             state=state,
             result=result,
         )

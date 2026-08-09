@@ -205,6 +205,27 @@ def add_list_item_to_section(note: str, heading: str, item: str) -> str:
     return note[:position] + section + note[next_heading:]
 
 
+def remove_list_item_from_section(note: str, heading: str, item: str) -> str:
+    """Remove one exact list item line from a section; raise if absent."""
+    marker = f"## {heading}\n"
+    position = note.find(marker)
+    if position < 0:
+        raise IntegrityError(f"缺少 {heading} 节，无法移除条目")
+    next_heading = note.find("\n## ", position + len(marker))
+    if next_heading < 0:
+        next_heading = len(note)
+    section = note[position:next_heading]
+    pattern = re.compile(rf"(?m)^[ \t]*-[ \t]*{re.escape(item)}[ \t]*\r?\n?$")
+    new_section, count = pattern.subn("", section)
+    if count == 0:
+        raise IntegrityError(f"{heading} 节中找不到要移除的条目")
+    if new_section.strip() == f"## {heading}":
+        if next_heading >= len(note):
+            return note[:position].rstrip() + "\n"
+        return note[:position].rstrip() + "\n\n" + note[next_heading + 1 :]
+    return note[:position] + new_section + note[next_heading:]
+
+
 def replace_section(note: str, heading: str, content: str) -> str:
     marker = f"## {heading}\n"
     position = note.find(marker)

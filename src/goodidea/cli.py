@@ -91,6 +91,19 @@ def build_parser() -> argparse.ArgumentParser:
     finalize_capture.add_argument("--proposal-id", required=True)
     finalize_capture.add_argument("--confirm-discussion-complete", action="store_true")
     finalize_capture.add_argument("--transaction-id", required=True)
+    revise_note = capture_sub.add_parser(
+        "revise", help="向既有轻量记录追加用户确认的演化内容"
+    )
+    revise_note.add_argument("--id", required=True)
+    revise_note.add_argument("--text", required=True)
+    revise_note.add_argument("--confirm-user-authored", action="store_true")
+    revise_note.add_argument("--transaction-id")
+    transition = capture_sub.add_parser(
+        "transition", help="流转轻量记录的生命周期状态"
+    )
+    transition.add_argument("--id", required=True)
+    transition.add_argument("--status", required=True)
+    transition.add_argument("--transaction-id")
     revise_anchors = capture_sub.add_parser("revise-source-anchors")
     revise_anchors.add_argument("--flash-id", required=True)
     revise_anchors.add_argument("--manifest-file", required=True)
@@ -239,6 +252,18 @@ def build_parser() -> argparse.ArgumentParser:
     connect_accept = connect_sub.add_parser("accept")
     connect_accept.add_argument("--proposal-id", required=True)
     connect_accept.add_argument("--transaction-id")
+    connect_withdraw = connect_sub.add_parser(
+        "withdraw", help="撤回仍待确认的连接候选"
+    )
+    connect_withdraw.add_argument("--proposal-id", required=True)
+    connect_withdraw.add_argument("--reason", required=True)
+    connect_withdraw.add_argument("--transaction-id")
+    connect_disconnect = connect_sub.add_parser(
+        "disconnect", help="断开已接受的语义连接"
+    )
+    connect_disconnect.add_argument("--proposal-id", required=True)
+    connect_disconnect.add_argument("--reason", required=True)
+    connect_disconnect.add_argument("--transaction-id")
 
     sub.add_parser("lint", help="检查结构和链接")
     sub.add_parser("verify", help="检查结构、链接和 Git 清洁状态")
@@ -390,6 +415,19 @@ def dispatch(args: argparse.Namespace) -> tuple[dict[str, Any], int]:
             confirmed_by_user=args.confirm_discussion_complete,
             transaction_id=args.transaction_id,
         )
+    elif args.command == "capture" and args.capture_command == "revise":
+        result = service.capture_revise(
+            args.id,
+            note=args.text,
+            confirmed_by_user=args.confirm_user_authored,
+            transaction_id=args.transaction_id,
+        )
+    elif args.command == "capture" and args.capture_command == "transition":
+        result = service.capture_transition(
+            args.id,
+            status=args.status,
+            transaction_id=args.transaction_id,
+        )
     elif args.command == "capture" and args.capture_command == "revise-source-anchors":
         manifest = _read_json(args.manifest_file)
         anchors = manifest.get("anchors")
@@ -496,9 +534,21 @@ def dispatch(args: argparse.Namespace) -> tuple[dict[str, Any], int]:
                 rationale=args.rationale,
                 transaction_id=args.transaction_id,
             )
-        else:
+        elif args.connect_command == "accept":
             result = service.connect_accept(
                 args.proposal_id, transaction_id=args.transaction_id
+            )
+        elif args.connect_command == "withdraw":
+            result = service.connect_withdraw(
+                args.proposal_id,
+                reason=args.reason,
+                transaction_id=args.transaction_id,
+            )
+        else:
+            result = service.connect_disconnect(
+                args.proposal_id,
+                reason=args.reason,
+                transaction_id=args.transaction_id,
             )
     elif args.command == "lint":
         result = service.lint()

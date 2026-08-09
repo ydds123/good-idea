@@ -2066,6 +2066,241 @@ updated_at: "2026-08-04T00:00:00+08:00"
         )
         self.assertTrue(self.service.lint()["ok"])
 
+    def test_capture_revise_appends_evolution_and_requires_confirmation(self):
+        todo = self.service.capture(
+            "todo",
+            text="用户画像记忆摘要层需要追加 Hermes 对照观察",
+            title="记忆摘要层",
+            transaction_id="tx-revise-target",
+        )
+        note_id = todo["result"]["id"]
+        with self.assertRaises(ValidationError):
+            self.service.capture_revise(
+                note_id,
+                note="没有确认的内容不得写入",
+                confirmed_by_user=False,
+                transaction_id="tx-revise-no-confirm",
+            )
+        revised = self.service.capture_revise(
+            note_id,
+            note="这与 Hermes 的 memory 和 user profile 机制同构，可反向参考其更新与淘汰策略",
+            confirmed_by_user=True,
+            transaction_id="tx-revise-do",
+        )
+        self.assertEqual(revised["result"]["id"], note_id)
+        note = self.repo.find_note(note_id)
+        self.assertIn("## 演化记录", note[1])
+        self.assertIn("Hermes 的 memory 和 user profile 机制同构", note[1])
+        self.assertIn("原始记录", note[1])
+        self.assertGreaterEqual(note[2]["updated_at"], note[2]["created_at"])
+        replay = self.service.capture_revise(
+            note_id,
+            note="重复事务不应再次写入",
+            confirmed_by_user=True,
+            transaction_id="tx-revise-do",
+        )
+        self.assertTrue(replay["idempotent"])
+        self.assertEqual(len(list((self.root / "待办空间").glob("*.md"))), 1)
+        with self.assertRaises(ValidationError):
+            self.service.capture_revise(
+                "FLA-20260809-00000000",
+                note="不存在的记录必须被拒绝",
+                confirmed_by_user=True,
+                transaction_id="tx-revise-missing",
+            )
+        self.assertTrue(self.service.lint()["ok"])
+
+    def test_capture_transition_moves_lightweight_status_within_allowed_set(self):
+        todo = self.service.capture(
+            "todo",
+            text="这条待办先完成再取消，验证状态可以回退",
+            transaction_id="tx-transition-todo",
+        )
+        todo_id = todo["result"]["id"]
+        done = self.service.capture_transition(
+            todo_id,
+            status="done",
+            transaction_id="tx-transition-done",
+        )
+        self.assertEqual(done["result"]["status"], "done")
+        self.assertEqual(
+            self.repo.find_note(todo_id)[2]["status"], "done"
+        )
+        reopened = self.service.capture_transition(
+            todo_id,
+            status="open",
+            transaction_id="tx-transition-reopen",
+        )
+        self.assertEqual(reopened["result"]["status"], "open")
+        with self.assertRaises(ValidationError):
+            self.service.capture_transition(
+                todo_id,
+                status="processed",
+                transaction_id="tx-transition-bad-status",
+            )
+        flash = self.service.capture(
+            "flash",
+            text="闪念的 processed 状态只能由系统在卡片接纳时设置",
+            transaction_id="tx-transition-flash",
+        )
+        flash_id = flash["result"]["id"]
+        dismissed = self.service.capture_transition(
+            flash_id,
+            status="dismissed",
+            transaction_id="tx-transition-dismiss",
+        )
+        self.assertEqual(dismissed["result"]["status"], "dismissed")
+        with self.assertRaises(ValidationError):
+            self.service.capture_transition(
+                flash_id,
+                status="processed",
+                transaction_id="tx-transition-flash-processed",
+            )
+        replay = self.service.capture_transition(
+            flash_id,
+            status="dismissed",
+            transaction_id="tx-transition-dismiss",
+        )
+        self.assertTrue(replay["idempotent"])
+        self.assertTrue(self.service.lint()["ok"])
+
+    def _two_connected_permanent_cards(self):
+        captured = self.service.source_commit(
+            self.preview(),
+            motivation="用来源支撑两张正式卡片之间的连接测试",
+            transaction_id="tx-disconnect-source",
+        )
+        source_id = captured["result"]["source_id"]
+
+        def make_card(card_type, title, body, tx_propose, tx_accept):
+            proposal = self.service.permanent_propose(
+                card_type,
+                draft=f"# {title}\n\n{body}\n",
+                source_ids=[source_id],
+                transaction_id=tx_propose,
+            )
+            accepted = self.service.permanent_accept(
+                proposal["result"]["proposal_id"],
+                confirmed_by_user=True,
+                transaction_id=tx_accept,
+            )
+            return accepted["result"]["card_id"]
+
+        left_id = make_card(
+            "permanent",
+            "左卡片",
+            "左边这张卡片作为连接起点。",
+            "tx-disconnect-left-propose",
+            "tx-disconnect-left-accept",
+        )
+        right_id = make_card(
+            "permanent",
+            "右卡片",
+            "右边这张卡片作为连接终点。",
+            "tx-disconnect-right-propose",
+            "tx-disconnect-right-accept",
+        )
+        connection = self.service.connect_propose(
+            left_id,
+            right_id,
+            relation="互为印证",
+            rationale="两张卡片在判断标准上互相支撑。",
+            transaction_id="tx-disconnect-connect-propose",
+        )
+        self.service.connect_accept(
+            connection["result"]["proposal_id"],
+            transaction_id="tx-disconnect-connect-accept",
+        )
+        return left_id, right_id, connection["result"]["proposal_id"]
+
+    def test_connect_withdraw_removes_pending_connection_proposal(self):
+        left_id, right_id, proposal_id = self._two_connected_permanent_cards()
+        left_before = self.repo.find_note(left_id)
+        right_before = self.repo.find_note(right_id)
+        self.assertIn(right_before[2]["title"], left_before[1])
+
+        # 撤回必须带原因；已接受的连接不能再 withdraw
+        with self.assertRaises(ValidationError):
+            self.service.connect_withdraw(
+                proposal_id,
+                reason="",
+                transaction_id="tx-connect-withdraw-no-reason",
+            )
+        with self.assertRaises(ValidationError):
+            self.service.connect_withdraw(
+                proposal_id,
+                reason="已接受的连接应走 disconnect 而不是 withdraw",
+                transaction_id="tx-connect-withdraw-accepted",
+            )
+
+        # 新建一个候选再撤回
+        pending = self.service.connect_propose(
+            left_id,
+            right_id,
+            relation="临时候选",
+            rationale="这条候选准备撤回以验证命令。",
+            transaction_id="tx-connect-withdraw-propose",
+        )
+        pending_id = pending["result"]["proposal_id"]
+        pending_path = self.root / pending["result"]["proposal_path"]
+        self.assertTrue(pending_path.exists())
+        withdrawn = self.service.connect_withdraw(
+            pending_id,
+            reason="这条连接理由不成立，撤回候选",
+            transaction_id="tx-connect-withdraw-do",
+        )
+        self.assertEqual(withdrawn["result"]["status"], "withdrawn")
+        self.assertFalse(pending_path.exists())
+        with self.assertRaises(ValidationError):
+            self.service.connect_accept(
+                pending_id,
+                transaction_id="tx-connect-withdraw-accept-rejected",
+            )
+        left_after = self.repo.find_note(left_id)
+        self.assertIn(right_before[2]["title"], left_after[1])
+        self.assertTrue(self.service.lint()["ok"])
+
+    def test_connect_disconnect_removes_bidirectional_links_and_ledger(self):
+        left_id, right_id, proposal_id = self._two_connected_permanent_cards()
+        state = self.repo.read_state()
+        self.assertEqual(len(state["connections"]), 1)
+        left = self.repo.find_note(left_id)
+        right = self.repo.find_note(right_id)
+        self.assertIn("## 连接", left[1])
+        self.assertIn("## 连接", right[1])
+
+        with self.assertRaises(ValidationError):
+            self.service.connect_disconnect(
+                proposal_id,
+                reason="",
+                transaction_id="tx-disconnect-no-reason",
+            )
+        disconnected = self.service.connect_disconnect(
+            proposal_id,
+            reason="两张卡片经过复核不再构成互相印证关系",
+            transaction_id="tx-disconnect-do",
+        )
+        self.assertEqual(disconnected["result"]["status"], "disconnected")
+        left_after = self.repo.find_note(left_id)
+        right_after = self.repo.find_note(right_id)
+        self.assertNotIn("## 连接", left_after[1])
+        self.assertNotIn("## 连接", right_after[1])
+        state_after = self.repo.read_state()
+        self.assertEqual(state_after["connections"], [])
+        replay = self.service.connect_disconnect(
+            proposal_id,
+            reason="重复事务不应再次生效",
+            transaction_id="tx-disconnect-do",
+        )
+        self.assertTrue(replay["idempotent"])
+        with self.assertRaises(ValidationError):
+            self.service.connect_disconnect(
+                proposal_id,
+                reason="连接已不存在，必须拒绝",
+                transaction_id="tx-disconnect-missing",
+            )
+        self.assertTrue(self.service.lint()["ok"])
+
 
 if __name__ == "__main__":
     unittest.main()

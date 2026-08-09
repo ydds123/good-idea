@@ -735,6 +735,170 @@ canonical_url: https://example.com/declared-only
         self.assertEqual(verified.returncode, 0, verified.stderr)
         self.assertTrue(json.loads(verified.stdout)["ok"])
 
+    def test_capture_revise_transition_connect_withdraw_disconnect_cli(self):
+        todo = run_cli(
+            "--root", str(self.root), "capture", "todo",
+            "--text", "CLI 层验证轻量记录追加与状态流转",
+            "--transaction-id", "cli-revise-todo",
+        )
+        self.assertEqual(todo.returncode, 0, todo.stderr)
+        todo_id = json.loads(todo.stdout)["result"]["id"]
+
+        # 无确认时拒绝追加
+        rejected = run_cli(
+            "--root", str(self.root), "capture", "revise",
+            "--id", todo_id,
+            "--text", "未经确认的追加内容",
+            "--transaction-id", "cli-revise-no-confirm",
+        )
+        self.assertEqual(rejected.returncode, 2, rejected.stderr)
+        self.assertIn(
+            "只能逐字追加用户亲自写下的内容",
+            json.loads(rejected.stderr)["error"]["message"],
+        )
+
+        revised = run_cli(
+            "--root", str(self.root), "capture", "revise",
+            "--id", todo_id,
+            "--text", "CLI 追加的演化记录内容",
+            "--confirm-user-authored",
+            "--transaction-id", "cli-revise-do",
+        )
+        self.assertEqual(revised.returncode, 0, revised.stderr)
+        todo_note = (self.root / json.loads(todo.stdout)["result"]["path"]).read_text(
+            encoding="utf-8"
+        )
+        self.assertIn("## 演化记录", todo_note)
+        self.assertIn("CLI 追加的演化记录内容", todo_note)
+
+        transitioned = run_cli(
+            "--root", str(self.root), "capture", "transition",
+            "--id", todo_id,
+            "--status", "done",
+            "--transaction-id", "cli-transition-done",
+        )
+        self.assertEqual(transitioned.returncode, 0, transitioned.stderr)
+        self.assertEqual(
+            json.loads(transitioned.stdout)["result"]["status"], "done"
+        )
+
+        # 非法状态被 CLI 拒绝
+        bad = run_cli(
+            "--root", str(self.root), "capture", "transition",
+            "--id", todo_id,
+            "--status", "processed",
+            "--transaction-id", "cli-transition-bad",
+        )
+        self.assertEqual(bad.returncode, 2, bad.stderr)
+
+        # 来源 + 两张永久卡片 + 连接：走完整正向与逆向 CLI 链路
+        source = run_cli(
+            "--root", str(self.root), "source", "preview",
+            "--url", "https://example.com/cli-connect",
+            "--markdown-file", "-",
+            "--title", "CLI 连接测试来源",
+        )
+        self.assertEqual(source.returncode, 0, source.stderr)
+        preview_file = self.base / "preview.json"
+        preview_file.write_text(source.stdout, encoding="utf-8")
+        committed = run_cli(
+            "--root", str(self.root), "source", "commit",
+            "--preview-file", str(preview_file),
+            "--motivation", "为 CLI 连接链路提供来源依据",
+            "--transaction-id", "cli-connect-source",
+        )
+        self.assertEqual(committed.returncode, 0, committed.stderr)
+        source_id = json.loads(committed.stdout)["result"]["source_id"]
+
+        card_ids = []
+        for index, (title, body, txp, txa) in enumerate(
+            [
+                ("CLI 左卡片",
+                 "连接测试用的左卡片，作为语义连接的起点，需要足够长的正文才能通过草稿门禁。",
+                 "cli-connect-left-propose", "cli-connect-left-accept"),
+                ("CLI 右卡片",
+                 "连接测试用的右卡片，作为语义连接的终点，同样需要足够长的正文来表达判断。",
+                 "cli-connect-right-propose", "cli-connect-right-accept"),
+            ]
+        ):
+            draft = self.base / f"draft-{index}.md"
+            draft.write_text(f"# {title}\n\n{body}\n", encoding="utf-8")
+            proposed = run_cli(
+                "--root", str(self.root), "permanent", "propose",
+                "--type", "permanent",
+                "--draft-file", str(draft),
+                "--source-ids", source_id,
+                "--transaction-id", txp,
+            )
+            self.assertEqual(proposed.returncode, 0, proposed.stderr)
+            accepted = run_cli(
+                "--root", str(self.root), "permanent", "accept",
+                "--proposal-id", json.loads(proposed.stdout)["result"]["proposal_id"],
+                "--confirm-user-authored",
+                "--transaction-id", txa,
+            )
+            self.assertEqual(accepted.returncode, 0, accepted.stderr)
+            card_ids.append(json.loads(accepted.stdout)["result"]["card_id"])
+
+        proposed_conn = run_cli(
+            "--root", str(self.root), "connect", "propose",
+            "--from-id", card_ids[0],
+            "--to-id", card_ids[1],
+            "--relation", "互为印证",
+            "--rationale", "CLI 链路验证两张卡片的关系。",
+            "--transaction-id", "cli-connect-propose",
+        )
+        self.assertEqual(proposed_conn.returncode, 0, proposed_conn.stderr)
+        proposal_id = json.loads(proposed_conn.stdout)["result"]["proposal_id"]
+        accepted_conn = run_cli(
+            "--root", str(self.root), "connect", "accept",
+            "--proposal-id", proposal_id,
+            "--transaction-id", "cli-connect-accept",
+        )
+        self.assertEqual(accepted_conn.returncode, 0, accepted_conn.stderr)
+
+        disconnected = run_cli(
+            "--root", str(self.root), "connect", "disconnect",
+            "--proposal-id", proposal_id,
+            "--reason", "CLI 链路验证完成后断开连接",
+            "--transaction-id", "cli-connect-disconnect",
+        )
+        self.assertEqual(disconnected.returncode, 0, disconnected.stderr)
+        left_note = (self.root / "永久空间/永久卡片").glob("*.md")
+        combined = "".join(
+            path.read_text(encoding="utf-8") for path in left_note
+        )
+        self.assertNotIn("## 连接", combined)
+
+        # 新候选走 withdraw 撤回
+        pending_conn = run_cli(
+            "--root", str(self.root), "connect", "propose",
+            "--from-id", card_ids[0],
+            "--to-id", card_ids[1],
+            "--relation", "临时候选",
+            "--rationale", "这条候选将被撤回。",
+            "--transaction-id", "cli-connect-withdraw-propose",
+        )
+        self.assertEqual(pending_conn.returncode, 0, pending_conn.stderr)
+        pending_id = json.loads(pending_conn.stdout)["result"]["proposal_id"]
+        withdrawn = run_cli(
+            "--root", str(self.root), "connect", "withdraw",
+            "--proposal-id", pending_id,
+            "--reason", "候选理由不成立，撤回",
+            "--transaction-id", "cli-connect-withdraw",
+        )
+        self.assertEqual(withdrawn.returncode, 0, withdrawn.stderr)
+        self.assertFalse(
+            (self.root / json.loads(pending_conn.stdout)["result"]["proposal_path"]).exists()
+        )
+
+        linted = run_cli("--root", str(self.root), "lint")
+        self.assertEqual(linted.returncode, 0, linted.stderr)
+        self.assertTrue(json.loads(linted.stdout)["ok"])
+        verified = run_cli("--root", str(self.root), "verify")
+        self.assertEqual(verified.returncode, 0, verified.stderr)
+        self.assertTrue(json.loads(verified.stdout)["ok"])
+
 
 if __name__ == "__main__":
     unittest.main()

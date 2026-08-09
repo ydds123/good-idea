@@ -148,9 +148,9 @@ finalize 同时创建可恢复的运行时维护任务。任务允许 `pending`�
 
 | 类型 | 创建状态 | CLI 可以执行的转换 |
 |---|---|---|
-| `flash` | `pending` | 被正式卡片接纳并引用：`pending → processed`；陈旧仅为回顾时的动态标记 |
-| `interesting` | `pending` | v0.1 暂无公开转换命令；`processed`、`dismissed` 为保留状态 |
-| `todo` | `open` | v0.1 暂无公开转换命令；`done`、`cancelled` 为保留状态 |
+| `flash` | `pending` | `capture transition` 可设为 `pending`、`dismissed`；`processed` 由系统在正式卡片接纳时自动设置，不开放手动流转；陈旧仅为回顾时的动态标记 |
+| `interesting` | `pending` | `capture transition` 可设为 `pending`、`processed`、`dismissed` |
+| `todo` | `open` | `capture transition` 可设为 `open`、`done`、`cancelled` |
 | `source` | 当前抓取质量对应 `complete`、`partial` 或 `failed` | `source refresh` 生成候选：当前状态 `→ update_available`；接受候选：`update_available →` 新快照抓取质量 |
 | `permanent`、`index` | `active` | `permanent revise` 可设为 `active`、`revised` 或 `retired`；未指定时转为 `revised` |
 | `mother` | `open` | `permanent revise` 可设为 `open`、`evolving` 或 `retired`；未指定时转为 `evolving` |
@@ -179,8 +179,12 @@ finalize 同时创建可恢复的运行时维护任务。任务允许 `pending`�
 | `permanent accept` | 候选、Frontmatter、正文哈希和状态账本必须一致且状态为 `pending`，并带用户明确创建确认 |
 | `permanent withdraw` | 只撤销仍为 `pending` 的候选；撤销后不可接纳，错误内容不保留在当前工作树 |
 | `permanent revise` / `permanent feedback` | 只能追加用户亲自提供并确认的内容；CLI 只机械添加区块、时间戳和规范换行 |
+| `capture revise` | 目标必须是既有轻量记录（闪念/有意思/待办）；只能追加用户亲自提供并确认的内容；追加内容必须有实际含义 |
+| `capture transition` | 目标必须是既有轻量记录；目标状态必须属于该类型允许集合；闪念的 `processed` 由系统保留，不开放手动流转 |
 | `connect propose` | 两端都必须是已存在的正式卡片；零连接节点本身有效 |
 | `connect accept` | 必须是用户确认的既有 `pending` 连接候选，接受时原子写入双向关系 |
+| `connect withdraw` | 只撤回仍为 `pending` 的连接候选；必须带明确撤回原因；撤回后候选不可接纳 |
+| `connect disconnect` | 目标必须是账本中已接受的连接；必须带明确断开原因；原子移除两端卡片的连接条目并更新账本 |
 | `review` | 只读返回待处理材料，并按创建时间标记超过 48 小时的陈旧闪念 |
 | `maintain metadata` | 只机械删除正式内容中已废弃的 `summary` 字段，不改正文、快照或关系 |
 

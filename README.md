@@ -361,6 +361,8 @@ uv run goodidea --root /Users/apple/Documents/Claude/good-idea <命令>
 | `goodidea capture cleanup` | 清理超过恢复窗口且任务已终结的临时完成会话 | 不删除正式内容 |
 | `goodidea capture pause|resume|status|discard` | 暂停、恢复、查看或放弃临时会话 | 仅运行时 |
 | `goodidea capture finalize` | 用户确认最新清单后原子创建多张正式闪念 | 是 |
+| `goodidea capture revise` | 向既有轻量记录追加用户确认的演化内容 | 是 |
+| `goodidea capture transition` | 流转轻量记录（闪念/有意思/待办）的生命周期状态 | 是 |
 | `goodidea capture revise-source-anchors` | 按用户确认把来源链接和论证说明合并为统一锚点 | 是 |
 | `goodidea source preview --url <URL>` | 在仓库外准备网页来源预览 | 否 |
 | `goodidea source preview --local-file <PATH>` | 在仓库外准备 UTF-8 `.md` / `.markdown` / `.txt` 来源预览 | 否 |
@@ -379,6 +381,8 @@ uv run goodidea --root /Users/apple/Documents/Claude/good-idea <命令>
 | `goodidea permanent feedback` | 追加用户亲自写下的行动结果和修正 | 是 |
 | `goodidea connect propose` | 创建两张正式卡片的关系候选 | 是 |
 | `goodidea connect accept` | 用户确认后写入双向语义连接 | 是 |
+| `goodidea connect withdraw` | 撤回仍待确认的连接候选 | 是 |
+| `goodidea connect disconnect` | 断开已接受的语义连接并更新账本 | 是 |
 | `goodidea lint` | 检查结构、快照、链接、状态和索引 | 否 |
 | `goodidea verify` | 在 lint 基础上检查 Git 工作区 | 否 |
 | `goodidea rollback` | 使用 `git revert` 非破坏性回滚指定事务提交 | 是 |
