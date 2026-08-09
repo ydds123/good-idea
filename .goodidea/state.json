@@ -248,6 +248,17 @@
       "timestamp": "2026-08-09T23:53:46+08:00",
       "transaction_id": "flash-subjectivity-20260809-finalize"
     },
+    "flash-visual-narrative-20260810": {
+      "action": "capture-flash",
+      "result": {
+        "id": "FLA-20260810-b4aaff57",
+        "path": "闪念空间/2026-08-10-母题级课题：AI图像-摄影与视觉叙事的-skill-化.md",
+        "type": "flash"
+      },
+      "summary": "母题级课题：AI图像/摄影与视觉叙事的 skill 化",
+      "timestamp": "2026-08-10T00:44:55+08:00",
+      "transaction_id": "flash-visual-narrative-20260810"
+    },
     "interesting-path-to-nowhere-20260810": {
       "action": "capture-interesting",
       "result": {

@@ -77,3 +77,5 @@
 
 ## [2026-08-10T00:44:54+08:00] capture-todo | 看板：记录 good idea 各类型卡片的每周增长情况 | tx=todo-kanban-growth-20260810
 
+## [2026-08-10T00:44:55+08:00] capture-flash | 母题级课题：AI图像/摄影与视觉叙事的 skill 化 | tx=flash-visual-narrative-20260810
+
