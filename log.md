@@ -67,3 +67,5 @@
 
 ## [2026-08-10T00:10:15+08:00] capture-revise | 闪念卡片每晚 8 点飞书预警机制 | tx=revise-anthropomorphic-upgrade-20260810
 
+## [2026-08-10T00:14:12+08:00] capture-revise | 闪念卡片每晚 8 点飞书预警机制 | tx=revise-anthropomorphic-soulmd-20260810
+
