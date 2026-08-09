@@ -51,12 +51,14 @@ class CaptureRuntime:
         self.captures = self.runtime / "captures"
         self.completed = self.runtime / "completed-captures"
         self.maintenance = self.runtime / "maintenance"
+        self.maintenance_assets = self.runtime / "maintenance-assets"
         self.transactions = self.runtime / "transactions"
         for directory in (
             self.runtime,
             self.captures,
             self.completed,
             self.maintenance,
+            self.maintenance_assets,
             self.transactions,
         ):
             resolved = directory.resolve(strict=False)
@@ -392,6 +394,64 @@ class CaptureRuntime:
                 jobs.append(job)
         return {"jobs": jobs, "count": len(jobs)}
 
+    def get_maintenance_job(self, job_id: str) -> dict[str, Any]:
+        if not re.fullmatch(r"JOB-[0-9a-f]{12}", job_id):
+            raise ValidationError("无效的后台维护任务 ID")
+        path = self.maintenance / f"{job_id}.json"
+        try:
+            job = json.loads(path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError) as exc:
+            raise ValidationError(f"找不到后台维护任务：{job_id}") from exc
+        return job
+
+    def read_cached_asset(self, job_id: str, url: str) -> tuple[bytes, str] | None:
+        self.get_maintenance_job(job_id)
+        key = hashlib.sha256(url.encode("utf-8")).hexdigest()
+        directory = self.maintenance_assets / job_id
+        metadata_path = directory / f"{key}.json"
+        data_path = directory / f"{key}.bin"
+        if not metadata_path.exists() or not data_path.exists():
+            return None
+        try:
+            metadata = json.loads(metadata_path.read_text(encoding="utf-8"))
+            data = data_path.read_bytes()
+        except (OSError, json.JSONDecodeError) as exc:
+            raise IntegrityError("后台图片检查点损坏") from exc
+        if metadata.get("url") != url or metadata.get("sha256") != hashlib.sha256(data).hexdigest():
+            raise IntegrityError("后台图片检查点身份或哈希不一致")
+        return data, str(metadata.get("extension") or ".bin")
+
+    def cache_asset(self, job_id: str, url: str, data: bytes, extension: str) -> None:
+        self.get_maintenance_job(job_id)
+        key = hashlib.sha256(url.encode("utf-8")).hexdigest()
+        directory = self.maintenance_assets / job_id
+        if directory.is_symlink() or not directory.resolve(strict=False).is_relative_to(
+            self.maintenance_assets
+        ):
+            raise IntegrityError("后台图片检查点路径越界或为符号链接")
+        directory.mkdir(parents=True, exist_ok=True)
+        data_path = directory / f"{key}.bin"
+        if not data_path.exists():
+            descriptor, temporary = tempfile.mkstemp(prefix=".asset.", dir=directory)
+            try:
+                with os.fdopen(descriptor, "wb") as stream:
+                    stream.write(data)
+                    stream.flush()
+                    os.fsync(stream.fileno())
+                os.replace(temporary, data_path)
+            except Exception:
+                with contextlib.suppress(FileNotFoundError):
+                    os.unlink(temporary)
+                raise
+        _atomic_json(
+            directory / f"{key}.json",
+            {
+                "url": url,
+                "extension": extension,
+                "sha256": hashlib.sha256(data).hexdigest(),
+            },
+        )
+
     def update_maintenance_job(
         self,
         job_id: str,
@@ -408,18 +468,15 @@ class CaptureRuntime:
         if status not in allowed:
             raise ValidationError("无效的后台维护状态")
         path = self.maintenance / f"{job_id}.json"
-        try:
-            job = json.loads(path.read_text(encoding="utf-8"))
-        except (OSError, json.JSONDecodeError) as exc:
-            raise ValidationError(f"找不到后台维护任务：{job_id}") from exc
+        job = self.get_maintenance_job(job_id)
         current = str(job.get("status") or "")
         transitions = {
-            "pending": {"processing", "maintenance_paused", "failed", "cancelled", "context_changed"},
+            "pending": {"processing", "maintenance_paused", "partial", "complete", "failed", "cancelled", "context_changed"},
             "processing": {"complete", "partial", "failed", "retry_pending", "maintenance_paused", "cancelled", "context_changed"},
             "maintenance_paused": {"pending", "processing", "cancelled", "context_changed"},
             "retry_pending": {"processing", "failed", "maintenance_paused", "cancelled", "context_changed"},
             "context_changed": {"pending", "failed", "cancelled"},
-            "partial": set(),
+            "partial": {"pending", "cancelled"},
             "failed": set(),
             "complete": set(),
             "cancelled": set(),
@@ -498,6 +555,10 @@ class CaptureRuntime:
             jobs = self.maintenance_status(str(state["session_id"]))["jobs"]
             if any(job.get("status") not in {"complete", "failed", "cancelled", "partial"} for job in jobs):
                 continue
+            for job in jobs:
+                cache = self.maintenance_assets / str(job.get("job_id"))
+                if cache.is_dir() and not cache.is_symlink():
+                    shutil.rmtree(cache)
             shutil.rmtree(directory)
             removed.append(str(state["session_id"]))
         return removed

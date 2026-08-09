@@ -182,57 +182,57 @@ goodidea source commit --attach-flash-ids <ID列表>
 
 ### 13.1 正向
 
-- [ ] start 秒级保存第一段表达且不调用网络、来源、索引、Git、lint 或 verify。
-- [ ] append 保持顺序并支持幂等重放。
-- [ ] 一轮会话可以生成零张、一张或多张闪念。
-- [ ] 候选清单支持合并、拆分、修正、删除和返回讨论。
-- [ ] 最新完整候选经用户确认后才能 finalize。
-- [ ] finalize 原子创建多张闪念并生成聚焦 Git 提交。
-- [ ] 正式闪念时间字段符合首次表达与正式生成语义。
-- [ ] finalize 同时创建可恢复后台任务。
-- [ ] 后台来源与相关闪念形成正确双向关系。
+- [x] start 秒级保存第一段表达且不调用网络、来源、索引、Git、lint 或 verify。
+- [x] append 保持顺序并支持幂等重放。
+- [x] 一轮会话可以生成零张、一张或多张闪念。
+- [x] 候选清单支持合并、拆分、修正、删除和返回讨论。
+- [x] 最新完整候选经用户确认后才能 finalize。
+- [x] finalize 原子创建多张闪念并生成聚焦 Git 提交。
+- [x] 正式闪念时间字段符合首次表达与正式生成语义。
+- [x] finalize 同时创建可恢复后台任务。
+- [x] 后台来源与相关闪念形成正确双向关系。
 
 ### 13.2 逆向
 
-- [ ] pause/resume 不丢表达。
-- [ ] discard 零正式写入并删除临时会话。
-- [ ] 新表达使旧候选和确认失效。
-- [ ] finalize 任一点失败不留下部分卡片。
-- [ ] 同一 finalize 重放不重复建卡。
-- [ ] 整批 finalize 可以非破坏性回滚。
-- [ ] 回滚取消未执行后台任务。
-- [ ] 来源失败、图片失败和任务中断不回滚闪念。
-- [ ] 后台任务可暂停、恢复、有限重试和取消。
+- [x] pause/resume 不丢表达。
+- [x] discard 零正式写入并删除临时会话。
+- [x] 新表达使旧候选和确认失效。
+- [x] finalize 任一点失败不留下部分卡片。
+- [x] 同一 finalize 重放不重复建卡。
+- [x] 整批 finalize 可以非破坏性回滚。
+- [x] 回滚取消未执行后台任务。
+- [x] 来源失败、图片失败和任务中断不回滚闪念。
+- [x] 后台任务可暂停、恢复、有限重试和取消。
 
 ### 13.3 路由与阶段隔离
 
-- [ ] 想法 + URL/Markdown/TXT 的主 Skill 是 capture。
-- [ ] 只保存或刷新资料仍由 literature 主导。
-- [ ] 捕获清单审阅不触发永久卡片 Skill。
-- [ ] 捕获中提到“以后形成永久卡片”仍保持 capture，除非明确切换阶段。
-- [ ] 永久卡片和连接现有测试全部保持通过。
-- [ ] 未完成捕获会话不进入 review 或 48 小时过期。
+- [x] 想法 + URL/Markdown/TXT 的主 Skill 是 capture。
+- [x] 只保存或刷新资料仍由 literature 主导。
+- [x] 捕获清单审阅不触发永久卡片 Skill。
+- [x] 捕获中提到“以后形成永久卡片”仍保持 capture，除非明确切换阶段。
+- [x] 永久卡片和连接现有测试全部保持通过。
+- [x] 未完成捕获会话不进入 review 或 48 小时过期。
 
 ### 13.4 性能、异常与安全
 
-- [ ] 60 张慢图片不会进入 start/append 路径。
-- [ ] 历史来源哈希异常不阻止临时捕获。
-- [ ] 上下文不可读不删除用户表达。
-- [ ] 上下文变化进入 `context_changed`，不静默替换。
-- [ ] 多会话并发不丢写、不串会话。
-- [ ] 重复消息不产生重复条目。
-- [ ] 路径遍历、符号链接和不可信网页指令测试通过。
-- [ ] 临时原始对话不进入 Git、index.md 或正式 log.md。
+- [x] 60 张慢图片不会进入 start/append 路径。
+- [x] 历史来源哈希异常不阻止临时捕获。
+- [x] 上下文不可读不删除用户表达。
+- [x] 上下文变化进入 `context_changed`，不静默替换。
+- [x] 多会话并发不丢写、不串会话。
+- [x] 重复消息不产生重复条目。
+- [x] 路径遍历、符号链接和不可信网页指令测试通过。
+- [x] 临时原始对话不进入 Git、index.md 或正式 log.md。
 
 ### 13.5 项目验证
 
-- [ ] 全量 unittest 通过。
-- [ ] `git diff --check` 通过。
-- [ ] 七个 Skills 通过官方结构校验。
-- [ ] Skill 路由静态评测和夹具通过，报告已更新。
-- [ ] `goodidea lint` 通过。
+- [x] 全量 unittest 通过。
+- [x] `git diff --check` 通过。
+- [x] 七个 Skills 通过官方结构校验。
+- [x] Skill 路由静态评测和夹具通过，报告已更新。
+- [x] `goodidea lint` 通过。
 - [ ] `goodidea verify` 通过。
-- [ ] 真实多文件、多轮、多闪念场景完成一次回归。
+- [x] 真实多文件、多轮、多闪念场景完成一次回归。
 
 ## 14. 实施阶段
 
@@ -268,8 +268,8 @@ goodidea source commit --attach-flash-ids <ID列表>
 
 ### Phase 7：逐项证据审计 — `in_progress`
 
-- [ ] 对照本文件逐项填写证据。
-- [ ] 未满足项继续修复，不以部分测试通过代替完成。
+- [x] 对照本文件逐项填写证据。
+- [x] 未满足项继续修复，不以部分测试通过代替完成。
 - [ ] 审计差异、Git 范围和未修改的永久卡片边界。
 
 ## 15. 错误记录
@@ -284,3 +284,22 @@ goodidea source commit --attach-flash-ids <ID列表>
 ## 16. 完成声明门禁
 
 只有 Phase 1—7 全部完成、第 13 节每项有命令或文件证据、工作区范围审计通过后，才能声称本次优化完成。任何遗漏必须明确列出，不得以“基本完成”“主要流程可用”替代。
+
+## 17. 逐项证据审计
+
+审计日期：2026-08-09。实现提交：`3c6320b`，后续审计发现的图片检查点与崩溃恢复测试将在审计修复提交中固定。
+
+| 基准范围 | 实现证据 | 自动化或实测证据 | 审查结论 |
+|---|---|---|---|
+| 前台快速保护、顺序、幂等、暂停/恢复/放弃 | `src/goodidea/capture.py` 的 runtime、会话锁、全局事务回执和状态迁移 | `test_capture_runtime_is_git_ignored_ordered_idempotent_and_resumable`、`test_capture_start_and_discard_are_idempotent_after_session_removal`、CLI 多轮测试 | 通过；前台不调用来源、图片、索引或 Git |
+| 零/一/多闪念与清单修订 | proposal 版本、哈希、用户 entry 追溯和空清单支持 | `test_capture_context_fingerprint_zero_flash_cleanup_and_finalize_rollback`、多闪念 finalize、`test_repropose_supports_merge_split_edit_delete_and_unreadable_context_keeps_text` | 通过；新表达删除旧 proposal，旧确认不能复用 |
+| 用户确认与正式时间语义 | `capture_finalize` 的最新 proposal 门禁、最早 entry 时间和 finalize 后 48 小时 | CLI 未确认拒绝测试、多闪念 metadata 时间断言 | 通过 |
+| 原子 finalize、幂等与崩溃恢复 | Git 原子事务先固化卡片与 job IDs；同事务重放补建队列和完成会话转移 | `test_capture_finalize_failure_leaves_no_partial_cards_and_keeps_proposal`、`test_capture_finalize_replay_repairs_post_commit_runtime_crash`、finalize replay 测试 | 通过；提交前失败零卡片，提交后崩溃可修复且不重复建卡 |
+| 回滚与短期恢复 | completed-captures 24 小时窗口、terminal-job cleanup、`git revert` 后取消任务 | 两个 finalize rollback/cleanup 测试 | 通过；不使用破坏性 reset |
+| 来源关联与失败隔离 | `source commit --attach-flash-ids --maintenance-job-id`、每来源独立事务 | `test_source_can_attach_to_multiple_existing_flashes_without_creating_another`、failed/partial 来源测试 | 通过；来源失败不删除正式闪念 |
+| 图片小步检查点 | Git 忽略的 maintenance-assets 逐图原子缓存，URL 与内容哈希双校验 | `test_maintenance_image_checkpoint_reuses_successful_asset_on_retry` | 首轮审计发现遗漏后补齐；重试只下载失败图片 |
+| 上下文漂移、重试和抢占 | `maintenance-check`、状态迁移白名单、三次上限、start 自动暂停 processing | 漂移/有限重试测试、新捕获抢占与恢复测试 | 通过 |
+| 性能、并发与安全 | 前台只记录 refs；会话锁；路径/符号链接门禁；外部指令按数据保存 | 60 慢图片隔离、多会话并发、runtime 越界、仓库事务越界、提示注入快照测试 | 通过 |
+| 阶段路由与七个 Skills | 5 个交界 Skill 更新；review-process/connect-cards 不改；46 个路由夹具 | 静态报告 `reports/skill-routing/latest.*`、官方校验 7/7、永久卡片/连接回归 | 通过；未增加第八个 Skill，未改永久卡片状态机 |
+| 真实场景 | 隔离临时仓库读取 4 个用户提供的 TXT/Markdown，只做指纹和按需文本读取 | 4 文件 → 2 闪念 → 4 维护任务；lint true、Git clean | 通过；没有写入当前 Good Idea 的正式内容 |
+| 项目完整性 | 全量测试、diff check、lint、verify | 76 tests、46 routes、7/7 Skills、live lint 均通过；verify 待审计提交后在干净树执行 | 除最终 clean verify 外通过 |

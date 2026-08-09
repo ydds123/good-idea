@@ -131,6 +131,7 @@ def build_parser() -> argparse.ArgumentParser:
     source_commit.add_argument("--preview-file", required=True)
     source_commit.add_argument("--motivation", default="")
     source_commit.add_argument("--attach-flash-ids", default="")
+    source_commit.add_argument("--maintenance-job-id", default="")
     source_commit.add_argument("--transaction-id")
 
     refresh = source_sub.add_parser("refresh", help="生成或接受来源更新候选")
@@ -409,6 +410,7 @@ def dispatch(args: argparse.Namespace) -> tuple[dict[str, Any], int]:
             _read_json(args.preview_file),
             motivation=args.motivation,
             attach_flash_ids=_split_ids(args.attach_flash_ids),
+            maintenance_job_id=args.maintenance_job_id,
             transaction_id=args.transaction_id,
         )
     elif args.command == "source" and args.source_command == "refresh":

@@ -33,9 +33,9 @@ description: "保存或刷新网页、微信公众号和外部 UTF-8 Markdown/TX
 
 读取 `capture maintenance-status` 中的待处理任务，按已确认闪念的 context_refs 逐份准备 preview，然后只关联已有正式闪念，不再创建重复动机闪念：
 
-       uv run goodidea --root <仓库> source commit --preview-file <preview.json> --attach-flash-ids <ID列表> --transaction-id <稳定ID>
+       uv run goodidea --root <仓库> source commit --preview-file <preview.json> --attach-flash-ids <ID列表> --maintenance-job-id <任务ID> --transaction-id <稳定ID>
 
-每份来源独立提交。处理前把当前轻量指纹写到仓库外临时 JSON，并让 CLI 与讨论时指纹比较；变化时自动标记 `context_changed`，不得静默声称新内容就是讨论时版本：
+每份来源独立提交。维护任务级的 Git 忽略缓存会在每张图片成功后写入检查点；同一任务重试复用已验证哈希的图片，不重复下载成功资产。处理前把当前轻量指纹写到仓库外临时 JSON，并让 CLI 与讨论时指纹比较；变化时自动标记 `context_changed`，不得静默声称新内容就是讨论时版本：
 
        uv run goodidea --root <仓库> capture maintenance-check --job-id <任务ID> --fingerprint-file <仓库外临时JSON>
 

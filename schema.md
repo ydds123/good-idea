@@ -167,7 +167,7 @@ finalize 同时创建可恢复的运行时维护任务。任务允许 `pending`�
 | `capture maintenance-update` | 维护任务暂停、恢复、失败或完成；重试最多三次，耗尽后转为 `failed` |
 | `capture cleanup` | 仅清理维护已终结且超过 24 小时的 Git 忽略完成会话 |
 | `capture pause/resume/discard` | pause/resume 不改变正式内容；discard 必须有用户放弃确认并产生零正式写入 |
-| `source commit --attach-flash-ids` | 只关联已经存在的正式闪念，不额外创建保存动机闪念；用于捕获结束后的后台维护 |
+| `source commit --attach-flash-ids --maintenance-job-id` | 只关联已经存在的正式闪念，不额外创建保存动机闪念；按任务缓存成功图片，重试不重复下载；提交后自动回写 `complete` 或 `partial` |
 | `source refresh` | 网页和本地来源都先创建候选并保留旧快照；本地更新必须显式指定既有来源。接受时要求仍为同一个待处理候选且旧哈希一致 |
 | `permanent propose` | 输入必须是用户确认后的完整草稿；结构化模式还必须带显式结构确认；候选进入隐藏目录，不进入永久空间 |
 | `permanent accept` | 候选、Frontmatter、正文哈希和状态账本必须一致且状态为 `pending`，并带用户明确创建确认 |

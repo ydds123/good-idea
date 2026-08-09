@@ -607,7 +607,7 @@ class GoodIdeaService:
         return data, extension
 
     def _localize_images(
-        self, preview: dict[str, Any]
+        self, preview: dict[str, Any], *, maintenance_job_id: str = ""
     ) -> tuple[str, dict[Path, bytes], list[str]]:
         markdown = str(preview.get("markdown", ""))
         image_records = {
@@ -629,9 +629,16 @@ class GoodIdeaService:
         urls = list(dict.fromkeys([*remote_urls, *local_record_urls]))
         writes: dict[Path, bytes] = {}
         failures: list[str] = []
+        runtime = CaptureRuntime(self.repo.root) if maintenance_job_id else None
         for url in urls:
             try:
-                data, extension = self._download_image(url, image_records.get(url))
+                cached = runtime.read_cached_asset(maintenance_job_id, url) if runtime else None
+                if cached is not None:
+                    data, extension = cached
+                else:
+                    data, extension = self._download_image(url, image_records.get(url))
+                    if runtime:
+                        runtime.cache_asset(maintenance_job_id, url, data, extension)
                 digest = hashlib.sha256(data).hexdigest()
                 rel = Path(f".goodidea/assets/{digest}{extension}")
                 writes[rel] = data
@@ -676,6 +683,7 @@ class GoodIdeaService:
         *,
         motivation: str = "",
         attach_flash_ids: list[str] | None = None,
+        maintenance_job_id: str = "",
         transaction_id: str | None = None,
     ) -> dict[str, Any]:
         attached_ids = list(dict.fromkeys(attach_flash_ids or []))
@@ -685,6 +693,16 @@ class GoodIdeaService:
             _ensure_motivation(motivation)
         txid = transaction_id or new_transaction_id("source-commit")
         if existing := self._idempotent(txid):
+            if maintenance_job_id:
+                runtime = CaptureRuntime(self.repo.root)
+                job = runtime.get_maintenance_job(maintenance_job_id)
+                desired = (
+                    "partial"
+                    if existing.get("result", {}).get("image_failures")
+                    else "complete"
+                )
+                if job.get("status") not in {"partial", "complete"}:
+                    runtime.update_maintenance_job(maintenance_job_id, status=desired)
             return existing
         preview, source_kind, identity_key, source_id = _persistable_source_preview(
             preview
@@ -699,6 +717,14 @@ class GoodIdeaService:
         timestamp = now_iso()
         state = self.repo.read_state()
         writes: dict[Path, str | bytes] = {}
+        failures: list[str] = []
+        runtime = CaptureRuntime(self.repo.root) if maintenance_job_id else None
+        if runtime:
+            job = runtime.get_maintenance_job(maintenance_job_id)
+            if job.get("kind") != "capture-source-maintenance":
+                raise ValidationError("维护任务类型不能用于来源提交")
+            if set(attached_ids) != set(job.get("flash_ids", [])):
+                raise ValidationError("来源提交关联闪念与维护任务不一致")
         attached_flashes: list[tuple[Path, str, dict[str, Any]]] = []
         if attached_ids:
             for flash_id in flash_ids:
@@ -744,8 +770,33 @@ class GoodIdeaService:
             ):
                 raise IntegrityError(f"来源账本与文件身份不一致：{identity_key}")
             source_title = source_meta["title"]
+            if runtime:
+                localized, assets, failures = self._localize_images(
+                    preview, maintenance_job_id=maintenance_job_id
+                )
+                writes.update(assets)
+                capture_status = str(preview.get("status") or "complete")
+                if failures and capture_status == "complete":
+                    capture_status = "partial"
+                source_note = replace_source_snapshot(
+                    source_note,
+                    self._build_snapshot(preview, localized),
+                    {
+                        "status": capture_status,
+                        "capture_status": capture_status,
+                        "fetched_at": timestamp,
+                        "updated_at": timestamp,
+                        "content_sha256": hashlib.sha256(
+                            str(preview.get("markdown", "")).encode("utf-8")
+                        ).hexdigest(),
+                        "image_failures": failures,
+                    },
+                )
+                source_meta, _ = parse_document(source_note)
         else:
-            localized, assets, failures = self._localize_images(preview)
+            localized, assets, failures = self._localize_images(
+                preview, maintenance_job_id=maintenance_job_id
+            )
             writes.update(assets)
             capture_status = str(preview.get("status") or "complete")
             if failures and capture_status == "complete":
@@ -843,11 +894,12 @@ class GoodIdeaService:
             "flash_ids": flash_ids,
             "flash_paths": flash_paths,
             "flash_created": not bool(attached_ids),
+            "image_failures": failures,
         }
         if not attached_ids:
             result["flash_id"] = flash_ids[0]
             result["flash_path"] = flash_paths[0]
-        return self.repo.commit(
+        committed = self.repo.commit(
             transaction_id=txid,
             action="source-commit",
             summary=(
@@ -859,6 +911,11 @@ class GoodIdeaService:
             state=state,
             result=result,
         )
+        if runtime:
+            runtime.update_maintenance_job(
+                maintenance_job_id, status="partial" if failures else "complete"
+            )
+        return committed
 
     def source_refresh(
         self,
