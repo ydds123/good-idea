@@ -63,3 +63,5 @@
 
 ## [2026-08-09T23:53:46+08:00] capture-finalize | 确认本轮 1 张闪念 | tx=flash-subjectivity-20260809-finalize
 
+## [2026-08-10T00:08:19+08:00] capture-todo | 如何更好地使用你（Hermes精装配置研究） | tx=capture-todo-20260810000819-290076b9
+

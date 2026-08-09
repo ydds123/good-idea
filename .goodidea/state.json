@@ -100,6 +100,17 @@
       "timestamp": "2026-08-09T19:01:54+08:00",
       "transaction_id": "capture-revise-source-anchors-20260809"
     },
+    "capture-todo-20260810000819-290076b9": {
+      "action": "capture-todo",
+      "result": {
+        "id": "TODO-20260810-3545d96a",
+        "path": "待办空间/2026-08-10-如何更好地使用你（Hermes精装配置研究）.md",
+        "type": "todo"
+      },
+      "summary": "如何更好地使用你（Hermes精装配置研究）",
+      "timestamp": "2026-08-10T00:08:19+08:00",
+      "transaction_id": "capture-todo-20260810000819-290076b9"
+    },
     "correction-withdraw-PRP-5a9bfa3f1970": {
       "action": "permanent-withdraw",
       "result": {
