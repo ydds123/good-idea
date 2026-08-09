@@ -232,7 +232,6 @@ def routing_output_schema(route_names: list[str]) -> dict[str, Any]:
                         "supporting_skills": {
                             "type": "array",
                             "items": {"type": "string", "enum": route_names},
-                            "uniqueItems": True,
                         },
                         "conflict": {"type": "boolean"},
                         "reason": {"type": "string"},
@@ -426,6 +425,8 @@ def evaluate_predictions(
         if not isinstance(supporting, list):
             failures.append("supporting_skills 不是数组")
             supporting = []
+        if len(supporting) != len(set(supporting)):
+            failures.append("supporting_skills 包含重复 Skill")
         invalid_supporting = set(supporting) - route_names
         if invalid_supporting:
             failures.append(f"非法 supporting：{sorted(invalid_supporting)}")
@@ -519,13 +520,13 @@ def render_markdown(report: dict[str, Any]) -> str:
             f"| `{pair['skills'][0]}` | `{pair['skills'][1]}` | "
             f"{pair['similarity']:.3f} | {explanation or '—'} |"
         )
-    lines.extend(["", "## 待模型验证的语义风险", ""])
+    lines.extend(["", "## 重点覆盖的语义风险场景", ""])
     for item in report.get("semantic_risk_hypotheses", []):
         skills = " / ".join(f"`{name}`" for name in item["skills"])
         lines.append(
             f"- **{item['severity']} · {item['id']}** · {skills}：{item['hypothesis']}"
         )
-    lines.extend(["", "## 待模型验证的召回风险", ""])
+    lines.extend(["", "## 重点覆盖的召回风险场景", ""])
     for item in report.get("recall_risk_hypotheses", []):
         lines.append(
             f"- `{item['skill']}`：description 可能没有充分覆盖“{item['missing_intent']}”。"

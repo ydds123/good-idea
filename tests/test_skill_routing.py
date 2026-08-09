@@ -96,6 +96,30 @@ class SkillRoutingTests(unittest.TestCase):
                 failed_report["model_evaluation"]["failures"][0]["failures"],
             )
 
+            passing["results"][0]["conflict"] = False
+            passing["results"][31]["supporting_skills"] = [
+                "goodidea-form-permanent",
+                "goodidea-form-permanent",
+            ]
+            duplicate = root / "duplicate.json"
+            duplicate.write_text(
+                json.dumps(passing, ensure_ascii=False), encoding="utf-8"
+            )
+            duplicate_failed = run_evaluator(
+                "--predictions-file",
+                str(duplicate),
+                "--report-dir",
+                str(root / "duplicate-report"),
+            )
+            self.assertEqual(duplicate_failed.returncode, 1)
+            duplicate_report = json.loads(
+                (root / "duplicate-report/latest.json").read_text(encoding="utf-8")
+            )
+            self.assertIn(
+                "supporting_skills 包含重复 Skill",
+                duplicate_report["model_evaluation"]["failures"][0]["failures"],
+            )
+
     def test_latest_report_matches_current_descriptions(self):
         self.assertTrue(LATEST_REPORT.is_file(), "缺少最新 Skill 路由评测报告")
         latest = json.loads(LATEST_REPORT.read_text(encoding="utf-8"))
