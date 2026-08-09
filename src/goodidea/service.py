@@ -465,7 +465,7 @@ class GoodIdeaService:
                 ).hexdigest(),
                 "image_failures": failures,
                 "flash_ids": [flash_id],
-                "summary": "原文快照，文献笔记待处理",
+                "summary": "原文快照，关联 1 张闪念",
             }
 
         flash_rel = self._new_note_path("flash", flash_title, timestamp)
@@ -496,6 +496,9 @@ class GoodIdeaService:
             source_meta["updated_at"] = timestamp
             source_meta["flash_ids"] = list(
                 dict.fromkeys([*source_meta.get("flash_ids", []), flash_id])
+            )
+            source_meta["summary"] = (
+                f"原文快照，关联 {len(source_meta['flash_ids'])} 张闪念"
             )
             source_note = add_list_item_to_section(
                 source_note, "关联闪念", flash_link
@@ -1185,9 +1188,9 @@ class GoodIdeaService:
         state = self.repo.read_state()
         result = {"changed": changed, "count": len(changed)}
         summary = (
-            f"规范化 {len(changed)} 份溯源笔记"
+            f"规范化 {len(changed)} 份来源快照"
             if changed
-            else "溯源笔记已经符合当前格式"
+            else "来源快照已经符合当前格式"
         )
         return self.repo.commit(
             transaction_id=txid,
@@ -1450,17 +1453,14 @@ class GoodIdeaService:
                         issues.append(f"{rel}: 不应持久化原始分享链接 source_url")
                     if not metadata.get("canonical_url"):
                         issues.append(f"{rel}: 缺少规范链接 canonical_url")
-                    headings = {
-                        heading: text.find(f"## {heading}\n")
-                        for heading in ("原文快照", "文献笔记", "关联闪念")
-                    }
-                    if not (
-                        -1 < headings["原文快照"] < headings["文献笔记"]
-                        < headings["关联闪念"]
-                    ):
+                    snapshot_heading = text.find("## 原文快照\n")
+                    flashes_heading = text.find("## 关联闪念\n")
+                    if not (-1 < snapshot_heading < flashes_heading):
                         issues.append(
-                            f"{rel}: 溯源顺序必须为标题、原文快照、文献笔记、关联闪念"
+                            f"{rel}: 溯源顺序必须为标题、原文快照、关联闪念"
                         )
+                    if "## 文献笔记\n" in text:
+                        issues.append(f"{rel}: 溯源空间不得包含文献笔记层")
                     try:
                         _, snapshot_content, _, _ = extract_snapshot(text)
                         if snapshot_content.startswith("# 原文："):

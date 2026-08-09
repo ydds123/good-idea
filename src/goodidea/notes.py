@@ -13,8 +13,11 @@ SNAPSHOT_START_RE = re.compile(
     r"<!-- goodidea:snapshot:start sha256=([0-9a-f]{64}) -->\n"
 )
 SNAPSHOT_END = "<!-- goodidea:snapshot:end -->"
-LITERATURE_START = "<!-- goodidea:literature:start -->"
-LITERATURE_END = "<!-- goodidea:literature:end -->"
+_LEGACY_NOTE_START = "<!-- goodidea:literature:start -->"
+_LEGACY_NOTE_END = "<!-- goodidea:literature:end -->"
+_LEGACY_NOTE_PLACEHOLDER = (
+    "> 待处理：这里由用户在后续阅读与回顾中补充，不由系统自动生成观点。"
+)
 
 TYPE_LOCATIONS = {
     "flash": Path("闪念空间"),
@@ -106,10 +109,6 @@ def render_source_note(
         + f"<!-- goodidea:snapshot:start sha256={digest} -->\n"
         + normalize_snapshot(snapshot)
         + f"{SNAPSHOT_END}\n\n"
-        + "## 文献笔记\n\n"
-        + f"{LITERATURE_START}\n"
-        + "> 待处理：这里由用户在后续阅读与回顾中补充，不由系统自动生成观点。\n"
-        + f"{LITERATURE_END}\n\n"
         + "## 关联闪念\n\n"
         + links
         + "\n"
@@ -157,13 +156,18 @@ def normalize_source_layout(note: str) -> str:
     digest = snapshot_hash(snapshot_content)
     metadata["snapshot_sha256"] = digest
 
-    literature_start = note.find(LITERATURE_START)
-    literature_end = note.find(LITERATURE_END, literature_start)
-    if literature_start < 0 or literature_end < 0:
-        raise IntegrityError("来源缺少受控文献笔记区域")
-    literature = note[
-        literature_start:literature_end + len(LITERATURE_END)
-    ].strip("\n")
+    legacy_start = note.find(_LEGACY_NOTE_START)
+    legacy_end = note.find(_LEGACY_NOTE_END, legacy_start)
+    if legacy_start >= 0 or legacy_end >= 0:
+        if legacy_start < 0 or legacy_end < 0:
+            raise IntegrityError("旧版来源中间笔记标记不完整")
+        legacy_content = note[
+            legacy_start + len(_LEGACY_NOTE_START):legacy_end
+        ].strip()
+        if legacy_content and legacy_content != _LEGACY_NOTE_PLACEHOLDER:
+            raise IntegrityError(
+                "旧版来源中间笔记含有实际内容；请先由用户决定是否迁移为闪念"
+            )
 
     heading = re.search(r"(?m)^## 关联闪念\s*$", note)
     if not heading:
@@ -172,6 +176,8 @@ def normalize_source_layout(note: str) -> str:
     next_heading = re.search(r"(?m)^## ", note[link_start:])
     link_end = link_start + next_heading.start() if next_heading else len(note)
     links = note[link_start:link_end].strip() or "_暂无_"
+    link_count = len(re.findall(r"(?m)^-\s+\[\[", links))
+    metadata["summary"] = f"原文快照，关联 {link_count} 张闪念"
 
     return (
         dump_frontmatter(metadata)
@@ -180,9 +186,7 @@ def normalize_source_layout(note: str) -> str:
         + f"<!-- goodidea:snapshot:start sha256={digest} -->\n"
         + snapshot_content
         + f"{SNAPSHOT_END}\n\n"
-        + "## 文献笔记\n\n"
-        + literature
-        + "\n\n## 关联闪念\n\n"
+        + "## 关联闪念\n\n"
         + links
         + "\n"
     )

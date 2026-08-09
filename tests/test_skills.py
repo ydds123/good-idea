@@ -12,7 +12,7 @@ class ProjectSkillTests(unittest.TestCase):
     def test_all_seven_skill_packages_expose_the_expected_cli_contract(self):
         expected = {
             "goodidea-capture-flash": ["capture flash", "interesting", "todo"],
-            "goodidea-record-literature": ["source preview", "source commit"],
+            "goodidea-record-literature": ["source preview", "source commit", "不创建文献笔记层"],
             "goodidea-review-process": ["goodidea --root <仓库> review", "review --expire"],
             "goodidea-form-permanent": ["permanent propose", "--draft-file", "一次一个问题", "--confirm-user-approved-structure", "--confirm-user-approved", "permanent withdraw"],
             "goodidea-review-permanent": ["permanent accept", "不生成正文候选内容", "完整待确认草稿", "每轮只提出一个"],
@@ -41,6 +41,9 @@ class ProjectSkillTests(unittest.TestCase):
         literature = (skills_root / "goodidea-record-literature" / "SKILL.md").read_text(encoding="utf-8")
         self.assertIn("预读阶段禁止写 Good idea 仓库", literature)
         self.assertIn("用户未回答或放弃时停止，不调用任何写命令", literature)
+        self.assertIn("人的即时观点、疑问和念头只写入闪念空间", literature)
+        review_process = (skills_root / "goodidea-review-process" / "SKILL.md").read_text(encoding="utf-8")
+        self.assertIn("来源快照不是待加工的认知材料", review_process)
         permanent = (skills_root / "goodidea-form-permanent" / "SKILL.md").read_text(encoding="utf-8")
         self.assertIn("提炼一个典型标题", permanent)
         self.assertIn("不得补入用户未表达的内容", permanent)

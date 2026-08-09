@@ -86,7 +86,7 @@ def build_parser() -> argparse.ArgumentParser:
     )
     filenames.add_argument("--transaction-id")
     sources = maintain_sub.add_parser(
-        "sources", help="统一溯源笔记顺序并只保留规范链接"
+        "sources", help="统一来源快照顺序并删除空的旧版中间笔记层"
     )
     sources.add_argument("--transaction-id")
 

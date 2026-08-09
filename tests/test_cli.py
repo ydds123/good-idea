@@ -178,7 +178,8 @@ class GoodIdeaCliTests(unittest.TestCase):
         self.assertTrue((self.root / result["flash_path"]).is_file())
         source_text = (self.root / result["source_path"]).read_text(encoding="utf-8")
         self.assertNotIn("source_url:", source_text)
-        self.assertLess(source_text.index("## 原文快照"), source_text.index("## 文献笔记"))
+        self.assertLess(source_text.index("## 原文快照"), source_text.index("## 关联闪念"))
+        self.assertNotIn("## 文献笔记", source_text)
         maintained = run_cli(
             "--root", str(self.root), "maintain", "sources",
             "--transaction-id", "cli-source-layout-noop",

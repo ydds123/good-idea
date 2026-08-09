@@ -11,8 +11,6 @@ from pathlib import Path
 from goodidea.errors import GitError, IntegrityError, TransactionError, ValidationError
 from goodidea.metadata import dump_frontmatter, parse_document, replace_frontmatter
 from goodidea.notes import (
-    LITERATURE_END,
-    LITERATURE_START,
     SNAPSHOT_END,
     extract_snapshot,
     snapshot_hash,
@@ -148,8 +146,8 @@ class GoodIdeaCoreTests(unittest.TestCase):
         self.assertEqual(source_meta["canonical_url"], "https://example.com/article")
         self.assertNotIn("原始链接：", source)
         self.assertNotIn("规范链接：", source_body)
-        self.assertLess(source.index("## 原文快照"), source.index("## 文献笔记"))
-        self.assertLess(source.index("## 文献笔记"), source.index("## 关联闪念"))
+        self.assertLess(source.index("## 原文快照"), source.index("## 关联闪念"))
+        self.assertNotIn("## 文献笔记", source)
         self.assertIn("../.goodidea/assets/", source)
         self.assertNotIn("](https://example.com/image.png)", source)
         files_in_commit = git(
@@ -174,6 +172,9 @@ class GoodIdeaCoreTests(unittest.TestCase):
         self.assertFalse(second["result"]["source_created"])
         self.assertEqual(second["result"]["source_id"], data["source_id"])
         self.assertNotEqual(second["result"]["flash_id"], data["flash_id"])
+        updated_source = self.repo.find_note(data["source_id"])
+        self.assertEqual(updated_source[2]["summary"], "原文快照，关联 2 张闪念")
+        self.assertNotIn("## 文献笔记", updated_source[1])
 
     def test_source_maintenance_migrates_legacy_wrapper_and_is_revertible(self):
         captured = self.service.source_commit(
@@ -197,13 +198,15 @@ class GoodIdeaCoreTests(unittest.TestCase):
         )
         legacy_digest = snapshot_hash(legacy_snapshot)
         metadata["snapshot_sha256"] = legacy_digest
-        literature_start = current.index(LITERATURE_START)
-        literature_end = current.index(LITERATURE_END) + len(LITERATURE_END)
-        literature = current[literature_start:literature_end]
         links = current.split("## 关联闪念\n\n", 1)[1].strip()
+        legacy_note = (
+            "<!-- goodidea:literature:start -->\n"
+            "> 待处理：这里由用户在后续阅读与回顾中补充，不由系统自动生成观点。\n"
+            "<!-- goodidea:literature:end -->"
+        )
         legacy = (
             dump_frontmatter(metadata)
-            + f"# {metadata['title']}\n\n## 文献笔记\n\n{literature}\n\n"
+            + f"# {metadata['title']}\n\n## 文献笔记\n\n{legacy_note}\n\n"
             + f"## 关联闪念\n\n{links}\n\n## 原文快照\n\n"
             + f"<!-- goodidea:snapshot:start sha256={legacy_digest} -->\n"
             + legacy_snapshot
@@ -221,8 +224,9 @@ class GoodIdeaCoreTests(unittest.TestCase):
         updated_meta, _ = parse_document(updated)
         self.assertNotIn("source_url", updated_meta)
         self.assertNotIn("原始链接：", updated)
-        self.assertLess(updated.index("## 原文快照"), updated.index("## 文献笔记"))
-        self.assertLess(updated.index("## 文献笔记"), updated.index("## 关联闪念"))
+        self.assertNotIn("## 文献笔记", updated)
+        self.assertLess(updated.index("## 原文快照"), updated.index("## 关联闪念"))
+        self.assertEqual(updated_meta["summary"], "原文快照，关联 1 张闪念")
         _, migrated_snapshot, _, _ = extract_snapshot(updated)
         self.assertEqual(migrated_snapshot.split("\n\n", 1)[1], article_body)
         validate_source_note(updated, rel.as_posix())
@@ -233,6 +237,34 @@ class GoodIdeaCoreTests(unittest.TestCase):
         restored_meta, _ = parse_document(restored)
         self.assertIn("source_url", restored_meta)
         self.assertGreater(restored.index("## 原文快照"), restored.index("## 文献笔记"))
+
+    def test_source_maintenance_never_discards_legacy_note_content(self):
+        captured = self.service.source_commit(
+            self.preview(),
+            motivation="我要验证旧版中间笔记不会被系统静默删除。",
+            transaction_id="tx-source-note-safety-base",
+        )["result"]
+        rel = Path(captured["source_path"])
+        current = (self.root / rel).read_text(encoding="utf-8")
+        legacy_section = (
+            "## 文献笔记\n\n"
+            "<!-- goodidea:literature:start -->\n"
+            "这是旧版中已经写下的实际内容。\n"
+            "<!-- goodidea:literature:end -->\n\n"
+        )
+        legacy = current.replace("## 关联闪念\n", legacy_section + "## 关联闪念\n")
+        (self.root / rel).write_text(legacy, encoding="utf-8")
+        git(self.root, "add", rel.as_posix())
+        git(self.root, "commit", "-m", "test fixture: substantive legacy note")
+        before_head = git(self.root, "rev-parse", "HEAD")
+
+        with self.assertRaises(IntegrityError):
+            self.service.maintain_sources(
+                transaction_id="tx-source-note-safety-maintain"
+            )
+
+        self.assertEqual((self.root / rel).read_text(encoding="utf-8"), legacy)
+        self.assertEqual(git(self.root, "rev-parse", "HEAD"), before_head)
 
     def test_human_filenames_hide_ids_and_handle_same_day_collisions(self):
         first = self.service.capture(
