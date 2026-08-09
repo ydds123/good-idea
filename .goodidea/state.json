@@ -557,6 +557,17 @@
       "timestamp": "2026-08-10T00:30:24+08:00",
       "transaction_id": "todo-hellgrind-video-practice-20260810"
     },
+    "todo-kanban-growth-20260810": {
+      "action": "capture-todo",
+      "result": {
+        "id": "TODO-20260810-b13fdb88",
+        "path": "待办空间/2026-08-10-看板：记录-good-idea-各类型卡片的每周增长情况.md",
+        "type": "todo"
+      },
+      "summary": "看板：记录 good idea 各类型卡片的每周增长情况",
+      "timestamp": "2026-08-10T00:44:54+08:00",
+      "transaction_id": "todo-kanban-growth-20260810"
+    },
     "todo-user-profile-20260809": {
       "action": "capture-todo",
       "result": {

@@ -75,3 +75,5 @@
 
 ## [2026-08-10T00:42:21+08:00] capture-revise | 《无期迷途》游戏美术风格：AI人像创作的参考方向 | tx=revise-style-refs-20260810
 
+## [2026-08-10T00:44:54+08:00] capture-todo | 看板：记录 good idea 各类型卡片的每周增长情况 | tx=todo-kanban-growth-20260810
+
