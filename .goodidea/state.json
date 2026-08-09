@@ -84,6 +84,16 @@
       "timestamp": "2026-08-09T18:47:54+08:00",
       "transaction_id": "capture-finalize-first-two-20260809"
     },
+    "capture-revise-source-anchors-20260809": {
+      "action": "capture-revise-source-anchors",
+      "result": {
+        "flash_id": "FLA-20260809-01ec2b01",
+        "path": "闪念空间/2026-08-09-以控制论为底座，研究如何让-AI-生成超越平庸.md"
+      },
+      "summary": "修正《以控制论为底座，研究如何让 AI 生成超越平庸》来源与论证锚点",
+      "timestamp": "2026-08-09T19:01:54+08:00",
+      "transaction_id": "capture-revise-source-anchors-20260809"
+    },
     "correction-withdraw-PRP-5a9bfa3f1970": {
       "action": "permanent-withdraw",
       "result": {

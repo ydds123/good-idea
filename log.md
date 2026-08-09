@@ -47,3 +47,5 @@
 
 ## [2026-08-09T18:50:00+08:00] source-commit | 来了！热狗GPT作图心法大公开！ + 关联 1 张闪念 | tx=source-hotdog-capture-20260809-v2
 
+## [2026-08-09T19:01:54+08:00] capture-revise-source-anchors | 修正《以控制论为底座，研究如何让 AI 生成超越平庸》来源与论证锚点 | tx=capture-revise-source-anchors-20260809
+
