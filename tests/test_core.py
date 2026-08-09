@@ -326,6 +326,7 @@ class GoodIdeaCoreTests(unittest.TestCase):
         self.assertIn("提供第二项论证", note)
         self.assertIn("边界说明：两份材料之间的关系属于用户解释。", note)
         self.assertNotIn("## 关联来源", note)
+        self.assertTrue(self.service.lint()["ok"])
 
     def test_capture_start_and_discard_are_idempotent_after_session_removal(self):
         runtime = CaptureRuntime(self.root)

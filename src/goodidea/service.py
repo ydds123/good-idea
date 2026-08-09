@@ -1955,14 +1955,12 @@ class GoodIdeaService:
         for rel, text, metadata in all_notes:
             if metadata.get("type") != "flash":
                 continue
-            if "## 关联来源\n" in text:
-                issues.append(f"{rel}: 闪念不得另设关联来源节")
             source_ids = list(metadata.get("source_ids", []))
-            if not source_ids:
+            if not source_ids or "## 来源与论证锚点\n" not in text:
+                # v0.1 旧闪念保留历史布局；新写入路径只产生统一锚点。
                 continue
-            if "## 来源与论证锚点\n" not in text:
-                issues.append(f"{rel}: 有外部来源的闪念缺少来源与论证锚点")
-                continue
+            if "## 关联来源\n" in text:
+                issues.append(f"{rel}: 已使用来源与论证锚点，不得再设关联来源节")
             for source_id in source_ids:
                 source = notes_by_id.get(str(source_id))
                 if not source or source[2].get("type") != "source":
