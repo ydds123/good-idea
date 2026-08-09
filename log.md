@@ -73,3 +73,5 @@
 
 ## [2026-08-10T00:34:51+08:00] capture-interesting | 《无期迷途》游戏美术风格：AI人像创作的参考方向 | tx=interesting-path-to-nowhere-20260810
 
+## [2026-08-10T00:42:21+08:00] capture-revise | 《无期迷途》游戏美术风格：AI人像创作的参考方向 | tx=revise-style-refs-20260810
+
