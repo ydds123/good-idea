@@ -524,6 +524,17 @@
       "timestamp": "2026-08-09T22:25:31+08:00",
       "transaction_id": "todo-flash-alert-20260809"
     },
+    "todo-hellgrind-video-practice-20260810": {
+      "action": "capture-todo",
+      "result": {
+        "id": "TODO-20260810-92f84ca8",
+        "path": "待办空间/2026-08-10-开源AI电影《Hell-Grind》：视频领域的控制论实践学习项目.md",
+        "type": "todo"
+      },
+      "summary": "开源AI电影《Hell Grind》：视频领域的控制论实践学习项目",
+      "timestamp": "2026-08-10T00:30:24+08:00",
+      "transaction_id": "todo-hellgrind-video-practice-20260810"
+    },
     "todo-user-profile-20260809": {
       "action": "capture-todo",
       "result": {
