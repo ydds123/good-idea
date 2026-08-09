@@ -71,30 +71,119 @@ flowchart LR
 
 ```text
 good-idea/
-├── README.md                  # 面向人的项目说明和使用入口
-├── AGENTS.md                  # Agent 必须遵守的系统宪法
-├── schema.md                  # 数据结构、状态和事务技术契约
-├── index.md                   # CLI 自动生成的人类可读内容索引
-├── log.md                     # CLI 只追加的操作日志
+├── README.md                           # 面向人的项目说明和使用入口
+├── AGENTS.md                           # Agent 必须遵守的系统宪法
+├── schema.md                           # 数据结构、状态和事务技术契约
+├── index.md                            # CLI 自动生成的人类可读内容索引
+├── log.md                              # CLI 只追加的操作日志
 ├── 闪念空间/
+│   └── <YYYY-MM-DD-标题>.md          # 用户的即时观点、疑问和念头
 ├── 溯源空间/
+│   └── <YYYY-MM-DD-文章标题>.md      # 单层来源元数据、原文快照和关联闪念
 ├── 有意思空间/
+│   └── <YYYY-MM-DD-标题>.md          # 暂时无法解释但值得保留的外部现象
 ├── 待办空间/
+│   └── <YYYY-MM-DD-标题>.md          # 未来需要完成的事务
 ├── 永久空间/
 │   ├── 永久卡片/
+│   │   └── <YYYY-MM-DD-标题>.md      # 用户确认的长期判断
 │   ├── 母题卡片/
+│   │   └── <YYYY-MM-DD-标题>.md      # 跨时间持续追问的开放问题
 │   ├── 行动卡片/
+│   │   └── <YYYY-MM-DD-标题>.md      # 行动、现实结果和修正
 │   └── 索引卡片/
-├── .agents/skills/            # 七个项目级对话与判断 Skills
-├── .goodidea/                 # 内部状态、候选、快照图片和事务备份
-├── .obsidian/                 # Obsidian 稳定阅读配置
-├── src/goodidea/              # 确定性 CLI 实现
-├── scripts/                   # Skill 校验和 macOS 定时维护脚本
-├── tests/                     # 自动化测试
-├── pyproject.toml             # Python 项目、命令入口和依赖声明
-├── uv.lock                    # 可复现开发环境锁文件
-└── .python-version            # 项目使用的 Python 版本
+│       └── <YYYY-MM-DD-标题>.md      # 由用户定义组织目的的认知入口
+├── .agents/
+│   └── skills/
+│       ├── goodidea-capture-flash/
+│       │   ├── SKILL.md
+│       │   └── agents/
+│       │       └── openai.yaml
+│       ├── goodidea-record-literature/
+│       │   ├── SKILL.md
+│       │   └── agents/
+│       │       └── openai.yaml
+│       ├── goodidea-review-process/
+│       │   ├── SKILL.md
+│       │   └── agents/
+│       │       └── openai.yaml
+│       ├── goodidea-form-permanent/
+│       │   ├── SKILL.md
+│       │   └── agents/
+│       │       └── openai.yaml
+│       ├── goodidea-review-permanent/
+│       │   ├── SKILL.md
+│       │   └── agents/
+│       │       └── openai.yaml
+│       ├── goodidea-connect-cards/
+│       │   ├── SKILL.md
+│       │   └── agents/
+│       │       └── openai.yaml
+│       └── goodidea-lint/
+│           ├── SKILL.md
+│           └── agents/
+│               └── openai.yaml
+├── .goodidea/
+│   ├── state.json                       # 事务、来源、候选和连接账本
+│   ├── assets/
+│   │   └── <内容哈希>.<扩展名>          # 来源快照的本地图片
+│   ├── baseline/
+│   │   ├── concept-v0.1.md            # 冻结的 v0.1 概念说明
+│   │   └── decisions-v0.1.md          # 已确认决策和覆盖关系
+│   ├── proposals/
+│   │   ├── permanent/
+│   │   │   └── <PRP-ID>.md             # 永久卡片候选或撤销记录
+│   │   ├── connections/
+│   │   │   └── <关系候选>.md           # 待确认的语义连接
+│   │   └── source-updates/
+│   │       └── <来源更新候选>.md       # 待确认的来源刷新
+│   ├── transactions/
+│   │   ├── .gitkeep
+│   │   └── <transaction-id>/
+│   │       └── backup/
+│   │           └── <原相对路径>         # 原子替换前的本地恢复副本
+│   └── tmp/                             # 运行时临时文件，不纳入 Git
+├── .obsidian/
+│   ├── app.json                         # 文件、链接和属性显示规则
+│   ├── appearance.json                  # 阅读外观与 CSS 片段开关
+│   ├── core-plugins.json                # 核心插件配置
+│   ├── snippets/
+│   │   └── goodidea.css                 # Good Idea 阅读样式
+│   ├── workspace.json                  # 本机窗口状态，不纳入 Git
+│   └── workspace-mobile.json           # 移动端窗口状态，不纳入 Git
+├── src/
+│   └── goodidea/
+│       ├── __init__.py                  # Python 包入口
+│       ├── cli.py                       # CLI 命令与参数
+│       ├── service.py                   # 产品流程和状态转换
+│       ├── repository.py                # 原子事务、索引、日志和 Git
+│       ├── notes.py                     # 笔记结构、状态标签和 Wiki 链接
+│       ├── metadata.py                  # Frontmatter 解析与生成
+│       ├── web.py                       # URL 规范化和网页正文处理
+│       └── errors.py                    # 领域错误类型
+├── scripts/
+│   ├── validate-skills.py               # 七个 Skills 的官方结构校验
+│   ├── run-maintenance.sh               # 闪念过期检查和仓库验证
+│   ├── install-maintenance.sh           # 安装 macOS 定时维护任务
+│   └── com.songhai.goodidea.maintenance.plist  # LaunchAgent 的六小时间隔配置
+├── tests/
+│   ├── fixtures/                        # 本地测试输入样本
+│   ├── test_cli.py                      # 公开 CLI 端到端测试
+│   ├── test_core.py                     # 核心状态、事务和回滚测试
+│   ├── test_web.py                      # 网页清洗和失败状态测试
+│   ├── test_skills.py                   # 七个 Skills 的流程契约测试
+│   └── test_skill_validator.py          # 官方校验器调用测试
+├── pyproject.toml                      # Python 项目、命令入口和依赖声明
+├── uv.lock                             # 可复现开发环境锁文件
+├── .python-version                     # 项目使用的 Python 版本
+├── .gitignore                          # 不进入 Git 的文件规则
+├── .git/                               # 本地 Git 对象和历史
+├── .venv/                              # 可重建的 Python 虚拟环境
+├── .gstack/                            # 本机工具状态，不属于内容模型
+└── .DS_Store                           # macOS 生成的本地文件
 ```
+
+尖括号表示按规则生成的文件名或目录名，不代表一个名为尖括号内容的真实文件。`.git/`、`.venv/`、事务备份和哈希图片内部可能包含大量机器生成文件；上图已经展开到 Good Idea 对其有明确语义的最深层级，不逐个罗列 Git 对象、依赖包、历史事务实例或图片实例。
 
 ### 根目录文档
 
