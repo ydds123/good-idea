@@ -739,6 +739,7 @@ canonical_url: https://example.com/declared-only
         todo = run_cli(
             "--root", str(self.root), "capture", "todo",
             "--text", "CLI 层验证轻量记录追加与状态流转",
+            "--context", "CLI 测试产生情境，更新后应保留",
             "--transaction-id", "cli-revise-todo",
         )
         self.assertEqual(todo.returncode, 0, todo.stderr)
@@ -781,6 +782,26 @@ canonical_url: https://example.com/declared-only
         self.assertEqual(
             json.loads(transitioned.stdout)["result"]["status"], "done"
         )
+
+        # 整体更新：替换原始记录正文，保留产生情境
+        update_text = "更新后的完整正文：这是通过 CLI 整体更新写入的第二版内容，包含完整设计框架。"
+        updated = run_cli(
+            "--root", str(self.root), "capture", "update",
+            "--id", todo_id,
+            "--text", update_text,
+            "--confirm-user-authored",
+            "--transaction-id", "cli-update-do",
+        )
+        self.assertEqual(updated.returncode, 0, updated.stderr)
+        todo_note_after = (self.root / json.loads(todo.stdout)["result"]["path"]).read_text(
+            encoding="utf-8"
+        )
+        self.assertIn("## 原始记录\n\n更新后的完整正文", todo_note_after)
+        self.assertNotIn(
+            "## 原始记录\n\nCLI 层验证轻量记录追加与状态流转", todo_note_after
+        )
+        self.assertIn("CLI 追加的演化记录内容", todo_note_after)
+        self.assertIn("## 产生情境", todo_note_after)
 
         # 非法状态被 CLI 拒绝
         bad = run_cli(

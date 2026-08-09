@@ -180,6 +180,7 @@ finalize 同时创建可恢复的运行时维护任务。任务允许 `pending`�
 | `permanent withdraw` | 只撤销仍为 `pending` 的候选；撤销后不可接纳，错误内容不保留在当前工作树 |
 | `permanent revise` / `permanent feedback` | 只能追加用户亲自提供并确认的内容；CLI 只机械添加区块、时间戳和规范换行 |
 | `capture revise` | 目标必须是既有轻量记录（闪念/有意思/待办）；只能追加用户亲自提供并确认的内容；追加内容必须有实际含义 |
+| `capture update` | 目标必须是既有轻量记录；只能整体更新为用户亲自提供并确认的内容；替换"原始记录"节并保留其余节 |
 | `capture transition` | 目标必须是既有轻量记录；目标状态必须属于该类型允许集合；闪念的 `processed` 由系统保留，不开放手动流转 |
 | `connect propose` | 两端都必须是已存在的正式卡片；零连接节点本身有效 |
 | `connect accept` | 必须是用户确认的既有 `pending` 连接候选，接受时原子写入双向关系 |

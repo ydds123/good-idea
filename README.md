@@ -362,6 +362,7 @@ uv run goodidea --root /Users/apple/Documents/Claude/good-idea <命令>
 | `goodidea capture pause|resume|status|discard` | 暂停、恢复、查看或放弃临时会话 | 仅运行时 |
 | `goodidea capture finalize` | 用户确认最新清单后原子创建多张正式闪念 | 是 |
 | `goodidea capture revise` | 向既有轻量记录追加用户确认的演化内容 | 是 |
+| `goodidea capture update` | 用户确认后整体更新轻量记录的原始记录正文 | 是 |
 | `goodidea capture transition` | 流转轻量记录（闪念/有意思/待办）的生命周期状态 | 是 |
 | `goodidea capture revise-source-anchors` | 按用户确认把来源链接和论证说明合并为统一锚点 | 是 |
 | `goodidea source preview --url <URL>` | 在仓库外准备网页来源预览 | 否 |

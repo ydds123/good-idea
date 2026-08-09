@@ -566,6 +566,49 @@ class GoodIdeaService:
             result=result,
         )
 
+    def capture_update(
+        self,
+        note_id: str,
+        *,
+        text: str,
+        confirmed_by_user: bool,
+        transaction_id: str | None = None,
+    ) -> dict[str, Any]:
+        if not confirmed_by_user:
+            raise ValidationError("轻量记录更新只能写入用户亲自确认的内容")
+        if not _meaningful(text, minimum=8):
+            raise ValidationError("更新内容必须包含用户明确的完整表达")
+        found = self.repo.find_note(note_id)
+        if not found or found[2].get("type") not in {
+            "flash",
+            "interesting",
+            "todo",
+        }:
+            raise ValidationError(f"找不到轻量记录：{note_id}")
+        rel, note_text, metadata = found
+        txid = transaction_id or new_transaction_id("capture-update")
+        if existing := self._idempotent(txid):
+            return existing
+        timestamp = now_iso()
+        user_text = _normalize_user_entry(text)
+        note_text = replace_section(note_text, "原始记录", user_text)
+        metadata["updated_at"] = timestamp
+        note_text = replace_frontmatter(note_text, metadata)
+        state = self.repo.read_state()
+        result = {
+            "id": note_id,
+            "path": rel.as_posix(),
+            "type": metadata["type"],
+        }
+        return self.repo.commit(
+            transaction_id=txid,
+            action="capture-update",
+            summary=metadata["title"],
+            writes={rel: note_text},
+            state=state,
+            result=result,
+        )
+
     def capture_finalize(
         self,
         runtime: CaptureRuntime,

@@ -2110,6 +2110,50 @@ updated_at: "2026-08-04T00:00:00+08:00"
             )
         self.assertTrue(self.service.lint()["ok"])
 
+    def test_capture_update_replaces_body_and_preserves_other_sections(self):
+        todo = self.service.capture(
+            "todo",
+            text="第一版待办内容，等待被整体更新",
+            title="更新测试待办",
+            context="测试产生情境，应在更新后保留",
+            transaction_id="tx-update-target",
+        )
+        note_id = todo["result"]["id"]
+        with self.assertRaises(ValidationError):
+            self.service.capture_update(
+                note_id,
+                text="未经确认的内容不得整体更新",
+                confirmed_by_user=False,
+                transaction_id="tx-update-no-confirm",
+            )
+        updated = self.service.capture_update(
+            note_id,
+            text="第二版完整内容：包含骨架、肌肉与皮肤三层设计原则，并附上备菜与炒菜的边界说明。",
+            confirmed_by_user=True,
+            transaction_id="tx-update-do",
+        )
+        self.assertEqual(updated["result"]["id"], note_id)
+        note = self.repo.find_note(note_id)
+        self.assertIn("第二版完整内容", note[1])
+        self.assertIn("备菜与炒菜的边界说明", note[1])
+        self.assertNotIn("第一版待办内容", note[1])
+        self.assertIn("## 产生情境", note[1])
+        replay = self.service.capture_update(
+            note_id,
+            text="重复事务不应再次写入",
+            confirmed_by_user=True,
+            transaction_id="tx-update-do",
+        )
+        self.assertTrue(replay["idempotent"])
+        with self.assertRaises(ValidationError):
+            self.service.capture_update(
+                "TODO-20260809-00000000",
+                text="不存在的记录必须被拒绝",
+                confirmed_by_user=True,
+                transaction_id="tx-update-missing",
+            )
+        self.assertTrue(self.service.lint()["ok"])
+
     def test_capture_transition_moves_lightweight_status_within_allowed_set(self):
         todo = self.service.capture(
             "todo",

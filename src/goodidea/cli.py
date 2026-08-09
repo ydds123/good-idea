@@ -104,6 +104,18 @@ def build_parser() -> argparse.ArgumentParser:
     transition.add_argument("--id", required=True)
     transition.add_argument("--status", required=True)
     transition.add_argument("--transaction-id")
+    update = capture_sub.add_parser(
+        "update", help="用户确认后整体更新轻量记录的原始记录正文"
+    )
+    update.add_argument("--id", required=True)
+    update.add_argument("--text", default="")
+    update.add_argument(
+        "--text-file",
+        default="",
+        help="从文件读取更新正文；传 - 从 stdin 读取；与 --text 二选一",
+    )
+    update.add_argument("--confirm-user-authored", action="store_true")
+    update.add_argument("--transaction-id")
     revise_anchors = capture_sub.add_parser("revise-source-anchors")
     revise_anchors.add_argument("--flash-id", required=True)
     revise_anchors.add_argument("--manifest-file", required=True)
@@ -426,6 +438,19 @@ def dispatch(args: argparse.Namespace) -> tuple[dict[str, Any], int]:
         result = service.capture_transition(
             args.id,
             status=args.status,
+            transaction_id=args.transaction_id,
+        )
+    elif args.command == "capture" and args.capture_command == "update":
+        if args.text_file:
+            if args.text:
+                raise ValidationError("--text 与 --text-file 只能二选一")
+            update_text = _read_text(args.text_file)
+        else:
+            update_text = args.text
+        result = service.capture_update(
+            args.id,
+            text=update_text,
+            confirmed_by_user=args.confirm_user_authored,
             transaction_id=args.transaction_id,
         )
     elif args.command == "capture" and args.capture_command == "revise-source-anchors":
