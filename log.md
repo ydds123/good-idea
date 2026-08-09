@@ -53,3 +53,5 @@
 
 ## [2026-08-09T21:54:09+08:00] capture-revise | 为 Good Idea 增加用户画像/记忆摘要层（类 ChatGPT 记忆） | tx=revise-user-profile-hermes-20260809
 
+## [2026-08-09T22:25:31+08:00] capture-todo | 闪念卡片每晚 8 点飞书预警机制 | tx=todo-flash-alert-20260809
+
