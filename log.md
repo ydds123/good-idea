@@ -34,9 +34,6 @@
 
 ## [2026-08-09T12:37:59+08:00] maintain-metadata | 从 5 份正式内容移除过时摘要字段 | tx=remove-content-summaries-20260809
 
-## [2026-08-09T14:40:53+08:00] source-commit | 控制论与科学方法论 + 保存动机 | tx=source-control-theory-20260809-v1
-
 ## [2026-08-09T14:40:59+08:00] source-commit | 对话李继刚：让AI超越平庸表现｜“读完周报再来聊聊”闭门会第5期精华 + 保存动机 | tx=source-lijigang-beyond-mediocrity-20260809-v1
 
 ## [2026-08-09T16:42:44+08:00] rollback | 回滚 7e40c07c2681 source-commit: 对话李继刚：让AI超越平庸表现｜“读完周报再来聊聊”闭门会第5期精华 + 保存动机 [tx:source-lijigang-beyond-mediocrity-20260809-v1] | tx=rollback-7e40c07c2681
-

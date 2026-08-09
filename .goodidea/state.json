@@ -63,11 +63,6 @@
       "id": "SRC-ddab8c91266b",
       "path": "溯源空间/2026-08-04-用AI的这三年，想跟你分享这9条心得。.md",
       "title": "用AI的这三年，想跟你分享这9条心得。"
-    },
-    "local:sha256:77d9cc8ab4040e0b50c362089c2362cb2d63054e87a56899332fc760af6c3fc8": {
-      "id": "SRC-d7b7b5b507a5",
-      "path": "溯源空间/2026-08-09-控制论与科学方法论.md",
-      "title": "控制论与科学方法论"
     }
   },
   "transactions": {
@@ -287,19 +282,6 @@
       "summary": "回滚 7e40c07c2681 source-commit: 对话李继刚：让AI超越平庸表现｜“读完周报再来聊聊”闭门会第5期精华 + 保存动机 [tx:source-lijigang-beyond-mediocrity-20260809-v1]",
       "timestamp": "2026-08-09T16:42:44+08:00",
       "transaction_id": "rollback-7e40c07c2681"
-    },
-    "source-control-theory-20260809-v1": {
-      "action": "source-commit",
-      "result": {
-        "flash_id": "FLA-20260809-5aa29ed9",
-        "flash_path": "闪念空间/2026-08-09-控制论和科学方法论这本书可以放到溯源空间里作为一个依据，因为我觉得后续我们肯定还.md",
-        "source_created": true,
-        "source_id": "SRC-d7b7b5b507a5",
-        "source_path": "溯源空间/2026-08-09-控制论与科学方法论.md"
-      },
-      "summary": "控制论与科学方法论 + 保存动机",
-      "timestamp": "2026-08-09T14:40:53+08:00",
-      "transaction_id": "source-control-theory-20260809-v1"
     },
     "source-lijigang-beyond-mediocrity-20260809-v1": {
       "action": "source-commit",
