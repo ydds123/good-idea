@@ -55,3 +55,5 @@
 
 ## [2026-08-09T22:25:31+08:00] capture-todo | 闪念卡片每晚 8 点飞书预警机制 | tx=todo-flash-alert-20260809
 
+## [2026-08-09T23:08:56+08:00] capture-revise | 闪念卡片每晚 8 点飞书预警机制 | tx=revise-flash-alert-v2-20260809
+
