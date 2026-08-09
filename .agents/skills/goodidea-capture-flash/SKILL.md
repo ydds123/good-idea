@@ -21,15 +21,21 @@ description: "捕捉 Good idea 闪念及多轮认知会话。用户正在表达�
 
        uv run goodidea --root <仓库> capture context-check --session-id <会话ID> --ref <上下文> --status <readable|unreadable|partial> --fingerprint-file <临时JSON> --transaction-id <稳定ID>
 
-3. 围绕用户想法一次只问一个有推进价值的问题。用户不想继续展开时立即进入清单阶段，不强迫追问。每次新表达都原样追加：
+3. 捕获阶段只问能帮助用户补充、修正、分组、合并、拆分或删除的问题。没有出现明确的“永久/母题/行动/索引卡片”主动发起词时，禁止询问定义、因果、证据、边界、反例、行动或“观点是否成立”；这些属于永久卡片阶段。用户不想继续展开时立即进入清单阶段，不强迫追问。每次新表达都原样追加：
 
        uv run goodidea --root <仓库> capture append --session-id <会话ID> --text <用户新表达> --transaction-id <稳定ID>
 
-4. 从用户表达识别零张、一张或多张闪念。默认向用户展示标题和一至两句中心意思；内部 manifest 为每张候选记录用户 entry_ids 和相关 context_refs：
+4. 从用户表达识别零张、一张或多张“认知激活事件”。一张闪念不等于一个孤立要点：同一次被激活的认知信号可以包含多个内容，但必须保留清晰的研究脉络或内在逻辑。先去掉口头停顿与重复、优化表述顺序，再完整展示这条脉络；不得先拆成平铺要点让用户猜结构。内部 manifest 使用 `format_version: 2`，每张候选除 `title`、`body`、用户 `entry_ids` 和 `context_refs` 外，必须记录：
+
+   - `source_anchor`：外部来源的论证过程与出处；没有外部来源时明确写“用户本轮口述，无外部来源”，不得伪造依据；
+   - `trigger_anchor`：当时的现实背景、卡点、观察到的现象与情绪；
+   - `activated_logic`：这些内容为什么在此刻连起来，多个内容之间的逻辑关系是什么。
+
+   捕获问法示例：“这段脉络里，A 触发你联想到 B，再回接 C；我这样整理有没有漏掉连接顺序？”永久阶段问法示例：“这个判断成立的边界和反例是什么？”前者可用，后者此阶段禁用。
 
        uv run goodidea --root <仓库> capture propose --session-id <会话ID> --manifest-file <临时候选JSON> --transaction-id <稳定ID>
 
-5. 用户可以一次补充、修正、合并、拆分或删除多项。任何新表达都会使旧候选失效并回到交流；重新 propose 后再展示最新清单。
+5. 用户可以一次补充、修正、合并、拆分或删除多项，也可以修正来源、触发情境或激活逻辑。任何新表达都会使旧候选失效并回到交流；重新 propose 后再展示最新完整脉络。
 6. 明确询问最新完整清单是否已经覆盖本轮该记录的内容。只有用户确认后才执行：
 
        uv run goodidea --root <仓库> capture finalize --session-id <会话ID> --proposal-id <最新候选ID> --confirm-discussion-complete --transaction-id <稳定ID>

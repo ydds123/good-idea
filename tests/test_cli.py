@@ -7,6 +7,8 @@ import tempfile
 import unittest
 from pathlib import Path
 
+from tests.support import initialize_test_vault
+
 
 def run_cli(*args: str, cwd: Path | None = None) -> subprocess.CompletedProcess[str]:
     return subprocess.run(
@@ -23,13 +25,12 @@ class GoodIdeaCliTests(unittest.TestCase):
         self.temp = tempfile.TemporaryDirectory()
         self.base = Path(self.temp.name)
         self.root = self.base / "vault"
-        initialized = run_cli("init", str(self.root))
-        self.assertEqual(initialized.returncode, 0, initialized.stderr)
+        initialize_test_vault(self.root)
 
     def tearDown(self):
         self.temp.cleanup()
 
-    def test_init_capture_and_verify_public_commands(self):
+    def test_capture_and_verify_public_commands(self):
         app = json.loads((self.root / ".obsidian/app.json").read_text(encoding="utf-8"))
         appearance = json.loads(
             (self.root / ".obsidian/appearance.json").read_text(encoding="utf-8")
@@ -61,7 +62,7 @@ class GoodIdeaCliTests(unittest.TestCase):
         self.assertIn("YYYY-MM-DD-标题.md", fresh_schema)
         self.assertIn("内部 ID", fresh_schema)
         self.assertIn("Obsidian", fresh_schema)
-        self.assertIn("正式内容不保存 `summary`", fresh_schema)
+        self.assertIn("正式内容 Frontmatter 禁止 `summary`", fresh_schema)
 
         captured = run_cli(
             "--root",

@@ -9,13 +9,12 @@ PROJECT = Path(__file__).resolve().parents[1]
 
 
 class ProjectSkillTests(unittest.TestCase):
-    def test_all_seven_skill_packages_expose_the_expected_cli_contract(self):
+    def test_all_skill_packages_expose_the_expected_cli_contract(self):
         expected = {
             "goodidea-capture-flash": ["capture start", "capture append", "capture propose", "capture finalize", "capture flash", "不在 Frontmatter 保存 `summary`"],
             "goodidea-record-literature": ["source preview", "--local-file", ".markdown", "source commit", "--attach-flash-ids", "source refresh", "--confirm-proposal", "不创建文献笔记层", "不写内容摘要或 `summary` 元数据"],
-            "goodidea-review-process": ["goodidea --root <仓库> review", "review --expire"],
-            "goodidea-form-permanent": ["permanent propose", "--draft-file", "一次一个问题", "--confirm-user-approved-structure", "--confirm-user-approved", "permanent withdraw"],
-            "goodidea-review-permanent": ["permanent accept", "不生成正文候选内容", "完整待确认草稿", "每轮只提出一个"],
+            "goodidea-review-process": ["goodidea --root <仓库> review", "动态标记陈旧闪念"],
+            "goodidea-form-permanent": ["permanent propose", "--draft-file", "一次一个问题", "审查标准", "完整待确认草稿", "--confirm-user-approved-structure", "--confirm-user-approved", "permanent withdraw"],
             "goodidea-connect-cards": ["connect propose", "connect accept", "零连接节点"],
             "goodidea-lint": ["goodidea --root <仓库> lint", "goodidea --root <仓库> verify", "goodidea maintain metadata"],
         }
@@ -55,9 +54,6 @@ class ProjectSkillTests(unittest.TestCase):
         self.assertIn("提炼一个典型标题", permanent)
         self.assertIn("不得补入用户未表达的内容", permanent)
         self.assertIn("不一次抛出问题清单", permanent)
-        review = (skills_root / "goodidea-review-permanent" / "SKILL.md").read_text(encoding="utf-8")
-        self.assertIn("审查意见只留在审查对话", review)
-        self.assertIn("不是用户主动发起创建", review)
         connect = (skills_root / "goodidea-connect-cards" / "SKILL.md").read_text(encoding="utf-8")
         self.assertIn("等待明确确认", connect)
         self.assertIn("已入网，当前零连接", connect)

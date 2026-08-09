@@ -3,7 +3,6 @@ from __future__ import annotations
 import copy
 import json
 import os
-import re
 import shutil
 import subprocess
 import tempfile
@@ -11,6 +10,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any
 
+from .contracts import TRANSACTION_ID_PATTERN
 from .errors import GitError, IntegrityError, TransactionError, ValidationError
 from .metadata import parse_document
 from .notes import (
@@ -25,7 +25,6 @@ from .notes import (
 STATE_PATH = Path(".goodidea/state.json")
 INDEX_PATH = Path("index.md")
 LOG_PATH = Path("log.md")
-TRANSACTION_ID_PATTERN = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$")
 
 
 def now_iso() -> str:
@@ -346,144 +345,3 @@ class Repository:
                     target.parent.mkdir(parents=True, exist_ok=True)
                     target.write_bytes(original)
             raise
-
-
-def initialize_vault(path: Path) -> dict[str, Any]:
-    root = path.resolve()
-    state_path = root / STATE_PATH
-    if state_path.exists():
-        repo = Repository(root)
-        return {
-            "initialized": False,
-            "root": str(repo.root),
-            "reason": "already_initialized",
-        }
-    if root.exists() and any(root.iterdir()):
-        raise ValidationError(f"初始化目标目录必须为空，拒绝覆盖现有内容：{root}")
-    root.mkdir(parents=True, exist_ok=True)
-    for location in TYPE_LOCATIONS.values():
-        (root / location).mkdir(parents=True, exist_ok=True)
-    for relative in (
-        ".goodidea/assets",
-        ".goodidea/proposals/source-updates",
-        ".goodidea/proposals/permanent",
-        ".goodidea/proposals/connections",
-        ".goodidea/transactions",
-    ):
-        (root / relative).mkdir(parents=True, exist_ok=True)
-    state = {
-        "schema_version": "0.1",
-        "transactions": {},
-        "sources": {},
-        "proposals": {},
-        "connections": [],
-    }
-    starter_files = {
-        STATE_PATH: json.dumps(state, ensure_ascii=False, indent=2) + "\n",
-        INDEX_PATH: (
-            "# Good idea 索引\n\n"
-            "> 由 goodidea CLI 自动生成，请勿手工改写。\n\n"
-            "## 闪念\n\n_暂无_\n\n"
-            "## 溯源\n\n_暂无_\n\n"
-            "## 有意思\n\n_暂无_\n\n"
-            "## 待办\n\n_暂无_\n\n"
-            "## 永久卡片\n\n_暂无_\n\n"
-            "## 母题卡片\n\n_暂无_\n\n"
-            "## 行动卡片\n\n_暂无_\n\n"
-            "## 索引卡片\n\n_暂无_\n"
-        ),
-        LOG_PATH: "# Good idea 操作日志\n\n> 只允许 CLI 追加。\n",
-        Path("AGENTS.md"): (
-            "# Good idea\n\n用户负责判断与永久卡片原文；Agent 负责对话和审查；"
-            "CLI 负责确定性写入。\n\n内容文件统一使用 `YYYY-MM-DD-标题.md`；"
-            "内部 ID 不得作为标题、文件名前缀或默认展示信息。\n\n"
-            "Obsidian 是 v0.1 的默认阅读界面，读取 schema.md 后再操作。\n"
-            "来源文件只保存规范链接，顺序为文章标题、原文快照、关联闪念；人的念头进入闪念空间。\n"
-            "正式卡片进入永久空间和索引即已接入卡片网络；零语义连接是有效状态。\n"
-            "永久卡片必须先形成候选，再由用户明确要求正式创建后接纳。\n"
-        ),
-        Path("schema.md"): (
-            "# Good idea v0.1 Schema\n\n## 人类可见命名\n\n"
-            "所有内容空间统一使用 `YYYY-MM-DD-标题.md`。内部 ID 只用于稳定识别、"
-            "去重、关系、事务和回滚，不作为标题、文件名前缀或索引默认展示信息。\n\n"
-            "## 机器字段\n\nMarkdown Frontmatter 保存 ID、类型、状态、创建与更新时间；"
-            "来源另保存规范化 URL、抓取状态和快照哈希。它们由 CLI 维护，"
-            "在 Obsidian 阅读界面默认隐藏。正式内容不保存 `summary`；"
-            "Git 事务的操作说明属于日志字段，不属于卡片元数据。\n\n## 来源与链接\n\n"
-            "溯源空间每份来源对应一个 Markdown 原文快照文件，快照受哈希保护。"
-            "只持久化规范链接；顺序为文章标题、原文快照、关联闪念。"
-            "不设置文献笔记层；人的即时念头进入闪念空间，对多个念头的思考进入永久空间。"
-            "Wiki 链接统一使用从仓库根目录开始的路径。\n\n## Obsidian\n\n"
-            "`.obsidian/` 中的稳定设置与阅读样式属于产品基线；"
-            "工作区布局文件属于本机状态，不纳入 Git。\n\n"
-            "## 卡片网络\n\n正式卡片被接纳并进入永久空间与索引即成为网络节点。"
-            "卡片网络允许从单个零连接节点开始；语义边只在存在有意义的另一张卡片并经用户确认后建立。\n"
-        ),
-        Path(".gitignore"): (
-            ".venv/\n__pycache__/\n*.py[cod]\n.goodidea/transactions/*\n"
-            ".goodidea/runtime/\n"
-            ".obsidian/workspace.json\n.obsidian/workspace-mobile.json\n"
-        ),
-        Path(".obsidian/app.json"): (
-            "{\n"
-            '  "alwaysUpdateLinks": true,\n'
-            '  "attachmentFolderPath": ".goodidea/assets",\n'
-            '  "defaultViewMode": "preview",\n'
-            '  "newLinkFormat": "absolute",\n'
-            '  "propertiesInDocument": "hidden",\n'
-            '  "showInlineTitle": false\n'
-            "}\n"
-        ),
-        Path(".obsidian/appearance.json"): (
-            "{\n"
-            '  "baseFontSize": 16,\n'
-            '  "enabledCssSnippets": ["goodidea"]\n'
-            "}\n"
-        ),
-        Path(".obsidian/core-plugins.json"): (
-            "{\n"
-            '  "file-explorer": true,\n'
-            '  "global-search": true,\n'
-            '  "switcher": true,\n'
-            '  "graph": true,\n'
-            '  "backlink": true,\n'
-            '  "canvas": true,\n'
-            '  "outgoing-link": true,\n'
-            '  "tag-pane": true,\n'
-            '  "properties": true,\n'
-            '  "page-preview": true,\n'
-            '  "templates": true,\n'
-            '  "note-composer": true,\n'
-            '  "command-palette": true,\n'
-            '  "editor-status": true,\n'
-            '  "bookmarks": true,\n'
-            '  "outline": true,\n'
-            '  "word-count": true,\n'
-            '  "file-recovery": true,\n'
-            '  "publish": false,\n'
-            '  "sync": false,\n'
-            '  "bases": true\n'
-            "}\n"
-        ),
-        Path(".obsidian/snippets/goodidea.css"): (
-            "/* Good idea: machine metadata stays available to the CLI, not the reading UI. */\n"
-            ".metadata-container { display: none !important; }\n"
-            '.nav-folder-title[data-path^=".goodidea"],\n'
-            '.nav-folder-title[data-path^=".agents"],\n'
-            '.nav-folder-title[data-path="src"],\n'
-            '.nav-folder-title[data-path="tests"] { display: none !important; }\n'
-            '.nav-file-title[data-path="AGENTS.md"],\n'
-            '.nav-file-title[data-path="schema.md"] { display: none !important; }\n'
-        ),
-    }
-    for rel, content in starter_files.items():
-        target = root / rel
-        target.parent.mkdir(parents=True, exist_ok=True)
-        target.write_text(content, encoding="utf-8")
-    _run_git(root, ["init", "-b", "main"])
-    _run_git(root, ["config", "user.name", "Good idea"])
-    _run_git(root, ["config", "user.email", "goodidea@local"])
-    _run_git(root, ["config", "core.quotepath", "false"])
-    _run_git(root, ["add", "--", *[path.as_posix() for path in starter_files]])
-    _run_git(root, ["commit", "-m", "chore: initialize Good idea vault"])
-    return {"initialized": True, "root": str(root)}

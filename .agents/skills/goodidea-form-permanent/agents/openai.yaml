@@ -1,4 +1,4 @@
 interface:
   display_name: "Good idea 形成永久卡片"
-  short_description: "通过苏格拉底式对话澄清观点并形成待确认永久卡片"
-  default_prompt: "Use $goodidea-form-permanent only after I explicitly initiate a permanent-card type, structure only what I expressed, and ask me to approve the final card."
+  short_description: "澄清审查用户观点并形成待确认永久类卡片"
+  default_prompt: "Use $goodidea-form-permanent to clarify and form a permanent-class card I explicitly initiated."

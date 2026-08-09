@@ -113,7 +113,6 @@ good-idea/
 │       │   ├── SKILL.md
 │       │   └── agents/
 │       │       └── openai.yaml
-│       ├── goodidea-review-permanent/
 │       │   ├── SKILL.md
 │       │   └── agents/
 │       │       └── openai.yaml
@@ -126,7 +125,7 @@ good-idea/
 │           └── agents/
 │               └── openai.yaml
 ├── .goodidea/
-│   ├── state.json                       # 事务、来源、候选和连接账本
+│   ├── state.json                       # 事务、连接与回滚事实账本
 │   ├── assets/
 │   │   └── <内容哈希>.<扩展名>          # 来源快照的本地图片
 │   ├── baseline/
@@ -134,7 +133,7 @@ good-idea/
 │   │   └── decisions-v0.1.md          # 已确认决策和覆盖关系
 │   ├── proposals/
 │   │   ├── permanent/
-│   │   │   └── <PRP-ID>.md             # 永久卡片候选或撤销记录
+│   │   │   └── <PRP-ID>.md             # 待确认的永久卡片候选
 │   │   ├── connections/
 │   │   │   └── <关系候选>.md           # 待确认的语义连接
 │   │   └── source-updates/
@@ -164,24 +163,20 @@ good-idea/
 │       ├── web.py                       # URL 规范化、网页正文与本地文档预览
 │       └── errors.py                    # 领域错误类型
 ├── scripts/
-│   ├── validate-skills.py               # 七个 Skills 的官方结构校验
-│   ├── evaluate-skill-routing.py         # 触发重叠、场景路由与冲突评测
-│   ├── run-maintenance.sh               # 闪念过期检查和仓库验证
-│   ├── install-maintenance.sh           # 安装 macOS 定时维护任务
-│   └── com.songhai.goodidea.maintenance.plist  # LaunchAgent 的六小时间隔配置
+│   ├── validate-skills.py               # 项目 Skills 的官方结构校验
+│   └── evaluate-skill-routing.py         # 触发重叠、场景路由与冲突评测
 ├── tests/
 │   ├── fixtures/
 │   │   └── skill-routing-cases.json     # 唯一路由、近邻、串联和不触发案例
 │   ├── test_cli.py                      # 公开 CLI 端到端测试
 │   ├── test_core.py                     # 核心状态、事务和回滚测试
 │   ├── test_web.py                      # 网页清洗和失败状态测试
-│   ├── test_skills.py                   # 七个 Skills 的流程契约测试
+│   ├── test_skills.py                   # 项目 Skills 的流程契约测试
 │   ├── test_skill_validator.py          # 官方校验器调用测试
 │   └── test_skill_routing.py            # 路由契约、冲突门禁和报告时效测试
 ├── reports/
 │   └── skill-routing/
-│       ├── latest.json                  # 机器可读的最新路由评测证据
-│       └── latest.md                    # 人类可读的冲突与误路由报告
+│       └── latest.json                  # 机器可读的最新路由评测证据
 ├── pyproject.toml                      # Python 项目、命令入口和依赖声明
 ├── uv.lock                             # 可复现开发环境锁文件
 ├── .python-version                     # 项目使用的 Python 版本
@@ -212,11 +207,10 @@ good-idea/
 
 | Skill | 什么时候使用 | 主要边界 |
 |---|---|---|
-| `goodidea-capture-flash` | 记一下想法、无链接摘录、有意思现象或待办 | 保留用户原始表达；明确链接或支持的本地来源时才转来源流程 |
-| `goodidea-record-literature` | 保存网页、公众号、其他链接，或明确作为来源的外部 Markdown / TXT 文档 | 先预读和询问动机，再原子保存来源与闪念；不创建文献笔记层 |
-| `goodidea-review-process` | 回顾待处理材料、处理过期闪念 | 组织处理节奏，不替用户判断内容正确性 |
-| `goodidea-form-permanent` | 用户主动发起永久、母题、行动或索引卡片 | 可整理已表达内容，不得创造用户观点；全文确认后才写入 |
-| `goodidea-review-permanent` | 评估或澄清用户的永久卡片观点 | 一次只问一个关键问题，审查意见不混入正文 |
+| `goodidea-capture-flash` | 用户正在表达、补充、修正或审阅本轮想法；即使附带链接或文件 | 保护认知前台；附件只作上下文，直到用户确认最新闪念清单 |
+| `goodidea-record-literature` | 用户单纯保存/刷新外部来源，或捕获完成后的后台来源维护 | 纯来源先预读和询问动机；后台只关联已有闪念，不创建重复动机闪念 |
+| `goodidea-review-process` | 回顾待处理材料、识别陈旧闪念 | 组织处理节奏，不替用户判断内容正确性 |
+| `goodidea-form-permanent` | 用户主动发起、审查或形成永久、母题、行动或索引卡片 | 一次只问一个关键问题；只整理已表达内容，全文确认后才写入 |
 | `goodidea-connect-cards` | 判断正式卡片之间是否值得建立关系 | 先提候选、后由用户确认；允许零连接节点 |
 | `goodidea-lint` | 检查快照、断链、状态、索引或 Git | 默认只报告，认知判断问题不自动修复 |
 
@@ -235,9 +229,9 @@ uv run python scripts/validate-skills.py
 
 | 路径 | 作用 | 是否直接操作 |
 |---|---|---|
-| `.goodidea/state.json` | 保存事务幂等账本、来源映射、永久卡片候选和连接状态 | 不直接编辑，由 CLI 维护 |
+| `.goodidea/state.json` | 保存事务幂等、已确认语义连接和回滚事实 | 不直接编辑，由 CLI 维护 |
 | `.goodidea/assets/` | 保存来源快照下载到本地的图片，文件名使用内容哈希 | 通常不直接操作 |
-| `.goodidea/proposals/permanent/` | 保存尚未接纳或已撤销的永久卡片候选 | 通过 CLI 流转 |
+| `.goodidea/proposals/permanent/` | 只保存尚未接纳的永久卡片候选 | 通过 CLI 流转；接纳或撤销后删除 |
 | `.goodidea/proposals/connections/` | 保存待用户确认的语义连接候选 | 通过 CLI 流转 |
 | `.goodidea/proposals/source-updates/` | 保存来源刷新候选 | 通过 CLI 流转 |
 | `.goodidea/baseline/concept-v0.1.md` | 冻结的 v0.1 概念基线 | 用于回溯，不随日常想法漂移 |
@@ -265,7 +259,8 @@ Obsidian 是阅读、搜索、反链和图谱导航界面，不负责绕过 CLI 
 |---|---|
 | `cli.py` | 定义 `goodidea` 命令及参数入口 |
 | `service.py` | 实现捕捉、来源、永久卡片、连接、维护、检查和回滚流程 |
-| `repository.py` | 负责原子文件事务、索引、日志、精确 Git 提交和初始化 |
+| `repository.py` | 负责原子文件事务、索引、日志和精确 Git 提交 |
+| `contracts.py` | 集中定义类型、状态、ID、时限和必填字段契约 |
 | `notes.py` | 定义内容空间、状态标签、来源快照结构和 Wiki 链接处理 |
 | `metadata.py` | 解析、校验和生成 Frontmatter |
 | `web.py` | 规范化 URL、清理网页正文，并为网页或受支持的本地文档准备 Markdown 预览 |
@@ -274,28 +269,26 @@ Obsidian 是阅读、搜索、反链和图谱导航界面，不负责绕过 CLI 
 
 Skills 只负责对话、判断和选择何时调用命令。脆弱写入、状态转换、快照保护、索引、日志与 Git 操作必须留在这一确定性执行层。
 
-### `scripts/`：开发与自动维护
+闪念按“一次认知激活事件”组织，不强制拆成一事一卡。正式候选既保存去除口语噪声后的完整研究脉络，也保存来源与论证、现实触发情境和内容间的激活逻辑；运行时原始表达仍保留到恢复窗口结束，避免结构化结果取代认知现场。
+
+### `scripts/`：开发工具
 
 | 文件 | 作用 |
 |---|---|
-| `validate-skills.py` | 找到官方校验器并逐一验证七个项目级 Skills |
+| `validate-skills.py` | 找到官方校验器并逐一验证项目级 Skills |
 | `evaluate-skill-routing.py` | 静态扫描 description 重叠，并可选调用只读 Codex 对中文场景做批量路由评测 |
-| `run-maintenance.sh` | 执行闪念过期检查和仓库验证 |
-| `com.songhai.goodidea.maintenance.plist` | 定义 macOS LaunchAgent：登录时运行，之后每 6 小时运行一次 |
-| `install-maintenance.sh` | 安装或更新本机 LaunchAgent 及运行脚本 |
-
-闪念创建满 48 小时后，如果仍是 `pending`，下一次维护检查会把状态改为 `expired`。文件不会删除或移动，原始表达和来源链接仍保留。维护任务每 6 小时检查一次，因此实际状态变化可能比 48 小时晚 0 到 6 小时。
+闪念是否陈旧在回顾时根据创建时间计算，不需要常驻进程或定时改写仓库。
 
 ### `tests/`：自动化证据
 
 | 文件 | 主要覆盖 |
 |---|---|
-| `test_cli.py` | 真实命令入口、初始化和各类公开命令 |
+| `test_cli.py` | 真实命令入口和各类公开命令 |
 | `test_core.py` | 原子事务、状态门禁、永久卡片、连接、快照、文件名、索引和回滚 |
 | `test_web.py` | URL 规范化、正文清洗、登录限制、抓取失败和提示注入隔离 |
-| `test_skills.py` | 七个 Skills 是否暴露正确流程与 CLI 契约 |
+| `test_skills.py` | 项目 Skills 是否暴露正确流程与 CLI 契约 |
 | `test_skill_validator.py` | 官方 Skill 校验器的发现、成功和错误报告 |
-| `test_skill_routing.py` | 七个 Skill 的案例覆盖、允许交接、同阶段冲突门禁及报告是否过期 |
+| `test_skill_routing.py` | Skill 案例覆盖、允许交接、同阶段冲突门禁及报告是否过期 |
 | `fixtures/` | 自动化测试使用的本地输入样本 |
 
 运行全部自动化测试：
@@ -304,19 +297,19 @@ Skills 只负责对话、判断和选择何时调用命令。脆弱写入、状�
 uv run python -m unittest discover -s tests -v
 ```
 
-七个 Skill 的触发路由另有一套专门评测。完全本地的静态扫描运行：
+Skill 触发路由另有一套专门评测。完全本地的静态扫描运行：
 
 ```bash
 uv run python scripts/evaluate-skill-routing.py
 ```
 
-它会检查七个 description 的重复和高相似度，并验证 41 条案例契约是否覆盖唯一主路由、近邻排除、正常顺序协作和不应触发。需要模型语义判断时，在明确允许把七个 description 与这些合成案例发送给 Codex 后运行：
+它会检查 Skill description 的重复和高相似度，并验证当前案例契约是否覆盖唯一主路由、近邻排除、正常顺序协作和不应触发。需要模型语义判断时，在明确允许把 descriptions 与这些合成案例发送给 Codex 后运行：
 
 ```bash
 uv run python scripts/evaluate-skill-routing.py --codex
 ```
 
-报告保存到 `reports/skill-routing/`。静态扫描只能证明文本重叠风险，不能冒充真实模型触发；`--codex` 当前使用一次批量只读分类，不是 Codex 原生 Skill 激活遥测，也不等同于 41 个独立会话。
+机器报告保存为 `reports/skill-routing/latest.json`；需要临时阅读版时可输出到仓库外。静态扫描只能证明文本重叠风险，不能冒充真实模型触发；`--codex` 当前使用一次批量只读分类，不是 Codex 原生 Skill 激活遥测，也不等同于多个独立会话。
 
 ### 其他环境与版本文件
 
@@ -362,7 +355,6 @@ uv run goodidea --root /Users/apple/Documents/Claude/good-idea <命令>
 
 | 命令 | 作用 | 是否写仓库 |
 |---|---|---|
-| `goodidea init` | 初始化新的独立 Good Idea 仓库 | 是 |
 | `goodidea capture flash|interesting|todo` | 创建轻量记录 | 是 |
 | `goodidea capture start|append|propose` | 保护和推进一轮临时闪念会话 | 仅运行时，不进入 Git |
 | `goodidea capture maintenance-check|maintenance-update` | 比较上下文漂移并推进可恢复来源任务 | 不回滚已创建闪念；重试最多三次 |
@@ -373,12 +365,12 @@ uv run goodidea --root /Users/apple/Documents/Claude/good-idea <命令>
 | `goodidea source preview --local-file <PATH>` | 在仓库外准备 UTF-8 `.md` / `.markdown` / `.txt` 来源预览 | 否 |
 | `goodidea source commit` | 用户给出保存动机后原子创建来源和闪念 | 是 |
 | `goodidea source refresh` | 创建或接受来源更新候选 | 视阶段而定 |
-| `goodidea review` | 只读列出待处理材料 | 否 |
-| `goodidea review --expire` | 将到期且仍待处理的闪念标为失效 | 有变化时写入 |
+| `goodidea review` | 只读回顾中间材料，并按创建时间标记陈旧闪念 | 否 |
 | `goodidea maintain filenames` | 统一日期加标题文件名并修复链接 | 是，记录维护事务 |
 | `goodidea maintain sources` | 规范来源快照结构 | 是，记录维护事务 |
 | `goodidea maintain index` | 重新生成只含标题和状态的索引 | 是，记录维护事务 |
 | `goodidea maintain metadata` | 从正式内容移除已废弃的 `summary` 字段 | 是，记录维护事务 |
+| `goodidea maintain contracts` | 移除旧状态镜像、旧关系字段和已终结候选 | 是，记录维护事务 |
 | `goodidea permanent propose` | 提交用户确认后的永久卡片候选 | 是 |
 | `goodidea permanent accept` | 用户明确确认后发布正式卡片 | 是 |
 | `goodidea permanent withdraw` | 撤销错误或过时候选 | 是 |

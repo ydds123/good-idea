@@ -9,17 +9,22 @@ import re
 import secrets
 import shutil
 import tempfile
-from datetime import datetime, timedelta
+from datetime import datetime
 from pathlib import Path
 from typing import Any, Iterator
 
+from .contracts import (
+    CAPTURE_ACTIVE_STATES, CAPTURE_RECOVERY_WINDOW, MAINTENANCE_JOB_ID_PATTERN,
+    MAINTENANCE_STATES, SESSION_ID_PATTERN, TRANSACTION_ID_PATTERN,
+    normalize_flash_event,
+)
 from .errors import IntegrityError, ValidationError
 from .repository import now_iso
 
 
-SESSION_RE = re.compile(r"^CAP-[0-9]{8}-[0-9a-f]{8}$")
-TX_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$")
-ACTIVE_STATES = {"active", "reviewing", "paused"}
+SESSION_RE = SESSION_ID_PATTERN
+TX_RE = TRANSACTION_ID_PATTERN
+ACTIVE_STATES = CAPTURE_ACTIVE_STATES
 
 
 def _canonical_json(value: Any) -> str:
@@ -140,28 +145,6 @@ class CaptureRuntime:
 
     def _write(self, directory: Path, state: dict[str, Any]) -> None:
         _atomic_json(directory / "session.json", state)
-        transcript = "".join(
-            _canonical_json(entry) + "\n" for entry in state.get("entries", [])
-        )
-        transcript_path = directory / "transcript.jsonl"
-        handle, temporary = tempfile.mkstemp(prefix=".transcript.", dir=directory)
-        try:
-            with os.fdopen(handle, "w", encoding="utf-8") as stream:
-                stream.write(transcript)
-                stream.flush()
-                os.fsync(stream.fileno())
-            os.replace(temporary, transcript_path)
-        except Exception:
-            with contextlib.suppress(FileNotFoundError):
-                os.unlink(temporary)
-            raise
-        _atomic_json(directory / "context.json", state.get("contexts", []))
-        proposal = state.get("proposal")
-        proposal_path = directory / "proposal.json"
-        if proposal:
-            _atomic_json(proposal_path, proposal)
-        elif proposal_path.exists():
-            proposal_path.unlink()
 
     def _transaction(
         self, state: dict[str, Any], transaction_id: str, result: dict[str, Any]
@@ -273,6 +256,7 @@ class CaptureRuntime:
         session_id: str,
         *,
         flashes: list[dict[str, Any]],
+        format_version: int = 1,
         transaction_id: str,
     ) -> dict[str, Any]:
         if existing := self._global_result(transaction_id):
@@ -292,23 +276,14 @@ class CaptureRuntime:
             }
             normalized: list[dict[str, Any]] = []
             for index, flash in enumerate(flashes):
-                title = str(flash.get("title") or "").strip()
-                body = str(flash.get("body") or "").strip()
-                refs = list(dict.fromkeys(str(item) for item in flash.get("entry_ids", [])))
-                if not title or not body:
-                    raise ValidationError(f"候选闪念 {index + 1} 缺少标题或正文")
-                if not refs or not set(refs).issubset(entry_ids):
-                    raise ValidationError(f"候选闪念 {index + 1} 必须追溯到用户表达")
-                normalized.append(
-                    {
-                        "title": title,
-                        "body": body,
-                        "entry_ids": refs,
-                        "context_refs": list(
-                            dict.fromkeys(str(item) for item in flash.get("context_refs", []))
-                        ),
-                    }
-                )
+                try:
+                    normalized.append(
+                        normalize_flash_event(
+                            flash, entry_ids, format_version=format_version
+                        )
+                    )
+                except ValueError as exc:
+                    raise ValidationError(f"候选闪念 {index + 1} {exc}") from exc
             version = int((state.get("proposal") or {}).get("version", 0)) + 1
             digest = hashlib.sha256(_canonical_json(normalized).encode("utf-8")).hexdigest()
             proposal = {
@@ -318,6 +293,7 @@ class CaptureRuntime:
                 "created_at": now_iso(),
                 "last_entry_id": state["entries"][-1]["entry_id"],
                 "flashes": normalized,
+                "format_version": format_version,
             }
             state["proposal"] = proposal
             state["status"] = "reviewing"
@@ -395,7 +371,7 @@ class CaptureRuntime:
         return {"jobs": jobs, "count": len(jobs)}
 
     def get_maintenance_job(self, job_id: str) -> dict[str, Any]:
-        if not re.fullmatch(r"JOB-[0-9a-f]{12}", job_id):
+        if not MAINTENANCE_JOB_ID_PATTERN.fullmatch(job_id):
             raise ValidationError("无效的后台维护任务 ID")
         path = self.maintenance / f"{job_id}.json"
         try:
@@ -459,12 +435,9 @@ class CaptureRuntime:
         status: str,
         error: str = "",
     ) -> dict[str, Any]:
-        if not re.fullmatch(r"JOB-[0-9a-f]{12}", job_id):
+        if not MAINTENANCE_JOB_ID_PATTERN.fullmatch(job_id):
             raise ValidationError("无效的后台维护任务 ID")
-        allowed = {
-            "pending", "processing", "maintenance_paused", "retry_pending",
-            "partial", "failed", "complete", "cancelled", "context_changed",
-        }
+        allowed = set(MAINTENANCE_STATES)
         if status not in allowed:
             raise ValidationError("无效的后台维护状态")
         path = self.maintenance / f"{job_id}.json"
@@ -507,7 +480,7 @@ class CaptureRuntime:
     def check_maintenance_context(
         self, job_id: str, *, fingerprint: dict[str, Any]
     ) -> dict[str, Any]:
-        if not re.fullmatch(r"JOB-[0-9a-f]{12}", job_id):
+        if not MAINTENANCE_JOB_ID_PATTERN.fullmatch(job_id):
             raise ValidationError("无效的后台维护任务 ID")
         path = self.maintenance / f"{job_id}.json"
         try:
@@ -653,7 +626,7 @@ class CaptureRuntime:
             current["status"] = "finalized"
             current["finalized_at"] = timestamp
             current["cleanup_after"] = (
-                datetime.now().astimezone() + timedelta(hours=24)
+                datetime.now().astimezone() + CAPTURE_RECOVERY_WINDOW
             ).isoformat(timespec="seconds")
             current["formal_result"] = formal_result
             self._write(directory, current)

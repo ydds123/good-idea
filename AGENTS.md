@@ -36,9 +36,9 @@
 |---|---|---|
 | 用户正在表达、补充、修正或审阅本轮闪念；即使附带网页或本地文件也不改变主路由 | `goodidea-capture-flash` | `goodidea capture start/append/propose/finalize` |
 | 用户只要求保存/刷新资料，或捕获会话完成后的后台来源维护 | `goodidea-record-literature` | `goodidea source preview/commit/refresh` |
-| 回顾待处理内容或处理过期闪念 | `goodidea-review-process` | `goodidea review` |
+| 回顾待处理内容或识别陈旧闪念 | `goodidea-review-process` | `goodidea review` |
 | 用户主动形成卡片，或为正式卡片提供本人修订与行动反馈 | `goodidea-form-permanent` | `goodidea permanent propose/accept/revise/feedback` |
-| 评估或澄清用户提出的永久卡片草稿 | `goodidea-review-permanent` | 不直接写入；通过后交回 `goodidea-form-permanent` |
+| 形成、评估或澄清用户主动提出的永久类卡片 | `goodidea-form-permanent` | `goodidea permanent propose/accept/revise/feedback` |
 | 为正式卡片提出或接受语义连接 | `goodidea-connect-cards` | `goodidea connect propose/accept` |
 | 检查结构、快照、索引、状态或 Git | `goodidea-lint` | `goodidea lint/verify` |
 
@@ -49,7 +49,7 @@
 3. 原文快照区禁止普通编辑。正式内容和来源维护写入前必须校验快照哈希；临时捕获会话的 start/append 不得被历史来源异常阻止。
 4. 捕获阶段中，用户想法是主信息，附件、链接和文件只是上下文。先在 Git 忽略的运行时目录保护认知现场，只做可访问性检查和按需读取；用户确认最新完整闪念清单后才生成正式闪念并进入后台来源维护。用户只要求保存资料时，仍需给出实际保存动机后才持久化。
 5. 永久卡片只能由用户主动发起。Agent 以一次一个问题的苏格拉底式对话帮助用户澄清观点；经用户授权后，可以删除口语停顿与重复、调整顺序、提炼标题并结构化为 Markdown，但不得增加用户未表达的新观点。结构化全文必须在写入前由用户明确确认；CLI 只接纳用户确认后的最终草稿。
-6. 正式卡片被接纳并进入永久空间、索引和状态账本时，即已接入卡片网络；网络允许只有一个节点且没有语义边。存在合适的其他卡片时，语义连接先形成候选，再由用户确认；没有合适连接时不得为了“入网”强行造边。反链、索引、格式与日志可以自动维护。
+6. 正式卡片被接纳并进入永久空间和索引时，即已接入卡片网络；网络允许只有一个节点且没有语义边。存在合适的其他卡片时，语义连接先形成候选，再由用户确认；没有合适连接时不得为了“入网”强行造边。反链、索引、格式与日志可以自动维护。
 7. 每个成功写事务只提交自身相关文件；失败不得留下部分状态。
 8. 默认资料录入只保存来源、完整 Markdown 快照、图片和关联闪念；不创建文献笔记层，不生成内容摘要、作者观点或个人理解，正式内容 Frontmatter 也不保存 `summary`。
 9. `log.md` 只追加，`index.md` 由 CLI 生成。不要手工改写二者。

@@ -6,7 +6,7 @@
 
 | 目录 | `type` | 允许状态 |
 |---|---|---|
-| `闪念空间/` | `flash` | `pending`, `processed`, `expired`, `dismissed` |
+| `闪念空间/` | `flash` | `pending`, `processed`, `dismissed` |
 | `溯源空间/` | `source` | `complete`, `partial`, `failed`, `update_available` |
 | `有意思空间/` | `interesting` | `pending`, `processed`, `dismissed` |
 | `待办空间/` | `todo` | `open`, `done`, `cancelled` |
@@ -45,7 +45,7 @@ ID 是系统内部的稳定身份，用于去重、状态关联、来源关系�
 
 五个空间中的所有内容文件统一使用 `YYYY-MM-DD-标题.md`，日期取 `created_at` 的本地创建日期。文件名冲突时在标题后机械追加 `-2`、`-3`；不得用 ID 解决冲突。标题和文件名可以面向人调整，内部 ID 保持不变。
 
-现有文件通过 `goodidea maintain filenames` 原子重命名。该事务同时维护路径链接、来源账本、索引、日志和 Git 历史。
+现有文件通过 `goodidea maintain filenames` 原子重命名。该事务同时维护路径链接、事务结果、索引、日志和 Git 历史。
 
 ## 内部参数
 
@@ -57,7 +57,7 @@ Markdown Frontmatter 是 CLI 的机器控制面，不是阅读正文。Obsidian 
 | `title` | 标题 | 生成文件名、一级标题和人类可读链接别名 |
 | `status` | 生命周期状态 | 区分待处理、已失效、完整、待行动等状态 |
 | `created_at` / `updated_at` | 创建 / 更新时间 | 文件命名、排序和演化审计 |
-| `source_ids` / `flash_ids` / `derived_from` | 来源 / 闪念 / 生成关系 | 用 ID 维持跨文件关系，不依赖文件名 |
+| `source_ids` / `derived_from` | 来源 / 生成关系 | 只在关系起点保存规范 ID；反向可读链接由 CLI 生成 |
 | `canonical_url` | 规范链接 | 网页来源的点击、身份和去重；原始分享链接不持久化 |
 | `origin_filename` / `origin_sha256` | 原文件名 / 首次导入内容哈希 | 本地来源的人类可读来处和稳定身份；不依赖本机路径 |
 | `capture_status` / `fetched_at` | 获取结果 / 获取时间 | 判断快照是否完整及何时取得 |
@@ -70,13 +70,13 @@ Markdown Frontmatter 是 CLI 的机器控制面，不是阅读正文。Obsidian 
 
 | 类型 | 额外必需字段 | 条件或可选字段 |
 |---|---|---|
-| `flash` | `source_ids` | `expires_at`；形成正式卡片后增加 `converted_to` |
+| `flash` | `source_ids` | 形成正式卡片后可转为 `processed` |
 | `interesting` | `source_ids` | 无 |
 | `todo` | `source_ids` | 无 |
-| `source` | `capture_status`、`fetched_at`、`content_sha256`、`snapshot_sha256`、`image_failures`、`flash_ids`；网页另必须有 `canonical_url`，本地文档另必须有 `origin_filename` 和 `origin_sha256` | `author`、`published_at`、存在更新候选时的 `pending_update` |
+| `source` | `capture_status`、`fetched_at`、`content_sha256`、`snapshot_sha256`、`image_failures`；网页另必须有 `canonical_url`，本地文档另必须有 `origin_filename` 和 `origin_sha256` | `author`、`published_at`、存在更新候选时的 `pending_update` |
 | `permanent`、`mother`、`action`、`index` | `authoring_mode`、`source_ids`、`derived_from` | 无 |
 
-`source_ids`、`flash_ids` 与 `derived_from` 必须是 ID 列表；没有关系时使用空列表。`expires_at` 缺失时，闪念过期时间按 `created_at + 48 小时`计算。`capture_status` 只表示当前快照的获取质量，取值为 `complete`、`partial` 或 `failed`；来源存在更新候选时，生命周期 `status` 可以是 `update_available`，原获取质量仍由 `capture_status` 保留。
+`source_ids` 与 `derived_from` 必须是 ID 列表；没有关系时使用空列表。来源正文中的“关联闪念”是由闪念 `source_ids` 生成的人类可读反向视图，来源 Frontmatter 不重复保存 `flash_ids`。闪念是否陈旧在回顾时按 `created_at + 48 小时`动态计算，不持久化过期时间或自动改写状态。`capture_status` 只表示当前快照的获取质量，取值为 `complete`、`partial` 或 `failed`；来源存在更新候选时，生命周期 `status` 可以是 `update_available`，原获取质量仍由 `capture_status` 保留。
 
 网页身份和本地文档身份严格二选一：网页来源不得出现 `origin_filename` / `origin_sha256`；本地来源不得出现 `canonical_url`。`origin_filename` 只保存 basename，禁止持久化绝对路径；`origin_sha256` 是 64 位小写十六进制哈希，作为首次导入身份，后续刷新不改写。同一内容的文件被移动或复制后仍复用同一来源；内容发生变化时必须对既有来源执行 `source refresh`，不得当作新来源静默导入。
 
@@ -92,9 +92,11 @@ Markdown Frontmatter 是 CLI 的机器控制面，不是阅读正文。Obsidian 
 
 | 候选类型 | Frontmatter 额外字段 | 账本与正文不变量 |
 |---|---|---|
-| `permanent_proposal` | `card_type`、`authoring_mode`、`draft_sha256` | Frontmatter、草稿正文哈希和 `state.json` 镜像字段必须一致；状态为 `pending`、`accepted` 或 `withdrawn` |
-| `source_update_proposal` | 无 | 正文机器负载保存来源 ID、旧/新内容哈希和预览；状态为 `pending` 或 `accepted` |
-| `connection_proposal` | 无 | 正文机器负载保存起点、终点、关系和理由；状态为 `pending` 或 `accepted` |
+| `permanent_proposal` | `card_type`、`authoring_mode`、`draft_sha256`、`source_ids`、`from_ids` | 候选文件本身是唯一事实源；草稿正文哈希必须与 Frontmatter 一致 |
+| `source_update_proposal` | 无 | 正文机器负载保存来源 ID、旧/新内容哈希和预览 |
+| `connection_proposal` | 无 | 正文机器负载保存起点、终点、关系和理由 |
+
+候选目录只保存 `pending` 文件。接纳或撤销后删除候选；结果与原因保留在事务账本、追加日志和 Git 历史中，不再维护终态候选文件或 `state.json.proposals` 镜像。来源身份直接由来源文件的规范身份字段和稳定 ID 决定，不再维护 `state.json.sources` 镜像。
 
 正式永久卡片草稿正文不得出现内部负载或“机器数据”区块。来源更新和连接候选的机器负载只存在于隐藏候选目录，由 CLI 校验和读取。
 
@@ -132,11 +134,13 @@ Markdown Frontmatter 是 CLI 的机器控制面，不是阅读正文。Obsidian 
 
 ### 临时捕获会话
 
-`.goodidea/runtime/captures/<session-id>/` 是 Git 忽略的运行时防丢区，不属于五个内容空间。每个会话保存角色明确的顺序记录、上下文可访问性/轻量指纹和最新闪念候选；不得进入 `index.md`、正式 `log.md` 或 Git。
+`.goodidea/runtime/captures/<session-id>/` 是 Git 忽略的运行时防丢区，不属于五个内容空间。每个会话只以 `session.json` 保存角色明确的顺序记录、上下文可访问性/轻量指纹和最新闪念候选；不得再维护 transcript、context 或 proposal 镜像文件，也不得进入 `index.md`、正式 `log.md` 或 Git。
 
 捕获状态为 `active`、`reviewing`、`paused`、`confirmed`、`finalized` 或 `abandoned`。新增用户表达会使旧候选和旧确认失效；finalize 只接受最新候选内容哈希和用户完成确认。一次会话可以原子生成零张、一张或多张正式闪念。临时会话写入只执行路径、锁、格式和幂等校验，不扫描来源快照。
 
-正式闪念的 `created_at` 取其最早相关用户表达时间，`updated_at` 取正式生成时间，`expires_at` 取正式生成时间加 48 小时。finalize 成功后运行时会话进入短期恢复区；来源维护完成且至少经过 24 小时后才可清理。用户放弃则不创建正式内容并删除临时会话。
+新候选 manifest 使用 `format_version: 2`。每张闪念以一次“认知激活事件”为单位，可以包含多个逻辑相关内容，但必须同时保存：`body`（去除口语噪声后的完整脉络）、`source_anchor`（来源论证与出处，无外部来源时明确说明）、`trigger_anchor`（现实背景、现象、卡点与情绪）和 `activated_logic`（内容在当时如何连起来）。`entry_ids` 必须全部指向用户表达；这些字段只允许忠实整理，不允许补造。旧运行时候选按 v1 完成，不强制补写或伪造缺失锚点。
+
+正式闪念的 `created_at` 取其最早相关用户表达时间，`updated_at` 取正式生成时间。finalize 成功后运行时会话进入短期恢复区；来源维护完成且至少经过 24 小时后才可清理。用户放弃则不创建正式内容并删除临时会话。
 
 finalize 同时创建可恢复的运行时维护任务。任务允许 `pending`、`processing`、`maintenance_paused`、`retry_pending`、`partial`、`failed`、`complete`、`cancelled` 或 `context_changed`。来源处理失败不得回滚正式闪念。
 
@@ -144,7 +148,7 @@ finalize 同时创建可恢复的运行时维护任务。任务允许 `pending`�
 
 | 类型 | 创建状态 | CLI 可以执行的转换 |
 |---|---|---|
-| `flash` | `pending` | `review --expire`：`pending → expired`；被正式卡片接纳并引用：`pending → processed` |
+| `flash` | `pending` | 被正式卡片接纳并引用：`pending → processed`；陈旧仅为回顾时的动态标记 |
 | `interesting` | `pending` | v0.1 暂无公开转换命令；`processed`、`dismissed` 为保留状态 |
 | `todo` | `open` | v0.1 暂无公开转换命令；`done`、`cancelled` 为保留状态 |
 | `source` | 当前抓取质量对应 `complete`、`partial` 或 `failed` | `source refresh` 生成候选：当前状态 `→ update_available`；接受候选：`update_available →` 新快照抓取质量 |
@@ -161,7 +165,7 @@ finalize 同时创建可恢复的运行时维护任务。任务允许 `pending`�
 | `source preview` | `--url` 和 `--local-file` 二选一；本地文档限 UTF-8 `.md` / `.markdown` / `.txt`。只在仓库外生成临时预览，对 Good idea 仓库零写入 |
 | `source commit` | 必须提供有实际内容的用户保存动机；纯确认文本无效 |
 | `capture start/append` | 只写运行时会话；同一幂等键不得重复记录；不运行来源、索引、Git 或全库验证 |
-| `capture propose` | 候选只能引用会话中存在的用户表达；新版本取代旧版本但不创建正式闪念 |
+| `capture propose` | 候选只能引用会话中存在的用户表达；v2 必须带来源、触发和激活逻辑锚点；新版本取代旧版本但不创建正式闪念 |
 | `capture finalize` | 必须确认最新候选覆盖本轮内容；候选之后没有新表达；一次原子生成多张闪念并创建后台任务 |
 | `capture maintenance-check` | 比较当前上下文与讨论时指纹；变化时原子转为 `context_changed` |
 | `capture maintenance-update` | 维护任务暂停、恢复、失败或完成；重试最多三次，耗尽后转为 `failed` |
@@ -175,7 +179,7 @@ finalize 同时创建可恢复的运行时维护任务。任务允许 `pending`�
 | `permanent revise` / `permanent feedback` | 只能追加用户亲自提供并确认的内容；CLI 只机械添加区块、时间戳和规范换行 |
 | `connect propose` | 两端都必须是已存在的正式卡片；零连接节点本身有效 |
 | `connect accept` | 必须是用户确认的既有 `pending` 连接候选，接受时原子写入双向关系 |
-| `review --expire` | 仅将超过创建时间或 `expires_at` 48 小时且仍为 `pending` 的闪念改为 `expired`，不删除文件 |
+| `review` | 只读返回待处理材料，并按创建时间标记超过 48 小时的陈旧闪念 |
 | `maintain metadata` | 只机械删除正式内容中已废弃的 `summary` 字段，不改正文、快照或关系 |
 
 人的发起、作者权、苏格拉底式澄清与完整草稿确认规则由 `AGENTS.md` 和相关 Skills 定义；本文件只校验其在 CLI 边界留下的确认参数、候选状态和内容哈希。正式卡片被接纳后即为网络节点，没有合适对象时允许零语义连接。

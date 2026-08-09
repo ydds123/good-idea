@@ -9,11 +9,12 @@ import re
 import secrets
 import urllib.parse
 import urllib.request
-from datetime import datetime, timedelta
+from datetime import datetime
 from pathlib import Path
 from typing import Any
 
 from .capture import CaptureRuntime
+from .contracts import FLASH_STALE_AFTER, NOTE_SPECS, PERMANENT_CARD_TYPES
 from .errors import GitError, IntegrityError, ValidationError
 from .metadata import dump_frontmatter, parse_document, replace_frontmatter
 from .notes import (
@@ -23,6 +24,7 @@ from .notes import (
     extract_snapshot,
     normalize_source_layout,
     render_note,
+    render_flash_event,
     render_source_note,
     replace_source_snapshot,
     snapshot_hash,
@@ -45,10 +47,25 @@ PURE_CONFIRMATIONS = {
     "是",
     "没问题",
 }
-PERMANENT_CARD_TYPES = {"permanent", "mother", "action", "index"}
 PROPOSAL_START = "<!-- goodidea:proposal-json:start -->"
 PROPOSAL_END = "<!-- goodidea:proposal-json:end -->"
 SHA256_RE = re.compile(r"^[0-9a-f]{64}$")
+
+
+def _pending_proposal(
+    root: Path, category: str, proposal_id: str, expected_type: str
+) -> tuple[Path, str, dict[str, Any]]:
+    rel = Path(f".goodidea/proposals/{category}/{proposal_id}.md")
+    path = root / rel
+    if not path.is_file():
+        raise ValidationError(f"找不到待处理候选：{proposal_id}")
+    text = path.read_text(encoding="utf-8")
+    metadata, _ = parse_document(text)
+    if metadata.get("id") != proposal_id or metadata.get("type") != expected_type:
+        raise IntegrityError(f"候选文件身份异常：{proposal_id}")
+    if metadata.get("status") != "pending":
+        raise ValidationError("候选已处理")
+    return rel, text, metadata
 
 
 def _origin_filename(value: Any) -> str:
@@ -190,24 +207,6 @@ def _source_metadata_identity(
     return "local", identity_key, stable_id("SRC", identity_key, dated=False)
 
 
-def _source_state_record_by_id(
-    state: dict[str, Any], source_id: str
-) -> tuple[str, dict[str, Any]]:
-    source_records = state.get("sources", {})
-    if not isinstance(source_records, dict):
-        raise IntegrityError("来源账本 sources 必须是对象")
-    matches = [
-        (str(identity_key), record)
-        for identity_key, record in source_records.items()
-        if isinstance(record, dict) and record.get("id") == source_id
-    ]
-    if not matches:
-        raise IntegrityError(f"来源账本缺少 ID：{source_id}")
-    if len(matches) != 1:
-        raise IntegrityError(f"来源账本中 ID 重复：{source_id}")
-    return matches[0]
-
-
 def new_transaction_id(prefix: str) -> str:
     stamp = datetime.now().astimezone().strftime("%Y%m%d%H%M%S")
     return f"{prefix}-{stamp}-{secrets.token_hex(4)}"
@@ -335,15 +334,7 @@ def _prepare_permanent_draft(
 
 
 def _default_status(note_type: str) -> str:
-    return {
-        "flash": "pending",
-        "interesting": "pending",
-        "todo": "open",
-        "permanent": "active",
-        "mother": "open",
-        "action": "planned",
-        "index": "active",
-    }[note_type]
+    return str(NOTE_SPECS[note_type]["default"])
 
 
 def _rewrite_wiki_paths(
@@ -513,9 +504,6 @@ class GoodIdeaService:
         proposal = session["proposal"]
         entries = {entry["entry_id"]: entry for entry in session.get("entries", [])}
         timestamp = now_iso()
-        expires_at = (
-            datetime.now().astimezone() + timedelta(hours=48)
-        ).isoformat(timespec="seconds")
         writes: dict[Path, str] = {}
         reserved: set[Path] = set()
         formal_flashes: list[dict[str, Any]] = []
@@ -540,10 +528,9 @@ class GoodIdeaService:
                 "status": "pending",
                 "created_at": created_at,
                 "updated_at": timestamp,
-                "expires_at": expires_at,
                 "source_ids": [],
             }
-            writes[rel] = render_note(metadata, [("原始记录", candidate["body"])])
+            writes[rel] = render_flash_event(metadata, candidate)
             formal_flashes.append(
                 {
                     "id": flash_id,
@@ -732,34 +719,14 @@ class GoodIdeaService:
                 if not found or found[2].get("type") != "flash":
                     raise ValidationError(f"找不到要关联的正式闪念：{flash_id}")
                 attached_flashes.append(found)
-        source_records = state.setdefault("sources", {})
-        if not isinstance(source_records, dict):
-            raise IntegrityError("来源账本 sources 必须是对象")
-        source_record = source_records.get(identity_key)
-        source_created = source_record is None
+        existing_source = self.repo.find_note(source_id)
+        source_created = existing_source is None
         flash_title = motivation.strip().splitlines()[0][:40] if not attached_ids else ""
 
-        if source_record is not None:
-            if not isinstance(source_record, dict):
-                raise IntegrityError(f"来源账本记录不是对象：{identity_key}")
-            if source_record.get("id") != source_id:
-                raise IntegrityError(f"来源账本身份异常：{identity_key}")
-            source_rel = Path(str(source_record.get("path") or ""))
-            if (
-                source_rel.is_absolute()
-                or ".." in source_rel.parts
-                or source_rel.parent != TYPE_LOCATIONS["source"]
-            ):
-                raise IntegrityError(f"来源账本路径无效：{identity_key}")
-            source_path = self.repo.root / source_rel
-            if not source_path.is_file():
-                raise IntegrityError(f"来源账本指向不存在的文件：{source_rel}")
-            source_note = source_path.read_text(encoding="utf-8")
-            source_meta, _ = parse_document(source_note)
-            if source_meta.get("id") != source_id:
-                raise IntegrityError(f"来源账本与文件 ID 不一致：{identity_key}")
-            if source_record.get("title") != source_meta.get("title"):
-                raise IntegrityError(f"来源账本与文件标题不一致：{identity_key}")
+        if existing_source is not None:
+            source_rel, source_note, source_meta = existing_source
+            if source_meta.get("type") != "source":
+                raise IntegrityError(f"来源 ID 与非来源内容冲突：{source_id}")
             stored_kind, stored_identity_key, stored_source_id = (
                 _source_metadata_identity(source_meta)
             )
@@ -768,7 +735,7 @@ class GoodIdeaService:
                 or stored_identity_key != identity_key
                 or stored_source_id != source_id
             ):
-                raise IntegrityError(f"来源账本与文件身份不一致：{identity_key}")
+                raise IntegrityError(f"来源文件身份不一致：{identity_key}")
             source_title = source_meta["title"]
             if runtime:
                 localized, assets, failures = self._localize_images(
@@ -819,7 +786,6 @@ class GoodIdeaService:
                     str(preview.get("markdown", "")).encode("utf-8")
                 ).hexdigest(),
                 "image_failures": failures,
-                "flash_ids": flash_ids,
             }
             if source_kind == "web":
                 source_meta["canonical_url"] = identity_key
@@ -852,9 +818,6 @@ class GoodIdeaService:
                 "status": "pending",
                 "created_at": timestamp,
                 "updated_at": timestamp,
-                "expires_at": (
-                    datetime.now().astimezone() + timedelta(hours=48)
-                ).isoformat(timespec="seconds"),
                 "source_ids": [source_id],
             }
             flash_note = render_note(
@@ -868,11 +831,8 @@ class GoodIdeaService:
             writes[flash_rel] = flash_note
             flash_links.append(wiki_link(flash_rel, flash_title))
             flash_paths.append(flash_rel.as_posix())
-        if source_record is not None:
+        if existing_source is not None:
             source_meta["updated_at"] = timestamp
-            source_meta["flash_ids"] = list(
-                dict.fromkeys([*source_meta.get("flash_ids", []), *flash_ids])
-            )
             for flash_link in flash_links:
                 source_note = add_list_item_to_section(
                     source_note, "关联闪念", flash_link
@@ -882,11 +842,6 @@ class GoodIdeaService:
         else:
             source_note = render_source_note(source_meta, snapshot, flash_links)
         writes[source_rel] = source_note
-        source_records[identity_key] = {
-            "id": source_id,
-            "path": source_rel.as_posix(),
-            "title": source_title,
-        }
         result = {
             "source_id": source_id,
             "source_path": source_rel.as_posix(),
@@ -933,35 +888,22 @@ class GoodIdeaService:
         if existing := self._idempotent(txid):
             return existing
         state = self.repo.read_state()
-        source_state_key, source_state_record = _source_state_record_by_id(
-            state, source_id
-        )
-        if source_state_record.get("path") != source_rel.as_posix():
-            raise IntegrityError(f"来源账本路径与文件不一致：{source_id}")
-        if source_state_record.get("title") != source_meta.get("title"):
-            raise IntegrityError(f"来源账本标题与文件不一致：{source_id}")
-
-        source_kind, expected_state_key, expected_source_id = (
+        source_kind, source_identity_key, expected_source_id = (
             _source_metadata_identity(source_meta)
         )
         source_is_local = source_kind == "local"
-        if source_state_key != expected_state_key:
-            raise IntegrityError(f"来源账本身份键与文件不一致：{source_id}")
         if expected_source_id != source_id:
             raise IntegrityError(f"来源文件 ID 与身份不一致：{source_id}")
 
         if confirm_proposal:
-            proposal_record = state.get("proposals", {}).get(confirm_proposal)
-            if not proposal_record or proposal_record.get("kind") != "source-update":
-                raise ValidationError(f"找不到来源更新候选：{confirm_proposal}")
-            if proposal_record.get("status") != "pending":
-                raise ValidationError("来源更新候选已处理")
-            if proposal_record.get("source_id") != source_id:
-                raise IntegrityError("来源更新候选账本与目标来源不一致")
             if source_meta.get("pending_update") != confirm_proposal:
                 raise IntegrityError("来源文件当前待处理候选与确认目标不一致")
-            proposal_rel = Path(proposal_record["path"])
-            proposal_text = (self.repo.root / proposal_rel).read_text(encoding="utf-8")
+            proposal_rel, proposal_text, _ = _pending_proposal(
+                self.repo.root,
+                "source-updates",
+                confirm_proposal,
+                "source_update_proposal",
+            )
             payload = _proposal_payload(proposal_text)
             if payload.get("source_id") != source_id:
                 raise ValidationError("更新候选与目标来源不一致")
@@ -979,7 +921,7 @@ class GoodIdeaService:
                 raise IntegrityError("来源更新候选的新内容哈希与 preview 不一致")
             if source_is_local != (candidate_kind == "local"):
                 raise ValidationError("更新候选的来源类型与目标来源不一致")
-            if not source_is_local and candidate_identity_key != source_state_key:
+            if not source_is_local and candidate_identity_key != source_identity_key:
                 raise ValidationError("网页更新候选的规范链接与目标来源不一致")
             localized, assets, failures = self._localize_images(candidate)
             capture_status = str(candidate.get("status") or "complete")
@@ -1028,13 +970,8 @@ class GoodIdeaService:
                         new_source_rel = candidate_rel
                         break
                     collision += 1
-            proposal_meta, _ = parse_document(proposal_text)
-            proposal_meta["status"] = "accepted"
-            proposal_meta["updated_at"] = timestamp
-            proposal_text = replace_frontmatter(proposal_text, proposal_meta)
-            state["proposals"][confirm_proposal]["status"] = "accepted"
-            writes: dict[Path, str | bytes] = {proposal_rel: proposal_text, **assets}
-            deletes: set[Path] = set()
+            writes: dict[Path, str | bytes] = {**assets}
+            deletes: set[Path] = {proposal_rel}
             if new_source_rel != source_rel:
                 wiki_replacements = {
                     source_rel.with_suffix("").as_posix():
@@ -1064,19 +1001,8 @@ class GoodIdeaService:
                         if target_rel != rel or rewritten != note_text:
                             writes[target_rel] = rewritten
                 deletes.add(source_rel)
-                state = _rewrite_exact_paths(
-                    state,
-                    {source_rel.as_posix(): new_source_rel.as_posix()},
-                )
             else:
                 writes[source_rel] = updated_source
-            refreshed_state_key, refreshed_state_record = _source_state_record_by_id(
-                state, source_id
-            )
-            if refreshed_state_key != source_state_key:
-                raise IntegrityError(f"来源刷新时账本身份发生变化：{source_id}")
-            refreshed_state_record["title"] = new_title
-            refreshed_state_record["path"] = new_source_rel.as_posix()
             result = {
                 "source_id": source_id,
                 "source_path": new_source_rel.as_posix(),
@@ -1100,7 +1026,7 @@ class GoodIdeaService:
         )
         if source_is_local != (candidate_kind == "local"):
             raise ValidationError("更新候选的来源类型与目标来源不一致")
-        if not source_is_local and candidate_identity_key != source_state_key:
+        if not source_is_local and candidate_identity_key != source_identity_key:
             raise ValidationError("网页更新候选的规范链接与目标来源不一致")
         candidate_hash = hashlib.sha256(
             str(preview.get("markdown", "")).encode("utf-8")
@@ -1135,12 +1061,6 @@ class GoodIdeaService:
         source_meta["pending_update"] = proposal_id
         source_meta["updated_at"] = timestamp
         updated_source = replace_frontmatter(source_note, source_meta)
-        state.setdefault("proposals", {})[proposal_id] = {
-            "kind": "source-update",
-            "path": proposal_rel.as_posix(),
-            "status": "pending",
-            "source_id": source_id,
-        }
         result = {
             "source_id": source_id,
             "proposal_id": proposal_id,
@@ -1191,22 +1111,13 @@ class GoodIdeaService:
             "card_type": card_type,
             "authoring_mode": authoring_mode,
             "draft_sha256": draft_sha256,
+            "source_ids": checked_source_ids,
+            "from_ids": checked_from_ids,
             "created_at": timestamp,
             "updated_at": timestamp,
         }
         proposal_text = dump_frontmatter(proposal_meta) + user_draft
         state = self.repo.read_state()
-        state.setdefault("proposals", {})[proposal_id] = {
-            "kind": "permanent",
-            "path": proposal_rel.as_posix(),
-            "status": "pending",
-            "card_type": card_type,
-            "authoring_mode": authoring_mode,
-            "draft_sha256": draft_sha256,
-            "title": title,
-            "source_ids": checked_source_ids,
-            "from_ids": checked_from_ids,
-        }
         result = {
             "proposal_id": proposal_id,
             "proposal_path": proposal_rel.as_posix(),
@@ -1236,24 +1147,20 @@ class GoodIdeaService:
         if existing := self._idempotent(txid):
             return existing
         state = self.repo.read_state()
-        record = state.get("proposals", {}).get(proposal_id)
-        if not record or record.get("kind") != "permanent":
-            raise ValidationError(f"找不到永久卡片候选：{proposal_id}")
-        if record.get("status") != "pending":
-            raise ValidationError("永久卡片候选已处理")
-        authoring_mode = record.get("authoring_mode")
+        proposal_rel, proposal_text, proposal_meta = _pending_proposal(
+            self.repo.root, "permanent", proposal_id, "permanent_proposal"
+        )
+        authoring_mode = proposal_meta.get("authoring_mode")
         if authoring_mode not in {
             "user_verbatim",
             "user_body_agent_title",
             "user_confirmed_agent_structured",
         }:
             raise ValidationError("该候选不是用户原文草稿，禁止接纳；请撤销后由用户重新发起")
-        proposal_rel = Path(record["path"])
-        proposal_text = (self.repo.root / proposal_rel).read_text(encoding="utf-8")
-        proposal_meta, user_draft = parse_document(proposal_text)
+        _, user_draft = parse_document(proposal_text)
         title, normalized_draft, draft_sha256 = _validate_user_draft(user_draft)
-        expected_sha256 = record.get("draft_sha256")
-        card_type = record.get("card_type")
+        expected_sha256 = proposal_meta.get("draft_sha256")
+        card_type = proposal_meta.get("card_type")
         if card_type not in PERMANENT_CARD_TYPES:
             raise IntegrityError("永久卡片草稿类型非法")
         mirrored_fields = {
@@ -1268,8 +1175,6 @@ class GoodIdeaService:
         for key, expected in mirrored_fields.items():
             if proposal_meta.get(key) != expected:
                 raise IntegrityError(f"永久卡片草稿 Frontmatter 与账本不一致：{key}")
-        if record.get("title") != title:
-            raise IntegrityError("永久卡片草稿标题与账本不一致")
         if (
             not expected_sha256
             or draft_sha256 != expected_sha256
@@ -1293,26 +1198,19 @@ class GoodIdeaService:
             "created_at": timestamp,
             "updated_at": timestamp,
             "authoring_mode": authoring_mode,
-            "source_ids": record.get("source_ids", []),
-            "derived_from": record.get("from_ids", []),
+            "source_ids": proposal_meta.get("source_ids", []),
+            "derived_from": proposal_meta.get("from_ids", []),
         }
         card_text = dump_frontmatter(metadata) + normalized_draft
         writes: dict[Path, str | bytes] = {card_rel: card_text}
-        proposal_meta["status"] = "accepted"
-        proposal_meta["accepted_card_id"] = card_id
-        proposal_meta["updated_at"] = timestamp
-        writes[proposal_rel] = replace_frontmatter(proposal_text, proposal_meta)
-        for from_id in record.get("from_ids", []):
+        for from_id in proposal_meta.get("from_ids", []):
             found = self.repo.find_note(from_id)
             if not found or found[2].get("type") != "flash":
                 continue
             from_rel, from_text, from_meta = found
             from_meta["status"] = "processed"
-            from_meta["converted_to"] = card_id
             from_meta["updated_at"] = timestamp
             writes[from_rel] = replace_frontmatter(from_text, from_meta)
-        state["proposals"][proposal_id]["status"] = "accepted"
-        state["proposals"][proposal_id]["card_id"] = card_id
         result = {
             "proposal_id": proposal_id,
             "card_id": card_id,
@@ -1324,6 +1222,7 @@ class GoodIdeaService:
             action="permanent-accept",
             summary=title,
             writes=writes,
+            deletes={proposal_rel},
             state=state,
             result=result,
         )
@@ -1341,53 +1240,20 @@ class GoodIdeaService:
         if existing := self._idempotent(txid):
             return existing
         state = self.repo.read_state()
-        record = state.get("proposals", {}).get(proposal_id)
-        if not record or record.get("kind") != "permanent":
-            raise ValidationError(f"找不到永久卡片候选：{proposal_id}")
-        if record.get("status") != "pending":
-            raise ValidationError("只有待处理的永久卡片候选可以撤销")
-        proposal_rel = Path(record["path"])
-        proposal_path = self.repo.root / proposal_rel
-        if not proposal_path.is_file():
-            raise IntegrityError(f"永久卡片候选文件不存在：{proposal_rel}")
-        proposal_text = proposal_path.read_text(encoding="utf-8")
-        proposal_meta, _ = parse_document(proposal_text)
-        timestamp = now_iso()
-        proposal_meta = {
-            "id": proposal_id,
-            "type": "permanent_proposal",
-            "title": f"已撤销候选 {proposal_id}",
-            "status": "withdrawn",
-            "card_type": record.get("card_type", "unknown"),
-            "created_at": proposal_meta.get("created_at", timestamp),
-            "updated_at": timestamp,
-            "withdrawn_at": timestamp,
-            "withdraw_reason": reason.strip(),
-        }
-        tombstone = render_note(
-            proposal_meta,
-            [("撤销记录", reason.strip())],
+        proposal_rel, _, _ = _pending_proposal(
+            self.repo.root, "permanent", proposal_id, "permanent_proposal"
         )
-        record.update(
-            {
-                "status": "withdrawn",
-                "withdrawn_at": timestamp,
-                "withdraw_reason": reason.strip(),
-            }
-        )
-        record.pop("title", None)
-        record.pop("draft_sha256", None)
-        record.pop("authoring_mode", None)
         result = {
             "proposal_id": proposal_id,
-            "proposal_path": proposal_rel.as_posix(),
             "status": "withdrawn",
+            "reason": reason.strip(),
         }
         return self.repo.commit(
             transaction_id=txid,
             action="permanent-withdraw",
             summary=f"撤销 {proposal_id}",
-            writes={proposal_rel: tombstone},
+            writes={},
+            deletes={proposal_rel},
             state=state,
             result=result,
         )
@@ -1414,12 +1280,7 @@ class GoodIdeaService:
         }:
             raise ValidationError(f"找不到正式卡片：{card_id}")
         rel, text, metadata = found
-        allowed = {
-            "permanent": {"active", "revised", "retired"},
-            "mother": {"open", "evolving", "retired"},
-            "action": {"planned", "acting", "observing", "reviewed"},
-            "index": {"active", "revised", "retired"},
-        }[metadata["type"]]
+        allowed = NOTE_SPECS[metadata["type"]]["statuses"]
         if status and status not in allowed:
             raise ValidationError(
                 f"{metadata['type']} 不允许状态 {status}；可选：{sorted(allowed)}"
@@ -1700,6 +1561,73 @@ class GoodIdeaService:
             result=result,
         )
 
+    def maintain_contracts(
+        self, *, transaction_id: str | None = None
+    ) -> dict[str, Any]:
+        """Make files canonical and remove state or terminal-proposal mirrors."""
+        txid = transaction_id or new_transaction_id("maintain-contracts")
+        if existing := self._idempotent(txid):
+            return existing
+        state = self.repo.read_state()
+        legacy_proposals = state.pop("proposals", {}) or {}
+        state.pop("sources", None)
+        writes: dict[Path, str | bytes] = {}
+        deletes: set[Path] = set()
+        cleaned_fields = 0
+        for note_type, location in TYPE_LOCATIONS.items():
+            for path in sorted((self.repo.root / location).glob("*.md")):
+                rel = path.relative_to(self.repo.root)
+                text = path.read_text(encoding="utf-8")
+                metadata, _ = parse_document(text)
+                changed = False
+                for field in ("expires_at", "converted_to"):
+                    if field in metadata:
+                        metadata.pop(field)
+                        cleaned_fields += 1
+                        changed = True
+                if note_type == "source" and "flash_ids" in metadata:
+                    metadata.pop("flash_ids")
+                    cleaned_fields += 1
+                    changed = True
+                if changed:
+                    writes[rel] = replace_frontmatter(text, metadata)
+
+        proposal_root = self.repo.root / ".goodidea/proposals"
+        for path in sorted(proposal_root.glob("*/*.md")):
+            rel = path.relative_to(self.repo.root)
+            text = path.read_text(encoding="utf-8")
+            metadata, _ = parse_document(text)
+            proposal_id = str(metadata.get("id") or path.stem)
+            if metadata.get("status") != "pending":
+                deletes.add(rel)
+                continue
+            if metadata.get("type") == "permanent_proposal":
+                legacy = legacy_proposals.get(proposal_id, {})
+                changed = False
+                for field, legacy_field in (
+                    ("source_ids", "source_ids"),
+                    ("from_ids", "from_ids"),
+                ):
+                    if field not in metadata:
+                        metadata[field] = list(legacy.get(legacy_field, []))
+                        changed = True
+                if changed:
+                    writes[rel] = replace_frontmatter(text, metadata)
+        result = {
+            "cleaned_fields": cleaned_fields,
+            "deleted_terminal_proposals": len(deletes),
+            "removed_state_mirrors": ["sources", "proposals"],
+        }
+        return self.repo.commit(
+            transaction_id=txid,
+            action="maintain-contracts",
+            summary="移除可推导状态镜像与已终结候选",
+            writes=writes,
+            deletes=deletes,
+            state=state,
+            result=result,
+        )
+
     def connect_propose(
         self,
         from_id: str,
@@ -1715,10 +1643,9 @@ class GoodIdeaService:
             raise ValidationError("连接候选必须包含关系类型和理由")
         left = self.repo.find_note(from_id)
         right = self.repo.find_note(to_id)
-        permanent_types = {"permanent", "mother", "action", "index"}
-        if not left or left[2].get("type") not in permanent_types:
+        if not left or left[2].get("type") not in PERMANENT_CARD_TYPES:
             raise ValidationError(f"连接起点不是正式卡片：{from_id}")
-        if not right or right[2].get("type") not in permanent_types:
+        if not right or right[2].get("type") not in PERMANENT_CARD_TYPES:
             raise ValidationError(f"连接终点不是正式卡片：{to_id}")
         txid = transaction_id or new_transaction_id("connect-propose")
         if existing := self._idempotent(txid):
@@ -1742,13 +1669,6 @@ class GoodIdeaService:
         }
         proposal = _proposal_document(metadata, payload)
         state = self.repo.read_state()
-        state.setdefault("proposals", {})[proposal_id] = {
-            "kind": "connection",
-            "path": proposal_rel.as_posix(),
-            "status": "pending",
-            "from_id": from_id,
-            "to_id": to_id,
-        }
         result = {
             "proposal_id": proposal_id,
             "proposal_path": proposal_rel.as_posix(),
@@ -1773,13 +1693,9 @@ class GoodIdeaService:
         if existing := self._idempotent(txid):
             return existing
         state = self.repo.read_state()
-        record = state.get("proposals", {}).get(proposal_id)
-        if not record or record.get("kind") != "connection":
-            raise ValidationError(f"找不到连接候选：{proposal_id}")
-        if record.get("status") != "pending":
-            raise ValidationError("连接候选已处理")
-        proposal_rel = Path(record["path"])
-        proposal_text = (self.repo.root / proposal_rel).read_text(encoding="utf-8")
+        proposal_rel, proposal_text, _ = _pending_proposal(
+            self.repo.root, "connections", proposal_id, "connection_proposal"
+        )
         payload = _proposal_payload(proposal_text)
         left = self.repo.find_note(payload["from_id"])
         right = self.repo.find_note(payload["to_id"])
@@ -1804,11 +1720,6 @@ class GoodIdeaService:
         right_text = replace_frontmatter(
             add_list_item_to_section(right[1], "连接", right_item), right_meta
         )
-        proposal_meta, _ = parse_document(proposal_text)
-        proposal_meta["status"] = "accepted"
-        proposal_meta["updated_at"] = timestamp
-        proposal_text = replace_frontmatter(proposal_text, proposal_meta)
-        state["proposals"][proposal_id]["status"] = "accepted"
         state.setdefault("connections", []).append(
             {
                 "proposal_id": proposal_id,
@@ -1827,8 +1738,8 @@ class GoodIdeaService:
             writes={
                 left[0]: left_text,
                 right[0]: right_text,
-                proposal_rel: proposal_text,
             },
+            deletes={proposal_rel},
             state=state,
             result=result,
         )
@@ -1836,78 +1747,36 @@ class GoodIdeaService:
     def review(
         self,
         *,
-        expire: bool = False,
-        transaction_id: str | None = None,
         current_time: datetime | None = None,
     ) -> dict[str, Any]:
         now = current_time or datetime.now().astimezone()
         pending: list[dict[str, Any]] = []
-        expired_writes: dict[Path, str] = {}
+        stale: list[str] = []
         for note_type in ("flash", "interesting", "todo", "source"):
             for path in sorted((self.repo.root / TYPE_LOCATIONS[note_type]).glob("*.md")):
                 text = path.read_text(encoding="utf-8")
                 metadata, _ = parse_document(text)
                 if metadata.get("status") in {"pending", "open", "partial", "failed"}:
-                    pending.append(
-                        {
+                    item = {
                             "id": metadata["id"],
                             "type": metadata["type"],
                             "title": metadata["title"],
                             "status": metadata["status"],
                             "path": path.relative_to(self.repo.root).as_posix(),
                         }
-                    )
-                if (
-                    expire
-                    and note_type == "flash"
-                    and metadata.get("status") == "pending"
-                ):
-                    deadline_raw = metadata.get("expires_at")
-                    if deadline_raw:
-                        deadline = datetime.fromisoformat(deadline_raw)
-                    else:
-                        deadline = datetime.fromisoformat(metadata["created_at"]) + timedelta(
-                            hours=48
-                        )
-                    if now >= deadline:
-                        metadata["status"] = "expired"
-                        metadata["updated_at"] = now.isoformat(timespec="seconds")
-                        expired_writes[path.relative_to(self.repo.root)] = (
-                            replace_frontmatter(text, metadata)
-                        )
-        if not expire:
-            return {"pending": pending, "count": len(pending), "write": False}
-        if not expired_writes:
-            return {
-                "pending": pending,
-                "expired": [],
-                "count": 0,
-                "no_change": True,
-            }
-        txid = transaction_id or new_transaction_id("review-expire")
-        if existing := self._idempotent(txid):
-            return existing
-        state = self.repo.read_state()
-        expired_ids = []
-        for content in expired_writes.values():
-            metadata, _ = parse_document(content)
-            expired_ids.append(metadata["id"])
-        result = {"expired": expired_ids, "count": len(expired_ids)}
-        return self.repo.commit(
-            transaction_id=txid,
-            action="review-expire",
-            summary=f"失效 {len(expired_ids)} 条闪念",
-            writes=expired_writes,
-            state=state,
-            result=result,
-        )
+                    if note_type == "flash" and metadata.get("status") == "pending":
+                        deadline = datetime.fromisoformat(metadata["created_at"]) + FLASH_STALE_AFTER
+                        item["stale"] = now >= deadline
+                        if item["stale"]:
+                            stale.append(str(metadata["id"]))
+                    pending.append(item)
+        return {"pending": pending, "stale": stale, "count": len(pending), "write": False}
 
     def lint(self, *, verify_git: bool = False) -> dict[str, Any]:
         issues: list[str] = []
         warnings: list[str] = []
         seen_ids: dict[str, str] = {}
         all_notes: list[tuple[Path, str, dict[str, Any]]] = []
-        source_identities: dict[str, tuple[str, str, str]] = {}
         for expected_type, location in TYPE_LOCATIONS.items():
             for path in sorted((self.repo.root / location).glob("*.md")):
                 rel = path.relative_to(self.repo.root)
@@ -1926,7 +1795,22 @@ class GoodIdeaService:
                     issues.append(
                         f"{rel}: 目录要求 {expected_type}，实际 {metadata.get('type')}"
                     )
+                spec = NOTE_SPECS[expected_type]
+                if metadata.get("status") not in spec["statuses"]:
+                    issues.append(
+                        f"{rel}: {expected_type} 不允许状态 {metadata.get('status')}"
+                    )
+                missing_type_fields = sorted(
+                    key for key in spec["required"] if key not in metadata
+                )
+                if missing_type_fields:
+                    issues.append(f"{rel}: {expected_type} 缺少字段 {missing_type_fields}")
+                for relation_field in ("source_ids", "derived_from"):
+                    if relation_field in metadata and not isinstance(metadata[relation_field], list):
+                        issues.append(f"{rel}: {relation_field} 必须是 ID 列表")
                 note_id = str(metadata.get("id", ""))
+                if note_id and not spec["id"].fullmatch(note_id):
+                    issues.append(f"{rel}: ID 格式与 {expected_type} 不一致")
                 if note_id in seen_ids:
                     issues.append(f"重复 ID {note_id}: {seen_ids[note_id]}, {rel}")
                 seen_ids[note_id] = rel.as_posix()
@@ -1954,16 +1838,11 @@ class GoodIdeaService:
                     if metadata.get("source_url"):
                         issues.append(f"{rel}: 不应持久化原始分享链接 source_url")
                     try:
-                        _, identity_key, expected_source_id = (
+                        _, _, expected_source_id = (
                             _source_metadata_identity(metadata)
                         )
                         if note_id != expected_source_id:
                             issues.append(f"{rel}: 来源 ID 与身份字段不一致")
-                        source_identities[note_id] = (
-                            identity_key,
-                            rel.as_posix(),
-                            str(metadata.get("title", "")),
-                        )
                     except ValidationError as exc:
                         issues.append(f"{rel}: {exc}")
                     expected_h1 = f"# {metadata.get('title', '')}\n"
@@ -1994,93 +1873,37 @@ class GoodIdeaService:
         if expected_index != current_index:
             issues.append("index.md 与当前卡片集合不一致")
         state = self.repo.read_state()
-        state_source_ids: set[str] = set()
-        source_records = state.get("sources", {})
-        if not isinstance(source_records, dict):
-            issues.append("来源账本 sources 必须是对象")
-            source_records = {}
-        for identity_key, record in source_records.items():
-            if not isinstance(record, dict):
-                issues.append(f"来源账本记录不是对象：{identity_key}")
-                continue
-            raw_path = str(record.get("path") or "")
-            rel_path = Path(raw_path)
-            if (
-                not raw_path
-                or rel_path.is_absolute()
-                or ".." in rel_path.parts
-                or rel_path.parent != TYPE_LOCATIONS["source"]
-            ):
-                issues.append(f"来源账本路径无效：{identity_key}")
-                continue
-            target = self.repo.root / rel_path
-            if not target.is_file():
-                issues.append(f"来源账本失效：{identity_key}")
-                continue
-            try:
-                target_text = target.read_text(encoding="utf-8")
-                target_meta, _ = parse_document(target_text)
-            except Exception as exc:
-                issues.append(f"来源账本目标无法解析：{identity_key}: {exc}")
-                continue
-            record_id = str(record.get("id") or "")
-            state_source_ids.add(record_id)
-            if target_meta.get("type") != "source":
-                issues.append(f"来源账本目标类型错误：{identity_key}")
-            if record_id != target_meta.get("id"):
-                issues.append(f"来源账本 ID 与文件不一致：{identity_key}")
-            if record.get("title") != target_meta.get("title"):
-                issues.append(f"来源账本标题与文件不一致：{identity_key}")
-            expected_identity = source_identities.get(record_id)
-            if not expected_identity:
-                issues.append(f"来源账本 ID 未对应有效来源：{identity_key}")
-                continue
-            expected_key, expected_path, expected_title = expected_identity
-            if str(identity_key) != expected_key:
-                issues.append(f"来源账本 identity key 与来源不一致：{identity_key}")
-            if raw_path != expected_path:
-                issues.append(f"来源账本路径与来源不一致：{identity_key}")
-            if record.get("title") != expected_title:
-                issues.append(f"来源账本标题镜像异常：{identity_key}")
-        for note_id, (identity_key, _, _) in source_identities.items():
-            if note_id not in state_source_ids:
-                issues.append(f"来源文件缺少账本记录：{identity_key}")
-        for proposal_id, record in state.get("proposals", {}).items():
-            if record.get("kind") != "permanent":
-                continue
-            proposal_path = self.repo.root / record.get("path", "")
-            if not proposal_path.is_file():
-                issues.append(f"永久卡片草稿账本失效：{proposal_id}")
-                continue
+        if state.get("sources"):
+            issues.append("state.json 仍包含可由来源文件推导的 sources 镜像")
+        if state.get("proposals"):
+            issues.append("state.json 仍包含可由候选文件推导的 proposals 镜像")
+        permanent_proposals = self.repo.root / ".goodidea/proposals/permanent"
+        for proposal_path in sorted(permanent_proposals.glob("*.md")):
+            proposal_id = proposal_path.stem
             try:
                 proposal_text = proposal_path.read_text(encoding="utf-8")
                 proposal_meta, proposal_body = parse_document(proposal_text)
             except Exception as exc:
                 issues.append(f"永久卡片草稿无法解析：{proposal_id}: {exc}")
                 continue
-            if proposal_meta.get("status") != record.get("status"):
-                issues.append(f"永久卡片草稿状态不一致：{proposal_id}")
-            if record.get("status") in {"pending", "accepted"}:
-                if record.get("authoring_mode") not in {
-                    "user_verbatim",
-                    "user_body_agent_title",
-                    "user_confirmed_agent_structured",
-                }:
-                    issues.append(f"永久卡片草稿不是用户原文：{proposal_id}")
-                    continue
-                try:
-                    _, _, actual_sha256 = _validate_user_draft(proposal_body)
-                except ValidationError as exc:
-                    issues.append(f"永久卡片草稿格式异常：{proposal_id}: {exc}")
-                    continue
-                if (
-                    actual_sha256 != record.get("draft_sha256")
-                    or actual_sha256 != proposal_meta.get("draft_sha256")
-                ):
-                    issues.append(f"永久卡片草稿哈希异常：{proposal_id}")
-            elif record.get("status") == "withdrawn":
-                if PROPOSAL_START in proposal_text or "## 机器数据" in proposal_text:
-                    issues.append(f"已撤销草稿仍暴露内部负载：{proposal_id}")
+            if proposal_meta.get("id") != proposal_id:
+                issues.append(f"永久卡片草稿文件名与 ID 不一致：{proposal_id}")
+            if proposal_meta.get("status") != "pending":
+                issues.append(f"候选目录只允许待处理草稿：{proposal_id}")
+            if proposal_meta.get("authoring_mode") not in {
+                "user_verbatim",
+                "user_body_agent_title",
+                "user_confirmed_agent_structured",
+            }:
+                issues.append(f"永久卡片草稿不是用户原文：{proposal_id}")
+                continue
+            try:
+                _, _, actual_sha256 = _validate_user_draft(proposal_body)
+            except ValidationError as exc:
+                issues.append(f"永久卡片草稿格式异常：{proposal_id}: {exc}")
+                continue
+            if actual_sha256 != proposal_meta.get("draft_sha256"):
+                issues.append(f"永久卡片草稿哈希异常：{proposal_id}")
         obsidian_root = self.repo.root / ".obsidian"
         try:
             app_config = json.loads(

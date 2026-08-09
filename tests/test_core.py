@@ -21,8 +21,9 @@ from goodidea.notes import (
     snapshot_hash,
     validate_source_note,
 )
-from goodidea.repository import Repository, initialize_vault
+from goodidea.repository import Repository
 from goodidea.service import GoodIdeaService, _rewrite_wiki_paths
+from tests.support import initialize_test_vault
 
 
 def git(root: Path, *args: str) -> str:
@@ -39,7 +40,7 @@ class GoodIdeaCoreTests(unittest.TestCase):
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()
         self.root = Path(self.temp.name) / "vault"
-        initialize_vault(self.root)
+        initialize_test_vault(self.root)
         self.repo = Repository(self.root)
         self.service = GoodIdeaService(self.repo)
 
@@ -99,16 +100,6 @@ class GoodIdeaCoreTests(unittest.TestCase):
             "status": "complete",
             "extractor": "local-test",
         }
-
-    def test_init_refuses_nonempty_directory_without_overwrite(self):
-        other = Path(self.temp.name) / "existing"
-        other.mkdir()
-        sentinel = other / "AGENTS.md"
-        sentinel.write_text("用户原有文件", encoding="utf-8")
-        with self.assertRaises(ValidationError):
-            initialize_vault(other)
-        self.assertEqual(sentinel.read_text(encoding="utf-8"), "用户原有文件")
-        self.assertFalse((other / ".git").exists())
 
     def test_transaction_id_and_symlink_ancestor_cannot_escape_repository(self):
         outside = Path(self.temp.name) / "outside"
@@ -235,6 +226,44 @@ class GoodIdeaCoreTests(unittest.TestCase):
         self.assertEqual((self.root / "index.md").read_text(encoding="utf-8"), before_index)
         self.assertEqual(git(self.root, "status", "--short"), "")
 
+    def test_flash_event_v2_requires_and_renders_cognition_anchors(self):
+        runtime = CaptureRuntime(self.root)
+        started = runtime.start(
+            text="我看到作图心法里的出卷人思维，联想到控制论的可能性空间。",
+            context_refs=["https://example.com/article"],
+            transaction_id="event-v2-start",
+        )
+        base = {
+            "title": "从出卷人思维连接到可能性空间",
+            "body": "AI 生图实践触发了对控制论的重新理解，两者构成从实践回到理论的研究脉络。",
+            "entry_ids": [started["entry_id"]],
+            "context_refs": ["https://example.com/article"],
+        }
+        with self.assertRaises(ValidationError):
+            runtime.propose(
+                started["session_id"], flashes=[base], format_version=2,
+                transaction_id="event-v2-invalid",
+            )
+        event = {
+            **base,
+            "source_anchor": "外部作图文章的出卷人概念与用户提到的控制论原书。",
+            "trigger_anchor": "研究 ChatGPT 生图时突然把过去分散的阅读和讨论连了起来，并感到兴奋。",
+            "activated_logic": "具体作图实践触发方法类比，再回接抽象理论底座。",
+        }
+        proposed = runtime.propose(
+            started["session_id"], flashes=[event], format_version=2,
+            transaction_id="event-v2-propose",
+        )
+        finalized = self.service.capture_finalize(
+            runtime, started["session_id"], proposal_id=proposed["proposal_id"],
+            confirmed_by_user=True, transaction_id="event-v2-finalize",
+        )
+        note = (self.root / finalized["result"]["flashes"][0]["path"]).read_text(
+            encoding="utf-8"
+        )
+        for heading in ("触发情境", "闪念内容", "激活逻辑", "来源与论证锚点"):
+            self.assertIn(f"## {heading}", note)
+
     def test_capture_start_and_discard_are_idempotent_after_session_removal(self):
         runtime = CaptureRuntime(self.root)
         started = runtime.start(
@@ -305,11 +334,9 @@ class GoodIdeaCoreTests(unittest.TestCase):
         self.assertEqual(runtime.status(started["session_id"])["sessions"][0]["entry_count"], 2)
         self.assertEqual(list((self.root / ".goodidea/assets").iterdir()), [])
         reviewed = self.service.review(
-            expire=True,
-            current_time=datetime.now().astimezone() + timedelta(days=30),
-            transaction_id="unfinished-must-not-expire",
+            current_time=datetime.now().astimezone() + timedelta(days=30)
         )
-        self.assertTrue(reviewed["no_change"])
+        self.assertEqual(reviewed["stale"], [])
         self.assertEqual(runtime.status(started["session_id"])["sessions"][0]["status"], "active")
 
     def test_capture_runtime_rejects_traversal_and_symlink_boundary(self):
@@ -450,11 +477,7 @@ class GoodIdeaCoreTests(unittest.TestCase):
                 (self.root / flash["path"]).read_text(encoding="utf-8")
             )
             self.assertEqual(metadata["created_at"], runtime_state["entries"][index]["recorded_at"])
-            lifetime = datetime.fromisoformat(metadata["expires_at"]) - datetime.fromisoformat(
-                metadata["updated_at"]
-            )
-            self.assertGreaterEqual(lifetime, timedelta(hours=47, minutes=59))
-            self.assertLessEqual(lifetime, timedelta(hours=48, minutes=1))
+            self.assertNotIn("expires_at", metadata)
         self.assertFalse((self.root / ".goodidea/runtime/captures" / session_id).exists())
         self.assertTrue((self.root / ".goodidea/runtime/completed-captures" / session_id).is_dir())
         replay = self.service.capture_finalize(
@@ -668,10 +691,11 @@ class GoodIdeaCoreTests(unittest.TestCase):
         )
         self.assertFalse(attached["result"]["flash_created"])
         source = self.repo.find_note(attached["result"]["source_id"])
-        self.assertEqual(set(source[2]["flash_ids"]), set(flash_ids))
+        self.assertNotIn("flash_ids", source[2])
         for flash_id in flash_ids:
             flash = self.repo.find_note(flash_id)
             self.assertIn(attached["result"]["source_id"], flash[2]["source_ids"])
+            self.assertIn(flash[0].with_suffix("").as_posix(), source[1])
 
     def test_maintenance_image_checkpoint_reuses_successful_asset_on_retry(self):
         runtime, session_id, _, proposal_id = self._capture_session_with_proposal(
@@ -740,7 +764,7 @@ class GoodIdeaCoreTests(unittest.TestCase):
         flash = (self.root / data["flash_path"]).read_text(encoding="utf-8")
         source_meta, source_body = parse_document(source)
         flash_meta, _ = parse_document(flash)
-        self.assertIn(data["flash_id"], source_meta["flash_ids"])
+        self.assertNotIn("flash_ids", source_meta)
         self.assertIn(data["source_id"], flash_meta["source_ids"])
         self.assertNotIn(data["flash_id"], source_body)
         self.assertNotIn("source_url", source_meta)
@@ -808,8 +832,6 @@ class GoodIdeaCoreTests(unittest.TestCase):
         flash_text = (self.root / flash_rel).read_text(encoding="utf-8")
         source_meta, _ = parse_document(source_text)
         flash_meta, _ = parse_document(flash_text)
-        identity_key = f"local:sha256:{preview['origin_sha256']}"
-
         self.assertTrue(data["source_created"])
         self.assertEqual(source_meta["origin_filename"], "本地资料.md")
         self.assertEqual(source_meta["origin_sha256"], preview["origin_sha256"])
@@ -824,8 +846,7 @@ class GoodIdeaCoreTests(unittest.TestCase):
         )
         self.assertIn("../.goodidea/assets/", source_text)
         self.assertNotIn("](images/local.png)", source_text)
-        state = self.repo.read_state()
-        self.assertEqual(state["sources"][identity_key]["id"], data["source_id"])
+        self.assertNotIn("sources", self.repo.read_state())
 
         moved_copy = self.local_preview(filename="移动后的副本.md", title="副本标题")
         second = self.service.source_commit(
@@ -838,7 +859,8 @@ class GoodIdeaCoreTests(unittest.TestCase):
         self.assertNotEqual(second["flash_id"], data["flash_id"])
         reused = self.repo.find_note(data["source_id"])
         self.assertEqual(reused[2]["origin_filename"], "本地资料.md")
-        self.assertEqual(len(reused[2]["flash_ids"]), 2)
+        self.assertNotIn("flash_ids", reused[2])
+        self.assertIn(second["flash_path"].removesuffix(".md"), reused[1])
 
         tracked_files = [
             path
@@ -1121,6 +1143,51 @@ class GoodIdeaCoreTests(unittest.TestCase):
         )
         self.assertEqual(restored_snapshot, snapshot_before)
 
+    def test_contract_maintenance_removes_only_derived_mirrors(self):
+        captured = self.service.source_commit(
+            self.preview(), motivation="用旧结构夹具验证契约收敛不会损坏正式内容。",
+            transaction_id="contracts-source",
+        )["result"]
+        proposal = self.service.permanent_propose(
+            "permanent",
+            draft="# 待处理判断\n\n这是一段仍需用户确认的正式判断草稿。\n",
+            source_ids=[captured["source_id"]],
+            from_ids=[captured["flash_id"]],
+            transaction_id="contracts-proposal",
+        )["result"]
+        source_path = self.root / captured["source_path"]
+        flash_path = self.root / captured["flash_path"]
+        source_text = source_path.read_text(encoding="utf-8")
+        source_meta, _ = parse_document(source_text)
+        source_meta["flash_ids"] = [captured["flash_id"]]
+        source_path.write_text(replace_frontmatter(source_text, source_meta), encoding="utf-8")
+        flash_text = flash_path.read_text(encoding="utf-8")
+        flash_meta, _ = parse_document(flash_text)
+        flash_meta["converted_to"] = "PER-20260809-deadbeef"
+        flash_meta["expires_at"] = "2026-08-11T00:00:00+08:00"
+        flash_path.write_text(replace_frontmatter(flash_text, flash_meta), encoding="utf-8")
+        state_path = self.root / ".goodidea/state.json"
+        state = self.repo.read_state()
+        state["sources"] = {"legacy": {"id": captured["source_id"]}}
+        state["proposals"] = {proposal["proposal_id"]: {"kind": "permanent"}}
+        state_path.write_text(
+            json.dumps(state, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
+            encoding="utf-8",
+        )
+        git(self.root, "add", source_path.relative_to(self.root), flash_path.relative_to(self.root), ".goodidea/state.json")
+        git(self.root, "commit", "-m", "test fixture: derived mirrors")
+
+        migrated = self.service.maintain_contracts(transaction_id="contracts-migrate")
+        self.assertEqual(migrated["result"]["cleaned_fields"], 3)
+        self.assertNotIn("sources", self.repo.read_state())
+        self.assertNotIn("proposals", self.repo.read_state())
+        self.assertNotIn("flash_ids", self.repo.find_note(captured["source_id"])[2])
+        cleaned_flash = self.repo.find_note(captured["flash_id"])[2]
+        self.assertNotIn("converted_to", cleaned_flash)
+        self.assertNotIn("expires_at", cleaned_flash)
+        self.assertTrue((self.root / proposal["proposal_path"]).is_file())
+        self.assertTrue(self.service.lint()["ok"])
+
     def test_lint_checks_obsidian_reading_baseline(self):
         app_path = self.root / ".obsidian/app.json"
         app = json.loads(app_path.read_text(encoding="utf-8"))
@@ -1158,9 +1225,6 @@ class GoodIdeaCoreTests(unittest.TestCase):
         (self.root / legacy_source_rel).write_text(source_text, encoding="utf-8")
         (self.root / legacy_flash_rel).write_text(flash_text, encoding="utf-8")
         state = self.repo.read_state()
-        state["sources"]["https://example.com/article"]["path"] = (
-            legacy_source_rel.as_posix()
-        )
         transaction_result = state["transactions"][
             "tx-before-filename-maintenance"
         ]["result"]
@@ -1187,10 +1251,6 @@ class GoodIdeaCoreTests(unittest.TestCase):
         self.assertIn(f"[[{source_rel.with_suffix('').as_posix()}", repaired_flash)
         validate_source_note(repaired_source, source_rel.as_posix())
         self.assertEqual(extract_snapshot(repaired_source)[0], original_snapshot)
-        self.assertEqual(
-            self.repo.read_state()["sources"]["https://example.com/article"]["path"],
-            source_rel.as_posix(),
-        )
         replay = self.service.source_commit(
             self.preview(),
             motivation="我要验证改文件名后来源和闪念仍保持双向关联",
@@ -1203,11 +1263,6 @@ class GoodIdeaCoreTests(unittest.TestCase):
         self.service.rollback(migrated["commit"], confirmed=True)
         self.assertTrue((self.root / legacy_source_rel).is_file())
         self.assertTrue((self.root / legacy_flash_rel).is_file())
-        restored_state = self.repo.read_state()
-        self.assertEqual(
-            restored_state["sources"]["https://example.com/article"]["path"],
-            legacy_source_rel.as_posix(),
-        )
         self.assertIn(
             legacy_source_rel.with_suffix("").as_posix(),
             (self.root / legacy_flash_rel).read_text(encoding="utf-8"),
@@ -1384,9 +1439,7 @@ class GoodIdeaCoreTests(unittest.TestCase):
         self.assertIn(new_path.with_suffix("").as_posix(), flash[1])
         self.assertIn(f"|更新后的示例文章]]", flash[1])
         self.assertNotIn(f"|示例文章]]", flash[1])
-        source_record = self.repo.read_state()["sources"]["https://example.com/article"]
-        self.assertEqual(source_record["path"], new_path.as_posix())
-        self.assertEqual(source_record["title"], "更新后的示例文章")
+        self.assertNotIn("sources", self.repo.read_state())
         self.assertTrue(self.service.lint()["ok"])
 
     def test_local_refresh_preserves_first_identity_and_updates_snapshot_hashes(self):
@@ -1401,10 +1454,6 @@ class GoodIdeaCoreTests(unittest.TestCase):
         original_meta = original_note[2]
         original_content_sha256 = original_meta["content_sha256"]
         original_snapshot_sha256 = original_meta["snapshot_sha256"]
-        initial_identity_key = (
-            f"local:sha256:{original_preview['origin_sha256']}"
-        )
-
         changed_preview = self.local_preview(
             "本地正文第二版，加入了反馈回路与选择标准。",
             filename="移动后且已修改.md",
@@ -1425,6 +1474,10 @@ class GoodIdeaCoreTests(unittest.TestCase):
         before_accept = self.repo.find_note(source_id)
         self.assertIn("本地正文第一版", before_accept[1])
         self.assertNotIn("本地正文第二版", before_accept[1])
+        proposal_text = (
+            self.root / proposal["proposal_path"]
+        ).read_text(encoding="utf-8")
+        self.assertNotIn(leaked_refresh_path, proposal_text)
 
         accepted = self.service.source_refresh(
             source_id,
@@ -1447,16 +1500,11 @@ class GoodIdeaCoreTests(unittest.TestCase):
             updated_meta["content_sha256"],
             hashlib.sha256(changed_preview["markdown"].encode("utf-8")).hexdigest(),
         )
-        state = self.repo.read_state()
-        self.assertEqual(list(state["sources"]), [initial_identity_key])
-        self.assertEqual(state["sources"][initial_identity_key]["id"], source_id)
-        proposal_text = (
-            self.root / proposal["proposal_path"]
-        ).read_text(encoding="utf-8")
-        self.assertNotIn(leaked_refresh_path, proposal_text)
+        self.assertNotIn("sources", self.repo.read_state())
+        self.assertFalse((self.root / proposal["proposal_path"]).exists())
         self.assertTrue(self.service.lint()["ok"])
 
-    def test_lint_rejects_mixed_source_fields_and_state_identity_tampering(self):
+    def test_lint_rejects_mixed_source_fields_and_derived_state_mirrors(self):
         local_preview = self.local_preview()
         captured = self.service.source_commit(
             local_preview,
@@ -1482,32 +1530,15 @@ class GoodIdeaCoreTests(unittest.TestCase):
 
         source_path.write_text(original_source, encoding="utf-8")
         state = json.loads(original_state)
-        identity_key = f"local:sha256:{local_preview['origin_sha256']}"
-        record = state["sources"].pop(identity_key)
-        state["sources"][f"{identity_key}-tampered"] = record
+        state["sources"] = {"duplicate": {"id": captured["source_id"]}}
         (self.root / ".goodidea/state.json").write_text(
             json.dumps(state, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
             encoding="utf-8",
         )
-        wrong_key = self.service.lint()
-        self.assertFalse(wrong_key["ok"])
+        mirrored = self.service.lint()
+        self.assertFalse(mirrored["ok"])
         self.assertTrue(
-            any("identity key 与来源不一致" in issue for issue in wrong_key["issues"])
-        )
-
-        (self.root / ".goodidea/state.json").write_text(
-            original_state, encoding="utf-8"
-        )
-        state = json.loads(original_state)
-        state["sources"][identity_key]["title"] = "被篡改的账本标题"
-        (self.root / ".goodidea/state.json").write_text(
-            json.dumps(state, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
-            encoding="utf-8",
-        )
-        wrong_title = self.service.lint()
-        self.assertFalse(wrong_title["ok"])
-        self.assertTrue(
-            any("标题与文件不一致" in issue for issue in wrong_title["issues"])
+            any("sources 镜像" in issue for issue in mirrored["issues"])
         )
 
     def test_lint_rejects_local_identity_fields_on_web_source(self):
@@ -1793,7 +1824,7 @@ class GoodIdeaCoreTests(unittest.TestCase):
         proposal_path.write_text(
             replace_frontmatter(clean_text, tampered_meta), encoding="utf-8"
         )
-        with self.assertRaises(IntegrityError):
+        with self.assertRaises(ValidationError):
             self.service.permanent_accept(
                 proposal_id,
                 confirmed_by_user=True,
@@ -1805,11 +1836,11 @@ class GoodIdeaCoreTests(unittest.TestCase):
             check=True,
         )
 
-        state = self.repo.read_state()
-        state["proposals"][proposal_id]["card_type"] = "invalid"
-        (self.root / ".goodidea/state.json").write_text(
-            json.dumps(state, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
-            encoding="utf-8",
+        clean_text = proposal_path.read_text(encoding="utf-8")
+        tampered_meta, _ = parse_document(clean_text)
+        tampered_meta["card_type"] = "invalid"
+        proposal_path.write_text(
+            replace_frontmatter(clean_text, tampered_meta), encoding="utf-8"
         )
         with self.assertRaises(IntegrityError):
             self.service.permanent_accept(
@@ -1818,7 +1849,7 @@ class GoodIdeaCoreTests(unittest.TestCase):
                 transaction_id="tx-state-tampered-accept",
             )
         subprocess.run(
-            ["git", "restore", "--", ".goodidea/state.json"],
+            ["git", "restore", "--", proposal["result"]["proposal_path"]],
             cwd=self.root,
             check=True,
         )
@@ -1829,9 +1860,7 @@ class GoodIdeaCoreTests(unittest.TestCase):
             transaction_id="tx-user-draft-withdraw",
         )
         self.assertEqual(withdrawn["result"]["status"], "withdrawn")
-        withdrawn_text = proposal_path.read_text(encoding="utf-8")
-        self.assertNotIn("这段正文完整表达", withdrawn_text)
-        self.assertNotIn("机器数据", withdrawn_text)
+        self.assertFalse(proposal_path.exists())
         with self.assertRaises(ValidationError):
             self.service.permanent_accept(
                 proposal_id,
@@ -1853,15 +1882,6 @@ class GoodIdeaCoreTests(unittest.TestCase):
             "# 用户占位草稿\n\n这段由用户写成的文字没有末尾换行\n",
         )
 
-        state = self.repo.read_state()
-        record = state["proposals"][proposal_id]
-        record.pop("authoring_mode")
-        record.pop("draft_sha256")
-        record.pop("title")
-        (self.root / ".goodidea/state.json").write_text(
-            json.dumps(state, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
-            encoding="utf-8",
-        )
         proposal_path.write_text(
             f'''---
 id: "{proposal_id}"
@@ -1886,7 +1906,7 @@ updated_at: "2026-08-04T00:00:00+08:00"
 ''',
             encoding="utf-8",
         )
-        git(self.root, "add", ".goodidea/state.json", proposal["result"]["proposal_path"])
+        git(self.root, "add", proposal["result"]["proposal_path"])
         git(self.root, "commit", "-m", "test fixture: legacy agent proposal")
         with self.assertRaises(ValidationError):
             self.service.permanent_accept(
@@ -1900,12 +1920,8 @@ updated_at: "2026-08-04T00:00:00+08:00"
             transaction_id="tx-legacy-withdraw",
         )
         self.assertEqual(withdrawn["result"]["status"], "withdrawn")
-        tombstone = proposal_path.read_text(encoding="utf-8")
-        self.assertNotIn("系统越权生成的旧标题", tombstone)
-        self.assertNotIn("这段错误正文不是用户写的", tombstone)
-        self.assertNotIn("机器数据", tombstone)
-        self.assertIn(f"# 已撤销候选 {proposal_id}", tombstone)
-        self.assertNotIn("title", self.repo.read_state()["proposals"][proposal_id])
+        self.assertFalse(proposal_path.exists())
+        self.assertNotIn("proposals", self.repo.read_state())
         self.assertTrue(self.service.lint()["ok"])
 
     def test_failed_and_partial_sources_are_explicit(self):
@@ -1946,21 +1962,17 @@ updated_at: "2026-08-04T00:00:00+08:00"
         self.assertIn("图片未能保存", source_note[1])
         self.assertNotIn("](https://example.com/image.png)", source_note[1])
 
-    def test_expiry_and_non_destructive_rollback(self):
+    def test_stale_review_and_non_destructive_rollback(self):
         capture = self.service.capture(
             "flash",
-            text="两天后如果仍未处理，这条闪念应失效",
+            text="两天后如果仍未处理，这条闪念应在回顾时标为陈旧",
             transaction_id="tx-expire-capture",
         )
         future = datetime.now().astimezone() + timedelta(days=3)
-        expired = self.service.review(
-            expire=True,
-            current_time=future,
-            transaction_id="tx-expire-review",
-        )
-        self.assertIn(capture["result"]["id"], expired["result"]["expired"])
+        reviewed = self.service.review(current_time=future)
+        self.assertIn(capture["result"]["id"], reviewed["stale"])
         after = self.repo.find_note(capture["result"]["id"])
-        self.assertEqual(after[2]["status"], "expired")
+        self.assertEqual(after[2]["status"], "pending")
 
         another = self.service.capture(
             "todo",

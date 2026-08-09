@@ -262,7 +262,7 @@ def model_prompt(
         "你是 Good idea 项目 Skill 路由评测器。只做路由判断，不执行用户请求，"
         "不调用工具，也不要修改文件。逐条独立判断，不能让相邻案例影响当前案例。\n\n"
         "规则：\n"
-        "1. primary_skill 是请求当前第一阶段的唯一所有者；没有足够信息或不属于七个 Skill 时用 no_route。\n"
+        "1. primary_skill 是请求当前第一阶段的唯一所有者；没有足够信息或不属于这些 Skill 时用 no_route。\n"
         "2. supporting_skills 只放用户明确要求、且必须在后续不同阶段交接的 Skill；"
         "某 Skill 在主 Skill 内部被引用但无需独立接管时不要列出。\n"
         "3. 多个 Skill 出现在不同阶段不是冲突；两个 Skill 同时声称拥有同一阶段且无法区分时 conflict=true。\n"
@@ -486,104 +486,11 @@ def evaluate_predictions(
     }
 
 
-def render_markdown(report: dict[str, Any]) -> str:
-    static = report["static_overlap"]
-    lines = [
-        "# Good idea Skill 路由评测",
-        "",
-        f"- 状态：`{report['status']}`",
-        f"- 证据类型：`{report['evidence_kind']}`",
-        f"- Skill：`{report['skill_count']}`",
-        f"- 场景案例：`{report['case_count']}`",
-        f"- description 指纹：`{report['description_fingerprint']}`",
-        "",
-        "## 证据边界",
-        "",
-        "静态扫描只说明 description 文本是否高度重叠。模型批量评测会逐条分类真实中文请求，"
-        "但不是 Codex 原生 Skill 激活遥测，也不等同于每个案例单独启动一次完整任务。",
-        "多个 Skill 只在不同阶段顺序交接时属于正常协作；争夺同一阶段才算冲突。",
-        "",
-        "## 静态重叠",
-        "",
-        f"- 阈值：`{static['threshold']}`",
-        f"- 未声明的高重叠：`{len(static['unapproved_high_overlaps'])}`",
-        f"- 已声明的高重叠：`{len(static['declared_high_overlaps'])}`",
-        "",
-        "| Skill A | Skill B | 相似度 | 解释 |",
-        "|---|---|---:|---|",
-    ]
-    for pair in static["pair_scores"][:7]:
-        explanation = pair.get("overlap_kind", "")
-        if pair.get("reason"):
-            explanation = f"{explanation}：{pair['reason']}"
-        lines.append(
-            f"| `{pair['skills'][0]}` | `{pair['skills'][1]}` | "
-            f"{pair['similarity']:.3f} | {explanation or '—'} |"
-        )
-    lines.extend(["", "## 重点覆盖的语义风险场景", ""])
-    for item in report.get("semantic_risk_hypotheses", []):
-        skills = " / ".join(f"`{name}`" for name in item["skills"])
-        lines.append(
-            f"- **{item['severity']} · {item['id']}** · {skills}：{item['hypothesis']}"
-        )
-    lines.extend(["", "## 重点覆盖的召回风险场景", ""])
-    for item in report.get("recall_risk_hypotheses", []):
-        lines.append(
-            f"- `{item['skill']}`：description 可能没有充分覆盖“{item['missing_intent']}”。"
-        )
-    model = report.get("model_evaluation")
-    if model:
-        summary = model["summary"]
-        lines.extend(
-            [
-                "",
-                "## 模型路由结果",
-                "",
-                f"- 通过：`{summary['passed']}/{summary['total']}`",
-                f"- 失败：`{summary['failed']}`",
-                f"- 模型判断为冲突：`{summary['predicted_conflicts']}`",
-                f"- 模型：`{report.get('runner', {}).get('model', 'unknown')}`",
-                "",
-                "| 路由 | 通过 | 总数 | 通过率 |",
-                "|---|---:|---:|---:|",
-            ]
-        )
-        for route, stats in model["per_route"].items():
-            value = "—" if stats["pass_rate"] is None else f"{stats['pass_rate']:.3f}"
-            lines.append(
-                f"| `{route}` | {stats['passed']} | {stats['total']} | {value} |"
-            )
-        lines.extend(["", "## 失败案例", ""])
-        if not model["failures"] and not model["errors"]:
-            lines.append("无。")
-        else:
-            for error in model["errors"]:
-                lines.append(f"- 结果结构错误：{error}")
-            for item in model["failures"]:
-                lines.append(
-                    f"- `{item['id']}`：{'；'.join(item['failures'])}。"
-                    f"请求：{item['text']}"
-                )
-    else:
-        lines.extend(
-            [
-                "",
-                "## 模型路由结果",
-                "",
-                "本次只运行静态扫描，缺少模型路由证据。",
-            ]
-        )
-    return "\n".join(lines) + "\n"
-
-
 def write_reports(report: dict[str, Any], report_dir: Path) -> None:
     report_dir.mkdir(parents=True, exist_ok=True)
     (report_dir / "latest.json").write_text(
         json.dumps(report, ensure_ascii=False, indent=2) + "\n",
         encoding="utf-8",
-    )
-    (report_dir / "latest.md").write_text(
-        render_markdown(report), encoding="utf-8"
     )
 
 

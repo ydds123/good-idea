@@ -5,32 +5,21 @@
     "goodidea-record-literature",
     "goodidea-review-process",
     "goodidea-form-permanent",
-    "goodidea-review-permanent",
     "goodidea-connect-cards",
     "goodidea-lint"
   ],
   "similarity_warning_threshold": 0.55,
   "minimum_primary_cases_per_skill": 3,
-  "allowed_overlap_pairs": [
-    {
-      "skills": [
-        "goodidea-form-permanent",
-        "goodidea-review-permanent"
-      ],
-      "kind": "intentional_handoff",
-      "reason": "形成卡片是入口和写入所有者，审查卡片是苏格拉底式澄清阶段；同一请求可以顺序交接，但不能同时拥有写入。"
-    }
-  ],
+  "allowed_overlap_pairs": [],
   "semantic_risk_hypotheses": [
     {
       "id": "permanent-entry-cluster",
       "severity": "high",
       "skills": [
         "goodidea-capture-flash",
-        "goodidea-form-permanent",
-        "goodidea-review-permanent"
+        "goodidea-form-permanent"
       ],
-      "hypothesis": "口述想法和草稿是共享名词；没有明确永久卡片意图时必须只由 capture 接管，form 与 review 还要按形成动作和评估动作分开。",
+      "hypothesis": "口述想法和草稿是共享名词；没有明确永久卡片意图时必须只由 capture 接管，只有用户主动发起后 form 才统一负责澄清、审查和形成。",
       "case_ids": [
         "form-permanent-spoken",
         "review-permanent-standard",
@@ -102,7 +91,7 @@
       "id": "capture-flash-idea",
       "family": "unique_capture",
       "text": "记一下：AI 原生工具的关键不是自动生成更多内容，而是帮助我持续形成判断。",
-      "expected_primary": "goodidea-record-literature",
+      "expected_primary": "goodidea-capture-flash",
       "allowed_supporting": [],
       "required_supporting": [],
       "expected_conflict": false
@@ -111,7 +100,7 @@
       "id": "capture-interesting",
       "family": "unique_capture",
       "text": "这个现象挺有意思：团队开始用对话代替固定表单，先帮我存着。",
-      "expected_primary": "goodidea-capture-flash",
+      "expected_primary": "goodidea-record-literature",
       "allowed_supporting": [],
       "required_supporting": [],
       "expected_conflict": false
@@ -202,9 +191,7 @@
       "family": "unique_form_permanent",
       "text": "我想写一张永久卡片，我先口述自己的想法，你一次问我一个问题。",
       "expected_primary": "goodidea-form-permanent",
-      "allowed_supporting": [
-        "goodidea-review-permanent"
-      ],
+      "allowed_supporting": [],
       "required_supporting": [],
       "expected_conflict": false
     },
@@ -228,27 +215,27 @@
     },
     {
       "id": "review-permanent-standard",
-      "family": "unique_review_permanent",
+      "family": "unique_form_permanent",
       "text": "只评估下面这张永久卡片草稿是否达到标准，不要创建，也不要改写正文。",
-      "expected_primary": "goodidea-review-permanent",
+      "expected_primary": "goodidea-form-permanent",
       "allowed_supporting": [],
       "required_supporting": [],
       "expected_conflict": false
     },
     {
       "id": "review-permanent-boundary",
-      "family": "unique_review_permanent",
+      "family": "unique_form_permanent",
       "text": "我已经提出了一个卡片观点，但适用边界还不清楚，请一次问我一个问题帮助澄清，暂时不要写入。",
-      "expected_primary": "goodidea-review-permanent",
+      "expected_primary": "goodidea-form-permanent",
       "allowed_supporting": [],
       "required_supporting": [],
       "expected_conflict": false
     },
     {
       "id": "review-permanent-counterexample",
-      "family": "unique_review_permanent",
+      "family": "unique_form_permanent",
       "text": "请寻找反例审查这份母题卡片草稿，审查意见只留在对话里。",
-      "expected_primary": "goodidea-review-permanent",
+      "expected_primary": "goodidea-form-permanent",
       "allowed_supporting": [],
       "required_supporting": [],
       "expected_conflict": false
@@ -329,7 +316,7 @@
       "id": "neighbor-card-review-not-lint",
       "family": "near_neighbor",
       "text": "检查这张永久卡片的观点能不能脱离当前对话独立理解，不要检查仓库结构。",
-      "expected_primary": "goodidea-review-permanent",
+      "expected_primary": "goodidea-form-permanent",
       "allowed_supporting": [],
       "required_supporting": [],
       "expected_conflict": false
@@ -427,13 +414,9 @@
       "id": "compound-review-card-then-form",
       "family": "intentional_sequence",
       "text": "先审查我的永久卡片草稿；如果达到标准，再把完整草稿交回形成卡片流程，等我确认创建。",
-      "expected_primary": "goodidea-review-permanent",
-      "allowed_supporting": [
-        "goodidea-form-permanent"
-      ],
-      "required_supporting": [
-        "goodidea-form-permanent"
-      ],
+      "expected_primary": "goodidea-form-permanent",
+      "allowed_supporting": [],
+      "required_supporting": [],
       "expected_conflict": false
     },
     {

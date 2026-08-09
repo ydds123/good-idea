@@ -1,4 +1,0 @@
-interface:
-  display_name: "Good idea 对话审查卡片"
-  short_description: "一次一个问题澄清观点并生成待确认结构化草稿"
-  default_prompt: "Use $goodidea-review-permanent only after I explicitly enter a permanent-card review, then clarify one question at a time without adding claims."

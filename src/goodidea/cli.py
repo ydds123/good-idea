@@ -7,8 +7,9 @@ from pathlib import Path
 from typing import Any
 
 from .capture import CaptureRuntime
+from .contracts import MAINTENANCE_STATES, PERMANENT_CARD_TYPES
 from .errors import GoodIdeaError, ValidationError
-from .repository import Repository, initialize_vault
+from .repository import Repository
 from .service import GoodIdeaService
 from .web import (
     preview_from_html,
@@ -44,9 +45,6 @@ def build_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument("--root", help="Good idea 仓库路径")
     sub = parser.add_subparsers(dest="command", required=True)
-
-    init = sub.add_parser("init", help="初始化一个独立 Good idea 仓库")
-    init.add_argument("path", nargs="?", default=".")
 
     capture = sub.add_parser("capture", help="捕捉轻量记录或多轮闪念会话")
     capture_sub = capture.add_subparsers(dest="capture_command", required=True)
@@ -100,10 +98,7 @@ def build_parser() -> argparse.ArgumentParser:
     maintenance_update.add_argument(
         "--status",
         required=True,
-        choices=[
-            "pending", "processing", "maintenance_paused", "retry_pending",
-            "partial", "failed", "complete", "cancelled", "context_changed",
-        ],
+        choices=MAINTENANCE_STATES,
     )
     maintenance_update.add_argument("--error", default="")
     maintenance_check = capture_sub.add_parser("maintenance-check")
@@ -141,8 +136,6 @@ def build_parser() -> argparse.ArgumentParser:
     refresh.add_argument("--transaction-id")
 
     review = sub.add_parser("review", help="回顾中间材料")
-    review.add_argument("--expire", action="store_true")
-    review.add_argument("--transaction-id")
 
     maintain = sub.add_parser("maintain", help="执行确定性的仓库机械维护")
     maintain_sub = maintain.add_subparsers(dest="maintain_command", required=True)
@@ -162,6 +155,10 @@ def build_parser() -> argparse.ArgumentParser:
         "metadata", help="从正式内容移除已废弃的 summary 字段"
     )
     metadata.add_argument("--transaction-id")
+    contracts = maintain_sub.add_parser(
+        "contracts", help="移除可推导的状态镜像和已终结候选"
+    )
+    contracts.add_argument("--transaction-id")
 
     permanent = sub.add_parser("permanent", help="用户原文草稿与永久卡片状态流转")
     permanent_sub = permanent.add_subparsers(
@@ -169,7 +166,7 @@ def build_parser() -> argparse.ArgumentParser:
     )
     propose = permanent_sub.add_parser("propose", help="提交用户亲自写成的草稿")
     propose.add_argument(
-        "--type", required=True, choices=["permanent", "mother", "action", "index"]
+        "--type", required=True, choices=sorted(PERMANENT_CARD_TYPES)
     )
     propose.add_argument(
         "--title",
@@ -309,8 +306,6 @@ def _source_preview(args: argparse.Namespace) -> dict[str, Any]:
 
 
 def dispatch(args: argparse.Namespace) -> tuple[dict[str, Any], int]:
-    if args.command == "init":
-        return initialize_vault(Path(args.path)), 0
     if args.command == "source" and args.source_command == "preview":
         return _source_preview(args), 0
 
@@ -349,6 +344,7 @@ def dispatch(args: argparse.Namespace) -> tuple[dict[str, Any], int]:
         result = runtime.propose(
             args.session_id,
             flashes=flashes,
+            format_version=int(manifest.get("format_version", 1)),
             transaction_id=args.transaction_id,
         )
     elif args.command == "capture" and args.capture_command == "context-check":
@@ -422,9 +418,7 @@ def dispatch(args: argparse.Namespace) -> tuple[dict[str, Any], int]:
             transaction_id=args.transaction_id,
         )
     elif args.command == "review":
-        result = service.review(
-            expire=args.expire, transaction_id=args.transaction_id
-        )
+        result = service.review()
     elif args.command == "maintain" and args.maintain_command == "filenames":
         result = service.maintain_filenames(transaction_id=args.transaction_id)
     elif args.command == "maintain" and args.maintain_command == "sources":
@@ -433,6 +427,8 @@ def dispatch(args: argparse.Namespace) -> tuple[dict[str, Any], int]:
         result = service.maintain_index(transaction_id=args.transaction_id)
     elif args.command == "maintain" and args.maintain_command == "metadata":
         result = service.maintain_metadata(transaction_id=args.transaction_id)
+    elif args.command == "maintain" and args.maintain_command == "contracts":
+        result = service.maintain_contracts(transaction_id=args.transaction_id)
     elif args.command == "permanent":
         if args.permanent_command == "propose":
             result = service.permanent_propose(

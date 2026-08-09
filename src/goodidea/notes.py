@@ -5,6 +5,7 @@ import re
 from pathlib import Path
 from typing import Any
 
+from .contracts import NOTE_SPECS
 from .errors import IntegrityError, ValidationError
 from .metadata import dump_frontmatter, parse_document, replace_frontmatter
 
@@ -19,32 +20,12 @@ _LEGACY_NOTE_PLACEHOLDER = (
     "> 待处理：这里由用户在后续阅读与回顾中补充，不由系统自动生成观点。"
 )
 
-TYPE_LOCATIONS = {
-    "flash": Path("闪念空间"),
-    "source": Path("溯源空间"),
-    "interesting": Path("有意思空间"),
-    "todo": Path("待办空间"),
-    "permanent": Path("永久空间/永久卡片"),
-    "mother": Path("永久空间/母题卡片"),
-    "action": Path("永久空间/行动卡片"),
-    "index": Path("永久空间/索引卡片"),
-}
-
-INDEX_HEADINGS = {
-    "flash": "闪念",
-    "source": "溯源",
-    "interesting": "有意思",
-    "todo": "待办",
-    "permanent": "永久卡片",
-    "mother": "母题卡片",
-    "action": "行动卡片",
-    "index": "索引卡片",
-}
+TYPE_LOCATIONS = {kind: spec["location"] for kind, spec in NOTE_SPECS.items()}
+INDEX_HEADINGS = {kind: spec["heading"] for kind, spec in NOTE_SPECS.items()}
 
 STATUS_LABELS = {
     "pending": "待处理",
     "processed": "已处理",
-    "expired": "已失效",
     "dismissed": "已放弃",
     "complete": "完整",
     "partial": "部分抓取",
@@ -231,6 +212,18 @@ def render_note(
     for heading, content in sections:
         body.append(f"\n## {heading}\n\n{content.strip()}\n")
     return "".join(body)
+
+
+def render_flash_event(metadata: dict[str, Any], event: dict[str, Any]) -> str:
+    sections: list[tuple[str, str]] = []
+    if event.get("trigger_anchor"):
+        sections.append(("触发情境", str(event["trigger_anchor"])))
+    sections.append(("闪念内容", str(event["body"])))
+    if event.get("activated_logic"):
+        sections.append(("激活逻辑", str(event["activated_logic"])))
+    if event.get("source_anchor"):
+        sections.append(("来源与论证锚点", str(event["source_anchor"])))
+    return render_note(metadata, sections)
 
 
 def validate_required_metadata(metadata: dict[str, Any]) -> list[str]:
