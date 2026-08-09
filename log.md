@@ -57,3 +57,5 @@
 
 ## [2026-08-09T23:08:56+08:00] capture-revise | 闪念卡片每晚 8 点飞书预警机制 | tx=revise-flash-alert-v2-20260809
 
+## [2026-08-09T23:09:20+08:00] rollback | 回滚 240893db82aa capture-revise: 闪念卡片每晚 8 点飞书预警机制 [tx:revise-flash-alert-v2-20260809] | tx=rollback-240893db82aa
+
