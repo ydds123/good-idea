@@ -30,3 +30,5 @@
 
 ## [2026-08-09T10:55:08+08:00] maintain-sources | 规范化 2 份来源快照 | tx=remove-literature-layer-20260809
 
+## [2026-08-09T11:50:52+08:00] maintain-index | 重新生成不展示摘要的内容索引 | tx=remove-index-summaries-20260809
+

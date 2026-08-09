@@ -213,6 +213,15 @@
       "timestamp": "2026-08-07T21:57:41+08:00",
       "transaction_id": "first-permanent-propose-20260807"
     },
+    "remove-index-summaries-20260809": {
+      "action": "maintain-index",
+      "result": {
+        "no_change": false
+      },
+      "summary": "重新生成不展示摘要的内容索引",
+      "timestamp": "2026-08-09T11:50:52+08:00",
+      "transaction_id": "remove-index-summaries-20260809"
+    },
     "remove-literature-layer-20260809": {
       "action": "maintain-sources",
       "result": {
