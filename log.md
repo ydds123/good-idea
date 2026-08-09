@@ -49,3 +49,5 @@
 
 ## [2026-08-09T19:01:54+08:00] capture-revise-source-anchors | 修正《以控制论为底座，研究如何让 AI 生成超越平庸》来源与论证锚点 | tx=capture-revise-source-anchors-20260809
 
+## [2026-08-09T21:42:30+08:00] capture-todo | 为 Good Idea 增加用户画像/记忆摘要层（类 ChatGPT 记忆） | tx=todo-user-profile-20260809
+

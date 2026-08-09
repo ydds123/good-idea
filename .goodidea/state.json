@@ -417,6 +417,17 @@
       "summary": "8 月 9 日 可能性空间讨论 + 关联 1 张闪念",
       "timestamp": "2026-08-09T18:49:39+08:00",
       "transaction_id": "source-possibility-discussion-capture-20260809-v2"
+    },
+    "todo-user-profile-20260809": {
+      "action": "capture-todo",
+      "result": {
+        "id": "TODO-20260809-13e2394c",
+        "path": "待办空间/2026-08-09-为-Good-Idea-增加用户画像-记忆摘要层（类-ChatGPT-记忆）.md",
+        "type": "todo"
+      },
+      "summary": "为 Good Idea 增加用户画像/记忆摘要层（类 ChatGPT 记忆）",
+      "timestamp": "2026-08-09T21:42:30+08:00",
+      "transaction_id": "todo-user-profile-20260809"
     }
   }
 }
