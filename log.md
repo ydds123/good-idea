@@ -61,3 +61,5 @@
 
 ## [2026-08-09T23:34:45+08:00] capture-update | 闪念卡片每晚 8 点飞书预警机制 | tx=update-flash-alert-design-20260809
 
+## [2026-08-09T23:53:46+08:00] capture-finalize | 确认本轮 1 张闪念 | tx=flash-subjectivity-20260809-finalize
+
