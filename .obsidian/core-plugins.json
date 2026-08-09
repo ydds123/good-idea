@@ -19,5 +19,15 @@
   "file-recovery": true,
   "publish": false,
   "sync": false,
-  "bases": true
+  "bases": true,
+  "footnotes": false,
+  "daily-notes": true,
+  "slash-command": false,
+  "markdown-importer": false,
+  "zk-prefixer": false,
+  "random-note": false,
+  "slides": false,
+  "audio-recorder": false,
+  "workspaces": false,
+  "webviewer": false
 }
