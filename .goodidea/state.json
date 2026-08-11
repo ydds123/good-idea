@@ -334,6 +334,18 @@
       "timestamp": "2026-08-09T18:29:16+08:00",
       "transaction_id": "maintain-contracts-20260809"
     },
+    "permanent-accept-path-20260811-01": {
+      "action": "permanent-accept",
+      "result": {
+        "card_id": "PER-20260811-abf32730",
+        "card_path": "永久空间/永久卡片/2026-08-11-以-AI-生图为实践抓手理解控制论与科学方法论，是提升驾驭-AI-素养的研究路径之一.md",
+        "card_type": "permanent",
+        "proposal_id": "PRP-dba6008cd92f"
+      },
+      "summary": "以 AI 生图为实践抓手理解控制论与科学方法论，是提升驾驭 AI 素养的研究路径之一",
+      "timestamp": "2026-08-11T22:08:38+08:00",
+      "transaction_id": "permanent-accept-path-20260811-01"
+    },
     "permanent-propose-collab-20260811-01": {
       "action": "permanent-propose",
       "result": {
