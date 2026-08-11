@@ -101,3 +101,5 @@
 
 ## [2026-08-11T22:08:38+08:00] permanent-accept | 以 AI 生图为实践抓手理解控制论与科学方法论，是提升驾驭 AI 素养的研究路径之一 | tx=permanent-accept-path-20260811-01
 
+## [2026-08-11T22:08:41+08:00] permanent-accept | 人与 AI 协作的本质：把 AI 当作共同创作对象，而非执行工具 | tx=permanent-accept-collab-20260811-01
+
