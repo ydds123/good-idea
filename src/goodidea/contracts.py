@@ -9,6 +9,8 @@ from typing import Any
 TRANSACTION_ID_PATTERN = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$")
 SESSION_ID_PATTERN = re.compile(r"^CAP-[0-9]{8}-[0-9a-f]{8}$")
 MAINTENANCE_JOB_ID_PATTERN = re.compile(r"^JOB-[0-9a-f]{12}$")
+FORMATION_WITNESS_ID_PATTERN = re.compile(r"^WIT-[0-9a-f]{12}$")
+FORMATION_WITNESS_ROOT = Path(".goodidea/formation-witnesses")
 FLASH_EVENT_FORMAT_VERSION = 2
 
 FLASH_STALE_AFTER = timedelta(hours=48)

@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-08-09T18:30:26+08:00",
+  "generated_at": "2026-08-11T15:17:30+08:00",
   "evidence_kind": "static_description_scan",
   "status": "static_passed",
   "skill_count": 6,
@@ -12,7 +12,7 @@
     "goodidea-record-literature",
     "goodidea-review-process"
   ],
-  "description_fingerprint": "286efbf46f9e37d945cf1bd9860c3db35581916203bb6f141ca04d676be3ba23",
+  "description_fingerprint": "4658bed127cd76f5e2a2e0011bc98bae9a5087d9f57bc5aa71733d6400a72145",
   "contract_file": "tests/fixtures/skill-routing-cases.json",
   "contract_errors": [],
   "semantic_risk_hypotheses": [
@@ -105,6 +105,24 @@
       },
       {
         "skills": [
+          "goodidea-connect-cards",
+          "goodidea-form-permanent"
+        ],
+        "similarity": 0.208,
+        "above_threshold": false,
+        "declared_overlap": false
+      },
+      {
+        "skills": [
+          "goodidea-capture-flash",
+          "goodidea-connect-cards"
+        ],
+        "similarity": 0.195,
+        "above_threshold": false,
+        "declared_overlap": false
+      },
+      {
+        "skills": [
           "goodidea-lint",
           "goodidea-record-literature"
         ],
@@ -115,7 +133,16 @@
       {
         "skills": [
           "goodidea-connect-cards",
-          "goodidea-lint"
+          "goodidea-record-literature"
+        ],
+        "similarity": 0.149,
+        "above_threshold": false,
+        "declared_overlap": false
+      },
+      {
+        "skills": [
+          "goodidea-connect-cards",
+          "goodidea-review-process"
         ],
         "similarity": 0.145,
         "above_threshold": false,
@@ -141,10 +168,10 @@
       },
       {
         "skills": [
-          "goodidea-connect-cards",
-          "goodidea-review-process"
+          "goodidea-form-permanent",
+          "goodidea-record-literature"
         ],
-        "similarity": 0.123,
+        "similarity": 0.129,
         "above_threshold": false,
         "declared_overlap": false
       },
@@ -159,19 +186,10 @@
       },
       {
         "skills": [
-          "goodidea-capture-flash",
-          "goodidea-form-permanent"
+          "goodidea-connect-cards",
+          "goodidea-lint"
         ],
-        "similarity": 0.116,
-        "above_threshold": false,
-        "declared_overlap": false
-      },
-      {
-        "skills": [
-          "goodidea-capture-flash",
-          "goodidea-connect-cards"
-        ],
-        "similarity": 0.113,
+        "similarity": 0.115,
         "above_threshold": false,
         "declared_overlap": false
       },
@@ -180,7 +198,7 @@
           "goodidea-form-permanent",
           "goodidea-lint"
         ],
-        "similarity": 0.111,
+        "similarity": 0.105,
         "above_threshold": false,
         "declared_overlap": false
       },
@@ -195,28 +213,10 @@
       },
       {
         "skills": [
-          "goodidea-form-permanent",
-          "goodidea-record-literature"
-        ],
-        "similarity": 0.085,
-        "above_threshold": false,
-        "declared_overlap": false
-      },
-      {
-        "skills": [
-          "goodidea-connect-cards",
+          "goodidea-capture-flash",
           "goodidea-form-permanent"
         ],
-        "similarity": 0.08,
-        "above_threshold": false,
-        "declared_overlap": false
-      },
-      {
-        "skills": [
-          "goodidea-connect-cards",
-          "goodidea-record-literature"
-        ],
-        "similarity": 0.057,
+        "similarity": 0.1,
         "above_threshold": false,
         "declared_overlap": false
       },
@@ -225,7 +225,7 @@
           "goodidea-form-permanent",
           "goodidea-review-process"
         ],
-        "similarity": 0.057,
+        "similarity": 0.095,
         "above_threshold": false,
         "declared_overlap": false
       }

@@ -10,7 +10,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any
 
-from .contracts import TRANSACTION_ID_PATTERN
+from .contracts import FORMATION_WITNESS_ROOT, TRANSACTION_ID_PATTERN
 from .errors import GitError, IntegrityError, TransactionError, ValidationError
 from .metadata import parse_document
 from .notes import (
@@ -95,11 +95,17 @@ class Repository:
             validate_source_note(
                 path.read_text(encoding="utf-8"), path.relative_to(self.root).as_posix()
             )
+        witness_dir = self.root / FORMATION_WITNESS_ROOT
+        if witness_dir.is_symlink():
+            raise IntegrityError("形成来源见证目录不得为符号链接")
+        for path in sorted(witness_dir.glob("*.md")):
+            if path.is_symlink():
+                raise IntegrityError(f"形成来源见证不得为符号链接：{path.name}")
 
     def find_note(
         self, note_id: str
     ) -> tuple[Path, str, dict[str, Any]] | None:
-        for location in TYPE_LOCATIONS.values():
+        for location in (*TYPE_LOCATIONS.values(), FORMATION_WITNESS_ROOT):
             for path in sorted((self.root / location).glob("*.md")):
                 try:
                     text = path.read_text(encoding="utf-8")

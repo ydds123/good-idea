@@ -14,7 +14,13 @@ from pathlib import Path
 from typing import Any
 
 from .capture import CaptureRuntime
-from .contracts import FLASH_STALE_AFTER, NOTE_SPECS, PERMANENT_CARD_TYPES
+from .contracts import (
+    FLASH_STALE_AFTER,
+    FORMATION_WITNESS_ID_PATTERN,
+    FORMATION_WITNESS_ROOT,
+    NOTE_SPECS,
+    PERMANENT_CARD_TYPES,
+)
 from .errors import GitError, IntegrityError, ValidationError
 from .metadata import dump_frontmatter, parse_document, replace_frontmatter
 from .notes import (
@@ -226,6 +232,35 @@ def stable_id(prefix: str, seed: str, *, dated: bool = True) -> str:
 def _meaningful(text: str, *, minimum: int = 4) -> bool:
     normalized = re.sub(r"[\s，。！？、,.!?;；:：]+", "", text).lower()
     return len(normalized) >= minimum and normalized not in PURE_CONFIRMATIONS
+
+
+def _normalize_direct_source(text: str) -> tuple[str, str]:
+    normalized = _normalize_user_entry(text).strip()
+    if "\n" in normalized:
+        raise ValidationError("直接口述形成说明必须是一段简短的单行说明")
+    if not _meaningful(normalized, minimum=8):
+        raise ValidationError(
+            "直接口述形成说明必须具体说明所回应的问题、经验或现实情境"
+        )
+    compact = re.sub(r"[\s，。！？、,.!?;；:：]+", "", normalized).lower()
+    if compact in {"来自本轮口述", "用户说过", "本轮用户表达", "直接口述"}:
+        raise ValidationError("直接口述形成说明不能只是来源标签或纯确认文本")
+    if normalized.startswith("---") or PROPOSAL_START in normalized or PROPOSAL_END in normalized:
+        raise ValidationError("直接口述形成说明不得包含 Frontmatter 或内部提案数据")
+    digest = hashlib.sha256(normalized.encode("utf-8")).hexdigest()
+    return normalized, digest
+
+
+def _render_formation_witness(
+    metadata: dict[str, Any], source_anchor: str, card_rel: Path, card_title: str
+) -> str:
+    return (
+        dump_frontmatter(metadata)
+        + "# 本轮直接表达形成来源\n\n"
+        + source_anchor
+        + "\n\n## 形成卡片\n\n"
+        + f"- {wiki_link(card_rel, card_title)}\n"
+    )
 
 
 def _ensure_motivation(text: str) -> None:
@@ -1306,6 +1341,8 @@ class GoodIdeaService:
         user_approved_structure: bool = False,
         source_ids: list[str] | None = None,
         from_ids: list[str] | None = None,
+        direct_source: str = "",
+        formation_sources_confirmed: bool = False,
         transaction_id: str | None = None,
     ) -> dict[str, Any]:
         if card_type not in PERMANENT_CARD_TYPES:
@@ -1319,11 +1356,43 @@ class GoodIdeaService:
         proposal_id = stable_id("PRP", f"{card_type}:{txid}", dated=False)
         proposal_rel = Path(f".goodidea/proposals/permanent/{proposal_id}.md")
         timestamp = now_iso()
-        checked_source_ids = source_ids or []
-        checked_from_ids = from_ids or []
+        checked_source_ids = list(dict.fromkeys(source_ids or []))
+        checked_from_ids = list(dict.fromkeys(from_ids or []))
+        direct_source_anchor = ""
+        direct_source_sha256 = ""
+        if card_type == "permanent":
+            if not formation_sources_confirmed:
+                raise ValidationError("普通永久卡片必须先由用户确认形成来源")
+            if "## 形成来源\n" in user_draft:
+                raise ValidationError("普通永久卡片的“形成来源”是 CLI 维护区，请勿写入用户草稿")
+            if direct_source.strip():
+                direct_source_anchor, direct_source_sha256 = (
+                    _normalize_direct_source(direct_source)
+                )
+            if not checked_from_ids and not direct_source_anchor:
+                raise ValidationError(
+                    "普通永久卡片必须引用至少一个形成来源，或提供本轮直接表达形成说明"
+                )
+        elif direct_source.strip() or formation_sources_confirmed:
+            raise ValidationError(
+                "直接表达来源和形成来源确认参数只适用于普通永久卡片"
+            )
         for note_id in checked_source_ids + checked_from_ids:
-            if not self.repo.find_note(note_id):
+            found = self.repo.find_note(note_id)
+            if not found:
                 raise ValidationError(f"用户草稿引用了不存在的对象：{note_id}")
+            if (
+                card_type == "permanent"
+                and note_id in checked_source_ids
+                and found[2].get("type") != "source"
+            ):
+                raise ValidationError(f"普通永久卡片的外部依据不是来源对象：{note_id}")
+            if (
+                card_type == "permanent"
+                and note_id in checked_from_ids
+                and found[2].get("type") not in {*NOTE_SPECS, "formation_witness"}
+            ):
+                raise ValidationError(f"普通永久卡片的形成来源类型非法：{note_id}")
         proposal_meta = {
             "id": proposal_id,
             "type": "permanent_proposal",
@@ -1337,6 +1406,11 @@ class GoodIdeaService:
             "created_at": timestamp,
             "updated_at": timestamp,
         }
+        if card_type == "permanent":
+            proposal_meta["formation_sources_confirmed"] = True
+            if direct_source_anchor:
+                proposal_meta["direct_source_anchor"] = direct_source_anchor
+                proposal_meta["direct_source_sha256"] = direct_source_sha256
         proposal_text = dump_frontmatter(proposal_meta) + user_draft
         state = self.repo.read_state()
         result = {
@@ -1384,6 +1458,43 @@ class GoodIdeaService:
         card_type = proposal_meta.get("card_type")
         if card_type not in PERMANENT_CARD_TYPES:
             raise IntegrityError("永久卡片草稿类型非法")
+        raw_source_ids = proposal_meta.get("source_ids", [])
+        raw_from_ids = proposal_meta.get("from_ids", [])
+        if not isinstance(raw_source_ids, list) or not isinstance(raw_from_ids, list):
+            raise IntegrityError("永久卡片候选的来源字段必须是 ID 列表")
+        checked_source_ids = list(dict.fromkeys(raw_source_ids))
+        checked_from_ids = list(dict.fromkeys(raw_from_ids))
+        found_sources: dict[str, tuple[Path, str, dict[str, Any]]] = {}
+        for note_id in checked_source_ids + checked_from_ids:
+            found = self.repo.find_note(note_id)
+            if not found:
+                raise IntegrityError(f"永久卡片候选引用的对象已不存在：{note_id}")
+            found_sources[note_id] = found
+        direct_source_anchor = ""
+        direct_source_sha256 = ""
+        if card_type == "permanent":
+            if proposal_meta.get("formation_sources_confirmed") is not True:
+                raise ValidationError("普通永久卡片候选缺少用户形成来源确认")
+            for source_id in checked_source_ids:
+                if found_sources[source_id][2].get("type") != "source":
+                    raise IntegrityError(f"普通永久卡片的外部依据不是来源对象：{source_id}")
+            for from_id in checked_from_ids:
+                if found_sources[from_id][2].get("type") not in {
+                    *NOTE_SPECS,
+                    "formation_witness",
+                }:
+                    raise IntegrityError(f"普通永久卡片的形成来源类型非法：{from_id}")
+            raw_direct_source = str(proposal_meta.get("direct_source_anchor") or "")
+            if raw_direct_source:
+                direct_source_anchor, direct_source_sha256 = (
+                    _normalize_direct_source(raw_direct_source)
+                )
+                if direct_source_sha256 != proposal_meta.get("direct_source_sha256"):
+                    raise IntegrityError("直接口述形成说明哈希异常")
+            elif "direct_source_sha256" in proposal_meta:
+                raise IntegrityError("直接口述形成说明字段不完整")
+            if not checked_from_ids and not direct_source_anchor:
+                raise ValidationError("普通永久卡片候选没有可接纳的形成来源")
         mirrored_fields = {
             "id": proposal_id,
             "type": "permanent_proposal",
@@ -1411,6 +1522,20 @@ class GoodIdeaService:
         timestamp = now_iso()
         card_rel = self._new_note_path(card_type, title, timestamp)
         status = _default_status(card_type)
+        witness_id = ""
+        witness_rel: Path | None = None
+        derived_from = list(checked_from_ids)
+        if card_type == "permanent" and direct_source_anchor:
+            witness_id = stable_id(
+                "WIT", f"{proposal_id}:{direct_source_sha256}", dated=False
+            )
+            witness_rel = FORMATION_WITNESS_ROOT / f"{witness_id}.md"
+            if (self.repo.root / witness_rel).exists():
+                raise IntegrityError(f"形成来源见证已存在：{witness_id}")
+            derived_from.append(witness_id)
+        derived_from = list(dict.fromkeys(derived_from))
+        if card_type == "permanent" and not derived_from:
+            raise ValidationError("普通永久卡片必须具有至少一个可寻址形成来源")
         metadata = {
             "id": card_id,
             "type": card_type,
@@ -1419,16 +1544,56 @@ class GoodIdeaService:
             "created_at": timestamp,
             "updated_at": timestamp,
             "authoring_mode": authoring_mode,
-            "source_ids": proposal_meta.get("source_ids", []),
-            "derived_from": proposal_meta.get("from_ids", []),
+            "source_ids": checked_source_ids,
+            "derived_from": derived_from,
         }
-        card_text = dump_frontmatter(metadata) + normalized_draft
-        writes: dict[Path, str | bytes] = {card_rel: card_text}
-        for from_id in proposal_meta.get("from_ids", []):
-            found = self.repo.find_note(from_id)
-            if not found or found[2].get("type") != "flash":
+        if card_type == "permanent":
+            metadata["formation_draft_sha256"] = draft_sha256
+        card_body = normalized_draft
+        for from_id in checked_from_ids:
+            found = found_sources[from_id]
+            card_body = add_list_item_to_section(
+                card_body,
+                "形成来源",
+                f"形成于 {wiki_link(found[0], found[2]['title'])}",
+            )
+        writes: dict[Path, str | bytes] = {}
+        if witness_rel is not None:
+            witness_metadata = {
+                "id": witness_id,
+                "type": "formation_witness",
+                "title": "本轮直接表达形成来源",
+                "created_at": timestamp,
+                "card_id": card_id,
+                "proposal_id": proposal_id,
+                "draft_sha256": draft_sha256,
+                "source_anchor_sha256": direct_source_sha256,
+            }
+            writes[witness_rel] = _render_formation_witness(
+                witness_metadata, direct_source_anchor, card_rel, title
+            )
+            card_body = add_list_item_to_section(
+                card_body,
+                "形成来源",
+                (
+                    f"形成于 {wiki_link(witness_rel, '本轮直接表达形成来源')}："
+                    f"{direct_source_anchor}"
+                ),
+            )
+        card_text = dump_frontmatter(metadata) + card_body
+        writes[card_rel] = card_text
+        for from_id in checked_from_ids:
+            found = found_sources[from_id]
+            if found[2].get("type") != "flash":
                 continue
             from_rel, from_text, from_meta = found
+            if from_meta.get("status") == "dismissed":
+                raise ValidationError(f"已放弃闪念不能直接作为形成来源：{from_id}")
+            if from_meta.get("status") == "processed":
+                continue
+            if from_meta.get("status") != "pending":
+                raise IntegrityError(f"闪念状态不能转换为已处理：{from_id}")
+            from_meta = copy.deepcopy(from_meta)
             from_meta["status"] = "processed"
             from_meta["updated_at"] = timestamp
             writes[from_rel] = replace_frontmatter(from_text, from_meta)
@@ -1438,6 +1603,9 @@ class GoodIdeaService:
             "card_path": card_rel.as_posix(),
             "card_type": card_type,
         }
+        if witness_id:
+            result["formation_witness_id"] = witness_id
+            result["formation_witness_path"] = witness_rel.as_posix()
         return self.repo.commit(
             transaction_id=txid,
             action="permanent-accept",
@@ -2187,6 +2355,117 @@ class GoodIdeaService:
             str(metadata.get("id")): (rel, text, metadata)
             for rel, text, metadata in all_notes
         }
+        witnesses_by_id: dict[str, tuple[Path, str, dict[str, Any], str]] = {}
+        witness_root = self.repo.root / FORMATION_WITNESS_ROOT
+        for witness_path in sorted(witness_root.glob("*.md")):
+            rel = witness_path.relative_to(self.repo.root)
+            try:
+                witness_text = witness_path.read_text(encoding="utf-8")
+                witness_meta, witness_body = parse_document(witness_text)
+            except Exception as exc:
+                issues.append(f"{rel}: 无法解析形成来源见证：{exc}")
+                continue
+            witness_id = str(witness_meta.get("id") or "")
+            if witness_path.is_symlink():
+                issues.append(f"{rel}: 形成来源见证不得为符号链接")
+            if witness_meta.get("type") != "formation_witness":
+                issues.append(f"{rel}: 形成来源见证类型非法")
+            if witness_path.stem != witness_id or not FORMATION_WITNESS_ID_PATTERN.fullmatch(
+                witness_id
+            ):
+                issues.append(f"{rel}: 形成来源见证 ID 或文件名非法")
+            if witness_id in seen_ids:
+                issues.append(f"重复 ID {witness_id}: {seen_ids[witness_id]}, {rel}")
+            seen_ids[witness_id] = rel.as_posix()
+            required_fields = {
+                "title",
+                "created_at",
+                "card_id",
+                "proposal_id",
+                "draft_sha256",
+                "source_anchor_sha256",
+            }
+            missing_fields = sorted(
+                key for key in required_fields if key not in witness_meta
+            )
+            if missing_fields:
+                issues.append(f"{rel}: 形成来源见证缺少字段 {missing_fields}")
+            prefix = "# 本轮直接表达形成来源\n\n"
+            marker = "\n\n## 形成卡片\n"
+            marker_at = witness_body.find(marker)
+            if not witness_body.startswith(prefix) or marker_at < len(prefix):
+                issues.append(f"{rel}: 形成来源见证正文结构异常")
+                continue
+            source_anchor = witness_body[len(prefix):marker_at].strip()
+            try:
+                normalized_anchor, anchor_sha256 = _normalize_direct_source(
+                    source_anchor
+                )
+            except ValidationError as exc:
+                issues.append(f"{rel}: {exc}")
+                continue
+            if anchor_sha256 != witness_meta.get("source_anchor_sha256"):
+                issues.append(f"{rel}: 形成说明哈希异常")
+            if not SHA256_RE.fullmatch(str(witness_meta.get("draft_sha256") or "")):
+                issues.append(f"{rel}: 草稿哈希非法")
+            witnesses_by_id[witness_id] = (
+                rel,
+                witness_text,
+                witness_meta,
+                normalized_anchor,
+            )
+        notes_by_id.update(
+            {
+                witness_id: (rel, text, metadata)
+                for witness_id, (rel, text, metadata, _) in witnesses_by_id.items()
+            }
+        )
+        for rel, text, metadata in all_notes:
+            if metadata.get("type") != "permanent":
+                continue
+            source_ids = metadata.get("source_ids", [])
+            derived_from = metadata.get("derived_from", [])
+            if not isinstance(source_ids, list) or not isinstance(derived_from, list):
+                continue
+            if not derived_from:
+                issues.append(f"{rel}: 普通永久卡片缺少形成来源连接")
+                continue
+            for source_id in source_ids:
+                source = notes_by_id.get(str(source_id))
+                if not source or source[2].get("type") != "source":
+                    issues.append(f"{rel}: 外部依据不是有效来源：{source_id}")
+            is_new_contract = "formation_draft_sha256" in metadata
+            if is_new_contract and "## 形成来源\n" not in text:
+                issues.append(f"{rel}: 新版普通永久卡片缺少形成来源导航区")
+            for from_id in derived_from:
+                target = notes_by_id.get(str(from_id))
+                if not target:
+                    issues.append(f"{rel}: 形成来源不存在：{from_id}")
+                    continue
+                if target[2].get("type") not in {*NOTE_SPECS, "formation_witness"}:
+                    issues.append(f"{rel}: 形成来源类型非法：{from_id}")
+                    continue
+                if is_new_contract:
+                    expected_link = wiki_link(target[0], target[2].get("title", ""))
+                    if expected_link not in text:
+                        issues.append(f"{rel}: 形成来源导航缺少 {from_id}")
+        for witness_id, (rel, text, metadata, source_anchor) in witnesses_by_id.items():
+            card_id = str(metadata.get("card_id") or "")
+            card = notes_by_id.get(card_id)
+            if not card or card[2].get("type") != "permanent":
+                issues.append(f"{rel}: 形成来源见证引用的普通永久卡片不存在")
+                continue
+            if witness_id not in card[2].get("derived_from", []):
+                issues.append(f"{rel}: 形成来源见证与普通永久卡片不是双向关系")
+            if metadata.get("draft_sha256") != card[2].get(
+                "formation_draft_sha256"
+            ):
+                issues.append(f"{rel}: 形成来源见证与卡片草稿哈希不一致")
+            if wiki_link(card[0], card[2].get("title", "")) not in text:
+                issues.append(f"{rel}: 形成来源见证缺少正式卡片反向链接")
+            expected_witness_link = wiki_link(rel, metadata.get("title", ""))
+            if expected_witness_link not in card[1] or source_anchor not in card[1]:
+                issues.append(f"{rel}: 正式卡片缺少形成见证导航或形成说明")
         for rel, text, metadata in all_notes:
             if metadata.get("type") != "flash":
                 continue
@@ -2245,6 +2524,43 @@ class GoodIdeaService:
                 continue
             if actual_sha256 != proposal_meta.get("draft_sha256"):
                 issues.append(f"永久卡片草稿哈希异常：{proposal_id}")
+            card_type = proposal_meta.get("card_type")
+            if card_type == "permanent":
+                raw_source_ids = proposal_meta.get("source_ids", [])
+                raw_from_ids = proposal_meta.get("from_ids", [])
+                if not isinstance(raw_source_ids, list) or not isinstance(
+                    raw_from_ids, list
+                ):
+                    issues.append(f"普通永久卡片候选来源字段非法：{proposal_id}")
+                    continue
+                if proposal_meta.get("formation_sources_confirmed") is not True:
+                    issues.append(f"普通永久卡片候选缺少来源确认：{proposal_id}")
+                raw_direct_source = str(
+                    proposal_meta.get("direct_source_anchor") or ""
+                )
+                if not raw_from_ids and not raw_direct_source:
+                    issues.append(f"普通永久卡片候选缺少形成来源：{proposal_id}")
+                if raw_direct_source:
+                    try:
+                        _, direct_sha256 = _normalize_direct_source(
+                            raw_direct_source
+                        )
+                    except ValidationError as exc:
+                        issues.append(f"普通永久卡片候选形成说明非法：{proposal_id}: {exc}")
+                    else:
+                        if direct_sha256 != proposal_meta.get(
+                            "direct_source_sha256"
+                        ):
+                            issues.append(f"普通永久卡片候选形成说明哈希异常：{proposal_id}")
+            elif any(
+                key in proposal_meta
+                for key in (
+                    "formation_sources_confirmed",
+                    "direct_source_anchor",
+                    "direct_source_sha256",
+                )
+            ):
+                issues.append(f"非普通永久卡片候选含有专属来源字段：{proposal_id}")
         obsidian_root = self.repo.root / ".obsidian"
         try:
             app_config = json.loads(

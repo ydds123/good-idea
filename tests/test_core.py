@@ -1144,6 +1144,12 @@ class GoodIdeaCoreTests(unittest.TestCase):
             ("action", "旧行动卡片摘要"),
             ("index", "旧索引卡片摘要"),
         ):
+            proposal_kwargs = {}
+            if card_type == "permanent":
+                proposal_kwargs = {
+                    "direct_source": "这张卡形成于验证旧元数据迁移不会改变用户正文的测试情境。",
+                    "formation_sources_confirmed": True,
+                }
             proposal = self.service.permanent_propose(
                 card_type,
                 draft=(
@@ -1151,6 +1157,7 @@ class GoodIdeaCoreTests(unittest.TestCase):
                     "这是用户已经确认的完整正文，用来验证旧元数据迁移不会改动正式卡片内容。\n"
                 ),
                 transaction_id=f"tx-metadata-propose-{card_type}",
+                **proposal_kwargs,
             )
             self.service.permanent_accept(
                 proposal["result"]["proposal_id"],
@@ -1222,6 +1229,7 @@ class GoodIdeaCoreTests(unittest.TestCase):
             draft="# 待处理判断\n\n这是一段仍需用户确认的正式判断草稿。\n",
             source_ids=[captured["source_id"]],
             from_ids=[captured["flash_id"]],
+            formation_sources_confirmed=True,
             transaction_id="contracts-proposal",
         )["result"]
         source_path = self.root / captured["source_path"]
@@ -1646,6 +1654,7 @@ class GoodIdeaCoreTests(unittest.TestCase):
             draft=permanent_draft,
             source_ids=[ids["source_id"]],
             from_ids=[ids["flash_id"]],
+            formation_sources_confirmed=True,
             transaction_id="tx-permanent-propose",
         )
         proposal_text = (
@@ -1669,19 +1678,17 @@ class GoodIdeaCoreTests(unittest.TestCase):
         formal_text = (self.root / accepted["result"]["card_path"]).read_text(
             encoding="utf-8"
         )
-        _, formal_body = parse_document(formal_text)
-        self.assertEqual(formal_body, permanent_draft)
+        formal_meta, formal_body = parse_document(formal_text)
+        self.assertTrue(formal_body.startswith(permanent_draft))
+        self.assertIn("## 形成来源", formal_body)
+        self.assertEqual(formal_meta["derived_from"], [ids["flash_id"]])
         self.assertNotIn("机器数据", formal_text)
         flash = self.repo.find_note(ids["flash_id"])
         self.assertEqual(flash[2]["status"], "processed")
 
-        # Accepting the first formal card joins it to a valid zero-edge network.
+        # The formation link activates the node; additional semantic edges remain optional.
         state_without_edges = self.repo.read_state()
         self.assertEqual(state_without_edges["connections"], [])
-        self.assertIn(
-            "零连接节点",
-            (self.root / "schema.md").read_text(encoding="utf-8"),
-        )
         self.assertIn(
             Path(accepted["result"]["card_path"]).with_suffix("").as_posix(),
             (self.root / "index.md").read_text(encoding="utf-8"),
@@ -1793,6 +1800,155 @@ class GoodIdeaCoreTests(unittest.TestCase):
         lint = self.service.lint()
         self.assertTrue(lint["ok"], lint["issues"])
 
+    def test_permanent_requires_confirmed_formation_source_not_evidence_only(self):
+        captured = self.service.source_commit(
+            self.preview(),
+            motivation="验证外部依据不能冒充普通永久卡片的形成来源。",
+            transaction_id="tx-formation-gate-source",
+        )["result"]
+        draft = "# 外部依据不等于形成来源\n\n引用一份资料只能说明判断有依据，不能自动说明这张卡是如何形成的。\n"
+        with self.assertRaises(ValidationError):
+            self.service.permanent_propose(
+                "permanent",
+                draft=draft,
+                source_ids=[captured["source_id"]],
+                formation_sources_confirmed=True,
+                transaction_id="tx-formation-evidence-only",
+            )
+        with self.assertRaises(ValidationError):
+            self.service.permanent_propose(
+                "permanent",
+                draft=draft,
+                from_ids=[captured["flash_id"]],
+                transaction_id="tx-formation-unconfirmed",
+            )
+
+        proposal = self.service.permanent_propose(
+            "permanent",
+            draft=draft,
+            source_ids=[captured["source_id"]],
+            from_ids=[captured["flash_id"]],
+            formation_sources_confirmed=True,
+            transaction_id="tx-formation-confirmed",
+        )
+        accepted = self.service.permanent_accept(
+            proposal["result"]["proposal_id"],
+            confirmed_by_user=True,
+            transaction_id="tx-formation-confirmed-accept",
+        )
+        formal = self.repo.find_note(accepted["result"]["card_id"])
+        self.assertEqual(formal[2]["source_ids"], [captured["source_id"]])
+        self.assertEqual(formal[2]["derived_from"], [captured["flash_id"]])
+        self.assertTrue(self.service.lint()["ok"])
+
+    def test_legacy_pending_permanent_candidate_is_not_silently_upgraded(self):
+        proposal = self.service.permanent_propose(
+            "permanent",
+            draft="# 旧候选不能静默补确认\n\n"
+            "新的形成来源门禁必须留下用户确认，不能由系统替旧候选推断。\n",
+            direct_source="这张卡形成于检查旧候选不能绕过新准入门禁的测试情境。",
+            formation_sources_confirmed=True,
+            transaction_id="tx-legacy-formation-proposal",
+        )
+        proposal_path = self.root / proposal["result"]["proposal_path"]
+        proposal_text = proposal_path.read_text(encoding="utf-8")
+        proposal_meta, proposal_body = parse_document(proposal_text)
+        proposal_meta.pop("formation_sources_confirmed")
+        proposal_path.write_text(
+            dump_frontmatter(proposal_meta) + proposal_body,
+            encoding="utf-8",
+        )
+
+        with self.assertRaises(ValidationError):
+            self.service.permanent_accept(
+                proposal["result"]["proposal_id"],
+                confirmed_by_user=True,
+                transaction_id="tx-legacy-formation-accept",
+            )
+        lint = self.service.lint()
+        self.assertFalse(lint["ok"])
+        self.assertTrue(
+            any("候选缺少来源确认" in issue for issue in lint["issues"]),
+            lint["issues"],
+        )
+
+    def test_direct_expression_creates_addressable_witness_and_rolls_back(self):
+        draft = "# 直接口述也必须具有真实连接\n\n直接形成永久卡片时，不应制造闪念，但必须保留有意义且可寻址的形成情境。\n"
+        with self.assertRaises(ValidationError):
+            self.service.permanent_propose(
+                "permanent",
+                draft=draft,
+                direct_source="来自本轮口述",
+                formation_sources_confirmed=True,
+                transaction_id="tx-direct-empty-anchor",
+            )
+        proposal = self.service.permanent_propose(
+            "permanent",
+            draft=draft,
+            direct_source="这张卡形成于解决直接口述没有可寻址连接端点的问题时。",
+            formation_sources_confirmed=True,
+            transaction_id="tx-direct-witness-propose",
+        )
+        accepted = self.service.permanent_accept(
+            proposal["result"]["proposal_id"],
+            confirmed_by_user=True,
+            transaction_id="tx-direct-witness-accept",
+        )
+        result = accepted["result"]
+        witness_id = result["formation_witness_id"]
+        witness_path = self.root / result["formation_witness_path"]
+        self.assertTrue(witness_path.is_file())
+        formal = self.repo.find_note(result["card_id"])
+        witness = self.repo.find_note(witness_id)
+        self.assertEqual(formal[2]["derived_from"], [witness_id])
+        self.assertEqual(witness[2]["card_id"], result["card_id"])
+        self.assertIn("这张卡形成于解决直接口述没有可寻址连接端点的问题时。", formal[1])
+        self.assertTrue(self.service.lint()["ok"], self.service.lint()["issues"])
+
+        rolled_back = self.service.rollback(accepted["commit"], confirmed=True)
+        self.assertEqual(rolled_back["rolled_back"], accepted["commit"])
+        self.assertIsNone(self.repo.find_note(result["card_id"]))
+        self.assertIsNone(self.repo.find_note(witness_id))
+        self.assertTrue(
+            (self.root / proposal["result"]["proposal_path"]).is_file()
+        )
+        self.assertTrue(self.service.lint()["ok"], self.service.lint()["issues"])
+
+    def test_formation_flash_state_boundaries_and_shared_type_isolation(self):
+        captured = self.service.source_commit(
+            self.preview(),
+            motivation="验证闪念作为形成来源时不会被错误复活。",
+            transaction_id="tx-formation-state-source",
+        )["result"]
+        self.service.capture_transition(
+            captured["flash_id"],
+            status="dismissed",
+            transaction_id="tx-formation-state-dismiss",
+        )
+        proposal = self.service.permanent_propose(
+            "permanent",
+            draft="# 已放弃闪念不能被静默复活\n\n接纳永久卡片不能把用户已经放弃的闪念重新标记为已处理。\n",
+            from_ids=[captured["flash_id"]],
+            formation_sources_confirmed=True,
+            transaction_id="tx-formation-dismissed-propose",
+        )
+        with self.assertRaises(ValidationError):
+            self.service.permanent_accept(
+                proposal["result"]["proposal_id"],
+                confirmed_by_user=True,
+                transaction_id="tx-formation-dismissed-accept",
+            )
+        self.assertEqual(self.repo.find_note(captured["flash_id"])[2]["status"], "dismissed")
+
+        with self.assertRaises(ValidationError):
+            self.service.permanent_propose(
+                "mother",
+                draft="# 普通卡片参数不能外溢\n\n母题卡片不应接收普通永久卡片专属的直接形成来源参数。\n",
+                direct_source="这条参数只属于普通永久卡片形成流程。",
+                formation_sources_confirmed=True,
+                transaction_id="tx-formation-mother-reject",
+            )
+
     def test_agent_extracted_title_preserves_user_body_verbatim(self):
         user_body = (
             "我认为持续生成让系统能够产生预设结构之外的新内容。\n\n"
@@ -1803,6 +1959,8 @@ class GoodIdeaCoreTests(unittest.TestCase):
             "permanent",
             title=title,
             draft=user_body,
+            direct_source="这张卡形成于用户比较持续生成的创造价值与幻觉风险时。",
+            formation_sources_confirmed=True,
             transaction_id="tx-agent-title-propose",
         )
         proposal_text = (
@@ -1821,7 +1979,8 @@ class GoodIdeaCoreTests(unittest.TestCase):
         )
         formal_meta, formal_body = parse_document(formal)
         self.assertEqual(formal_meta["authoring_mode"], "user_body_agent_title")
-        self.assertEqual(formal_body, f"# {title}\n\n{user_body}")
+        self.assertTrue(formal_body.startswith(f"# {title}\n\n{user_body}"))
+        self.assertIn("## 形成来源", formal_body)
         self.assertTrue(self.service.lint()["ok"])
 
     def test_user_confirmed_agent_structure_is_explicit_and_hash_protected(self):
@@ -1835,6 +1994,8 @@ class GoodIdeaCoreTests(unittest.TestCase):
             "permanent",
             draft=structured,
             user_approved_structure=True,
+            direct_source="这张卡形成于用户区分可交给 AI 的重复维护和必须亲自完成的思考时。",
+            formation_sources_confirmed=True,
             transaction_id="tx-approved-structure-propose",
         )
         proposal_path = self.root / proposal["result"]["proposal_path"]
@@ -1856,7 +2017,8 @@ class GoodIdeaCoreTests(unittest.TestCase):
         self.assertEqual(
             formal_meta["authoring_mode"], "user_confirmed_agent_structured"
         )
-        self.assertEqual(formal_body, structured)
+        self.assertTrue(formal_body.startswith(structured))
+        self.assertIn("## 形成来源", formal_body)
         self.assertTrue(self.service.lint()["ok"])
 
     def test_permanent_draft_tampering_and_withdrawal_are_enforced(self):
@@ -1866,6 +2028,8 @@ class GoodIdeaCoreTests(unittest.TestCase):
 
 这段正文完整表达了用户自己的判断，也为后续审查保留了足够上下文和可质疑空间。
 """,
+            direct_source="这张卡形成于验证用户草稿篡改和候选撤销门禁的测试情境。",
+            formation_sources_confirmed=True,
             transaction_id="tx-user-draft",
         )
         proposal_id = proposal["result"]["proposal_id"]
@@ -1941,6 +2105,8 @@ class GoodIdeaCoreTests(unittest.TestCase):
         proposal = self.service.permanent_propose(
             "permanent",
             draft="# 用户占位草稿\r\n\r\n这段由用户写成的文字没有末尾换行",
+            direct_source="这张卡形成于验证旧版 Agent 候选不能越权进入永久空间的情境。",
+            formation_sources_confirmed=True,
             transaction_id="tx-before-legacy-shape",
         )
         proposal_id = proposal["result"]["proposal_id"]
@@ -2221,6 +2387,8 @@ updated_at: "2026-08-04T00:00:00+08:00"
                 card_type,
                 draft=f"# {title}\n\n{body}\n",
                 source_ids=[source_id],
+                from_ids=[source_id] if card_type == "permanent" else [],
+                formation_sources_confirmed=(card_type == "permanent"),
                 transaction_id=tx_propose,
             )
             accepted = self.service.permanent_accept(

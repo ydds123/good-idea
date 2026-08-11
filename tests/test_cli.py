@@ -136,6 +136,55 @@ class GoodIdeaCliTests(unittest.TestCase):
         self.assertEqual(drifted.returncode, 1)
         self.assertIn("Obsidian 未启用自动更新链接", drifted.stdout)
 
+    def test_direct_expression_formation_witness_public_cli(self):
+        draft = self.base / "direct-permanent.md"
+        draft.write_text(
+            "# 直接表达需要可寻址的形成见证\n\n"
+            "普通永久卡片可以直接形成于本轮表达，但不能以此为由丢失形成情境。\n",
+            encoding="utf-8",
+        )
+        direct_source = self.base / "direct-source.txt"
+        direct_source.write_text(
+            "这张卡形成于用户明确要求无形成链接就不接纳普通永久卡片的讨论。\n",
+            encoding="utf-8",
+        )
+
+        missing_confirmation = run_cli(
+            "--root", str(self.root), "permanent", "propose",
+            "--type", "permanent", "--draft-file", str(draft),
+            "--direct-source-file", str(direct_source),
+            "--transaction-id", "cli-direct-missing-confirmation",
+        )
+        self.assertEqual(missing_confirmation.returncode, 2)
+
+        proposed = run_cli(
+            "--root", str(self.root), "permanent", "propose",
+            "--type", "permanent", "--draft-file", str(draft),
+            "--direct-source-file", str(direct_source),
+            "--confirm-user-approved-sources",
+            "--transaction-id", "cli-direct-propose",
+        )
+        self.assertEqual(proposed.returncode, 0, proposed.stderr)
+        proposal_id = json.loads(proposed.stdout)["result"]["proposal_id"]
+
+        accepted = run_cli(
+            "--root", str(self.root), "permanent", "accept",
+            "--proposal-id", proposal_id,
+            "--confirm-user-approved",
+            "--transaction-id", "cli-direct-accept",
+        )
+        self.assertEqual(accepted.returncode, 0, accepted.stderr)
+        result = json.loads(accepted.stdout)["result"]
+        witness_path = self.root / result["formation_witness_path"]
+        self.assertTrue(witness_path.is_file())
+        card_text = (self.root / result["card_path"]).read_text(encoding="utf-8")
+        self.assertIn(result["formation_witness_id"], card_text)
+        self.assertIn("## 形成来源", card_text)
+
+        verified = run_cli("--root", str(self.root), "verify")
+        self.assertEqual(verified.returncode, 0, verified.stderr)
+        self.assertTrue(json.loads(verified.stdout)["ok"])
+
     def test_preview_cannot_write_inside_repository(self):
         markdown = self.base / "article.md"
         markdown.write_text("# 标题\n\n正文内容足够用于预读。", encoding="utf-8")
@@ -532,6 +581,7 @@ canonical_url: https://example.com/declared-only
             "--confirm-user-approved-structure",
             "--source-ids", source_result["source_id"],
             "--from-ids", source_result["flash_id"],
+            "--confirm-user-approved-sources",
             "--transaction-id", "cli-permanent-propose",
         )
         self.assertEqual(permanent_proposal.returncode, 0, permanent_proposal.stderr)
@@ -554,7 +604,8 @@ canonical_url: https://example.com/declared-only
         permanent_result = json.loads(permanent_accept.stdout)["result"]
         permanent_id = permanent_result["card_id"]
         formal_text = (self.root / permanent_result["card_path"]).read_text(encoding="utf-8")
-        self.assertTrue(formal_text.endswith(permanent_body))
+        self.assertIn(permanent_body, formal_text)
+        self.assertIn("## 形成来源", formal_text)
         self.assertNotIn("机器数据", formal_text)
 
         mother_draft = self.base / "mother.md"
@@ -849,6 +900,8 @@ canonical_url: https://example.com/declared-only
                 "--type", "permanent",
                 "--draft-file", str(draft),
                 "--source-ids", source_id,
+                "--from-ids", source_id,
+                "--confirm-user-approved-sources",
                 "--transaction-id", txp,
             )
             self.assertEqual(proposed.returncode, 0, proposed.stderr)

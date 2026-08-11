@@ -214,8 +214,22 @@ def build_parser() -> argparse.ArgumentParser:
         required=True,
         help="用户原文 Markdown 草稿；传 - 从 stdin 读取",
     )
-    propose.add_argument("--source-ids", default="")
-    propose.add_argument("--from-ids", default="")
+    propose.add_argument(
+        "--source-ids", default="", help="外部依据的来源 ID，逗号分隔"
+    )
+    propose.add_argument(
+        "--from-ids", default="", help="形成来源 ID，逗号分隔"
+    )
+    propose.add_argument(
+        "--direct-source-file",
+        default="",
+        help="用户确认的简短形成说明；只适用于普通永久卡片",
+    )
+    propose.add_argument(
+        "--confirm-user-approved-sources",
+        action="store_true",
+        help="用户已确认形成来源及其作用；只适用于普通永久卡片",
+    )
     propose.add_argument("--transaction-id")
 
     accept = permanent_sub.add_parser("accept", help="按用户明确指令发布原文草稿")
@@ -513,6 +527,10 @@ def dispatch(args: argparse.Namespace) -> tuple[dict[str, Any], int]:
         result = service.maintain_contracts(transaction_id=args.transaction_id)
     elif args.command == "permanent":
         if args.permanent_command == "propose":
+            if args.draft_file == "-" and args.direct_source_file == "-":
+                raise ValidationError(
+                    "--draft-file 与 --direct-source-file 不能同时从 stdin 读取"
+                )
             result = service.permanent_propose(
                 args.type,
                 draft=_read_text(args.draft_file),
@@ -520,6 +538,12 @@ def dispatch(args: argparse.Namespace) -> tuple[dict[str, Any], int]:
                 user_approved_structure=args.confirm_user_approved_structure,
                 source_ids=_split_ids(args.source_ids),
                 from_ids=_split_ids(args.from_ids),
+                direct_source=(
+                    _read_text(args.direct_source_file)
+                    if args.direct_source_file
+                    else ""
+                ),
+                formation_sources_confirmed=args.confirm_user_approved_sources,
                 transaction_id=args.transaction_id,
             )
         elif args.permanent_command == "accept":

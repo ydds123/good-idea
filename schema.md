@@ -35,6 +35,7 @@
 - 有意思：`INT-YYYYMMDD-xxxxxxxx`
 - 待办：`TODO-YYYYMMDD-xxxxxxxx`
 - 永久/母题/行动/索引：`PER|MOT|ACT|IDX-YYYYMMDD-xxxxxxxx`
+- 直接表达形成见证：`WIT-xxxxxxxxxxxx`
 - 提案：`PRP-xxxxxxxxxxxx`
 
 调用方可以提供 `--transaction-id`。同一事务 ID 重放必须返回原结果且不再创建文件或 Git 提交。
@@ -57,7 +58,7 @@ Markdown Frontmatter 是 CLI 的机器控制面，不是阅读正文。Obsidian 
 | `title` | 标题 | 生成文件名、一级标题和人类可读链接别名 |
 | `status` | 生命周期状态 | 区分待处理、已失效、完整、待行动等状态 |
 | `created_at` / `updated_at` | 创建 / 更新时间 | 文件命名、排序和演化审计 |
-| `source_ids` / `derived_from` | 来源 / 生成关系 | 只在关系起点保存规范 ID；反向可读链接由 CLI 生成 |
+| `source_ids` / `derived_from` | 外部依据 / 形成关系 | `source_ids` 只引用外部来源；普通永久卡片的 `derived_from` 至少引用一个真实形成来源；反向可读链接由 CLI 生成 |
 | `canonical_url` | 规范链接 | 网页来源的点击、身份和去重；原始分享链接不持久化 |
 | `origin_filename` / `origin_sha256` | 原文件名 / 首次导入内容哈希 | 本地来源的人类可读来处和稳定身份；不依赖本机路径 |
 | `capture_status` / `fetched_at` | 获取结果 / 获取时间 | 判断快照是否完整及何时取得 |
@@ -74,9 +75,10 @@ Markdown Frontmatter 是 CLI 的机器控制面，不是阅读正文。Obsidian 
 | `interesting` | `source_ids` | 无 |
 | `todo` | `source_ids` | 无 |
 | `source` | `capture_status`、`fetched_at`、`content_sha256`、`snapshot_sha256`、`image_failures`；网页另必须有 `canonical_url`，本地文档另必须有 `origin_filename` 和 `origin_sha256` | `author`、`published_at`、存在更新候选时的 `pending_update` |
-| `permanent`、`mother`、`action`、`index` | `authoring_mode`、`source_ids`、`derived_from` | 无 |
+| `permanent` | `authoring_mode`、`source_ids`、`derived_from`、`formation_draft_sha256` | `derived_from` 不得为空 |
+| `mother`、`action`、`index` | `authoring_mode`、`source_ids`、`derived_from` | 无 |
 
-`source_ids` 与 `derived_from` 必须是 ID 列表；没有关系时使用空列表。来源正文中的“关联闪念”是由闪念 `source_ids` 生成的人类可读反向视图，来源 Frontmatter 不重复保存 `flash_ids`。闪念是否陈旧在回顾时按 `created_at + 48 小时`动态计算，不持久化过期时间或自动改写状态。`capture_status` 只表示当前快照的获取质量，取值为 `complete`、`partial` 或 `failed`；来源存在更新候选时，生命周期 `status` 可以是 `update_available`，原获取质量仍由 `capture_status` 保留。
+`source_ids` 与 `derived_from` 必须是 ID 列表。`source_ids` 只表示外部来源提供的依据；`derived_from` 表示这张卡实际从哪些材料或表达中形成。普通永久卡片的形成来源可以是闪念、外部来源、既有正式材料或直接表达形成见证；同一外部来源可以同时出现在两个列表中，但角色不同。母题、行动、索引卡片没有关系时仍使用空列表。来源正文中的“关联闪念”是由闪念 `source_ids` 生成的人类可读反向视图，来源 Frontmatter 不重复保存 `flash_ids`。闪念是否陈旧在回顾时按 `created_at + 48 小时`动态计算，不持久化过期时间或自动改写状态。`capture_status` 只表示当前快照的获取质量，取值为 `complete`、`partial` 或 `failed`；来源存在更新候选时，生命周期 `status` 可以是 `update_available`，原获取质量仍由 `capture_status` 保留。
 
 网页身份和本地文档身份严格二选一：网页来源不得出现 `origin_filename` / `origin_sha256`；本地来源不得出现 `canonical_url`。`origin_filename` 只保存 basename，禁止持久化绝对路径；`origin_sha256` 是 64 位小写十六进制哈希，作为首次导入身份，后续刷新不改写。同一内容的文件被移动或复制后仍复用同一来源；内容发生变化时必须对既有来源执行 `source refresh`，不得当作新来源静默导入。
 
@@ -92,13 +94,19 @@ Markdown Frontmatter 是 CLI 的机器控制面，不是阅读正文。Obsidian 
 
 | 候选类型 | Frontmatter 额外字段 | 账本与正文不变量 |
 |---|---|---|
-| `permanent_proposal` | `card_type`、`authoring_mode`、`draft_sha256`、`source_ids`、`from_ids` | 候选文件本身是唯一事实源；草稿正文哈希必须与 Frontmatter 一致 |
+| `permanent_proposal` | `card_type`、`authoring_mode`、`draft_sha256`、`source_ids`、`from_ids`；普通永久卡片另需 `formation_sources_confirmed`，直接表达时另需 `direct_source_anchor`、`direct_source_sha256` | 候选文件本身是唯一事实源；草稿正文哈希必须与 Frontmatter 一致；旧候选不会被静默补齐新确认 |
 | `source_update_proposal` | 无 | 正文机器负载保存来源 ID、旧/新内容哈希和预览 |
 | `connection_proposal` | 无 | 正文机器负载保存起点、终点、关系和理由 |
 
 候选目录只保存 `pending` 文件。接纳或撤销后删除候选；结果与原因保留在事务账本、追加日志和 Git 历史中，不再维护终态候选文件或 `state.json.proposals` 镜像。来源身份直接由来源文件的规范身份字段和稳定 ID 决定，不再维护 `state.json.sources` 镜像。
 
 正式永久卡片草稿正文不得出现内部负载或“机器数据”区块。来源更新和连接候选的机器负载只存在于隐藏候选目录，由 CLI 校验和读取。
+
+### 直接表达形成见证
+
+`.goodidea/formation-witnesses/<WIT-ID>.md` 只在普通永久卡片直接形成于本轮表达、又没有可寻址对象可以代表这次形成情境时创建。它是内部来源见证，不是第五种正式卡片，也不进入 `index.md`、生命周期、回顾或语义连接流程。
+
+见证必须包含 `id`、固定 `type: formation_witness`、`title`、`created_at`、`card_id`、`proposal_id`、`draft_sha256` 和 `source_anchor_sha256`。正文只保存用户确认的一句形成情境和指向正式卡片的机械反链；不得保存完整聊天原文。普通永久卡片通过 `derived_from` 指回见证，并由 CLI 在正文末尾机械添加“形成来源”导航区。该导航区不属于用户确认的认知正文，不能由 Agent 自由改写。
 
 ## Obsidian 产品基线
 
@@ -175,21 +183,21 @@ finalize 同时创建可恢复的运行时维护任务。任务允许 `pending`�
 | `source commit --attach-flash-ids` | 只关联已经存在的正式闪念，不额外创建保存动机闪念；必须由维护任务提供逐卡论证说明，或显式提供 `--anchor-explanation` |
 | `source commit --attach-flash-ids --maintenance-job-id` | 按任务缓存成功图片，重试不重复下载；提交后自动回写 `complete` 或 `partial` |
 | `source refresh` | 网页和本地来源都先创建候选并保留旧快照；本地更新必须显式指定既有来源。接受时要求仍为同一个待处理候选且旧哈希一致 |
-| `permanent propose` | 输入必须是用户确认后的完整草稿；结构化模式还必须带显式结构确认；候选进入隐藏目录，不进入永久空间 |
-| `permanent accept` | 候选、Frontmatter、正文哈希和状态账本必须一致且状态为 `pending`，并带用户明确创建确认 |
+| `permanent propose` | 输入必须是用户确认后的完整草稿；结构化模式还必须带显式结构确认；普通永久卡片必须带 `--confirm-user-approved-sources`，并通过 `--from-ids` 提供至少一个可寻址形成来源，或通过 `--direct-source-file` 提供用户确认的一句具体形成情境；`--source-ids` 只表示外部依据，不能单独满足形成门禁；候选进入隐藏目录，不进入永久空间 |
+| `permanent accept` | 候选、Frontmatter、正文哈希和状态账本必须一致且状态为 `pending`，并带用户在候选形成后的明确创建确认；普通永久卡片原子创建卡片及必要的直接表达见证、维护形成来源导航、删除候选，并只把 `pending` 形成闪念转为 `processed`；`processed` 保持不变，`dismissed` 拒绝接纳 |
 | `permanent withdraw` | 只撤销仍为 `pending` 的候选；撤销后不可接纳，错误内容不保留在当前工作树 |
 | `permanent revise` / `permanent feedback` | 只能追加用户亲自提供并确认的内容；CLI 只机械添加区块、时间戳和规范换行 |
 | `capture revise` | 目标必须是既有轻量记录（闪念/有意思/待办）；只能追加用户亲自提供并确认的内容；追加内容必须有实际含义 |
 | `capture update` | 目标必须是既有轻量记录；只能整体更新为用户亲自提供并确认的内容；替换"原始记录"节并保留其余节 |
 | `capture transition` | 目标必须是既有轻量记录；目标状态必须属于该类型允许集合；闪念的 `processed` 由系统保留，不开放手动流转 |
-| `connect propose` | 两端都必须是已存在的正式卡片；零连接节点本身有效 |
+| `connect propose` | 两端都必须是已存在的正式卡片；它只增加形成关系之外的可选语义连接，不承担普通永久卡片的准入激活 |
 | `connect accept` | 必须是用户确认的既有 `pending` 连接候选，接受时原子写入双向关系 |
 | `connect withdraw` | 只撤回仍为 `pending` 的连接候选；必须带明确撤回原因；撤回后候选不可接纳 |
 | `connect disconnect` | 目标必须是账本中已接受的连接；必须带明确断开原因；原子移除两端卡片的连接条目并更新账本 |
 | `review` | 只读返回待处理材料，并按创建时间标记超过 48 小时的陈旧闪念 |
 | `maintain metadata` | 只机械删除正式内容中已废弃的 `summary` 字段，不改正文、快照或关系 |
 
-人的发起、作者权、苏格拉底式澄清与完整草稿确认规则由 `AGENTS.md` 和相关 Skills 定义；本文件只校验其在 CLI 边界留下的确认参数、候选状态和内容哈希。正式卡片被接纳后即为网络节点，没有合适对象时允许零语义连接。
+人的发起、作者权、苏格拉底式澄清与完整草稿确认规则由 `AGENTS.md` 和相关 Skills 定义；本文件只校验其在 CLI 边界留下的确认参数、候选状态和内容哈希。普通永久卡片必须先以形成来源连接完成最小网络激活；在此之外没有合适对象时，允许零条额外语义连接。母题、行动和索引卡片暂不受这项普通永久卡片门禁约束。
 
 ## 事务、索引与日志
 
