@@ -203,6 +203,34 @@
       "timestamp": "2026-08-04T21:45:41+08:00",
       "transaction_id": "e2e-wechat-permanent-propose-20260804"
     },
+    "finalize-skillhub-20260811": {
+      "action": "capture-finalize",
+      "result": {
+        "flash_count": 1,
+        "flashes": [
+          {
+            "context_refs": [
+              "https://mp.weixin.qq.com/s/rSVXMwOMLSEhl7gC5KdBCg",
+              "https://my.feishu.cn/wiki/Zw7VwUMgtih1EMkUOx4cRSvqnNg"
+            ],
+            "id": "FLA-20260811-a54b9e13",
+            "path": "闪念空间/2026-08-11-核心矛盾就一个词：交易成本——SkillHub-的「信任与分发基础设施」=-曾鸣-1.2-智能体经济交易成本问题的工程化.md",
+            "source_anchors": [],
+            "source_boundary": "",
+            "title": "核心矛盾就一个词：交易成本——SkillHub 的「信任与分发基础设施」= 曾鸣 1.2 智能体经济交易成本问题的工程化"
+          }
+        ],
+        "maintenance_job_ids": [
+          "JOB-4f1b44c0d246",
+          "JOB-0338b1e93db9"
+        ],
+        "proposal_id": "CPR-f360dad73887",
+        "session_id": "CAP-20260811-184de82f"
+      },
+      "summary": "确认本轮 1 张闪念",
+      "timestamp": "2026-08-11T10:13:28+08:00",
+      "transaction_id": "finalize-skillhub-20260811"
+    },
     "first-permanent-accept-20260807": {
       "action": "permanent-accept",
       "result": {
