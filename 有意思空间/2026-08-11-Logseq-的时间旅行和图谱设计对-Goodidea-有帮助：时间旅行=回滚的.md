@@ -1,8 +1,8 @@
 ---
 id: "INT-20260811-c7fef391"
-type: "interesting"
+type: "有意思"
 title: "Logseq 的时间旅行和图谱设计对 Goodidea 有帮助：时间旅行=回滚的"
-status: "pending"
+status: "待处理"
 created_at: "2026-08-11T16:52:05+08:00"
 updated_at: "2026-08-11T16:52:05+08:00"
 source_ids: []

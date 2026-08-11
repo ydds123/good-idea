@@ -1,8 +1,8 @@
 ---
 id: "TODO-20260809-13e2394c"
-type: "todo"
+type: "待办"
 title: "为 Good Idea 增加用户画像/记忆摘要层（类 ChatGPT 记忆）"
-status: "open"
+status: "进行中"
 created_at: "2026-08-09T21:42:30+08:00"
 updated_at: "2026-08-09T21:54:09+08:00"
 source_ids: []

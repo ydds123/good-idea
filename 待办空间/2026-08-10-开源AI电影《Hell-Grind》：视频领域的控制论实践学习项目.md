@@ -1,8 +1,8 @@
 ---
 id: "TODO-20260810-92f84ca8"
-type: "todo"
+type: "待办"
 title: "开源AI电影《Hell Grind》：视频领域的控制论实践学习项目"
-status: "open"
+status: "进行中"
 created_at: "2026-08-10T00:30:24+08:00"
 updated_at: "2026-08-10T00:30:24+08:00"
 source_ids: []
