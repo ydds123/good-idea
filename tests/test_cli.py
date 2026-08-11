@@ -30,6 +30,40 @@ class GoodIdeaCliTests(unittest.TestCase):
     def tearDown(self):
         self.temp.cleanup()
 
+    def test_permanent_help_exposes_input_and_confirmation_contracts(self):
+        propose = run_cli("permanent", "propose", "--help")
+        self.assertEqual(propose.returncode, 0, propose.stderr)
+        self.assertIn("不创建正式卡片", propose.stdout)
+        self.assertIn("仓库外 UTF-8 Markdown 草稿文件路径", propose.stdout)
+        self.assertIn("仓库外 UTF-8 文本文件路径", propose.stdout)
+        self.assertIn("文件内容是用户确认的一句具体形成情境", propose.stdout)
+        self.assertIn("只适用于普通永久卡片", propose.stdout)
+        self.assertIn("不能与值同为 - 的 --draft-file 同时使用", propose.stdout)
+        self.assertIn("用户已确认形成来源及其作用", propose.stdout)
+
+        accept = run_cli("permanent", "accept", "--help")
+        self.assertEqual(accept.returncode, 0, accept.stderr)
+        self.assertIn("候选形成后再次明确要求正式创建", accept.stdout)
+        self.assertIn("新流程不得用它替代候选形成后的再次确认", accept.stdout)
+        self.assertIn("用户已看到本次候选", accept.stdout)
+
+        withdraw = run_cli("permanent", "withdraw", "--help")
+        self.assertEqual(withdraw.returncode, 0, withdraw.stderr)
+        self.assertIn("撤销后候选不能再接纳", withdraw.stdout)
+        self.assertIn("作为命令行直接文本传入", withdraw.stdout)
+
+        revise = run_cli("permanent", "revise", "--help")
+        self.assertEqual(revise.returncode, 0, revise.stderr)
+        self.assertIn("用户本人提供的修订内容", revise.stdout)
+        self.assertIn("permanent/index: active|revised|retired", revise.stdout)
+        self.assertIn("确认修订内容由用户本人提供并已确认", revise.stdout)
+
+        feedback = run_cli("permanent", "feedback", "--help")
+        self.assertEqual(feedback.returncode, 0, feedback.stderr)
+        self.assertIn("已接纳的行动卡", feedback.stdout)
+        self.assertIn("现实结果，作为直接文本传入", feedback.stdout)
+        self.assertIn("结果和调整均由用户本人提供并已确认", feedback.stdout)
+
     def test_capture_and_verify_public_commands(self):
         app = json.loads((self.root / ".obsidian/app.json").read_text(encoding="utf-8"))
         appearance = json.loads(
@@ -165,7 +199,20 @@ class GoodIdeaCliTests(unittest.TestCase):
             "--transaction-id", "cli-direct-propose",
         )
         self.assertEqual(proposed.returncode, 0, proposed.stderr)
-        proposal_id = json.loads(proposed.stdout)["result"]["proposal_id"]
+        proposal_result = json.loads(proposed.stdout)["result"]
+        proposal_id = proposal_result["proposal_id"]
+        self.assertTrue((self.root / proposal_result["proposal_path"]).is_file())
+        self.assertFalse(list((self.root / "永久空间/永久卡片").glob("*.md")))
+        self.assertFalse((self.root / ".goodidea/formation-witnesses").exists())
+
+        premature_accept = run_cli(
+            "--root", str(self.root), "permanent", "accept",
+            "--proposal-id", proposal_id,
+            "--transaction-id", "cli-direct-premature-accept",
+        )
+        self.assertEqual(premature_accept.returncode, 2)
+        self.assertTrue((self.root / proposal_result["proposal_path"]).is_file())
+        self.assertFalse(list((self.root / "永久空间/永久卡片").glob("*.md")))
 
         accepted = run_cli(
             "--root", str(self.root), "permanent", "accept",

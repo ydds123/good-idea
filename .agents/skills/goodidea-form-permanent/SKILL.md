@@ -32,18 +32,11 @@ description: "仅在用户明确主动发起 Good idea 永久、母题、行动�
 2. 按审查标准帮助用户形成自己的判断。普通永久卡片同时列出候选形成来源及各自作用，请用户确认；未达到标准时等待用户补充，不生成写入候选。达到标准也不等于获得创建授权。
 3. 根据用户完整表达提炼标题，并把用户已表达的内容结构化为 Markdown；只删除口语噪声、合并重复和调整顺序，不新增观点。
 4. 展示完整待确认草稿。只有用户明确确认全文没有问题，才把它视为最终草稿。
-5. 用户确认完整草稿后，把最终草稿保存到仓库外临时文件。普通永久卡片还需确认形成来源，然后只创建候选：
+5. 用户确认完整草稿后，把最终草稿保存到仓库外临时文件。普通永久卡片还需确认形成来源，然后先运行 `uv run goodidea --root <仓库> permanent propose --help`，按当前 CLI 帮助只创建候选。若只有本轮表达可用，把用户确认的一句具体形成情境保存到仓库外临时文本文件；不要保存完整聊天。用户直接提交自己的完整草稿时可使用逐字模式；草稿第一行必须是唯一的 `# 标题`。
+6. 向用户报告候选标题、路径和形成来源，然后立即结束当前 Agent 回合。不得把候选形成前的“确认全文”或提前授权解释成正式接纳，也不得在同一回合继续查看或调用 `accept`。
+7. 只有用户看到候选结果后发送一条新的消息，再次明确要求正式创建，才运行 `uv run goodidea --root <仓库> permanent accept --help` 并按当前 CLI 帮助接纳该候选。
+8. 接纳完成后运行 `uv run goodidea --root <仓库> verify`。普通永久卡片的用户认知正文必须保持确认草稿不变；CLI 可以在正文末尾机械添加“形成来源”导航区。该区不属于用户创作内容。
 
-       uv run goodidea --root <仓库> permanent propose --type permanent --draft-file <确认后的完整草稿> --confirm-user-approved-structure --source-ids <外部依据ID列表> --from-ids <形成来源ID列表> --confirm-user-approved-sources
+`permanent propose` 不授权 Agent 创作新观点。旧候选若缺少新门禁要求的形成来源确认，必须撤销并重新提案，不能静默补齐。错误或过时的待处理草稿先查看 `permanent withdraw --help` 再撤销，不能接纳。
 
-   若直接形成于本轮表达，用 `--direct-source-file <用户确认的一句形成说明>` 代替空的 `--from-ids`。母题、行动和索引卡片仍按原参数创建候选，不使用这两个普通卡片专属参数。用户直接提交自己的完整草稿时可使用逐字模式；草稿第一行必须是唯一的 `# 标题`。
-6. 向用户报告候选标题、路径和形成来源，然后停止。不得把“确认全文”解释成正式接纳，也不得在同一次 Agent 决策中紧接着调用 `accept`。
-7. 只有用户看到候选结果后再次明确要求正式创建，才调用：
-
-       uv run goodidea --root <仓库> permanent accept --proposal-id <ID> --confirm-user-approved
-
-8. 运行 `uv run goodidea --root <仓库> verify`。普通永久卡片的用户认知正文必须保持确认草稿不变；CLI 可以在正文末尾机械添加“形成来源”导航区。该区不属于用户创作内容。
-
-`permanent propose` 不授权 Agent 创作新观点。旧候选若缺少新门禁要求的形成来源确认，必须撤销并重新提案，不能静默补齐。错误或过时的待处理草稿用 `permanent withdraw` 撤销，不能接纳。
-
-正式卡片创建后的 `permanent revise` 和 `permanent feedback` 也只能提交用户亲自写下的内容，并带 `--confirm-user-authored`；CLI 可以机械添加区块、列表标记和时间戳、规范化边界换行，但不得改变用户措辞。Agent 仍然只能评估，不能维护正文。
+正式卡片创建后的 `permanent revise` 和 `permanent feedback` 也只能提交用户亲自写下并确认的内容；执行前查看对应 `--help`。CLI 可以机械添加区块、列表标记和时间戳、规范化边界换行，但不得改变用户措辞。Agent 仍然只能评估，不能维护正文。

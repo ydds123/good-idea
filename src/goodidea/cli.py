@@ -195,9 +195,19 @@ def build_parser() -> argparse.ArgumentParser:
     permanent_sub = permanent.add_subparsers(
         dest="permanent_command", required=True
     )
-    propose = permanent_sub.add_parser("propose", help="提交用户亲自写成的草稿")
+    propose = permanent_sub.add_parser(
+        "propose",
+        help="提交用户确认后的永久类卡片候选",
+        description=(
+            "提交用户确认后的永久类卡片候选，不创建正式卡片。"
+            "草稿与直接表达形成说明均从文件路径读取。"
+        ),
+    )
     propose.add_argument(
-        "--type", required=True, choices=sorted(PERMANENT_CARD_TYPES)
+        "--type",
+        required=True,
+        choices=sorted(PERMANENT_CARD_TYPES),
+        help="候选卡片类型",
     )
     propose.add_argument(
         "--title",
@@ -212,7 +222,7 @@ def build_parser() -> argparse.ArgumentParser:
     propose.add_argument(
         "--draft-file",
         required=True,
-        help="用户原文 Markdown 草稿；传 - 从 stdin 读取",
+        help="仓库外 UTF-8 Markdown 草稿文件路径；传 - 从 stdin 读取",
     )
     propose.add_argument(
         "--source-ids", default="", help="外部依据的来源 ID，逗号分隔"
@@ -223,49 +233,102 @@ def build_parser() -> argparse.ArgumentParser:
     propose.add_argument(
         "--direct-source-file",
         default="",
-        help="用户确认的简短形成说明；只适用于普通永久卡片",
+        help=(
+            "仓库外 UTF-8 文本文件路径；文件内容是用户确认的一句具体形成情境；"
+            "只适用于普通永久卡片，传 - 从 stdin 读取；"
+            "不能与值同为 - 的 --draft-file 同时使用"
+        ),
     )
     propose.add_argument(
         "--confirm-user-approved-sources",
         action="store_true",
         help="用户已确认形成来源及其作用；只适用于普通永久卡片",
     )
-    propose.add_argument("--transaction-id")
+    propose.add_argument("--transaction-id", help="可复用的幂等事务 ID")
 
-    accept = permanent_sub.add_parser("accept", help="按用户明确指令发布原文草稿")
-    accept.add_argument("--proposal-id", required=True)
+    accept = permanent_sub.add_parser(
+        "accept",
+        help="按候选形成后的用户明确指令正式创建卡片",
+        description=(
+            "接纳仍为 pending 的永久类卡片候选。"
+            "只有用户看到候选结果后再次明确要求正式创建时才能执行。"
+        ),
+    )
+    accept.add_argument("--proposal-id", required=True, help="待接纳的候选 ID")
     accept.add_argument(
         "--confirm-user-authored",
         dest="confirm_user_approved",
         action="store_true",
-        help="兼容旧命令：用户已确认最终草稿",
+        help=(
+            "旧命令兼容别名；新流程不得用它替代候选形成后的再次确认，"
+            "应使用 --confirm-user-approved"
+        ),
     )
     accept.add_argument(
         "--confirm-user-approved",
         dest="confirm_user_approved",
         action="store_true",
-        help="用户已明确确认最终草稿并要求正式创建",
+        help="用户已看到本次候选，并在候选形成后再次明确要求正式创建",
     )
-    accept.add_argument("--transaction-id")
+    accept.add_argument("--transaction-id", help="可复用的幂等事务 ID")
 
-    withdraw = permanent_sub.add_parser("withdraw", help="撤销待处理草稿")
-    withdraw.add_argument("--proposal-id", required=True)
-    withdraw.add_argument("--reason", required=True)
-    withdraw.add_argument("--transaction-id")
+    withdraw = permanent_sub.add_parser(
+        "withdraw",
+        help="撤销错误或过时的待处理候选",
+        description="撤销仍为 pending 的候选；撤销后候选不能再接纳。",
+    )
+    withdraw.add_argument("--proposal-id", required=True, help="待撤销的候选 ID")
+    withdraw.add_argument(
+        "--reason", required=True, help="撤销原因，作为命令行直接文本传入"
+    )
+    withdraw.add_argument("--transaction-id", help="可复用的幂等事务 ID")
 
-    revise = permanent_sub.add_parser("revise")
-    revise.add_argument("--card-id", required=True)
-    revise.add_argument("--note", required=True)
-    revise.add_argument("--status", default="")
-    revise.add_argument("--confirm-user-authored", action="store_true")
-    revise.add_argument("--transaction-id")
+    revise = permanent_sub.add_parser(
+        "revise",
+        help="追加用户本人提供并确认的卡片修订",
+        description=(
+            "向已接纳的永久类卡片追加用户修订。"
+            "未指定状态时，CLI 按卡片类型进入默认修订状态。"
+        ),
+    )
+    revise.add_argument("--card-id", required=True, help="待修订的正式卡片 ID")
+    revise.add_argument(
+        "--note", required=True, help="用户本人提供的修订内容，作为直接文本传入"
+    )
+    revise.add_argument(
+        "--status",
+        default="",
+        help=(
+            "目标状态；permanent/index: active|revised|retired，"
+            "mother: open|evolving|retired，"
+            "action: planned|acting|observing|reviewed"
+        ),
+    )
+    revise.add_argument(
+        "--confirm-user-authored",
+        action="store_true",
+        help="确认修订内容由用户本人提供并已确认",
+    )
+    revise.add_argument("--transaction-id", help="可复用的幂等事务 ID")
 
-    feedback = permanent_sub.add_parser("feedback")
-    feedback.add_argument("--card-id", required=True)
-    feedback.add_argument("--result", required=True)
-    feedback.add_argument("--adjustment", required=True)
-    feedback.add_argument("--confirm-user-authored", action="store_true")
-    feedback.add_argument("--transaction-id")
+    feedback = permanent_sub.add_parser(
+        "feedback",
+        help="向行动卡追加用户本人提供并确认的现实反馈",
+        description="向已接纳的行动卡追加现实结果和后续调整，并转为 reviewed。",
+    )
+    feedback.add_argument("--card-id", required=True, help="待反馈的行动卡 ID")
+    feedback.add_argument(
+        "--result", required=True, help="用户提供的现实结果，作为直接文本传入"
+    )
+    feedback.add_argument(
+        "--adjustment", required=True, help="用户提供的后续调整，作为直接文本传入"
+    )
+    feedback.add_argument(
+        "--confirm-user-authored",
+        action="store_true",
+        help="确认结果和调整均由用户本人提供并已确认",
+    )
+    feedback.add_argument("--transaction-id", help="可复用的幂等事务 ID")
 
     connect = sub.add_parser("connect", help="语义连接候选与确认")
     connect_sub = connect.add_subparsers(dest="connect_command", required=True)

@@ -207,7 +207,7 @@ good-idea/
 
 ### `.agents/skills/`：Agent 协作流程
 
-项目级 Skills 位于 `.agents/skills/<skill-name>/`。每个 Skill 的核心文件是 `SKILL.md`；`agents/openai.yaml` 保存 Codex UI 使用的名称、简介和默认提示。不要在每个 Skill 里另建 README，共享说明集中维护在本文件，具体工作流留在对应 `SKILL.md`。
+项目级 Skills 位于 `.agents/skills/<skill-name>/`。每个 Skill 的核心文件是 `SKILL.md`；`agents/openai.yaml` 保存 Codex UI 使用的名称、简介和默认提示。不要在每个 Skill 里另建 README，共享说明集中维护在本文件。触发、语义工作流、用户决策点和停止条件留在对应 `SKILL.md`；准确参数、输入类型和调用方式以 CLI `--help` 为准。
 
 | Skill | 什么时候使用 | 主要边界 |
 |---|---|---|
