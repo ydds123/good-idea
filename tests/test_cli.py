@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import os
 import subprocess
 import sys
 import tempfile
@@ -11,9 +12,13 @@ from tests.support import initialize_test_vault
 
 
 def run_cli(*args: str, cwd: Path | None = None) -> subprocess.CompletedProcess[str]:
+    # 固定终端宽度：argparse 的 help 换行依赖 COLUMNS，窄终端会把长 help
+    # 折行导致契约断言不稳定；200 列保证 help 文本按代码书写原样输出。
+    env = {**os.environ, "COLUMNS": "200"}
     return subprocess.run(
         [sys.executable, "-m", "goodidea.cli", *args],
         cwd=cwd,
+        env=env,
         text=True,
         capture_output=True,
         check=False,

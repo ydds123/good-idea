@@ -35,7 +35,11 @@ def initialize_test_vault(root: Path) -> None:
     )
     for relative in ("AGENTS.md", "schema.md", ".gitignore"):
         shutil.copy2(PROJECT_ROOT / relative, root / relative)
-    shutil.copytree(PROJECT_ROOT / ".obsidian", root / ".obsidian")
+    shutil.copytree(
+        PROJECT_ROOT / ".obsidian",
+        root / ".obsidian",
+        ignore=shutil.ignore_patterns(".DS_Store"),
+    )
     (root / LOG_PATH).write_text(
         "# Good idea 操作日志\n\n> 只允许 CLI 追加。\n", encoding="utf-8"
     )
