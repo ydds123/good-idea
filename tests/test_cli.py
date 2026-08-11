@@ -66,7 +66,7 @@ class GoodIdeaCliTests(unittest.TestCase):
         revise = run_cli("permanent", "revise", "--help")
         self.assertEqual(revise.returncode, 0, revise.stderr)
         self.assertIn("用户本人提供的修订内容", revise.stdout)
-        self.assertIn("permanent/index: active|revised|retired", revise.stdout)
+        self.assertIn("永久卡/索引: 有效|已修订|已停用", revise.stdout)
         self.assertIn("确认修订内容由用户本人提供并已确认", revise.stdout)
 
         feedback = run_cli("permanent", "feedback", "--help")
@@ -196,7 +196,7 @@ class GoodIdeaCliTests(unittest.TestCase):
 
         missing_confirmation = run_cli(
             "--root", str(self.root), "permanent", "propose",
-            "--type", "permanent", "--draft-file", str(draft),
+            "--type", "永久卡", "--draft-file", str(draft),
             "--direct-source-file", str(direct_source),
             "--transaction-id", "cli-direct-missing-confirmation",
         )
@@ -204,7 +204,7 @@ class GoodIdeaCliTests(unittest.TestCase):
 
         proposed = run_cli(
             "--root", str(self.root), "permanent", "propose",
-            "--type", "permanent", "--draft-file", str(draft),
+            "--type", "永久卡", "--draft-file", str(draft),
             "--direct-source-file", str(direct_source),
             "--confirm-user-approved-sources",
             "--transaction-id", "cli-direct-propose",
@@ -635,7 +635,7 @@ canonical_url: https://example.com/declared-only
         permanent_draft.write_text(permanent_body, encoding="utf-8")
         permanent_proposal = run_cli(
             "--root", str(self.root), "permanent", "propose",
-            "--type", "permanent", "--draft-file", str(permanent_draft),
+            "--type", "永久卡", "--draft-file", str(permanent_draft),
             "--confirm-user-approved-structure",
             "--source-ids", source_result["source_id"],
             "--from-ids", source_result["flash_id"],
@@ -678,7 +678,7 @@ canonical_url: https://example.com/declared-only
         )
         mother_proposal = run_cli(
             "--root", str(self.root), "permanent", "propose",
-            "--type", "mother", "--draft-file", str(mother_draft),
+            "--type", "母题", "--draft-file", str(mother_draft),
             "--source-ids", source_result["source_id"],
             "--transaction-id", "cli-mother-propose",
         )
@@ -738,7 +738,7 @@ canonical_url: https://example.com/declared-only
         )
         action_proposal = run_cli(
             "--root", str(self.root), "permanent", "propose",
-            "--type", "action", "--draft-file", str(action_draft),
+            "--type", "行动", "--draft-file", str(action_draft),
             "--transaction-id", "cli-action-propose",
         )
         self.assertEqual(action_proposal.returncode, 0, action_proposal.stderr)
@@ -779,7 +779,7 @@ canonical_url: https://example.com/declared-only
         )
         index_proposal = run_cli(
             "--root", str(self.root), "permanent", "propose",
-            "--type", "index", "--draft-file", str(index_draft),
+            "--type", "索引", "--draft-file", str(index_draft),
             "--source-ids", f"{permanent_id},{mother_id},{action_id}",
             "--transaction-id", "cli-index-propose",
         )
@@ -810,13 +810,13 @@ canonical_url: https://example.com/declared-only
             (
                 mother_id,
                 "新增观察：能否主动删除噪声，是持续生成质量提升的可观察指标。",
-                "evolving",
+                "演化中",
                 "cli-mother-revise",
             ),
             (
                 index_id,
                 "把完成反馈的行动卡保留为现实校验入口。",
-                "revised",
+                "已修订",
                 "cli-index-revise",
             ),
         ]:
@@ -884,7 +884,7 @@ canonical_url: https://example.com/declared-only
         transitioned = run_cli(
             "--root", str(self.root), "capture", "transition",
             "--id", todo_id,
-            "--status", "done",
+            "--status", "已完成",
             "--transaction-id", "cli-transition-done",
         )
         self.assertEqual(transitioned.returncode, 0, transitioned.stderr)
@@ -916,7 +916,7 @@ canonical_url: https://example.com/declared-only
         bad = run_cli(
             "--root", str(self.root), "capture", "transition",
             "--id", todo_id,
-            "--status", "processed",
+            "--status", "已处理",
             "--transaction-id", "cli-transition-bad",
         )
         self.assertEqual(bad.returncode, 2, bad.stderr)
@@ -955,7 +955,7 @@ canonical_url: https://example.com/declared-only
             draft.write_text(f"# {title}\n\n{body}\n", encoding="utf-8")
             proposed = run_cli(
                 "--root", str(self.root), "permanent", "propose",
-                "--type", "permanent",
+                "--type", "永久卡",
                 "--draft-file", str(draft),
                 "--source-ids", source_id,
                 "--from-ids", source_id,

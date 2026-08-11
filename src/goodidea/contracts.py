@@ -22,6 +22,75 @@ MAINTENANCE_STATES = (
     "partial", "failed", "complete", "cancelled", "context_changed",
 )
 
+# ---------------------------------------------------------------------------
+# 枚举值中文化（2026-08-11 契约决策：frontmatter 写中文值，内部逻辑保持英文）
+#
+# 原则：能中文化的英文词（type/status/authoring_mode/card_type/capture_status
+# 的取值）在 Frontmatter 文件层面使用中文；CLI 在读写边界做双向归一化，
+# 状态机、校验、事务逻辑全部在英文内部值上运行。ID、哈希、时间戳等机器
+# 字段保持原样。内部类型（permanent_proposal / formation_witness）与运行时
+# 状态（MAINTENANCE_STATES / 可读性检查）不进入映射表，保持英文。
+#
+# 中文译法复用 notes.STATUS_LABELS（index.md 一直在用的人类可读标签），
+# 保持单一事实源；type 译法对齐空间名。
+# ---------------------------------------------------------------------------
+ENUM_ZH: dict[str, str] = {
+    # type（与空间/目录对应）
+    "flash": "闪念",
+    "source": "来源",
+    "interesting": "有意思",
+    "todo": "待办",
+    "permanent": "永久卡",
+    "mother": "母题",
+    "action": "行动",
+    "index": "索引",
+    # status（跨类型共用词，译法 = 原 STATUS_LABELS）
+    "pending": "待处理",
+    "processed": "已处理",
+    "dismissed": "已放弃",
+    "complete": "完整",
+    "partial": "部分抓取",
+    "failed": "抓取失败",
+    "update_available": "有更新待确认",
+    "open": "进行中",
+    "done": "已完成",
+    "cancelled": "已取消",
+    "active": "有效",
+    "revised": "已修订",
+    "retired": "已停用",
+    "evolving": "演化中",
+    "planned": "待行动",
+    "acting": "行动中",
+    "observing": "待观察",
+    "reviewed": "已复盘",
+    # authoring_mode
+    "user_verbatim": "用户原文",
+    "user_body_agent_title": "仅提炼标题",
+    "user_confirmed_agent_structured": "用户确认·Agent结构化",
+}
+ENUM_EN: dict[str, str] = {zh: en for en, zh in ENUM_ZH.items()}
+ENUM_FIELDS = frozenset({"type", "status", "authoring_mode", "card_type", "capture_status"})
+
+
+def localize_enums(metadata: dict[str, Any]) -> dict[str, Any]:
+    """写入 Frontmatter 前：英文内部值 → 中文文件值（不修改入参）。"""
+    localized = dict(metadata)
+    for field in ENUM_FIELDS:
+        value = localized.get(field)
+        if isinstance(value, str) and value in ENUM_ZH:
+            localized[field] = ENUM_ZH[value]
+    return localized
+
+
+def normalize_enums(metadata: dict[str, Any]) -> dict[str, Any]:
+    """读取 Frontmatter 后：中文文件值 → 英文内部值（不修改入参）。"""
+    normalized = dict(metadata)
+    for field in ENUM_FIELDS:
+        value = normalized.get(field)
+        if isinstance(value, str) and value in ENUM_EN:
+            normalized[field] = ENUM_EN[value]
+    return normalized
+
 
 def normalize_flash_event(
     raw: dict[str, Any], known_entry_ids: set[str], *, format_version: int

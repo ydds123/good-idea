@@ -6,14 +6,14 @@
 
 | 目录 | `type` | 允许状态 |
 |---|---|---|
-| `闪念空间/` | `flash` | `pending`, `processed`, `dismissed` |
-| `溯源空间/` | `source` | `complete`, `partial`, `failed`, `update_available` |
-| `有意思空间/` | `interesting` | `pending`, `processed`, `dismissed` |
-| `待办空间/` | `todo` | `open`, `done`, `cancelled` |
-| `永久空间/永久卡片/` | `permanent` | `active`, `revised`, `retired` |
-| `永久空间/母题卡片/` | `mother` | `open`, `evolving`, `retired` |
-| `永久空间/行动卡片/` | `action` | `planned`, `acting`, `observing`, `reviewed` |
-| `永久空间/索引卡片/` | `index` | `active`, `revised`, `retired` |
+| `闪念空间/` | `闪念` | `待处理`, `已处理`, `已放弃` |
+| `溯源空间/` | `来源` | `完整`, `部分抓取`, `抓取失败`, `有更新待确认` |
+| `有意思空间/` | `有意思` | `待处理`, `已处理`, `已放弃` |
+| `待办空间/` | `待办` | `进行中`, `已完成`, `已取消` |
+| `永久空间/永久卡片/` | `永久卡` | `有效`, `已修订`, `已停用` |
+| `永久空间/母题卡片/` | `母题` | `进行中`, `演化中`, `已停用` |
+| `永久空间/行动卡片/` | `行动` | `待行动`, `行动中`, `待观察`, `已复盘` |
+| `永久空间/索引卡片/` | `索引` | `有效`, `已修订`, `已停用` |
 
 所有正式内容必须包含 JSON-compatible YAML Frontmatter：
 
@@ -52,6 +52,10 @@ ID 是系统内部的稳定身份，用于去重、状态关联、来源关系�
 
 Markdown Frontmatter 是 CLI 的机器控制面，不是阅读正文。Obsidian 默认显示属性，方便用户查看卡片身份、状态、时间和来源关系；这些字段仍只能由 CLI 维护，不应在 Obsidian 中手工修改。
 
+### 枚举值中文化（2026-08-11 契约）
+
+正式内容 Frontmatter 中的语义枚举值使用中文（`type`：`闪念`/`来源`/`有意思`/`待办`/`永久卡`/`母题`/`行动`/`索引`；`status`、`capture_status`、`authoring_mode` 同理，完整映射见 `src/goodidea/contracts.py` 的 `ENUM_ZH`）。CLI 在读写边界做双向归一化：读取时中文值归一化为英文内部值，写入时英文内部值本地化为中文，状态机、校验与事务逻辑始终运行在英文内部值上。字段名（`type`、`status` 等）、ID、哈希与时间戳保持英文机器格式不变。内部状态（捕获会话、维护任务、候选文件、可读性检查）不进正式 Frontmatter，保持英文。
+
 | 参数 | 中文含义 | 系统用途 |
 |---|---|---|
 | `id` / `type` | 稳定身份 / 对象类型 | 在改名后仍识别同一对象，并校验所在空间 |
@@ -71,22 +75,22 @@ Markdown Frontmatter 是 CLI 的机器控制面，不是阅读正文。Obsidian 
 
 | 类型 | 额外必需字段 | 条件或可选字段 |
 |---|---|---|
-| `flash` | `source_ids` | 形成正式卡片后可转为 `processed` |
-| `interesting` | `source_ids` | 无 |
-| `todo` | `source_ids` | 无 |
+| `闪念` | `source_ids` | 形成正式卡片后可转为 `已处理` |
+| `有意思` | `source_ids` | 无 |
+| `待办` | `source_ids` | 无 |
 | `source` | `capture_status`、`fetched_at`、`content_sha256`、`snapshot_sha256`、`image_failures`；网页另必须有 `canonical_url`，本地文档另必须有 `origin_filename` 和 `origin_sha256` | `author`、`published_at`、存在更新候选时的 `pending_update` |
-| `permanent` | `authoring_mode`、`source_ids`、`derived_from`、`formation_draft_sha256` | `derived_from` 不得为空 |
-| `mother`、`action`、`index` | `authoring_mode`、`source_ids`、`derived_from` | 无 |
+| `永久卡` | `authoring_mode`、`source_ids`、`derived_from`、`formation_draft_sha256` | `derived_from` 不得为空 |
+| `母题`、`行动`、`索引` | `authoring_mode`、`source_ids`、`derived_from` | 无 |
 
-`source_ids` 与 `derived_from` 必须是 ID 列表。`source_ids` 只表示外部来源提供的依据；`derived_from` 表示这张卡实际从哪些材料或表达中形成。普通永久卡片的形成来源可以是闪念、外部来源、既有正式材料或直接表达形成见证；同一外部来源可以同时出现在两个列表中，但角色不同。母题、行动、索引卡片没有关系时仍使用空列表。来源正文中的“关联闪念”是由闪念 `source_ids` 生成的人类可读反向视图，来源 Frontmatter 不重复保存 `flash_ids`。闪念是否陈旧在回顾时按 `created_at + 48 小时`动态计算，不持久化过期时间或自动改写状态。`capture_status` 只表示当前快照的获取质量，取值为 `complete`、`partial` 或 `failed`；来源存在更新候选时，生命周期 `status` 可以是 `update_available`，原获取质量仍由 `capture_status` 保留。
+`source_ids` 与 `derived_from` 必须是 ID 列表。`source_ids` 只表示外部来源提供的依据；`derived_from` 表示这张卡实际从哪些材料或表达中形成。普通永久卡片的形成来源可以是闪念、外部来源、既有正式材料或直接表达形成见证；同一外部来源可以同时出现在两个列表中，但角色不同。母题、行动、索引卡片没有关系时仍使用空列表。来源正文中的“关联闪念”是由闪念 `source_ids` 生成的人类可读反向视图，来源 Frontmatter 不重复保存 `flash_ids`。闪念是否陈旧在回顾时按 `created_at + 48 小时`动态计算，不持久化过期时间或自动改写状态。`capture_status` 只表示当前快照的获取质量，取值为 `完整`、`部分抓取` 或 `抓取失败`；来源存在更新候选时，生命周期 `status` 可以是 `有更新待确认`，原获取质量仍由 `capture_status` 保留。
 
 网页身份和本地文档身份严格二选一：网页来源不得出现 `origin_filename` / `origin_sha256`；本地来源不得出现 `canonical_url`。`origin_filename` 只保存 basename，禁止持久化绝对路径；`origin_sha256` 是 64 位小写十六进制哈希，作为首次导入身份，后续刷新不改写。同一内容的文件被移动或复制后仍复用同一来源；内容发生变化时必须对既有来源执行 `source refresh`，不得当作新来源静默导入。
 
 `authoring_mode` 只能是：
 
-- `user_verbatim`：用户直接提交完整原文草稿；
-- `user_body_agent_title`：Agent 只从用户正文提炼标题；
-- `user_confirmed_agent_structured`：Agent 只整理用户已表达内容，且用户确认了完整结构化草稿。
+- `用户原文`（user_verbatim）：用户直接提交完整原文草稿；
+- `仅提炼标题`（user_body_agent_title）：Agent 只从用户正文提炼标题；
+- `用户确认·Agent结构化`（user_confirmed_agent_structured）：Agent 只整理用户已表达内容，且用户确认了完整结构化草稿。
 
 ### 内部候选文件
 
@@ -110,7 +114,7 @@ Markdown Frontmatter 是 CLI 的机器控制面，不是阅读正文。Obsidian 
 
 ## Obsidian 产品基线
 
-`.obsidian/app.json`、`appearance.json`、`core-plugins.json` 和 `snippets/goodidea.css` 属于 v0.1 产品基线：默认显示 Frontmatter 属性、隐藏内部目录、自动维护链接，并把附件保存到 `.goodidea/assets/`。`workspace.json` 只记录本机临时窗口状态，不进入 Git。
+`.obsidian/app.json`、`appearance.json`、`core-plugins.json` 和 `snippets/goodidea.css`、`snippets/properties-zh.css` 属于 v0.1 产品基线：默认显示 Frontmatter 属性（显示层中文映射与账本字段隐藏见 properties-zh.css）、隐藏内部目录、自动维护链接，并把附件保存到 `.goodidea/assets/`。`workspace.json` 只记录本机临时窗口状态，不进入 Git。
 
 ## 溯源文件
 
@@ -136,7 +140,7 @@ Markdown Frontmatter 是 CLI 的机器控制面，不是阅读正文。Obsidian 
 
 哈希基于两个快照标记之间规范化后的完整文本。Frontmatter 和起始标记中的哈希必须相同。任何写操作开始前都要校验所有来源快照；发现异常则停止。
 
-来源图片（包括网页图片和本地 Markdown 的相对图片）存入 `.goodidea/assets/<内容哈希>.<扩展名>`，正文使用库内相对链接。下载或读取失败时以明确的失败占位文本替换原图片，来源状态降为 `partial`，不让可读性静默依赖远程图片或原本地路径。
+来源图片（包括网页图片和本地 Markdown 的相对图片）存入 `.goodidea/assets/<内容哈希>.<扩展名>`，正文使用库内相对链接。下载或读取失败时以明确的失败占位文本替换原图片，来源状态降为 `部分抓取`，不让可读性静默依赖远程图片或原本地路径。
 
 ## 状态机与命令门禁
 
@@ -156,13 +160,13 @@ finalize 同时创建可恢复的运行时维护任务。任务允许 `pending`�
 
 | 类型 | 创建状态 | CLI 可以执行的转换 |
 |---|---|---|
-| `flash` | `pending` | `capture transition` 可设为 `pending`、`dismissed`；`processed` 由系统在正式卡片接纳时自动设置，不开放手动流转；陈旧仅为回顾时的动态标记 |
-| `interesting` | `pending` | `capture transition` 可设为 `pending`、`processed`、`dismissed` |
-| `todo` | `open` | `capture transition` 可设为 `open`、`done`、`cancelled` |
-| `source` | 当前抓取质量对应 `complete`、`partial` 或 `failed` | `source refresh` 生成候选：当前状态 `→ update_available`；接受候选：`update_available →` 新快照抓取质量 |
-| `permanent`、`index` | `active` | `permanent revise` 可设为 `active`、`revised` 或 `retired`；未指定时转为 `revised` |
-| `mother` | `open` | `permanent revise` 可设为 `open`、`evolving` 或 `retired`；未指定时转为 `evolving` |
-| `action` | `planned` | `permanent revise` 可设为 `planned`、`acting`、`observing` 或 `reviewed`；未指定时转为 `observing`；`permanent feedback` 转为 `reviewed` |
+| `闪念` | `待处理` | `capture transition` 可设为 `待处理`、`已放弃`；`已处理` 由系统在正式卡片接纳时自动设置，不开放手动流转；陈旧仅为回顾时的动态标记 |
+| `有意思` | `待处理` | `capture transition` 可设为 `待处理`、`已处理`、`已放弃` |
+| `待办` | `进行中` | `capture transition` 可设为 `进行中`、`已完成`、`已取消` |
+| `来源` | 当前抓取质量对应 `完整`、`部分抓取` 或 `抓取失败` | `source refresh` 生成候选：当前状态 `→ 有更新待确认`；接受候选：`有更新待确认 →` 新快照抓取质量 |
+| `永久卡`、`索引` | `有效` | `permanent revise` 可设为 `有效`、`已修订` 或 `已停用`；未指定时转为 `已修订` |
+| `母题` | `进行中` | `permanent revise` 可设为 `进行中`、`演化中` 或 `已停用`；未指定时转为 `演化中` |
+| `行动` | `待行动` | `permanent revise` 可设为 `待行动`、`行动中`、`待观察` 或 `已复盘`；未指定时转为 `待观察`；`permanent feedback` 转为 `已复盘` |
 
 表中的保留状态是数据模型允许但当前 CLI 尚未暴露转换入口的状态，不能靠手工编辑 Frontmatter 进入。新增入口必须同时修改本表、实现和测试。
 
@@ -184,12 +188,12 @@ finalize 同时创建可恢复的运行时维护任务。任务允许 `pending`�
 | `source commit --attach-flash-ids --maintenance-job-id` | 按任务缓存成功图片，重试不重复下载；提交后自动回写 `complete` 或 `partial` |
 | `source refresh` | 网页和本地来源都先创建候选并保留旧快照；本地更新必须显式指定既有来源。接受时要求仍为同一个待处理候选且旧哈希一致 |
 | `permanent propose` | 输入必须是用户确认后的完整草稿；结构化模式还必须带显式结构确认；普通永久卡片必须带 `--confirm-user-approved-sources`，并通过 `--from-ids` 提供至少一个可寻址形成来源，或通过 `--direct-source-file` 提供用户确认的一句具体形成情境；`--source-ids` 只表示外部依据，不能单独满足形成门禁；候选进入隐藏目录，不进入永久空间。带 `--preauthorize-accept` 时，用户在确认草稿的同时已明确授权正式创建；propose 校验通过后同一调用内继续执行 accept 的全部校验（候选与草稿哈希一致、形成来源可寻址、状态为 `pending`）并直接创建正式卡片，候选不残留；除创建确认的时机提前外，所有既有门禁照常必需 |
-| `permanent accept` | 候选、Frontmatter、正文哈希和状态账本必须一致且状态为 `pending`，并带用户在候选形成后的明确创建确认；普通永久卡片原子创建卡片及必要的直接表达见证、维护形成来源导航、删除候选，并只把 `pending` 形成闪念转为 `processed`；`processed` 保持不变，`dismissed` 拒绝接纳。`permanent propose --preauthorize-accept` 提供的授权等价于本确认，仅时机提前到草稿确认时；两种路径下的 accept 校验完全一致 |
+| `permanent accept` | 候选、Frontmatter、正文哈希和状态账本必须一致且状态为 `pending`，并带用户在候选形成后的明确创建确认；普通永久卡片原子创建卡片及必要的直接表达见证、维护形成来源导航、删除候选，并只把 `待处理` 形成闪念转为 `已处理`；`已处理` 保持不变，`已放弃` 拒绝接纳。`permanent propose --preauthorize-accept` 提供的授权等价于本确认，仅时机提前到草稿确认时；两种路径下的 accept 校验完全一致 |
 | `permanent withdraw` | 只撤销仍为 `pending` 的候选；撤销后不可接纳，错误内容不保留在当前工作树 |
 | `permanent revise` / `permanent feedback` | 只能追加用户亲自提供并确认的内容；CLI 只机械添加区块、时间戳和规范换行 |
 | `capture revise` | 目标必须是既有轻量记录（闪念/有意思/待办）；只能追加用户亲自提供并确认的内容；追加内容必须有实际含义 |
 | `capture update` | 目标必须是既有轻量记录；只能整体更新为用户亲自提供并确认的内容；替换"原始记录"节并保留其余节 |
-| `capture transition` | 目标必须是既有轻量记录；目标状态必须属于该类型允许集合；闪念的 `processed` 由系统保留，不开放手动流转 |
+| `capture transition` | 目标必须是既有轻量记录；目标状态必须属于该类型允许集合；闪念的 `已处理` 由系统保留，不开放手动流转 |
 | `connect propose` | 两端都必须是已存在的正式卡片；它只增加形成关系之外的可选语义连接，不承担普通永久卡片的准入激活 |
 | `connect accept` | 必须是用户确认的既有 `pending` 连接候选，接受时原子写入双向关系 |
 | `connect withdraw` | 只撤回仍为 `pending` 的连接候选；必须带明确撤回原因；撤回后候选不可接纳 |

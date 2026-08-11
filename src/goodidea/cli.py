@@ -7,7 +7,12 @@ from pathlib import Path
 from typing import Any
 
 from .capture import CaptureRuntime
-from .contracts import MAINTENANCE_STATES, PERMANENT_CARD_TYPES
+from .contracts import (
+    ENUM_EN,
+    ENUM_ZH,
+    MAINTENANCE_STATES,
+    PERMANENT_CARD_TYPES,
+)
 from .errors import GoodIdeaError, ValidationError
 from .repository import Repository
 from .service import GoodIdeaService
@@ -17,6 +22,11 @@ from .web import (
     preview_from_markdown,
     preview_from_url,
 )
+
+def _enum_arg(value: str | None) -> str:
+    """CLI 参数归一化：中文枚举值 → 英文内部值（未识别的原样返回）。"""
+    value = value or ""
+    return ENUM_EN.get(value, value)
 
 
 def _json(data: Any, *, stream: Any = sys.stdout) -> None:
@@ -190,6 +200,10 @@ def build_parser() -> argparse.ArgumentParser:
         "contracts", help="移除可推导的状态镜像和已终结候选"
     )
     contracts.add_argument("--transaction-id")
+    enums_zh = maintain_sub.add_parser(
+        "enums-zh", help="把正式内容 Frontmatter 枚举值从英文迁移为中文（2026-08-11 契约）"
+    )
+    enums_zh.add_argument("--transaction-id")
 
     permanent = sub.add_parser("permanent", help="用户原文草稿与永久卡片状态流转")
     permanent_sub = permanent.add_subparsers(
@@ -206,8 +220,8 @@ def build_parser() -> argparse.ArgumentParser:
     propose.add_argument(
         "--type",
         required=True,
-        choices=sorted(PERMANENT_CARD_TYPES),
-        help="候选卡片类型",
+        choices=[ENUM_ZH[card_type] for card_type in sorted(PERMANENT_CARD_TYPES)],
+        help="候选卡片类型（中文枚举值）",
     )
     propose.add_argument(
         "--title",
@@ -309,9 +323,9 @@ def build_parser() -> argparse.ArgumentParser:
         "--status",
         default="",
         help=(
-            "目标状态；permanent/index: active|revised|retired，"
-            "mother: open|evolving|retired，"
-            "action: planned|acting|observing|reviewed"
+            "目标状态（中文枚举值）；永久卡/索引: 有效|已修订|已停用，"
+            "母题: 进行中|演化中|已停用，"
+            "行动: 待行动|行动中|待观察|已复盘"
         ),
     )
     revise.add_argument(
@@ -524,7 +538,7 @@ def dispatch(args: argparse.Namespace) -> tuple[dict[str, Any], int]:
     elif args.command == "capture" and args.capture_command == "transition":
         result = service.capture_transition(
             args.id,
-            status=args.status,
+            status=_enum_arg(args.status),
             transaction_id=args.transaction_id,
         )
     elif args.command == "capture" and args.capture_command == "update":
@@ -598,6 +612,8 @@ def dispatch(args: argparse.Namespace) -> tuple[dict[str, Any], int]:
         result = service.maintain_metadata(transaction_id=args.transaction_id)
     elif args.command == "maintain" and args.maintain_command == "contracts":
         result = service.maintain_contracts(transaction_id=args.transaction_id)
+    elif args.command == "maintain" and args.maintain_command == "enums-zh":
+        result = service.maintain_enums_zh(transaction_id=args.transaction_id)
     elif args.command == "permanent":
         if args.permanent_command == "propose":
             if args.draft_file == "-" and args.direct_source_file == "-":
@@ -605,7 +621,7 @@ def dispatch(args: argparse.Namespace) -> tuple[dict[str, Any], int]:
                     "--draft-file 与 --direct-source-file 不能同时从 stdin 读取"
                 )
             result = service.permanent_propose(
-                args.type,
+                _enum_arg(args.type),
                 draft=_read_text(args.draft_file),
                 title=args.title,
                 user_approved_structure=args.confirm_user_approved_structure,
@@ -637,7 +653,7 @@ def dispatch(args: argparse.Namespace) -> tuple[dict[str, Any], int]:
                 args.card_id,
                 note=args.note,
                 confirmed_by_user=args.confirm_user_authored,
-                status=args.status,
+                status=_enum_arg(args.status),
                 transaction_id=args.transaction_id,
             )
         else:

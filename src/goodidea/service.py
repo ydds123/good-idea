@@ -15,11 +15,13 @@ from typing import Any
 
 from .capture import CaptureRuntime
 from .contracts import (
+    ENUM_FIELDS,
     FLASH_STALE_AFTER,
     FORMATION_WITNESS_ID_PATTERN,
     FORMATION_WITNESS_ROOT,
     NOTE_SPECS,
     PERMANENT_CARD_TYPES,
+    localize_enums,
 )
 from .errors import GitError, IntegrityError, ValidationError
 from .metadata import dump_frontmatter, parse_document, replace_frontmatter
@@ -2045,6 +2047,45 @@ class GoodIdeaService:
             summary="移除可推导状态镜像与已终结候选",
             writes=writes,
             deletes=deletes,
+            state=state,
+            result=result,
+        )
+
+    def maintain_enums_zh(
+        self, *, transaction_id: str | None = None
+    ) -> dict[str, Any]:
+        """把正式内容 Frontmatter 枚举值从英文迁移为中文（2026-08-11 契约）。
+
+        幂等：parse 会把中文值归一化为英文内部值，dump 再本地化回中文，
+        已迁移文件重写后输出不变，不会产生空事务。updated_at 保持不变。
+        """
+        txid = transaction_id or new_transaction_id("maintain-enums-zh")
+        if existing := self._idempotent(txid):
+            return existing
+        state = self.repo.read_state()
+        writes: dict[Path, str | bytes] = {}
+        for note_type, location in TYPE_LOCATIONS.items():
+            for path in sorted((self.repo.root / location).glob("*.md")):
+                rel = path.relative_to(self.repo.root)
+                text = path.read_text(encoding="utf-8")
+                metadata, _ = parse_document(text)
+                localized = localize_enums(metadata)
+                if any(
+                    localized.get(field) != metadata.get(field)
+                    for field in ENUM_FIELDS
+                ):
+                    writes[rel] = replace_frontmatter(text, metadata)
+        if not writes:
+            return {"migrated": 0, "already_current": True}
+        result = {
+            "migrated": len(writes),
+            "files": sorted(rel.as_posix() for rel in writes),
+        }
+        return self.repo.commit(
+            transaction_id=txid,
+            action="maintain-enums-zh",
+            summary=f"枚举值中文化迁移 {len(writes)} 张卡片",
+            writes=writes,
             state=state,
             result=result,
         )

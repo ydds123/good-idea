@@ -4,6 +4,7 @@ import json
 import re
 from typing import Any
 
+from .contracts import localize_enums, normalize_enums
 from .errors import ValidationError
 
 
@@ -12,7 +13,7 @@ FRONTMATTER_RE = re.compile(r"\A---\n(.*?)\n---\n?", re.DOTALL)
 
 def dump_frontmatter(metadata: dict[str, Any]) -> str:
     lines = ["---"]
-    for key, value in metadata.items():
+    for key, value in localize_enums(metadata).items():
         if not re.fullmatch(r"[a-z][a-z0-9_]*", key):
             raise ValidationError(f"非法 Frontmatter 字段：{key}")
         lines.append(f"{key}: {json.dumps(value, ensure_ascii=False, sort_keys=True)}")
@@ -39,7 +40,7 @@ def parse_document(text: str) -> tuple[dict[str, Any], str]:
             raise ValidationError(
                 f"Frontmatter 字段 {key} 不是 JSON-compatible YAML"
             ) from exc
-    return metadata, normalized[match.end():]
+    return normalize_enums(metadata), normalized[match.end():]
 
 
 def replace_frontmatter(text: str, metadata: dict[str, Any]) -> str:

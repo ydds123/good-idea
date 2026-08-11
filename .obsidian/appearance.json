@@ -1,6 +1,8 @@
 {
   "baseFontSize": 16,
   "enabledCssSnippets": [
-    "goodidea"
+    "goodidea",
+    "properties-zh",
+    "canvas-clean-cards"
   ]
 }

@@ -5,7 +5,7 @@ import re
 from pathlib import Path
 from typing import Any
 
-from .contracts import NOTE_SPECS
+from .contracts import ENUM_ZH, NOTE_SPECS
 from .errors import IntegrityError, ValidationError
 from .metadata import dump_frontmatter, parse_document, replace_frontmatter
 
@@ -23,26 +23,8 @@ _LEGACY_NOTE_PLACEHOLDER = (
 TYPE_LOCATIONS = {kind: spec["location"] for kind, spec in NOTE_SPECS.items()}
 INDEX_HEADINGS = {kind: spec["heading"] for kind, spec in NOTE_SPECS.items()}
 
-STATUS_LABELS = {
-    "pending": "待处理",
-    "processed": "已处理",
-    "dismissed": "已放弃",
-    "complete": "完整",
-    "partial": "部分抓取",
-    "failed": "抓取失败",
-    "update_available": "有更新待确认",
-    "open": "进行中",
-    "done": "已完成",
-    "cancelled": "已取消",
-    "active": "有效",
-    "revised": "已修订",
-    "retired": "已停用",
-    "evolving": "演化中",
-    "planned": "待行动",
-    "acting": "行动中",
-    "observing": "待观察",
-    "reviewed": "已复盘",
-}
+# 状态显示标签 = 契约层中文枚举值（ENUM_ZH），单一事实源
+STATUS_LABELS = ENUM_ZH
 
 
 def normalize_snapshot(text: str) -> str:
