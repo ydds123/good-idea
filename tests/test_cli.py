@@ -41,6 +41,10 @@ class GoodIdeaCliTests(unittest.TestCase):
         self.assertIn("只适用于普通永久卡片", propose.stdout)
         self.assertIn("不能与值同为 - 的 --draft-file 同时使用", propose.stdout)
         self.assertIn("用户已确认形成来源及其作用", propose.stdout)
+        self.assertIn("预授权", propose.stdout)
+        self.assertIn("--preauthorize-accept", propose.stdout)
+        self.assertIn("候选不残留", propose.stdout)
+        self.assertIn("不再等待候选形成后的第二次确认", propose.stdout)
 
         accept = run_cli("permanent", "accept", "--help")
         self.assertEqual(accept.returncode, 0, accept.stderr)

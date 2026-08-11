@@ -14,7 +14,7 @@ class ProjectSkillTests(unittest.TestCase):
             "goodidea-capture-flash": ["capture start", "capture append", "capture propose", "capture finalize", "capture flash", "不在 Frontmatter 保存 `summary`"],
             "goodidea-record-literature": ["source preview", "--local-file", ".markdown", "source commit", "--attach-flash-ids", "source refresh", "--confirm-proposal", "不创建文献笔记层", "不写内容摘要或 `summary` 元数据"],
             "goodidea-review-process": ["goodidea --root <仓库> review", "动态标记陈旧闪念"],
-            "goodidea-form-permanent": ["permanent propose --help", "一次一个问题", "审查标准", "完整待确认草稿", "立即结束当前 Agent 回合", "发送一条新的消息", "permanent accept --help", "permanent withdraw --help"],
+            "goodidea-form-permanent": ["permanent propose --help", "一次一个问题", "审查标准", "完整待确认草稿", "立即结束当前 Agent 回合", "发送一条新的消息", "permanent accept --help", "permanent withdraw --help", "预授权", "--preauthorize-accept"],
             "goodidea-connect-cards": ["connect propose", "connect accept", "当前无需新增语义连接"],
             "goodidea-lint": ["goodidea --root <仓库> lint", "goodidea --root <仓库> verify", "goodidea maintain metadata"],
         }

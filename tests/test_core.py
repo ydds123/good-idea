@@ -1800,6 +1800,142 @@ class GoodIdeaCoreTests(unittest.TestCase):
         lint = self.service.lint()
         self.assertTrue(lint["ok"], lint["issues"])
 
+    def test_permanent_propose_preauthorize_accept_creates_card_in_one_call(self):
+        captured = self.service.source_commit(
+            self.preview(),
+            motivation="验证预授权模式在一次调用内完成候选与正式创建。",
+            transaction_id="tx-preauthorize-source",
+        )["result"]
+        draft = "# 预授权创建永久卡片\n\n用户在确认草稿的同时授权正式创建，候选形成后不再需要第二次确认。\n"
+        result = self.service.permanent_propose(
+            "permanent",
+            draft=draft,
+            source_ids=[captured["source_id"]],
+            from_ids=[captured["flash_id"]],
+            formation_sources_confirmed=True,
+            preauthorize_accept=True,
+            transaction_id="tx-preauthorize-propose",
+        )
+        self.assertIn("card_id", result["result"])
+        self.assertIn("card_path", result["result"])
+        # 候选不残留
+        proposal_rel = Path(
+            f".goodidea/proposals/permanent/{result['result']['proposal_id']}.md"
+        )
+        self.assertFalse((self.root / proposal_rel).exists())
+        # 正式卡片已创建且形成来源导航已维护
+        formal = self.repo.find_note(result["result"]["card_id"])
+        self.assertEqual(formal[2]["status"], "active")
+        self.assertEqual(formal[2]["derived_from"], [captured["flash_id"]])
+        self.assertIn("## 形成来源", formal[1])
+        # 形成闪念转为 processed
+        flash = self.repo.find_note(captured["flash_id"])
+        self.assertEqual(flash[2]["status"], "processed")
+        self.assertTrue(self.service.lint()["ok"])
+
+    def test_permanent_propose_without_preauthorize_keeps_two_stage_flow(self):
+        captured = self.service.source_commit(
+            self.preview(),
+            motivation="验证未预授权时行为与两阶段流程完全一致。",
+            transaction_id="tx-two-stage-source",
+        )["result"]
+        draft = "# 两阶段创建永久卡片\n\n未预授权时候选先形成，等待用户在候选形成后的第二次确认。\n"
+        proposal = self.service.permanent_propose(
+            "permanent",
+            draft=draft,
+            source_ids=[captured["source_id"]],
+            from_ids=[captured["flash_id"]],
+            formation_sources_confirmed=True,
+            transaction_id="tx-two-stage-propose",
+        )
+        # 只形成候选，不创建卡片
+        self.assertNotIn("card_id", proposal["result"])
+        self.assertIn("proposal_path", proposal["result"])
+        proposal_rel = Path(proposal["result"]["proposal_path"])
+        self.assertTrue((self.root / proposal_rel).is_file())
+        # 候选形成后没有明确创建确认时仍然拒绝
+        with self.assertRaises(ValidationError):
+            self.service.permanent_accept(
+                proposal["result"]["proposal_id"],
+                confirmed_by_user=False,
+                transaction_id="tx-two-stage-reject",
+            )
+        accepted = self.service.permanent_accept(
+            proposal["result"]["proposal_id"],
+            confirmed_by_user=True,
+            transaction_id="tx-two-stage-accept",
+        )
+        self.assertIn("card_id", accepted["result"])
+        self.assertFalse((self.root / proposal_rel).exists())
+
+    def test_permanent_propose_preauthorize_accept_still_enforces_gates(self):
+        captured = self.service.source_commit(
+            self.preview(),
+            motivation="验证预授权不会放宽任何既有门禁。",
+            transaction_id="tx-preauthorize-gate-source",
+        )["result"]
+        draft = "# 预授权不放松门禁\n\n即使带预授权，缺少用户确认或形成来源时仍然拒绝。\n"
+        # 缺形成来源确认
+        with self.assertRaises(ValidationError):
+            self.service.permanent_propose(
+                "permanent",
+                draft=draft,
+                source_ids=[captured["source_id"]],
+                from_ids=[captured["flash_id"]],
+                preauthorize_accept=True,
+                transaction_id="tx-preauthorize-gate-unconfirmed",
+            )
+        # 有形成来源确认但没有可寻址形成来源
+        with self.assertRaises(ValidationError):
+            self.service.permanent_propose(
+                "permanent",
+                draft=draft,
+                source_ids=[captured["source_id"]],
+                formation_sources_confirmed=True,
+                preauthorize_accept=True,
+                transaction_id="tx-preauthorize-gate-no-formation",
+            )
+        # 门禁拦截时不得残留候选
+        self.assertEqual(
+            list((self.root / ".goodidea/proposals/permanent").glob("*.md")), []
+        )
+
+    def test_permanent_propose_preauthorize_accept_replay_returns_original_result(self):
+        captured = self.service.source_commit(
+            self.preview(),
+            motivation="验证预授权事务重放不会重复创建卡片。",
+            transaction_id="tx-preauthorize-replay-source",
+        )["result"]
+        draft = "# 预授权重放幂等\n\n同一事务 ID 重放必须返回原结果，不重复创建卡片。\n"
+        first = self.service.permanent_propose(
+            "permanent",
+            draft=draft,
+            source_ids=[captured["source_id"]],
+            from_ids=[captured["flash_id"]],
+            formation_sources_confirmed=True,
+            preauthorize_accept=True,
+            transaction_id="tx-preauthorize-replay",
+        )
+        replay = self.service.permanent_propose(
+            "permanent",
+            draft=draft,
+            source_ids=[captured["source_id"]],
+            from_ids=[captured["flash_id"]],
+            formation_sources_confirmed=True,
+            preauthorize_accept=True,
+            transaction_id="tx-preauthorize-replay",
+        )
+        self.assertEqual(replay["result"]["card_id"], first["result"]["card_id"])
+        # 卡片只创建一份，候选不残留
+        self.assertEqual(
+            self.repo.find_note(first["result"]["card_id"])[2]["status"], "active"
+        )
+        proposal_rel = Path(
+            f".goodidea/proposals/permanent/{first['result']['proposal_id']}.md"
+        )
+        self.assertFalse((self.root / proposal_rel).exists())
+        self.assertTrue(self.service.lint()["ok"])
+
     def test_permanent_requires_confirmed_formation_source_not_evidence_only(self):
         captured = self.service.source_commit(
             self.preview(),

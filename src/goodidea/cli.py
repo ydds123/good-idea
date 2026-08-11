@@ -245,6 +245,15 @@ def build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="用户已确认形成来源及其作用；只适用于普通永久卡片",
     )
+    propose.add_argument(
+        "--preauthorize-accept",
+        action="store_true",
+        help=(
+            "预授权：用户已在确认草稿时明确授权正式创建；propose 成功后同一调用内"
+            "自动执行 accept 的全部校验并直接创建卡片，候选不残留，"
+            "不再等待候选形成后的第二次确认；所有既有门禁参数照常必需"
+        ),
+    )
     propose.add_argument("--transaction-id", help="可复用的幂等事务 ID")
 
     accept = permanent_sub.add_parser(
@@ -608,6 +617,7 @@ def dispatch(args: argparse.Namespace) -> tuple[dict[str, Any], int]:
                     else ""
                 ),
                 formation_sources_confirmed=args.confirm_user_approved_sources,
+                preauthorize_accept=args.preauthorize_accept,
                 transaction_id=args.transaction_id,
             )
         elif args.permanent_command == "accept":

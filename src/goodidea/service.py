@@ -1343,6 +1343,7 @@ class GoodIdeaService:
         from_ids: list[str] | None = None,
         direct_source: str = "",
         formation_sources_confirmed: bool = False,
+        preauthorize_accept: bool = False,
         transaction_id: str | None = None,
     ) -> dict[str, Any]:
         if card_type not in PERMANENT_CARD_TYPES:
@@ -1351,8 +1352,17 @@ class GoodIdeaService:
             draft, title, user_approved_structure
         )
         txid = transaction_id or new_transaction_id("permanent-propose")
+        accept_txid = f"{txid}-accept" if preauthorize_accept else ""
         if existing := self._idempotent(txid):
-            return existing
+            if not accept_txid:
+                return existing
+            # 预授权重放：propose 事务已提交；accept 已完成则返回原结果，
+            # 未完成（如首次运行在 accept 前异常中断）则继续完成 accept，候选不残留。
+            if accepted := self._idempotent(accept_txid):
+                return accepted
+            return self._preauthorized_accept(
+                existing["result"]["proposal_id"], accept_txid
+            )
         proposal_id = stable_id("PRP", f"{card_type}:{txid}", dated=False)
         proposal_rel = Path(f".goodidea/proposals/permanent/{proposal_id}.md")
         timestamp = now_iso()
@@ -1418,7 +1428,7 @@ class GoodIdeaService:
             "proposal_path": proposal_rel.as_posix(),
             "card_type": card_type,
         }
-        return self.repo.commit(
+        result = self.repo.commit(
             transaction_id=txid,
             action="permanent-propose",
             summary=title,
@@ -1426,6 +1436,28 @@ class GoodIdeaService:
             state=state,
             result=result,
         )
+        if accept_txid:
+            # 预授权：同一调用内继续执行 accept 全部校验并创建正式卡片。
+            return self._preauthorized_accept(
+                result["result"]["proposal_id"], accept_txid
+            )
+        return result
+
+    def _preauthorized_accept(
+        self, proposal_id: str, accept_txid: str
+    ) -> dict[str, Any]:
+        """预授权模式下完成 accept：所有 accept 门禁原样执行，不因预授权放宽。
+
+        预授权只在时机上提前了“用户的明确创建确认”：
+        ``--preauthorize-accept`` 是用户在确认草稿时同时给出的创建授权，
+        等价于 accept 门禁要求的“候选形成后的明确创建确认”。
+        """
+        accepted = self.permanent_accept(
+            proposal_id,
+            confirmed_by_user=True,
+            transaction_id=accept_txid,
+        )
+        return accepted
 
     def permanent_accept(
         self,

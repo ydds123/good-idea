@@ -183,8 +183,8 @@ finalize 同时创建可恢复的运行时维护任务。任务允许 `pending`�
 | `source commit --attach-flash-ids` | 只关联已经存在的正式闪念，不额外创建保存动机闪念；必须由维护任务提供逐卡论证说明，或显式提供 `--anchor-explanation` |
 | `source commit --attach-flash-ids --maintenance-job-id` | 按任务缓存成功图片，重试不重复下载；提交后自动回写 `complete` 或 `partial` |
 | `source refresh` | 网页和本地来源都先创建候选并保留旧快照；本地更新必须显式指定既有来源。接受时要求仍为同一个待处理候选且旧哈希一致 |
-| `permanent propose` | 输入必须是用户确认后的完整草稿；结构化模式还必须带显式结构确认；普通永久卡片必须带 `--confirm-user-approved-sources`，并通过 `--from-ids` 提供至少一个可寻址形成来源，或通过 `--direct-source-file` 提供用户确认的一句具体形成情境；`--source-ids` 只表示外部依据，不能单独满足形成门禁；候选进入隐藏目录，不进入永久空间 |
-| `permanent accept` | 候选、Frontmatter、正文哈希和状态账本必须一致且状态为 `pending`，并带用户在候选形成后的明确创建确认；普通永久卡片原子创建卡片及必要的直接表达见证、维护形成来源导航、删除候选，并只把 `pending` 形成闪念转为 `processed`；`processed` 保持不变，`dismissed` 拒绝接纳 |
+| `permanent propose` | 输入必须是用户确认后的完整草稿；结构化模式还必须带显式结构确认；普通永久卡片必须带 `--confirm-user-approved-sources`，并通过 `--from-ids` 提供至少一个可寻址形成来源，或通过 `--direct-source-file` 提供用户确认的一句具体形成情境；`--source-ids` 只表示外部依据，不能单独满足形成门禁；候选进入隐藏目录，不进入永久空间。带 `--preauthorize-accept` 时，用户在确认草稿的同时已明确授权正式创建；propose 校验通过后同一调用内继续执行 accept 的全部校验（候选与草稿哈希一致、形成来源可寻址、状态为 `pending`）并直接创建正式卡片，候选不残留；除创建确认的时机提前外，所有既有门禁照常必需 |
+| `permanent accept` | 候选、Frontmatter、正文哈希和状态账本必须一致且状态为 `pending`，并带用户在候选形成后的明确创建确认；普通永久卡片原子创建卡片及必要的直接表达见证、维护形成来源导航、删除候选，并只把 `pending` 形成闪念转为 `processed`；`processed` 保持不变，`dismissed` 拒绝接纳。`permanent propose --preauthorize-accept` 提供的授权等价于本确认，仅时机提前到草稿确认时；两种路径下的 accept 校验完全一致 |
 | `permanent withdraw` | 只撤销仍为 `pending` 的候选；撤销后不可接纳，错误内容不保留在当前工作树 |
 | `permanent revise` / `permanent feedback` | 只能追加用户亲自提供并确认的内容；CLI 只机械添加区块、时间戳和规范换行 |
 | `capture revise` | 目标必须是既有轻量记录（闪念/有意思/待办）；只能追加用户亲自提供并确认的内容；追加内容必须有实际含义 |
