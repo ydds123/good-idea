@@ -91,3 +91,5 @@
 
 ## [2026-08-11T16:52:05+08:00] capture-interesting | Logseq 的时间旅行和图谱设计对 Goodidea 有帮助：时间旅行=回滚的 | tx=capture-interesting-20260811165205-3b5c0d35
 
+## [2026-08-11T17:16:40+08:00] capture-interesting | 高级概念海报生成提示词（词义→视觉隐喻） | tx=capture-interesting-20260811171640-85410082
+

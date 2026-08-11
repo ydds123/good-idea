@@ -101,6 +101,17 @@
       "timestamp": "2026-08-11T16:52:05+08:00",
       "transaction_id": "capture-interesting-20260811165205-3b5c0d35"
     },
+    "capture-interesting-20260811171640-85410082": {
+      "action": "capture-interesting",
+      "result": {
+        "id": "INT-20260811-2b011c76",
+        "path": "有意思空间/2026-08-11-高级概念海报生成提示词（词义→视觉隐喻）.md",
+        "type": "interesting"
+      },
+      "summary": "高级概念海报生成提示词（词义→视觉隐喻）",
+      "timestamp": "2026-08-11T17:16:40+08:00",
+      "transaction_id": "capture-interesting-20260811171640-85410082"
+    },
     "capture-revise-source-anchors-20260809": {
       "action": "capture-revise-source-anchors",
       "result": {
