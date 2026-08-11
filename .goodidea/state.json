@@ -334,6 +334,15 @@
       "timestamp": "2026-08-09T18:29:16+08:00",
       "transaction_id": "maintain-contracts-20260809"
     },
+    "maintain-index-after-test-cards-removal": {
+      "action": "maintain-index",
+      "result": {
+        "no_change": false
+      },
+      "summary": "重新生成不展示摘要的内容索引",
+      "timestamp": "2026-08-11T23:24:28+08:00",
+      "transaction_id": "maintain-index-after-test-cards-removal"
+    },
     "migrate-enums-zh-20260811": {
       "action": "maintain-enums-zh",
       "result": {

@@ -105,3 +105,5 @@
 
 ## [2026-08-11T23:08:31+08:00] maintain-enums-zh | 枚举值中文化迁移 26 张卡片 | tx=migrate-enums-zh-20260811
 
+## [2026-08-11T23:24:28+08:00] maintain-index | 重新生成不展示摘要的内容索引 | tx=maintain-index-after-test-cards-removal
+
