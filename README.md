@@ -291,7 +291,7 @@ Skills 只负责对话、判断和选择何时调用命令。脆弱写入、状�
 | `test_skill_routing.py` | Skill 案例覆盖、允许交接、同阶段冲突门禁及报告是否过期 |
 | `fixtures/` | 自动化测试使用的本地输入样本 |
 
-运行全部自动化测试：
+当变更涉及跨层契约、核心事务、状态门禁、来源快照、索引、Git 行为、CLI 公共行为或依赖环境时，运行全部自动化测试：
 
 ```bash
 uv run python -m unittest discover -s tests -v
@@ -310,6 +310,22 @@ uv run python scripts/evaluate-skill-routing.py --codex
 ```
 
 机器报告保存为 `reports/skill-routing/latest.json`；需要临时阅读版时可输出到仓库外。静态扫描只能证明文本重叠风险，不能冒充真实模型触发；`--codex` 当前使用一次批量只读分类，不是 Codex 原生 Skill 激活遥测，也不等同于多个独立会话。
+
+### 按变更风险选择验证
+
+Good idea 不把测试数量或仓库统计当作完成目标。验证的作用是证明本次变更没有破坏相关的不变量，因此先确定风险，再选择最小充分检查集：
+
+| 变更类型 | 默认验证 | 何时扩大范围 |
+|---|---|---|
+| 根目录中的非生效方案、研究稿或普通说明 | 审计目标差异、Markdown 基础完整性、`git diff --check` | 文档实际改变权威契约、命令或用户流程时 |
+| 正式内容的 CLI 事务 | 事务自身校验、`goodidea lint`、`goodidea verify` | 发现状态、快照、索引或 Git 异常时 |
+| `AGENTS.md`、`schema.md`、CLI 实现或依赖 | 直接覆盖风险的定向测试、`git diff --check` | 触及跨层契约或核心行为时运行全量测试 |
+| 项目级 Skill | 官方 Skill 校验器和直接相关测试 | description 或路由变化时增加静态路由评测；模型评测仍需外发授权 |
+| Obsidian 基线与仓库配置 | 对应配置检查及相关整体状态检查 | 影响内容契约、索引或跨层行为时 |
+
+`goodidea verify` 用来验证仓库应当满足的整体状态，不是每次编辑后的仪式。仓库存在已知且无关的未提交改动时，应当审计并如实报告边界，而不是运行一个必然只会报告 dirty 的检查。全量测试和完整验证仍然保留，但只在它们能够覆盖本次真实风险时运行。
+
+完成汇报优先说明目标是否实现、必要检查是否通过以及剩余风险。测试总数、内容数、来源数、围栏数等统计只有在直接回答本次问题时才值得展示。
 
 ### 其他环境与版本文件
 
@@ -440,7 +456,7 @@ uv sync --group dev --locked
 uv run python scripts/validate-skills.py
 ```
 
-自动化测试：
+全量自动化测试（只在变更风险需要时）：
 
 ```bash
 uv run python -m unittest discover -s tests -v
@@ -464,6 +480,7 @@ uv run goodidea --root /Users/apple/Documents/Claude/good-idea rollback --commit
 | 确定性写入、状态转换或 Git 行为 | `src/goodidea/` | Schema、自动化测试和回滚路径 |
 | Obsidian 阅读体验 | `.obsidian/` | Schema 中的产品基线和 `goodidea verify` |
 | 人类项目说明 | `README.md` | 避免复制或覆盖 AGENTS、Schema 的精确契约 |
+| 非生效方案或研究稿 | 目标 Markdown 文件 | 审计差异与格式；无契约影响时不默认运行全量测试、lint 或 verify |
 | v0.1 历史设计依据 | `.goodidea/baseline/` | 只记录已确认的覆盖关系，不静默改写历史 |
 
 修改时先判断这是产品原则、数据契约、对话工作流、确定性执行还是阅读呈现问题，再在对应层解决。不要把所有规则复制到每个 Skill，也不要让 Skills 直接承担脆弱文件写入。
