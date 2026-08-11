@@ -85,3 +85,5 @@
 
 ## [2026-08-11T10:13:28+08:00] capture-finalize | 确认本轮 1 张闪念 | tx=finalize-skillhub-20260811
 
+## [2026-08-11T10:54:13+08:00] capture-finalize | 确认本轮 1 张闪念 | tx=tx-capture-20260811-permanent-standard-finalize-01
+

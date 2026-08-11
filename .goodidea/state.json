@@ -640,6 +640,37 @@
       "timestamp": "2026-08-09T21:42:30+08:00",
       "transaction_id": "todo-user-profile-20260809"
     },
+    "tx-capture-20260811-permanent-standard-finalize-01": {
+      "action": "capture-finalize",
+      "result": {
+        "flash_count": 1,
+        "flashes": [
+          {
+            "context_refs": [
+              "永久卡片整体设计逻辑.md"
+            ],
+            "id": "FLA-20260811-a2060081",
+            "path": "闪念空间/2026-08-11-普通永久卡片标准是最小任务调用循环的前置条件.md",
+            "source_anchors": [
+              {
+                "context_ref": "永久卡片整体设计逻辑.md",
+                "explanation": "该文档把永久卡片定义为面向未来任务的认知节点，并提出最小可复用的充分思维单元，为讨论一张普通永久卡片应该长什么样提供概念基础。"
+              }
+            ],
+            "source_boundary": "《永久卡片整体设计逻辑》是讨论性工作文档，没有给出已经生效的最终标准；把普通永久卡片标准前置于最小任务调用循环，是用户本轮提出的方案修正。",
+            "title": "普通永久卡片标准是最小任务调用循环的前置条件"
+          }
+        ],
+        "maintenance_job_ids": [
+          "JOB-885332f0db25"
+        ],
+        "proposal_id": "CPR-15e773e44394",
+        "session_id": "CAP-20260811-0374caf2"
+      },
+      "summary": "确认本轮 1 张闪念",
+      "timestamp": "2026-08-11T10:54:13+08:00",
+      "transaction_id": "tx-capture-20260811-permanent-standard-finalize-01"
+    },
     "update-flash-alert-design-20260809": {
       "action": "capture-update",
       "result": {
