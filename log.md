@@ -97,3 +97,5 @@
 
 ## [2026-08-11T22:02:05+08:00] permanent-propose | 以 AI 生图为实践抓手理解控制论与科学方法论，是提升驾驭 AI 素养的研究路径之一 | tx=permanent-propose-path-20260811-01
 
+## [2026-08-11T22:07:16+08:00] permanent-propose | 人与 AI 协作的本质：把 AI 当作共同创作对象，而非执行工具 | tx=permanent-propose-collab-20260811-01
+
