@@ -87,3 +87,5 @@
 
 ## [2026-08-11T10:54:13+08:00] capture-finalize | 确认本轮 1 张闪念 | tx=tx-capture-20260811-permanent-standard-finalize-01
 
+## [2026-08-11T15:14:47+08:00] capture-revise | 《无期迷途》游戏美术风格：AI人像创作的参考方向 | tx=revise-guigu-bahuang-20260811
+
