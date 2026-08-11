@@ -222,7 +222,7 @@ def build_parser() -> argparse.ArgumentParser:
     propose.add_argument(
         "--draft-file",
         required=True,
-        help="仓库外 UTF-8 Markdown 草稿文件路径；传 - 从 stdin 读取",
+        help="UTF-8 Markdown 草稿文件路径；建议使用仓库外临时文件；传 - 从 stdin 读取",
     )
     propose.add_argument(
         "--source-ids", default="", help="外部依据的来源 ID，逗号分隔"
@@ -234,7 +234,8 @@ def build_parser() -> argparse.ArgumentParser:
         "--direct-source-file",
         default="",
         help=(
-            "仓库外 UTF-8 文本文件路径；文件内容是用户确认的一句具体形成情境；"
+            "UTF-8 文本文件路径；建议使用仓库外临时文件；"
+            "文件内容是用户确认的一句具体形成情境；"
             "只适用于普通永久卡片，传 - 从 stdin 读取；"
             "不能与值同为 - 的 --draft-file 同时使用"
         ),
@@ -260,8 +261,8 @@ def build_parser() -> argparse.ArgumentParser:
         dest="confirm_user_approved",
         action="store_true",
         help=(
-            "旧命令兼容别名；新流程不得用它替代候选形成后的再次确认，"
-            "应使用 --confirm-user-approved"
+            "旧命令兼容别名，与 --confirm-user-approved 进入同一确认门禁；"
+            "新流程应使用后者表达候选形成后的再次确认"
         ),
     )
     accept.add_argument(
