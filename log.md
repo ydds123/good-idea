@@ -89,3 +89,5 @@
 
 ## [2026-08-11T15:14:47+08:00] capture-revise | 《无期迷途》游戏美术风格：AI人像创作的参考方向 | tx=revise-guigu-bahuang-20260811
 
+## [2026-08-11T16:52:05+08:00] capture-interesting | Logseq 的时间旅行和图谱设计对 Goodidea 有帮助：时间旅行=回滚的 | tx=capture-interesting-20260811165205-3b5c0d35
+
