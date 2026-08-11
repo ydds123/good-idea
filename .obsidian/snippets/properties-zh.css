@@ -27,15 +27,22 @@
   position: relative;
 }
 
+/* 隐藏英文原 key：三重保险（color 透明 + text-fill 透明 + 文本移出视野）。
+   !important 防止主题对 input 的高优先级颜色规则覆盖（2026-08-11 实测
+   主题把 color 覆盖为 rgb(92,92,92)，导致中英文重叠）。 */
 .metadata-property-key-input {
-  color: transparent;
-  caret-color: transparent;
+  color: transparent !important;
+  -webkit-text-fill-color: transparent !important;
+  caret-color: transparent !important;
+  text-indent: -9999px;
 }
 
 /* 聚焦（编辑态）恢复英文原名，露出机器契约 */
 .metadata-property-key:focus-within .metadata-property-key-input {
-  color: var(--text-normal);
-  caret-color: var(--text-normal);
+  color: var(--text-normal) !important;
+  -webkit-text-fill-color: var(--text-normal) !important;
+  caret-color: var(--text-normal) !important;
+  text-indent: 0;
 }
 
 .metadata-property-key::after {
