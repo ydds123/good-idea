@@ -12,6 +12,12 @@
       "subject": "capture-revise: 闪念卡片每晚 8 点飞书预警机制 [tx:revise-flash-alert-v2-20260809]",
       "timestamp": "2026-08-09T23:09:20+08:00",
       "transaction_id": "rollback-240893db82aa"
+    },
+    {
+      "commit": "0f91215c875f03629b48b2c5398a95222a6357d1",
+      "subject": "maintain-flash-content: 轻量记录正文镜像字段已是最新 [tx:maintain-flash-content-20260812140204-ca1b9d30]",
+      "timestamp": "2026-08-12T14:03:38+08:00",
+      "transaction_id": "rollback-0f91215c875f"
     }
   ],
   "schema_version": "0.1",
@@ -375,6 +381,8 @@
         ],
         "no_change": true
       },
+      "rolled_back_at": "2026-08-12T14:03:38+08:00",
+      "rolled_back_by": "rollback-0f91215c875f",
       "summary": "轻量记录正文镜像字段已是最新",
       "timestamp": "2026-08-12T14:02:04+08:00",
       "transaction_id": "maintain-flash-content-20260812140204-ca1b9d30"
@@ -601,6 +609,16 @@
       "summary": "母题级课题：AI图像/摄影与视觉叙事的 skill 化",
       "timestamp": "2026-08-10T00:47:52+08:00",
       "transaction_id": "revise-visual-narrative-v2-20260810"
+    },
+    "rollback-0f91215c875f": {
+      "action": "rollback",
+      "result": {
+        "rolled_back": "0f91215c875f03629b48b2c5398a95222a6357d1",
+        "strategy": "git-revert"
+      },
+      "summary": "回滚 0f91215c875f maintain-flash-content: 轻量记录正文镜像字段已是最新 [tx:maintain-flash-content-20260812140204-ca1b9d30]",
+      "timestamp": "2026-08-12T14:03:38+08:00",
+      "transaction_id": "rollback-0f91215c875f"
     },
     "rollback-240893db82aa": {
       "action": "rollback",

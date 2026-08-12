@@ -113,3 +113,5 @@
 
 ## [2026-08-12T14:02:04+08:00] maintain-flash-content | 轻量记录正文镜像字段已是最新 | tx=maintain-flash-content-20260812140204-ca1b9d30
 
+## [2026-08-12T14:03:38+08:00] rollback | 回滚 0f91215c875f maintain-flash-content: 轻量记录正文镜像字段已是最新 [tx:maintain-flash-content-20260812140204-ca1b9d30] | tx=rollback-0f91215c875f
+
