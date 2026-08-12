@@ -499,6 +499,18 @@
       "timestamp": "2026-08-12T19:11:53+08:00",
       "transaction_id": "permanent-propose-20260812191153-9f5f3796"
     },
+    "permanent-propose-20260812191153-9f5f3796-accept": {
+      "action": "permanent-accept",
+      "result": {
+        "card_id": "PER-20260812-4b9ce0bd",
+        "card_path": "永久空间/永久卡片/2026-08-12-闪念卡片记录的不是孤立要点，而是一次认知激活事件.md",
+        "card_type": "permanent",
+        "proposal_id": "PRP-2bd7cc151c7b"
+      },
+      "summary": "闪念卡片记录的不是孤立要点，而是一次认知激活事件",
+      "timestamp": "2026-08-12T19:11:53+08:00",
+      "transaction_id": "permanent-propose-20260812191153-9f5f3796-accept"
+    },
     "permanent-propose-collab-20260811-01": {
       "action": "permanent-propose",
       "result": {
