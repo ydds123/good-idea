@@ -1,36 +1,32 @@
-# 闪念空间实时数据库
-# 基于 Obsidian Bases：实时扫描 闪念空间/ 下的卡片 frontmatter。
-# 画布是视觉浏览，本文件是结构化查询视图；卡片变化即刷新。
 filters:
   and:
     - file.inFolder("闪念空间")
-    - 'file.ext == "md"'
-    - 'type == "闪念"'
-
+    - file.ext == "md"
+    - type == "闪念"
 formulas:
-  days_since_created: '(now() - file.ctime).days'
-  source_count: 'source_ids.length'
-
+  days_since_created: (now() - file.ctime).days
+  source_count: source_ids.length
 properties:
+  file.name:
+    displayName: "卡片"
   status:
     displayName: "状态"
   title:
-    displayName: "标题"
+    displayName: 标题
   created_at:
-    displayName: "创建时间"
+    displayName: 创建时间
   updated_at:
-    displayName: "更新时间"
+    displayName: 更新时间
   formula.days_since_created:
-    displayName: "创建天数"
+    displayName: 创建天数
   formula.source_count:
-    displayName: "来源数"
-
+    displayName: 来源数
 views:
   - type: table
-    name: "待处理队列"
+    name: 待处理队列
     filters:
       and:
-        - 'status == "待处理"'
+        - status == "待处理"
     order:
       - file.name
       - title
@@ -38,9 +34,11 @@ views:
       - created_at
       - updated_at
       - formula.source_count
-
   - type: table
-    name: "全部闪念"
+    name: 全部闪念
+    groupBy:
+      property: status
+      direction: ASC
     order:
       - file.name
       - status
@@ -48,6 +46,8 @@ views:
       - formula.days_since_created
       - created_at
       - updated_at
-    groupBy:
-      property: status
-      direction: ASC
+    sort:
+      - property: file.name
+        direction: ASC
+      - property: formula.days_since_created
+        direction: DESC
