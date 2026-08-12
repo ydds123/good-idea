@@ -1,5 +1,6 @@
 [
   "advanced-canvas",
   "agent-client",
-  "foldercanvas"
+  "foldercanvas",
+  "dataview"
 ]
