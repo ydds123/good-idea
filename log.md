@@ -133,3 +133,5 @@
 
 ## [2026-08-12T20:10:46+08:00] source-commit | 2026中国企业级AI Agent发展洞察报告 + 保存动机 | tx=source-aiagent-report-20260812-001
 
+## [2026-08-12T20:13:45+08:00] source-refresh-propose | 2026中国企业级AI Agent发展洞察报告 | tx=refresh-aiagent-report-20260812-001
+
