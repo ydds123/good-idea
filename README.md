@@ -126,10 +126,10 @@ good-idea/
 │           ├── SKILL.md
 │           └── agents/
 │               └── openai.yaml
+├── assets/                              # 来源图片与 Obsidian 附件（Obsidian 可见）
+│   └── <内容哈希>.<扩展名>          # 内容寻址，来源快照的本地图片
 ├── .goodidea/
 │   ├── state.json                       # 事务、连接与回滚事实账本
-│   ├── assets/
-│   │   └── <内容哈希>.<扩展名>          # 来源快照的本地图片
 │   ├── baseline/
 │   │   ├── concept-v0.1.md            # 冻结的 v0.1 概念说明
 │   │   └── decisions-v0.1.md          # 已确认决策和覆盖关系
@@ -234,7 +234,7 @@ uv run python scripts/validate-skills.py
 | 路径 | 作用 | 是否直接操作 |
 |---|---|---|
 | `.goodidea/state.json` | 保存事务幂等、已确认语义连接和回滚事实 | 不直接编辑，由 CLI 维护 |
-| `.goodidea/assets/` | 保存来源快照下载到本地的图片，文件名使用内容哈希 | 通常不直接操作 |
+| `assets/` | 保存来源快照下载到本地的图片，文件名使用内容哈希 | 通常不直接操作 |
 | `.goodidea/proposals/permanent/` | 只保存尚未接纳的永久卡片候选 | 通过 CLI 流转；接纳或撤销后删除 |
 | `.goodidea/formation-witnesses/` | 保存直接表达形成普通永久卡片时的一句确认情境和反链 | 只由 CLI 在接纳与回滚事务中维护，不进入索引或 review |
 | `.goodidea/proposals/connections/` | 保存待用户确认的语义连接候选 | 通过 CLI 流转 |
@@ -431,7 +431,7 @@ CLI 不会把其他未提交修改顺便混入自动提交。如果目标文件�
 
 网页只持久化去掉分享和追踪参数后的规范链接。原始分享链接只用于当次抓取，不保存。网页原文快照只保留标题、作者、日期、正文和本地化图片，排除导航、广告、评论和脚本。
 
-本地来源当前只支持外部 UTF-8 `.md`、`.markdown` 和 `.txt` 文档。正式文件只保存 `origin_filename` 和首次导入的 `origin_sha256`，不保存本机绝对路径，也不伪造 `canonical_url`；Markdown 开头的 YAML Frontmatter 只用于提取允许的来源元数据，随后从正文快照移除；如果开头一级标题与最终来源标题相同，也会机械去重，正文其他内容与顺序保持不变。Markdown 中的可读相对图片会复制到 `.goodidea/assets/` 并改写为内容寻址的库内链接。同一内容被移动或复制后仍识别为同一来源；文档内容变化时，必须对既有来源走 `source refresh` 候选和用户确认，不静默覆盖。v0.1 不直接摄取本地 PDF。
+本地来源当前只支持外部 UTF-8 `.md`、`.markdown` 和 `.txt` 文档。正式文件只保存 `origin_filename` 和首次导入的 `origin_sha256`，不保存本机绝对路径，也不伪造 `canonical_url`；Markdown 开头的 YAML Frontmatter 只用于提取允许的来源元数据，随后从正文快照移除；如果开头一级标题与最终来源标题相同，也会机械去重，正文其他内容与顺序保持不变。Markdown 中的可读相对图片会复制到 `assets/` 并改写为内容寻址的库内链接。同一内容被移动或复制后仍识别为同一来源；文档内容变化时，必须对既有来源走 `source refresh` 候选和用户确认，不静默覆盖。v0.1 不直接摄取本地 PDF。
 
 来源刷新先比较内容并生成更新候选，状态变为 `update_available`；只有用户确认后才替换同一个来源文件。旧版本由 Git 保存，不会被静默覆盖。
 

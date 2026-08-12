@@ -1,6 +1,6 @@
 {
   "alwaysUpdateLinks": true,
-  "attachmentFolderPath": ".goodidea/assets",
+  "attachmentFolderPath": "assets",
   "defaultViewMode": "preview",
   "newLinkFormat": "absolute",
   "propertiesInDocument": "visible",

@@ -84,7 +84,7 @@ class GoodIdeaCliTests(unittest.TestCase):
             (self.root / ".obsidian/core-plugins.json").read_text(encoding="utf-8")
         )
         self.assertEqual(app["propertiesInDocument"], "visible")
-        self.assertEqual(app["attachmentFolderPath"], ".goodidea/assets")
+        self.assertEqual(app["attachmentFolderPath"], "assets")
         self.assertEqual(app["defaultViewMode"], "preview")
         self.assertEqual(app["newLinkFormat"], "absolute")
         self.assertFalse(app["showInlineTitle"])

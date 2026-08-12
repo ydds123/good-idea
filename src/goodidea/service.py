@@ -806,7 +806,7 @@ class GoodIdeaService:
                     if runtime:
                         runtime.cache_asset(maintenance_job_id, url, data, extension)
                 digest = hashlib.sha256(data).hexdigest()
-                rel = Path(f".goodidea/assets/{digest}{extension}")
+                rel = Path(f"assets/{digest}{extension}")
                 writes[rel] = data
                 markdown = markdown.replace(
                     f"]({url})", f"](../{rel.as_posix()})"
@@ -2651,8 +2651,8 @@ class GoodIdeaService:
                 issues.append("Obsidian 未默认显示卡片 Frontmatter 属性")
             if app_config.get("alwaysUpdateLinks") is not True:
                 issues.append("Obsidian 未启用自动更新链接")
-            if app_config.get("attachmentFolderPath") != ".goodidea/assets":
-                issues.append("Obsidian 附件目录未指向 .goodidea/assets")
+            if app_config.get("attachmentFolderPath") != "assets":
+                issues.append("Obsidian 附件目录未指向 assets")
             if app_config.get("defaultViewMode") != "preview":
                 issues.append("Obsidian 未默认使用阅读视图")
             if app_config.get("newLinkFormat") != "absolute":

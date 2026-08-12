@@ -18,7 +18,7 @@ def initialize_test_vault(root: Path) -> None:
     for location in TYPE_LOCATIONS.values():
         (root / location).mkdir(parents=True, exist_ok=True)
     for relative in (
-        ".goodidea/assets",
+        "assets",
         ".goodidea/proposals/source-updates",
         ".goodidea/proposals/permanent",
         ".goodidea/proposals/connections",

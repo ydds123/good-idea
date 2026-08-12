@@ -112,12 +112,13 @@ class GoodIdeaCoreTests(unittest.TestCase):
             )
         self.assertEqual(list(outside.iterdir()), [])
 
-        assets = self.root / ".goodidea/assets"
+        assets = self.root / "assets"
+        assets.mkdir(exist_ok=True)
         assets.rmdir()
         assets.symlink_to(outside, target_is_directory=True)
         with self.assertRaises(TransactionError):
             self.repo._atomic_apply(
-                {Path(".goodidea/assets/new/image.bin"): b"x"},
+                {Path("assets/new/image.bin"): b"x"},
                 set(),
                 "safe-test",
                 "test",
@@ -396,7 +397,7 @@ class GoodIdeaCoreTests(unittest.TestCase):
                 transaction_id="sixty-assets-append",
             )
         self.assertEqual(runtime.status(started["session_id"])["sessions"][0]["entry_count"], 2)
-        self.assertEqual(list((self.root / ".goodidea/assets").iterdir()), [])
+        self.assertEqual(list((self.root / "assets").iterdir()), [])
         reviewed = self.service.review(
             current_time=datetime.now().astimezone() + timedelta(days=30)
         )
@@ -842,7 +843,7 @@ class GoodIdeaCoreTests(unittest.TestCase):
         self.assertNotIn("规范链接：", source_body)
         self.assertLess(source.index("## 原文快照"), source.index("## 关联闪念"))
         self.assertNotIn("## 文献笔记", source)
-        self.assertIn("../.goodidea/assets/", source)
+        self.assertIn("../assets/", source)
         self.assertNotIn("](https://example.com/image.png)", source)
         files_in_commit = git(
             self.root, "show", "--pretty=", "--name-only", result["commit"]
@@ -913,7 +914,7 @@ class GoodIdeaCoreTests(unittest.TestCase):
         self.assertIn(
             source_rel.with_suffix("").as_posix(), flash_text
         )
-        self.assertIn("../.goodidea/assets/", source_text)
+        self.assertIn("../assets/", source_text)
         self.assertNotIn("](images/local.png)", source_text)
         self.assertNotIn("sources", self.repo.read_state())
 

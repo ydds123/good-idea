@@ -114,7 +114,7 @@ Markdown Frontmatter 是 CLI 的机器控制面，不是阅读正文。Obsidian 
 
 ## Obsidian 产品基线
 
-`.obsidian/app.json`、`appearance.json`、`core-plugins.json` 和 `snippets/goodidea.css`、`snippets/properties-zh.css` 属于 v0.1 产品基线：默认显示 Frontmatter 属性（显示层中文映射与账本字段隐藏见 properties-zh.css）、隐藏内部目录、自动维护链接，并把附件保存到 `.goodidea/assets/`。`workspace.json` 只记录本机临时窗口状态，不进入 Git。
+`.obsidian/app.json`、`appearance.json`、`core-plugins.json` 和 `snippets/goodidea.css`、`snippets/properties-zh.css` 属于 v0.1 产品基线：默认显示 Frontmatter 属性（显示层中文映射与账本字段隐藏见 properties-zh.css）、隐藏内部目录、自动维护链接，并把附件保存到 `assets/`。`workspace.json` 只记录本机临时窗口状态，不进入 Git。
 
 ## 溯源文件
 
@@ -140,7 +140,7 @@ Markdown Frontmatter 是 CLI 的机器控制面，不是阅读正文。Obsidian 
 
 哈希基于两个快照标记之间规范化后的完整文本。Frontmatter 和起始标记中的哈希必须相同。任何写操作开始前都要校验所有来源快照；发现异常则停止。
 
-来源图片（包括网页图片和本地 Markdown 的相对图片）存入 `.goodidea/assets/<内容哈希>.<扩展名>`，正文使用库内相对链接。下载或读取失败时以明确的失败占位文本替换原图片，来源状态降为 `部分抓取`，不让可读性静默依赖远程图片或原本地路径。
+来源图片（包括网页图片和本地 Markdown 的相对图片）存入 `assets/<内容哈希>.<扩展名>`，正文使用库内相对链接。下载或读取失败时以明确的失败占位文本替换原图片，来源状态降为 `部分抓取`，不让可读性静默依赖远程图片或原本地路径。
 
 ## 状态机与命令门禁
 
