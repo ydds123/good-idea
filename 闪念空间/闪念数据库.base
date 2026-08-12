@@ -52,15 +52,12 @@ views:
       - formula.status_icon
       - status
       - title
-      - formula.days_since_created
-      - formula.is_stale
-      - created_at
-      - updated_at
     sort:
       - property: formula.days_since_created
         direction: DESC
     summaries:
       formula.days_since_created: Max
+    rowHeight: medium
   - type: table
     name: 闪念节奏
     groupBy:
@@ -80,6 +77,6 @@ views:
     order:
       - file.name
       - formula.status_icon
-      - title
-      - formula.days_since_created
-      - formula.source_count
+    cardSize: 420
+  - type: table
+    name: 视图
