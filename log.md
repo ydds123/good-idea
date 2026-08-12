@@ -117,3 +117,5 @@
 
 ## [2026-08-12T14:06:44+08:00] rollback | 回滚 248db032a955 maintain-flash-content: 为 14 张轻量记录同步正文镜像字段 [tx:maintain-flash-content-20260812140155-3f227782] | tx=rollback-248db032a955
 
+## [2026-08-12T14:11:38+08:00] maintain-index | 重新生成不展示摘要的内容索引 | tx=maintain-index-20260812141138-ccb52004
+
