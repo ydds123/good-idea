@@ -511,6 +511,17 @@
       "timestamp": "2026-08-12T19:11:53+08:00",
       "transaction_id": "permanent-propose-20260812191153-9f5f3796-accept"
     },
+    "permanent-propose-20260812191155-a67b1e93": {
+      "action": "permanent-propose",
+      "result": {
+        "card_type": "permanent",
+        "proposal_id": "PRP-dfb108b48657",
+        "proposal_path": ".goodidea/proposals/permanent/PRP-dfb108b48657.md"
+      },
+      "summary": "普通永久卡片标准是最小任务调用循环的前置条件",
+      "timestamp": "2026-08-12T19:11:55+08:00",
+      "transaction_id": "permanent-propose-20260812191155-a67b1e93"
+    },
     "permanent-propose-collab-20260811-01": {
       "action": "permanent-propose",
       "result": {

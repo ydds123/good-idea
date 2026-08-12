@@ -127,3 +127,5 @@
 
 ## [2026-08-12T19:11:53+08:00] permanent-accept | 闪念卡片记录的不是孤立要点，而是一次认知激活事件 | tx=permanent-propose-20260812191153-9f5f3796-accept
 
+## [2026-08-12T19:11:55+08:00] permanent-propose | 普通永久卡片标准是最小任务调用循环的前置条件 | tx=permanent-propose-20260812191155-a67b1e93
+
