@@ -109,3 +109,5 @@
 
 ## [2026-08-12T09:19:58+08:00] capture-finalize | 确认本轮 1 张闪念 | tx=tx-20260812-finalize-life-script-v2
 
+## [2026-08-12T14:01:55+08:00] maintain-flash-content | 为 14 张轻量记录同步正文镜像字段 | tx=maintain-flash-content-20260812140155-3f227782
+
