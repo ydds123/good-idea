@@ -6,11 +6,14 @@ filters:
 formulas:
   days_since_created: (now() - file.ctime).days
   source_count: source_ids.length
+  status_icon: if(status == "待处理", "🟡", if(status == "已处理", "✅", "⚪"))
+  is_stale: if(status == "待处理" && (now() - file.ctime).days >= 2, "⚠️ 陈旧", "")
+  created_date: file.ctime.format("YYYY-MM-DD")
 properties:
   file.name:
-    displayName: "卡片"
+    displayName: 卡片
   status:
-    displayName: "状态"
+    displayName: 状态
   title:
     displayName: 标题
   created_at:
@@ -21,6 +24,10 @@ properties:
     displayName: 创建天数
   formula.source_count:
     displayName: 来源数
+  formula.is_stale:
+    displayName: 陈旧
+  formula.created_date:
+    displayName: 创建日
 views:
   - type: table
     name: 待处理队列
@@ -29,10 +36,11 @@ views:
         - status == "待处理"
     order:
       - file.name
+      - formula.status_icon
       - title
       - formula.days_since_created
+      - formula.is_stale
       - created_at
-      - updated_at
       - formula.source_count
   - type: table
     name: 全部闪念
@@ -41,13 +49,37 @@ views:
       direction: ASC
     order:
       - file.name
+      - formula.status_icon
       - status
       - title
       - formula.days_since_created
+      - formula.is_stale
       - created_at
       - updated_at
     sort:
-      - property: file.name
-        direction: ASC
       - property: formula.days_since_created
         direction: DESC
+    summaries:
+      formula.days_since_created: Max
+  - type: table
+    name: 闪念节奏
+    groupBy:
+      property: formula.created_date
+      direction: DESC
+    order:
+      - file.name
+      - formula.status_icon
+      - status
+      - title
+      - formula.days_since_created
+    sort:
+      - property: formula.days_since_created
+        direction: DESC
+  - type: cards
+    name: 卡片墙
+    order:
+      - file.name
+      - formula.status_icon
+      - title
+      - formula.days_since_created
+      - formula.source_count
