@@ -364,6 +364,21 @@
       "timestamp": "2026-08-12T14:01:55+08:00",
       "transaction_id": "maintain-flash-content-20260812140155-3f227782"
     },
+    "maintain-flash-content-20260812140204-ca1b9d30": {
+      "action": "maintain-flash-content",
+      "result": {
+        "changed": [],
+        "count": 0,
+        "errors": [
+          "闪念空间/2026-08-10-《人生脚本》：主体性是产物，人生脚本是观察维度.md: Frontmatter 字段 id 不是 JSON-compatible YAML",
+          "闪念空间/2026-08-11-核心矛盾就一个词：交易成本——SkillHub-的「信任与分发基础设施」=-曾鸣-1.2-智能体经济交易成本问题的工程化.md: Frontmatter 字段 id 不是 JSON-compatible YAML"
+        ],
+        "no_change": true
+      },
+      "summary": "轻量记录正文镜像字段已是最新",
+      "timestamp": "2026-08-12T14:02:04+08:00",
+      "transaction_id": "maintain-flash-content-20260812140204-ca1b9d30"
+    },
     "maintain-index-after-test-cards-removal": {
       "action": "maintain-index",
       "result": {
