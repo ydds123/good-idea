@@ -29,7 +29,8 @@ views:
   - type: table
     name: "待处理队列"
     filters:
-      - 'status == "待处理"'
+      and:
+        - 'status == "待处理"'
     order:
       - file.name
       - title
