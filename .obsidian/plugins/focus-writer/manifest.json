@@ -1,0 +1,9 @@
+{
+	"id": "focus-writer",
+	"name": "Focus Writer",
+	"version": "0.2.0",
+	"minAppVersion": "1.5.0",
+	"description": "把 Obsidian 焦点（看板/表格选中的卡片或当前打开笔记）写入 .goodidea/runtime/focus.json",
+	"author": "local",
+	"isDesktopOnly": true
+}

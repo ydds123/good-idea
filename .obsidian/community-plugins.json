@@ -2,5 +2,8 @@
   "advanced-canvas",
   "agent-client",
   "foldercanvas",
-  "dataview"
+  "dataview",
+  "note-database",
+  "bases-kanban-view-ttvl",
+  "focus-writer"
 ]
