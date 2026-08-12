@@ -14,10 +14,10 @@
       "transaction_id": "rollback-240893db82aa"
     },
     {
-      "commit": "0f91215c875f03629b48b2c5398a95222a6357d1",
-      "subject": "maintain-flash-content: 轻量记录正文镜像字段已是最新 [tx:maintain-flash-content-20260812140204-ca1b9d30]",
-      "timestamp": "2026-08-12T14:03:38+08:00",
-      "transaction_id": "rollback-0f91215c875f"
+      "commit": "248db032a9550302e1449b4672f3a3bbdec94845",
+      "subject": "maintain-flash-content: 为 14 张轻量记录同步正文镜像字段 [tx:maintain-flash-content-20260812140155-3f227782]",
+      "timestamp": "2026-08-12T14:06:44+08:00",
+      "transaction_id": "rollback-248db032a955"
     }
   ],
   "schema_version": "0.1",
@@ -366,6 +366,8 @@
         ],
         "no_change": false
       },
+      "rolled_back_at": "2026-08-12T14:06:44+08:00",
+      "rolled_back_by": "rollback-248db032a955",
       "summary": "为 14 张轻量记录同步正文镜像字段",
       "timestamp": "2026-08-12T14:01:55+08:00",
       "transaction_id": "maintain-flash-content-20260812140155-3f227782"
@@ -381,8 +383,8 @@
         ],
         "no_change": true
       },
-      "rolled_back_at": "2026-08-12T14:03:38+08:00",
-      "rolled_back_by": "rollback-0f91215c875f",
+      "rolled_back_at": "2026-08-12T14:06:44+08:00",
+      "rolled_back_by": "rollback-248db032a955",
       "summary": "轻量记录正文镜像字段已是最新",
       "timestamp": "2026-08-12T14:02:04+08:00",
       "transaction_id": "maintain-flash-content-20260812140204-ca1b9d30"
@@ -616,6 +618,8 @@
         "rolled_back": "0f91215c875f03629b48b2c5398a95222a6357d1",
         "strategy": "git-revert"
       },
+      "rolled_back_at": "2026-08-12T14:06:44+08:00",
+      "rolled_back_by": "rollback-248db032a955",
       "summary": "回滚 0f91215c875f maintain-flash-content: 轻量记录正文镜像字段已是最新 [tx:maintain-flash-content-20260812140204-ca1b9d30]",
       "timestamp": "2026-08-12T14:03:38+08:00",
       "transaction_id": "rollback-0f91215c875f"
@@ -629,6 +633,16 @@
       "summary": "回滚 240893db82aa capture-revise: 闪念卡片每晚 8 点飞书预警机制 [tx:revise-flash-alert-v2-20260809]",
       "timestamp": "2026-08-09T23:09:20+08:00",
       "transaction_id": "rollback-240893db82aa"
+    },
+    "rollback-248db032a955": {
+      "action": "rollback",
+      "result": {
+        "rolled_back": "248db032a9550302e1449b4672f3a3bbdec94845",
+        "strategy": "git-revert"
+      },
+      "summary": "回滚 248db032a955 maintain-flash-content: 为 14 张轻量记录同步正文镜像字段 [tx:maintain-flash-content-20260812140155-3f227782]",
+      "timestamp": "2026-08-12T14:06:44+08:00",
+      "transaction_id": "rollback-248db032a955"
     },
     "rollback-7e40c07c2681": {
       "action": "rollback",
