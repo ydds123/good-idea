@@ -135,3 +135,5 @@
 
 ## [2026-08-12T20:13:45+08:00] source-refresh-propose | 2026中国企业级AI Agent发展洞察报告 | tx=refresh-aiagent-report-20260812-001
 
+## [2026-08-12T20:14:12+08:00] source-refresh-accept | 2026中国企业级AI Agent发展洞察报告 | tx=refresh-aiagent-report-20260812-002
+
