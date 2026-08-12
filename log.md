@@ -131,3 +131,5 @@
 
 ## [2026-08-12T19:11:55+08:00] permanent-accept | 普通永久卡片标准是最小任务调用循环的前置条件 | tx=permanent-propose-20260812191155-a67b1e93-accept
 
+## [2026-08-12T20:10:46+08:00] source-commit | 2026中国企业级AI Agent发展洞察报告 + 保存动机 | tx=source-aiagent-report-20260812-001
+
