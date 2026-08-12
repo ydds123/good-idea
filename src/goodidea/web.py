@@ -128,6 +128,19 @@ def _strip_frontmatter(markdown: str) -> tuple[str, dict[str, str]]:
     return "".join(lines[closing_index + 1 :]), metadata
 
 
+_TITLE_QUOTE_TRANS = str.maketrans({ch: "" for ch in "\"'“”‘’「」『』＂"})
+
+
+def _title_key(text: str) -> str:
+    """标题比较键：折叠空白并忽略成对引号类排版标点。
+
+    仅用于“开头一级标题是否与最终来源标题重复”的机械判断。引号是排版
+    标点、不改变标题语义：最终标题与原文 H1 只差引号时仍视为重复并移除，
+    避免在正式来源标题下重复显示同一标题。
+    """
+    return " ".join(text.translate(_TITLE_QUOTE_TRANS).split())
+
+
 def _heading_title(markdown: str) -> str:
     match = re.match(r"^\s*#\s+(.+?)(?:\s+#+)?\s*(?:\n|$)", markdown)
     return " ".join(match.group(1).split()) if match else ""
@@ -139,8 +152,8 @@ def _strip_matching_leading_h1(markdown: str, title: str) -> str:
     match = re.match(r"^(\s*)#\s+(.+?)(?:\s+#+)?\s*(?:\n|$)", markdown)
     if not match:
         return markdown
-    heading = " ".join(match.group(2).split())
-    if heading != " ".join(title.split()):
+    heading = _title_key(match.group(2))
+    if heading != _title_key(title):
         return markdown
     return markdown[match.end() :]
 

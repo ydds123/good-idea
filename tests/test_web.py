@@ -116,6 +116,22 @@ canonical_url: https://ignored.example/source
         self.assertEqual(matched["markdown"], "正文。")
         self.assertEqual(unmatched["markdown"], "# 原文自己的标题\n\n正文。")
 
+    def test_quote_variant_of_matching_h1_is_removed(self):
+        quoted = preview_from_markdown(
+            "https://example.com/quoted",
+            "# 对话李继刚：让AI超越平庸表现｜“读完周报再来聊聊”闭门会第5期精华\n\n正文。",
+            title="对话李继刚：让AI超越平庸表现｜读完周报再来聊聊闭门会第5期精华",
+        )
+        self.assertEqual(quoted["markdown"], "正文。")
+
+    def test_title_with_real_punctuation_difference_is_kept(self):
+        different = preview_from_markdown(
+            "https://example.com/different",
+            "# 控制论新解\n\n正文。",
+            title="《控制论》新解",
+        )
+        self.assertEqual(different["markdown"], "# 控制论新解\n\n正文。")
+
     def test_local_markdown_extracts_metadata_and_embeds_safe_relative_image(self):
         with tempfile.TemporaryDirectory() as temporary:
             base = Path(temporary)

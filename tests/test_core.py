@@ -972,6 +972,44 @@ class GoodIdeaCoreTests(unittest.TestCase):
             self.repo.transaction_result("tx-local-forged-identity")
         )
 
+    def test_source_commit_skips_duplicate_author_date_context_header(self):
+        with_header = self.preview(
+            "> **来源**：作者甲 公众号（原创）\n"
+            "> **发布时间**：2026年8月4日 20:00\n"
+            "> **原文链接**：https://example.com/original\n"
+            "\n"
+            "正文第一段。"
+        )
+        with_header["url"] = "https://example.com/with-header?utm_source=test"
+        with_header["canonical_url"] = "https://example.com/with-header"
+        captured = self.service.source_commit(
+            with_header,
+            motivation="我要验证正文自带信息头时快照不再重复插入作者与日期。",
+            transaction_id="tx-snapshot-no-dup-header",
+        )["result"]
+        note = (self.root / Path(captured["source_path"])).read_text(
+            encoding="utf-8"
+        )
+        _, snapshot, _, _ = extract_snapshot(note)
+        self.assertIn("> **来源**：作者甲", snapshot)
+        self.assertNotIn("> 作者：作者甲", snapshot)
+        self.assertNotIn("> 发布日期：2026-08-04", snapshot)
+
+        plain = self.preview("正文第二版。")
+        plain["url"] = "https://example.com/plain?utm_source=test"
+        plain["canonical_url"] = "https://example.com/plain"
+        captured = self.service.source_commit(
+            plain,
+            motivation="对照组：正文不带信息头时仍插入作者与日期。",
+            transaction_id="tx-snapshot-with-dup-header",
+        )["result"]
+        note = (self.root / Path(captured["source_path"])).read_text(
+            encoding="utf-8"
+        )
+        _, snapshot, _, _ = extract_snapshot(note)
+        self.assertIn("> 作者：作者甲", snapshot)
+        self.assertIn("> 发布日期：2026-08-04", snapshot)
+
     def test_source_maintenance_migrates_legacy_wrapper_and_is_revertible(self):
         captured = self.service.source_commit(
             self.preview(),

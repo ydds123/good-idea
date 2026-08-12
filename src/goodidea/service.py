@@ -39,6 +39,7 @@ from .notes import (
     render_source_note,
     replace_source_snapshot,
     replace_section,
+    snapshot_has_context_header,
     snapshot_hash,
     validate_required_metadata,
     validate_source_note,
@@ -831,9 +832,10 @@ class GoodIdeaService:
         self, preview: dict[str, Any], localized_markdown: str
     ) -> str:
         lines: list[str] = []
-        if preview.get("author"):
+        skip_author, skip_date = snapshot_has_context_header(localized_markdown)
+        if preview.get("author") and not skip_author:
             lines.append(f"> 作者：{preview['author']}")
-        if preview.get("published_at"):
+        if preview.get("published_at") and not skip_date:
             lines.append(f"> 发布日期：{preview['published_at']}")
         if preview.get("error"):
             lines.append(f"> 抓取说明：{preview['error']}")

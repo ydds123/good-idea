@@ -35,6 +35,20 @@ def snapshot_hash(text: str) -> str:
     return hashlib.sha256(normalize_snapshot(text).encode("utf-8")).hexdigest()
 
 
+def snapshot_has_context_header(markdown: str) -> tuple[bool, bool]:
+    """检测正文开头是否已自带作者/来源与发布/日期信息头。
+
+    返回 ``(has_author, has_date)``。两者各自命中时，调用方不应再插入
+    对应的“作者/发布日期”上下文行，避免与正文已有信息头重复显示。
+    只检查开头若干行中的引用块，避免误伤正文其他位置。
+    """
+    head_lines = markdown.splitlines()[:12]
+    quote_lines = [line for line in head_lines if line.startswith(">")]
+    has_author = any(re.search(r"(作者|来源)", line) for line in quote_lines)
+    has_date = any(re.search(r"(发布|日期)", line) for line in quote_lines)
+    return has_author, has_date
+
+
 def extract_snapshot(note: str) -> tuple[str, str, int, int]:
     start = SNAPSHOT_START_RE.search(note)
     if not start:
@@ -98,9 +112,12 @@ def normalize_source_layout(note: str) -> str:
             while article_lines and not article_lines[0]:
                 article_lines.pop(0)
             context_lines: list[str] = []
-            if metadata.get("author"):
+            skip_author, skip_date = snapshot_has_context_header(
+                "\n".join(article_lines)
+            )
+            if metadata.get("author") and not skip_author:
                 context_lines.append(f"> 作者：{metadata['author']}")
-            if metadata.get("published_at"):
+            if metadata.get("published_at") and not skip_date:
                 context_lines.append(f"> 发布日期：{metadata['published_at']}")
             capture_note = next(
                 (
