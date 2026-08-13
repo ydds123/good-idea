@@ -150,6 +150,17 @@
       "timestamp": "2026-08-10T00:08:19+08:00",
       "transaction_id": "capture-todo-20260810000819-290076b9"
     },
+    "capture-todo-20260813101206-4aad64f1": {
+      "action": "capture-todo",
+      "result": {
+        "id": "TODO-20260813-505dda9b",
+        "path": "待办空间/2026-08-13-阅读《Raycast从入门到精通：Mac-终极效率神器完全指南》.md",
+        "type": "todo"
+      },
+      "summary": "阅读《Raycast从入门到精通：Mac 终极效率神器完全指南》",
+      "timestamp": "2026-08-13T10:12:06+08:00",
+      "transaction_id": "capture-todo-20260813101206-4aad64f1"
+    },
     "correction-withdraw-PRP-5a9bfa3f1970": {
       "action": "permanent-withdraw",
       "result": {

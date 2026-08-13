@@ -137,3 +137,5 @@
 
 ## [2026-08-12T20:14:12+08:00] source-refresh-accept | 2026中国企业级AI Agent发展洞察报告 | tx=refresh-aiagent-report-20260812-002
 
+## [2026-08-13T10:12:06+08:00] capture-todo | 阅读《Raycast从入门到精通：Mac 终极效率神器完全指南》 | tx=capture-todo-20260813101206-4aad64f1
+

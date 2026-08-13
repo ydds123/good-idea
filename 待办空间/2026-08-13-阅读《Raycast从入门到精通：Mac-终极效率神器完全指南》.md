@@ -1,0 +1,18 @@
+---
+id: "TODO-20260813-505dda9b"
+type: "待办"
+title: "阅读《Raycast从入门到精通：Mac 终极效率神器完全指南》"
+status: "进行中"
+created_at: "2026-08-13T10:12:06+08:00"
+updated_at: "2026-08-13T10:12:06+08:00"
+source_ids: []
+---
+# 阅读《Raycast从入门到精通：Mac 终极效率神器完全指南》
+
+## 原始记录
+
+阅读《Raycast从入门到精通：Mac 终极效率神器完全指南》
+
+## 产生情境
+
+https://mp.weixin.qq.com/s/xIjJUEGvAkuibz9YZYE9IQ （公众号：灵感回路，2026-02-15，万字长文）
