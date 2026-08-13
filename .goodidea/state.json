@@ -924,6 +924,25 @@
       "timestamp": "2026-08-13T20:53:53+08:00",
       "transaction_id": "source-commit-20260813-feishu-cognitive"
     },
+    "source-commit-20260813-zengming": {
+      "action": "source-commit",
+      "result": {
+        "flash_created": false,
+        "flash_ids": [
+          "FLA-20260813-fdd1b6b2"
+        ],
+        "flash_paths": [
+          "闪念空间/2026-08-13-①企业AI转型四阶段（工具散点期-试点治理期-流程重构期-AI原生期）可联系昨天.md"
+        ],
+        "image_failures": [],
+        "source_created": true,
+        "source_id": "SRC-2f9287e240b2",
+        "source_path": "溯源空间/2026-08-13-阅读素材：曾鸣《智能商业》（第一章AI产业化的展开+第二章智能复利和黑洞效应）.md"
+      },
+      "summary": "阅读素材：曾鸣《智能商业》（第一章AI产业化的展开+第二章智能复利和黑洞效应） + 关联 1 张闪念",
+      "timestamp": "2026-08-13T21:26:25+08:00",
+      "transaction_id": "source-commit-20260813-zengming"
+    },
     "source-control-theory-capture-20260809-v2": {
       "action": "source-commit",
       "result": {
