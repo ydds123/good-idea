@@ -183,3 +183,5 @@
 
 [2026-08-13T22:22:28+08:00] permanent-accept | 企业AI转型四阶段：理解AI入企的分析积木 | tx=permanent-20260813-ai-stages-accept
 
+[2026-08-13T22:37:58+08:00] capture-todo | 看看朱镕基的讲话实录这套书，了解一下 | tx=capture-todo-20260813223758-9c7484e6
+
