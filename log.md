@@ -187,3 +187,5 @@
 
 [2026-08-13T22:44:04+08:00] permanent-propose | 主体性：行为原因的自我归属 | tx=permanent-20260813-agency
 
+[2026-08-13T22:44:04+08:00] permanent-accept | 主体性：行为原因的自我归属 | tx=permanent-20260813-agency-accept
+

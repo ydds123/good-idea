@@ -540,6 +540,18 @@
       "timestamp": "2026-08-13T22:44:04+08:00",
       "transaction_id": "permanent-20260813-agency"
     },
+    "permanent-20260813-agency-accept": {
+      "action": "permanent-accept",
+      "result": {
+        "card_id": "PER-20260813-96574216",
+        "card_path": "永久空间/永久卡片/2026-08-13-主体性：行为原因的自我归属.md",
+        "card_type": "permanent",
+        "proposal_id": "PRP-785866ff92ab"
+      },
+      "summary": "主体性：行为原因的自我归属",
+      "timestamp": "2026-08-13T22:44:04+08:00",
+      "transaction_id": "permanent-20260813-agency-accept"
+    },
     "permanent-20260813-ai-stages": {
       "action": "permanent-propose",
       "result": {
