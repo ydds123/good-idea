@@ -507,6 +507,18 @@
       "timestamp": "2026-08-13T21:00:13+08:00",
       "transaction_id": "permanent-20260813-judgment-catalysis"
     },
+    "permanent-20260813-judgment-catalysis-accept": {
+      "action": "permanent-accept",
+      "result": {
+        "card_id": "PER-20260813-2865f96c",
+        "card_path": "永久空间/永久卡片/2026-08-13-判断力不靠熬年头，靠主动催化.md",
+        "card_type": "permanent",
+        "proposal_id": "PRP-21b27ac7d590"
+      },
+      "summary": "判断力不靠熬年头，靠主动催化",
+      "timestamp": "2026-08-13T21:00:13+08:00",
+      "transaction_id": "permanent-20260813-judgment-catalysis-accept"
+    },
     "permanent-accept-collab-20260811-01": {
       "action": "permanent-accept",
       "result": {
