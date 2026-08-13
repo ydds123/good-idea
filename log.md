@@ -157,3 +157,5 @@
 
 [2026-08-13T20:53:53+08:00] source-commit | 广义认知行动系统分析 + 关联 1 张闪念 | tx=source-commit-20260813-feishu-cognitive
 
+[2026-08-13T21:00:13+08:00] permanent-propose | 判断力不靠熬年头，靠主动催化 | tx=permanent-20260813-judgment-catalysis
+
