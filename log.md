@@ -147,3 +147,5 @@
 
 [2026-08-13T19:28:04+08:00] source-refresh-propose | AI时代职场自救法则：消失的入门梯子与用AI搭建学习路径 | tx=refresh-196-name-fix
 
+[2026-08-13T19:30:54+08:00] source-refresh-accept | AI时代职场自救法则：消失的入门梯子与用AI搭建学习路径 | tx=confirm-refresh-196-name-fix
+
