@@ -212,7 +212,7 @@ Obsidian 与 CLI 生成的 Wiki 链接统一使用从仓库根目录开始的路
 `index.md` 每次成功事务重新生成，只展示卡片标题链接和中文状态。正式内容没有 `summary` 字段。`log.md` 中的 `<summary>` 是一次事务的人类可读操作说明，同时保存在状态账本和 Git 提交信息中，不是任何卡片的内容摘要。每条日志格式为：
 
 ```text
-## [YYYY-MM-DD HH:MM:SS +0800] <action> | <summary> | tx=<transaction-id>
+[YYYY-MM-DD HH:MM:SS +0800] <action> | <summary> | tx=<transaction-id>
 ```
 
 ## 信任模型

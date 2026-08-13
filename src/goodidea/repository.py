@@ -229,7 +229,7 @@ class Repository:
             log_text += "\n"
         final_writes[LOG_PATH] = (
             log_text
-            + f"## [{timestamp}] {action} | {summary} | tx={transaction_id}\n\n"
+            + f"[{timestamp}] {action} | {summary} | tx={transaction_id}\n\n"
         )
         final_writes[INDEX_PATH] = self.generate_index(final_writes, final_deletes)
         target_paths = sorted(

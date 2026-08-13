@@ -2760,7 +2760,7 @@ class GoodIdeaService:
             if not log_text.endswith("\n"):
                 log_text += "\n"
             log_text += (
-                f"## [{timestamp}] rollback | 回滚 {resolved[:12]} {subject} "
+                f"[{timestamp}] rollback | 回滚 {resolved[:12]} {subject} "
                 f"| tx={rollback_tx}\n\n"
             )
             (self.repo.root / ".goodidea/state.json").write_text(
