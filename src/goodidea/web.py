@@ -498,6 +498,7 @@ def preview_from_markdown(
     title: str = "",
     author: str = "",
     published_at: str = "",
+    tags: list[str] | None = None,
 ) -> dict[str, Any]:
     content, metadata, extracted_title = _normalize_markdown_document(
         markdown,
@@ -528,6 +529,7 @@ def preview_from_markdown(
         "status": "complete" if content else "failed",
         "error": "" if content else "未提供正文",
         "extractor": "agent-markdown",
+        "tags": list(tags or []),
     }
 
 
@@ -537,6 +539,7 @@ def preview_from_local_file(
     title: str = "",
     author: str = "",
     published_at: str = "",
+    tags: list[str] | None = None,
 ) -> dict[str, Any]:
     source_path = Path(path).expanduser()
     filename = source_path.name
@@ -603,6 +606,7 @@ def preview_from_local_file(
             if suffix in {".md", ".markdown"}
             else "local-text"
         ),
+        "tags": list(tags or []),
     }
 
 

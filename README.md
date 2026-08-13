@@ -388,6 +388,7 @@ uv run goodidea --root /Users/apple/Documents/Claude/good-idea <命令>
 | `goodidea capture revise-source-anchors` | 按用户确认把来源链接和论证说明合并为统一锚点 | 是 |
 | `goodidea source preview --url <URL>` | 在仓库外准备网页来源预览 | 否 |
 | `goodidea source preview --local-file <PATH>` | 在仓库外准备 UTF-8 `.md` / `.markdown` / `.txt` 来源预览 | 否 |
+| `goodidea source preview --markdown-file <PATH> --tags <标签>` | 预览时附加可选来源渠道标签（逗号分隔，写入 preview JSON，commit 时落库） | 否 |
 | `goodidea source commit` | 用户给出保存动机后原子创建来源和闪念 | 是 |
 | `goodidea source refresh` | 创建或接受来源更新候选 | 视阶段而定 |
 | `goodidea review` | 只读回顾中间材料，并按创建时间标记陈旧闪念 | 否 |
@@ -395,6 +396,7 @@ uv run goodidea --root /Users/apple/Documents/Claude/good-idea <命令>
 | `goodidea maintain sources` | 规范来源快照结构 | 是，记录维护事务 |
 | `goodidea maintain index` | 重新生成只含标题和状态的索引 | 是，记录维护事务 |
 | `goodidea maintain metadata` | 从正式内容移除已废弃的 `summary` 字段 | 是，记录维护事务 |
+| `goodidea maintain source-tags` | 设置或清除来源的可选渠道标签（用户命名的高辨识度实体名；空列表即清除） | 是，记录维护事务 |
 | `goodidea maintain contracts` | 移除旧状态镜像、旧关系字段和已终结候选 | 是，记录维护事务 |
 | `goodidea permanent propose` | 提交用户确认后的永久卡片候选；普通永久卡片还需确认形成来源 | 是 |
 | `goodidea permanent accept` | 用户看到候选后再次明确确认，原子发布卡片及必要的直接表达见证 | 是 |

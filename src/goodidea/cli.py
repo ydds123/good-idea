@@ -158,6 +158,11 @@ def build_parser() -> argparse.ArgumentParser:
     preview.add_argument("--title", default="")
     preview.add_argument("--author", default="")
     preview.add_argument("--published-at", default="")
+    preview.add_argument(
+        "--tags",
+        default="",
+        help="逗号分隔的来源标签（可选，用户命名的高辨识度实体名，写入 preview JSON）",
+    )
     preview.add_argument("--output")
 
     source_commit = source_sub.add_parser(
@@ -196,6 +201,14 @@ def build_parser() -> argparse.ArgumentParser:
         "metadata", help="从正式内容移除已废弃的 summary 字段"
     )
     metadata.add_argument("--transaction-id")
+    source_tags = maintain_sub.add_parser(
+        "source-tags", help="设置或清除来源的可选渠道标签（用户命名的高辨识度实体名）"
+    )
+    source_tags.add_argument("--source-id", required=True)
+    source_tags.add_argument(
+        "--tags", default="", help="逗号分隔；传空即清除来源标签"
+    )
+    source_tags.add_argument("--transaction-id")
     contracts = maintain_sub.add_parser(
         "contracts", help="移除可推导的状态镜像和已终结候选"
     )
@@ -387,6 +400,7 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def _source_preview(args: argparse.Namespace) -> dict[str, Any]:
+    tags = [t.strip() for t in args.tags.split(",") if t.strip()] if args.tags else []
     if args.local_file:
         if args.html_file or args.markdown_file:
             raise ValidationError(
@@ -397,6 +411,7 @@ def _source_preview(args: argparse.Namespace) -> dict[str, Any]:
             title=args.title,
             author=args.author,
             published_at=args.published_at,
+            tags=tags,
         )
     elif args.html_file:
         html_text = (
@@ -419,6 +434,7 @@ def _source_preview(args: argparse.Namespace) -> dict[str, Any]:
             title=args.title,
             author=args.author,
             published_at=args.published_at,
+            tags=tags,
         )
     else:
         value = preview_from_url(args.url)
@@ -610,6 +626,13 @@ def dispatch(args: argparse.Namespace) -> tuple[dict[str, Any], int]:
         result = service.maintain_index(transaction_id=args.transaction_id)
     elif args.command == "maintain" and args.maintain_command == "metadata":
         result = service.maintain_metadata(transaction_id=args.transaction_id)
+    elif args.command == "maintain" and args.maintain_command == "source-tags":
+        tags = [t.strip() for t in args.tags.split(",") if t.strip()]
+        result = service.maintain_source_tags(
+            source_id=args.source_id,
+            tags=tags,
+            transaction_id=args.transaction_id,
+        )
     elif args.command == "maintain" and args.maintain_command == "contracts":
         result = service.maintain_contracts(transaction_id=args.transaction_id)
     elif args.command == "maintain" and args.maintain_command == "enums-zh":

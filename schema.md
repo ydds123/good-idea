@@ -68,6 +68,7 @@ Markdown Frontmatter 是 CLI 的机器控制面，不是阅读正文。Obsidian 
 | `capture_status` / `fetched_at` | 获取结果 / 获取时间 | 判断快照是否完整及何时取得 |
 | `content_sha256` / `snapshot_sha256` | 内容 / 快照哈希 | 检测来源变化并阻止原文快照被静默篡改 |
 | `image_failures` | 图片保存失败记录 | 明确标记不完整来源，避免静默依赖远程图片 |
+| `tags` | 来源渠道标签 | 仅来源层的可选回忆锚点（用户命名的高辨识度实体身份专有名词：渠道品牌/人物/系列场景）；弱约束：多值字符串列表、不进枚举机制；全中文、去重、≤2 条由对话层查重维护，不做 lint 校验 |
 
 这些参数只能由 CLI 维护。需要排查问题时再查看 `schema.md` 和 `.goodidea/state.json`，不要把它们当成卡片正文。
 
@@ -78,7 +79,7 @@ Markdown Frontmatter 是 CLI 的机器控制面，不是阅读正文。Obsidian 
 | `闪念` | `source_ids` | 形成正式卡片后可转为 `已处理` |
 | `有意思` | `source_ids` | 无 |
 | `待办` | `source_ids` | 无 |
-| `source` | `capture_status`、`fetched_at`、`content_sha256`、`snapshot_sha256`、`image_failures`；网页另必须有 `canonical_url`，本地文档另必须有 `origin_filename` 和 `origin_sha256` | `author`、`published_at`、存在更新候选时的 `pending_update` |
+| `source` | `capture_status`、`fetched_at`、`content_sha256`、`snapshot_sha256`、`image_failures`；网页另必须有 `canonical_url`，本地文档另必须有 `origin_filename` 和 `origin_sha256` | `author`、`published_at`、`tags`（来源渠道标签，见内部参数字段表）、存在更新候选时的 `pending_update` |
 | `永久卡` | `authoring_mode`、`source_ids`、`derived_from`、`formation_draft_sha256` | `derived_from` 不得为空 |
 | `母题`、`行动`、`索引` | `authoring_mode`、`source_ids`、`derived_from` | 无 |
 
@@ -200,6 +201,7 @@ finalize 同时创建可恢复的运行时维护任务。任务允许 `pending`�
 | `connect disconnect` | 目标必须是账本中已接受的连接；必须带明确断开原因；原子移除两端卡片的连接条目并更新账本 |
 | `review` | 只读返回待处理材料，并按创建时间标记超过 48 小时的陈旧闪念 |
 | `maintain metadata` | 只机械删除正式内容中已废弃的 `summary` 字段，不改正文、快照或关系 |
+| `maintain source-tags` | 只设置或清除来源 Frontmatter 的可选 `tags` 字段（用户命名的高辨识度实体名，全中文、去重、≤2 条）；空列表即清除；重跑传新值即整体替换；不触碰快照区、不触发哈希变化 |
 
 人的发起、作者权、苏格拉底式澄清与完整草稿确认规则由 `AGENTS.md` 和相关 Skills 定义；本文件只校验其在 CLI 边界留下的确认参数、候选状态和内容哈希。普通永久卡片必须先以形成来源连接完成最小网络激活；在此之外没有合适对象时，允许零条额外语义连接。母题、行动和索引卡片暂不受这项普通永久卡片门禁约束。
 

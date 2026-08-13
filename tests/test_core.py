@@ -2689,5 +2689,111 @@ updated_at: "2026-08-04T00:00:00+08:00"
         self.assertTrue(self.service.lint()["ok"])
 
 
+class SourceTagsTests(unittest.TestCase):
+    """来源渠道标签：白名单透传、maintain source-tags 设置/覆盖/清除/幂等/校验。"""
+
+    def setUp(self):
+        self.temp = tempfile.TemporaryDirectory()
+        self.root = Path(self.temp.name) / "vault"
+        initialize_test_vault(self.root)
+        self.repo = Repository(self.root)
+        self.service = GoodIdeaService(self.repo)
+
+    def tearDown(self):
+        self.temp.cleanup()
+
+    def _commit_source_with_tags(self, tags=None, transaction_id="tx-tags-commit"):
+        preview = {
+            "url": "https://example.com/tagged",
+            "canonical_url": "https://example.com/tagged",
+            "title": "带标签来源",
+            "author": "作者乙",
+            "published_at": "2026-08-13",
+            "markdown": "标签来源正文",
+            "images": [],
+            "status": "complete",
+            "extractor": "test",
+        }
+        if tags is not None:
+            preview["tags"] = tags
+        return self.service.source_commit(
+            preview, motivation="保存带标签的来源", transaction_id=transaction_id
+        )
+
+    def test_tags_survive_whitelist_and_land_in_frontmatter(self):
+        result = self._commit_source_with_tags(["炒饭会"])
+        _, _, meta = self.repo.find_note(result["result"]["source_id"])
+        self.assertEqual(meta["tags"], ["炒饭会"])
+
+    def test_commit_without_tags_writes_no_tags_field(self):
+        result = self._commit_source_with_tags(None)
+        _, _, meta = self.repo.find_note(result["result"]["source_id"])
+        self.assertNotIn("tags", meta)
+
+    def test_maintain_source_tags_set_replace_clear(self):
+        result = self._commit_source_with_tags(["炒饭会"])
+        source_id = result["result"]["source_id"]
+        _, source_note_before, _ = self.repo.find_note(source_id)
+        snapshot_before = extract_snapshot(source_note_before)[1]
+        digest_before = snapshot_hash(snapshot_before)
+
+        set_result = self.service.maintain_source_tags(
+            source_id=source_id, tags=["炒饭会"], transaction_id="tx-tags-set"
+        )
+        self.assertTrue(set_result["result"]["no_change"])  # commit 已带 tags，无需再写
+
+        replace_result = self.service.maintain_source_tags(
+            source_id=source_id, tags=["新渠道"], transaction_id="tx-tags-replace"
+        )
+        self.assertFalse(replace_result["result"]["no_change"])
+        _, source_note_after, meta_after = self.repo.find_note(source_id)
+        self.assertEqual(meta_after["tags"], ["新渠道"])
+        snapshot_after = extract_snapshot(source_note_after)[1]
+        self.assertEqual(snapshot_hash(snapshot_after), digest_before)
+
+        clear_result = self.service.maintain_source_tags(
+            source_id=source_id, tags=[], transaction_id="tx-tags-clear"
+        )
+        self.assertFalse(clear_result["result"]["no_change"])
+        _, _, meta_cleared = self.repo.find_note(source_id)
+        self.assertNotIn("tags", meta_cleared)
+
+    def test_maintain_source_tags_replay_is_content_zero_change(self):
+        result = self._commit_source_with_tags(["炒饭会"])
+        source_id = result["result"]["source_id"]
+        self.service.maintain_source_tags(
+            source_id=source_id, tags=["炒饭会"], transaction_id="tx-tags-do"
+        )
+        replay = self.service.maintain_source_tags(
+            source_id=source_id, tags=["炒饭会"], transaction_id="tx-tags-replay"
+        )
+        self.assertTrue(replay["result"]["no_change"])
+        self.assertEqual(replay["result"]["changed"], [])
+        _, _, meta_after = self.repo.find_note(source_id)
+        self.assertEqual(meta_after["tags"], ["炒饭会"])
+        idem = self.service.maintain_source_tags(
+            source_id=source_id, tags=["炒饭会"], transaction_id="tx-tags-do"
+        )
+        self.assertTrue(idem["idempotent"])
+
+    def test_maintain_source_tags_validation(self):
+        result = self._commit_source_with_tags(["炒饭会"])
+        source_id = result["result"]["source_id"]
+        with self.assertRaises(ValidationError):
+            self.service.maintain_source_tags(
+                source_id=source_id, tags=["SkillHub"], transaction_id="tx-tags-bad"
+            )
+        with self.assertRaises(ValidationError):
+            self.service.maintain_source_tags(
+                source_id=source_id,
+                tags=["炒饭会", "闭门会", "第三个"],
+                transaction_id="tx-tags-too-many",
+            )
+        with self.assertRaises(ValidationError):
+            self.service.maintain_source_tags(
+                source_id="SRC-不存在", tags=["炒饭会"], transaction_id="tx-tags-missing"
+            )
+
+
 if __name__ == "__main__":
     unittest.main()

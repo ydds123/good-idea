@@ -72,3 +72,12 @@
 .metadata-property[data-property-key="published_at"] .metadata-property-key::after { content: "发布时间"; }
 .metadata-property[data-property-key="fetched_at"] .metadata-property-key::after { content: "获取时间"; }
 .metadata-property[data-property-key="origin_filename"] .metadata-property-key::after { content: "原始文件名"; }
+/* ---------- 3. 来源渠道标签：隐藏编辑输入框，保留渲染与点击搜索（2026-08-13） ----------
+   tags 是来源层的可选回忆锚点，只能由 CLI 维护。隐藏值区编辑控件后
+   用户无法手改，但标签 chips 的渲染与点击搜索（tag: 聚合）完整保留。
+   data-property-key 匹配的是 frontmatter 字段名 tags。 */
+.metadata-property[data-property-key="tags"] .metadata-property-value input,
+.metadata-property[data-property-key="tags"] .metadata-property-value textarea,
+.metadata-property[data-property-key="tags"] .metadata-property-value .multi-select-input {
+  display: none !important;
+}

@@ -17,17 +17,18 @@ description: "保存或刷新网页、微信公众号和外部 UTF-8 Markdown/TX
 2. 网页读取标题、作者、日期、正文和图片，并清理导航、广告、评论与脚本。本地 Markdown 的开头 YAML Frontmatter 只用于提取允许的来源元数据，匹配来源标题的开头一级标题机械去重；除此之外保留正文内容和顺序。相对图片交给 CLI 转为内容寻址的库内资产。预读阶段禁止写 Good idea 仓库。
 3. 根据来源的具体内容提出一个问题，询问用户为什么想保存、它触动或改变了什么。不要问泛化的“要不要保存”。
 4. 用户未回答或放弃时停止，不调用任何写命令。
-5. 用户给出保存动机后，按来源类型在仓库外生成 preview：
+5. 用户给出保存动机后，顺口问一句“这条你未来会用什么词想起它？”，作为可选来源渠道标签（`tags`）：只打高辨识度的实体身份专有名词（渠道品牌/人物/系列场景），标题或 author 已覆盖的词不重复打，答不上来或说不需要就不打。同一轮对话两问连发，不单独开问题；用户表示“不用问”后，本轮后续来源默认不打（每轮至多问一次）。后台来源维护路径（`--attach-flash-ids`，用户不在场）一律不提问、不打标签。标签语义与修正路径见 `设计方案/溯源空间来源渠道标签方案.md`。
+6. 用户给出保存动机后，按来源类型在仓库外生成 preview：
 
        uv run goodidea --root <仓库> source preview --url <URL> --markdown-file <仓库外临时文件> --title <标题> --author <作者> --published-at <日期> --output <仓库外preview.json>
 
        uv run goodidea --root <仓库> source preview --local-file <外部文档> --title <标题> --author <作者> --published-at <日期> --output <仓库外preview.json>
 
-6. 用同一事务创建来源与闪念：
+7. 用同一事务创建来源与闪念：
 
        uv run goodidea --root <仓库> source commit --preview-file <preview.json> --motivation <用户原话> --transaction-id <稳定事务ID>
 
-7. 运行 goodidea verify，默认报告来源与闪念的标题、路径、抓取状态和图片失败项；ID 只在排错或后续命令确实需要时提供。
+8. 运行 goodidea verify，默认报告来源与闪念的标题、路径、抓取状态和图片失败项；ID 只在排错或后续命令确实需要时提供。
 
 ### 捕获完成后的后台来源维护
 

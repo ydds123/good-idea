@@ -151,6 +151,7 @@ def _persistable_source_preview(
         "markdown",
         "status",
         "extractor",
+        "tags",
     ):
         if key in preview:
             kept[key] = copy.deepcopy(preview[key])
@@ -968,6 +969,9 @@ class GoodIdeaService:
                 ).hexdigest(),
                 "image_failures": failures,
             }
+            tags = list(preview.get("tags") or [])
+            if tags:
+                source_meta["tags"] = tags
             if source_kind == "web":
                 source_meta["canonical_url"] = identity_key
             else:
@@ -1980,6 +1984,71 @@ class GoodIdeaService:
         return self.repo.commit(
             transaction_id=txid,
             action="maintain-metadata",
+            summary=summary,
+            writes=writes,
+            state=state,
+            result=result,
+        )
+
+    def maintain_source_tags(
+        self,
+        *,
+        source_id: str,
+        tags: list[str],
+        transaction_id: str | None = None,
+    ) -> dict[str, Any]:
+        """设置或清除来源的可选渠道标签（用户命名的高辨识度实体名）。
+
+        只改 Frontmatter 的 tags 字段，不触碰快照区、不触发哈希变化。
+        传空列表即清除标签；重跑同命令传新值即整体替换（修正路径）。
+        标签约束：全中文专有名词、去重、最多 2 条。
+        """
+        txid = transaction_id or new_transaction_id("maintain-source-tags")
+        if existing := self._idempotent(txid):
+            return existing
+        self.repo.preflight_integrity()
+        found = self.repo.find_note(source_id)
+        if not found or found[2].get("type") != "source":
+            raise ValidationError(f"找不到要打标签的来源：{source_id}")
+        source_rel, source_note, source_meta = found
+        cleaned: list[str] = []
+        for tag in tags:
+            tag = str(tag).strip()
+            if not tag:
+                continue
+            if not re.fullmatch(r"[\u4e00-\u9fff]+", tag):
+                raise ValidationError(f"来源标签必须是全中文专有名词：{tag}")
+            if tag not in cleaned:
+                cleaned.append(tag)
+        if len(cleaned) > 2:
+            raise ValidationError("来源标签最多 2 条")
+        current = list(source_meta.get("tags") or [])
+        writes: dict[Path, str | bytes] = {}
+        if current != cleaned:
+            metadata = dict(source_meta)
+            if cleaned:
+                metadata["tags"] = cleaned
+            else:
+                metadata.pop("tags", None)
+            writes[source_rel] = replace_frontmatter(source_note, metadata)
+        state = self.repo.read_state()
+        result = {
+            "no_change": not writes,
+            "changed": [rel.as_posix() for rel in writes],
+            "tags": cleaned,
+        }
+        summary = (
+            f"来源标签已更新：{source_meta['title']} → {cleaned}"
+            if writes
+            else (
+                f"来源标签无变化：{source_meta['title']}"
+                if cleaned
+                else f"来源没有标签可清除：{source_meta['title']}"
+            )
+        )
+        return self.repo.commit(
+            transaction_id=txid,
+            action="maintain-source-tags",
             summary=summary,
             writes=writes,
             state=state,
