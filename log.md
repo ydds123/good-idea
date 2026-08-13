@@ -193,3 +193,5 @@
 
 [2026-08-13T22:44:40+08:00] connect-accept | 主体性：行为原因的自我归属 ↔ 职业规划已失效：行业选择是长出来的 | tx=connect-accept-20260813-agency-career
 
+[2026-08-13T22:51:45+08:00] permanent-revise | 职业规划已失效：行业选择是长出来的 | tx=permanent-revise-20260813-career-origin
+
