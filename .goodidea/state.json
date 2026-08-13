@@ -1033,6 +1033,21 @@
       "timestamp": "2026-08-13T19:15:40+08:00",
       "transaction_id": "source-yachanghui196-20260813"
     },
+    "tags-backfill-chaofanhui-20260813": {
+      "action": "maintain-source-tags",
+      "result": {
+        "changed": [
+          "溯源空间/2026-08-13-AI时代职场自救法则：消失的入门梯子与用AI搭建学习路径.md"
+        ],
+        "no_change": false,
+        "tags": [
+          "炒饭会"
+        ]
+      },
+      "summary": "来源标签已更新：AI时代职场自救法则：消失的入门梯子与用AI搭建学习路径 → ['炒饭会']",
+      "timestamp": "2026-08-13T20:19:03+08:00",
+      "transaction_id": "tags-backfill-chaofanhui-20260813"
+    },
     "todo-ai-industry-mother-20260810": {
       "action": "capture-todo",
       "result": {
