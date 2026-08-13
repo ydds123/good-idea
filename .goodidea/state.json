@@ -764,6 +764,27 @@
       "timestamp": "2026-08-09T16:42:44+08:00",
       "transaction_id": "rollback-7e40c07c2681"
     },
+    "source-196-rules-001": {
+      "action": "source-commit",
+      "result": {
+        "flash_created": true,
+        "flash_id": "FLA-20260813-fdd1b6b2",
+        "flash_ids": [
+          "FLA-20260813-fdd1b6b2"
+        ],
+        "flash_path": "闪念空间/2026-08-13-①企业AI转型四阶段（工具散点期-试点治理期-流程重构期-AI原生期）可联系昨天.md",
+        "flash_paths": [
+          "闪念空间/2026-08-13-①企业AI转型四阶段（工具散点期-试点治理期-流程重构期-AI原生期）可联系昨天.md"
+        ],
+        "image_failures": [],
+        "source_created": false,
+        "source_id": "SRC-aadc46966f91",
+        "source_path": "溯源空间/2026-08-13-AI时代职场自救法则：消失的入门梯子与用AI搭建学习路径.md"
+      },
+      "summary": "AI时代职场自救法则：消失的入门梯子与用AI搭建学习路径 + 保存动机",
+      "timestamp": "2026-08-13T19:17:20+08:00",
+      "transaction_id": "source-196-rules-001"
+    },
     "source-aiagent-report-20260812-001": {
       "action": "source-commit",
       "result": {
