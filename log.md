@@ -175,3 +175,5 @@
 
 [2026-08-13T22:09:06+08:00] capture-todo | 明天（8/14）看论文《A Programming Paradigm for S | tx=capture-todo-20260813220906-16813182
 
+[2026-08-13T22:11:01+08:00] permanent-propose | 职业规划已失效：行业选择是长出来的 | tx=permanent-20260813-career-strategy
+
