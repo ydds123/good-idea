@@ -1111,6 +1111,24 @@
       "timestamp": "2026-08-13T21:26:31+08:00",
       "transaction_id": "source-tags-20260813-zengming"
     },
+    "source-tags-20260813-zengming-full": {
+      "action": "maintain-source-tags",
+      "result": {
+        "changed": [
+          "溯源空间/2026-08-13-阅读素材：曾鸣《智能商业》（第一章AI产业化的展开+第二章智能复利和黑洞效应）.md"
+        ],
+        "no_change": false,
+        "tags": [
+          "曾鸣",
+          "智能商业",
+          "读书",
+          "阅读笔记"
+        ]
+      },
+      "summary": "来源标签已更新：阅读素材：曾鸣《智能商业》（第一章AI产业化的展开+第二章智能复利和黑洞效应） → ['曾鸣', '智能商业', '读书', '阅读笔记']",
+      "timestamp": "2026-08-13T21:29:26+08:00",
+      "transaction_id": "source-tags-20260813-zengming-full"
+    },
     "source-yachanghui196-20260813": {
       "action": "source-commit",
       "result": {
