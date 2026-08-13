@@ -149,3 +149,5 @@
 
 [2026-08-13T19:30:54+08:00] source-refresh-accept | AI时代职场自救法则：消失的入门梯子与用AI搭建学习路径 | tx=confirm-refresh-196-name-fix
 
+[2026-08-13T19:58:38+08:00] source-commit | AI时代职场自救法则：消失的入门梯子与用AI搭建学习路径 + 保存动机 | tx=source-196-20260813
+

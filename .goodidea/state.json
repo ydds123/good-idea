@@ -797,6 +797,27 @@
       "timestamp": "2026-08-09T16:42:44+08:00",
       "transaction_id": "rollback-7e40c07c2681"
     },
+    "source-196-20260813": {
+      "action": "source-commit",
+      "result": {
+        "flash_created": true,
+        "flash_id": "FLA-20260813-cf59cad3",
+        "flash_ids": [
+          "FLA-20260813-cf59cad3"
+        ],
+        "flash_path": "闪念空间/2026-08-13-围绕这个展开讨论——先获取里边内容保存到溯源空间.md",
+        "flash_paths": [
+          "闪念空间/2026-08-13-围绕这个展开讨论——先获取里边内容保存到溯源空间.md"
+        ],
+        "image_failures": [],
+        "source_created": false,
+        "source_id": "SRC-aadc46966f91",
+        "source_path": "溯源空间/2026-08-13-AI时代职场自救法则：消失的入门梯子与用AI搭建学习路径.md"
+      },
+      "summary": "AI时代职场自救法则：消失的入门梯子与用AI搭建学习路径 + 保存动机",
+      "timestamp": "2026-08-13T19:58:38+08:00",
+      "transaction_id": "source-196-20260813"
+    },
     "source-196-rules-001": {
       "action": "source-commit",
       "result": {
