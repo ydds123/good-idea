@@ -181,3 +181,5 @@
 
 [2026-08-13T22:22:28+08:00] permanent-propose | 企业AI转型四阶段：理解AI入企的分析积木 | tx=permanent-20260813-ai-stages
 
+[2026-08-13T22:22:28+08:00] permanent-accept | 企业AI转型四阶段：理解AI入企的分析积木 | tx=permanent-20260813-ai-stages-accept
+
