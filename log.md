@@ -163,3 +163,5 @@
 
 [2026-08-13T21:04:13+08:00] permanent-revise | 判断力不靠熬年头，靠主动催化 | tx=permanent-revise-20260813-judgment-catalysis
 
+[2026-08-13T21:10:50+08:00] capture-interesting | 炒饭会196期演示的行业分析工作台（Web Coding 开发）：输入行业→细分 | tx=interesting-20260813-workbench
+

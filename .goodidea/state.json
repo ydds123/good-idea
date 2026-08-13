@@ -349,6 +349,17 @@
       "timestamp": "2026-08-10T00:44:55+08:00",
       "transaction_id": "flash-visual-narrative-20260810"
     },
+    "interesting-20260813-workbench": {
+      "action": "capture-interesting",
+      "result": {
+        "id": "INT-20260813-4a1b215a",
+        "path": "有意思空间/2026-08-13-炒饭会196期演示的行业分析工作台（Web-Coding-开发）：输入行业→细分.md",
+        "type": "interesting"
+      },
+      "summary": "炒饭会196期演示的行业分析工作台（Web Coding 开发）：输入行业→细分",
+      "timestamp": "2026-08-13T21:10:50+08:00",
+      "transaction_id": "interesting-20260813-workbench"
+    },
     "interesting-path-to-nowhere-20260810": {
       "action": "capture-interesting",
       "result": {
