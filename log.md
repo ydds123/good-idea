@@ -139,3 +139,5 @@
 
 [2026-08-13T10:12:06+08:00] capture-todo | 阅读《Raycast从入门到精通：Mac 终极效率神器完全指南》 | tx=capture-todo-20260813101206-4aad64f1
 
+[2026-08-13T19:15:40+08:00] source-commit | AI时代职场自救法则：消失的入门梯子与用AI搭建学习路径 + 保存动机 | tx=source-yachanghui196-20260813
+

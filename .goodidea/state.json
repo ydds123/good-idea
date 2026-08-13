@@ -937,6 +937,27 @@
       "timestamp": "2026-08-09T18:49:39+08:00",
       "transaction_id": "source-possibility-discussion-capture-20260809-v2"
     },
+    "source-yachanghui196-20260813": {
+      "action": "source-commit",
+      "result": {
+        "flash_created": true,
+        "flash_id": "FLA-20260813-e0ef2371",
+        "flash_ids": [
+          "FLA-20260813-e0ef2371"
+        ],
+        "flash_path": "闪念空间/2026-08-13-围绕《AI时代职场自救法则：消失的入门梯子与用AI搭建学习路径》展开讨论.md",
+        "flash_paths": [
+          "闪念空间/2026-08-13-围绕《AI时代职场自救法则：消失的入门梯子与用AI搭建学习路径》展开讨论.md"
+        ],
+        "image_failures": [],
+        "source_created": true,
+        "source_id": "SRC-aadc46966f91",
+        "source_path": "溯源空间/2026-08-13-AI时代职场自救法则：消失的入门梯子与用AI搭建学习路径.md"
+      },
+      "summary": "AI时代职场自救法则：消失的入门梯子与用AI搭建学习路径 + 保存动机",
+      "timestamp": "2026-08-13T19:15:40+08:00",
+      "transaction_id": "source-yachanghui196-20260813"
+    },
     "todo-ai-industry-mother-20260810": {
       "action": "capture-todo",
       "result": {
