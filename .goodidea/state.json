@@ -1048,6 +1048,19 @@
       "timestamp": "2026-08-13T20:19:03+08:00",
       "transaction_id": "tags-backfill-chaofanhui-20260813"
     },
+    "tags-backfill-replay-20260813": {
+      "action": "maintain-source-tags",
+      "result": {
+        "changed": [],
+        "no_change": true,
+        "tags": [
+          "炒饭会"
+        ]
+      },
+      "summary": "来源标签无变化：AI时代职场自救法则：消失的入门梯子与用AI搭建学习路径",
+      "timestamp": "2026-08-13T20:19:09+08:00",
+      "transaction_id": "tags-backfill-replay-20260813"
+    },
     "todo-ai-industry-mother-20260810": {
       "action": "capture-todo",
       "result": {
