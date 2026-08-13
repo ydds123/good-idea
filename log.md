@@ -189,3 +189,5 @@
 
 [2026-08-13T22:44:04+08:00] permanent-accept | 主体性：行为原因的自我归属 | tx=permanent-20260813-agency-accept
 
+[2026-08-13T22:44:07+08:00] connect-propose | 连接候选：主体性：行为原因的自我归属 → 职业规划已失效：行业选择是长出来的 | tx=connect-20260813-agency-career
+
