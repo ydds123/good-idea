@@ -161,6 +161,17 @@
       "timestamp": "2026-08-13T10:12:06+08:00",
       "transaction_id": "capture-todo-20260813101206-4aad64f1"
     },
+    "capture-todo-20260813220906-16813182": {
+      "action": "capture-todo",
+      "result": {
+        "id": "TODO-20260813-59eda158",
+        "path": "待办空间/2026-08-13-明天（8-14）看论文《A-Programming-Paradigm-for-S.md",
+        "type": "todo"
+      },
+      "summary": "明天（8/14）看论文《A Programming Paradigm for S",
+      "timestamp": "2026-08-13T22:09:06+08:00",
+      "transaction_id": "capture-todo-20260813220906-16813182"
+    },
     "confirm-refresh-196-name-fix": {
       "action": "source-refresh-accept",
       "result": {

@@ -1,0 +1,18 @@
+---
+id: "TODO-20260813-59eda158"
+type: "待办"
+title: "明天（8/14）看论文《A Programming Paradigm for S"
+status: "进行中"
+created_at: "2026-08-13T22:09:06+08:00"
+updated_at: "2026-08-13T22:09:06+08:00"
+source_ids: []
+---
+# 明天（8/14）看论文《A Programming Paradigm for S
+
+## 原始记录
+
+明天（8/14）看论文《A Programming Paradigm for Spatiotemporal Composability》（北大×DeepSeek，Cordis 动态组件理论）
+
+## 产生情境
+
+论文：https://github.com/cordiverse/paper｜公众号介绍文章：https://mp.weixin.qq.com/s/kFvZpKIQFFAdZq9iEPfdKQ

@@ -173,3 +173,5 @@
 
 [2026-08-13T21:29:26+08:00] maintain-source-tags | 来源标签已更新：阅读素材：曾鸣《智能商业》（第一章AI产业化的展开+第二章智能复利和黑洞效应） → ['曾鸣', '智能商业', '读书', '阅读笔记'] | tx=source-tags-20260813-zengming-full
 
+[2026-08-13T22:09:06+08:00] capture-todo | 明天（8/14）看论文《A Programming Paradigm for S | tx=capture-todo-20260813220906-16813182
+
