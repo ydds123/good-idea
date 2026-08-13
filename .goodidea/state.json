@@ -1,5 +1,14 @@
 {
-  "connections": [],
+  "connections": [
+    {
+      "accepted_at": "2026-08-13T22:44:40+08:00",
+      "from_id": "PER-20260813-96574216",
+      "proposal_id": "PRP-e1886cb3a23b",
+      "rationale": "主体性限定职业规划已失效的实施条件：职业规划卡回答'往哪走'（生成式战略：愿景+行动+反馈），主体性卡回答'为谁走'（因果归属权+价值捕获结构）；若行为原因不归属自己，愿景就不是自己的愿景，生成式战略会退化成换一家妓院继续当头牌",
+      "relation": "限定",
+      "to_id": "PER-20260813-2690bcf1"
+    }
+  ],
   "rollbacks": [
     {
       "commit": "7e40c07c26818dfc71ee32a12a2b1bc9b2ab9c66",
@@ -208,6 +217,19 @@
       "summary": "连接候选：主体性：行为原因的自我归属 → 职业规划已失效：行业选择是长出来的",
       "timestamp": "2026-08-13T22:44:07+08:00",
       "transaction_id": "connect-20260813-agency-career"
+    },
+    "connect-accept-20260813-agency-career": {
+      "action": "connect-accept",
+      "result": {
+        "from_id": "PER-20260813-96574216",
+        "proposal_id": "PRP-e1886cb3a23b",
+        "rationale": "主体性限定职业规划已失效的实施条件：职业规划卡回答'往哪走'（生成式战略：愿景+行动+反馈），主体性卡回答'为谁走'（因果归属权+价值捕获结构）；若行为原因不归属自己，愿景就不是自己的愿景，生成式战略会退化成换一家妓院继续当头牌",
+        "relation": "限定",
+        "to_id": "PER-20260813-2690bcf1"
+      },
+      "summary": "主体性：行为原因的自我归属 ↔ 职业规划已失效：行业选择是长出来的",
+      "timestamp": "2026-08-13T22:44:40+08:00",
+      "transaction_id": "connect-accept-20260813-agency-career"
     },
     "correction-withdraw-PRP-5a9bfa3f1970": {
       "action": "permanent-withdraw",
