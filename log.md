@@ -145,3 +145,5 @@
 
 [2026-08-13T19:21:35+08:00] maintain-index | 重新生成不展示摘要的内容索引 | tx=maintain-index-20260813192135-19cdd659
 
+[2026-08-13T19:28:04+08:00] source-refresh-propose | AI时代职场自救法则：消失的入门梯子与用AI搭建学习路径 | tx=refresh-196-name-fix
+

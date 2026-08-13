@@ -576,6 +576,18 @@
       "timestamp": "2026-08-11T22:02:05+08:00",
       "transaction_id": "permanent-propose-path-20260811-01"
     },
+    "refresh-196-name-fix": {
+      "action": "source-refresh-propose",
+      "result": {
+        "proposal_id": "PRP-807d2dfef252",
+        "proposal_path": ".goodidea/proposals/source-updates/PRP-807d2dfef252.md",
+        "source_id": "SRC-aadc46966f91",
+        "status": "update_available"
+      },
+      "summary": "AI时代职场自救法则：消失的入门梯子与用AI搭建学习路径",
+      "timestamp": "2026-08-13T19:28:04+08:00",
+      "transaction_id": "refresh-196-name-fix"
+    },
     "refresh-aiagent-report-20260812-001": {
       "action": "source-refresh-propose",
       "result": {
