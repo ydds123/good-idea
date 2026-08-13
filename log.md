@@ -177,3 +177,5 @@
 
 [2026-08-13T22:11:01+08:00] permanent-propose | 职业规划已失效：行业选择是长出来的 | tx=permanent-20260813-career-strategy
 
+[2026-08-13T22:11:01+08:00] permanent-accept | 职业规划已失效：行业选择是长出来的 | tx=permanent-20260813-career-strategy-accept
+

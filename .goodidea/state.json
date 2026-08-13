@@ -529,6 +529,18 @@
       "timestamp": "2026-08-13T22:11:01+08:00",
       "transaction_id": "permanent-20260813-career-strategy"
     },
+    "permanent-20260813-career-strategy-accept": {
+      "action": "permanent-accept",
+      "result": {
+        "card_id": "PER-20260813-2690bcf1",
+        "card_path": "永久空间/永久卡片/2026-08-13-职业规划已失效：行业选择是长出来的.md",
+        "card_type": "permanent",
+        "proposal_id": "PRP-25935fea1139"
+      },
+      "summary": "职业规划已失效：行业选择是长出来的",
+      "timestamp": "2026-08-13T22:11:01+08:00",
+      "transaction_id": "permanent-20260813-career-strategy-accept"
+    },
     "permanent-20260813-judgment-catalysis": {
       "action": "permanent-propose",
       "result": {
