@@ -1125,6 +1125,17 @@
       "timestamp": "2026-08-13T20:19:09+08:00",
       "transaction_id": "tags-backfill-replay-20260813"
     },
+    "todo-20260813-workbench": {
+      "action": "capture-todo",
+      "result": {
+        "id": "TODO-20260813-bc332864",
+        "path": "待办空间/2026-08-13-去炒饭会行业分析工作台的开源-Git-地址看看是否已开源、能否获取.md",
+        "type": "todo"
+      },
+      "summary": "去炒饭会行业分析工作台的开源 Git 地址看看是否已开源、能否获取",
+      "timestamp": "2026-08-13T21:10:50+08:00",
+      "transaction_id": "todo-20260813-workbench"
+    },
     "todo-ai-industry-mother-20260810": {
       "action": "capture-todo",
       "result": {

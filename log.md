@@ -165,3 +165,5 @@
 
 [2026-08-13T21:10:50+08:00] capture-interesting | 炒饭会196期演示的行业分析工作台（Web Coding 开发）：输入行业→细分 | tx=interesting-20260813-workbench
 
+[2026-08-13T21:10:50+08:00] capture-todo | 去炒饭会行业分析工作台的开源 Git 地址看看是否已开源、能否获取 | tx=todo-20260813-workbench
+
