@@ -518,6 +518,17 @@
       "timestamp": "2026-08-11T23:08:31+08:00",
       "transaction_id": "migrate-enums-zh-20260811"
     },
+    "permanent-20260813-ai-stages": {
+      "action": "permanent-propose",
+      "result": {
+        "card_type": "permanent",
+        "proposal_id": "PRP-f4fa5b1354d8",
+        "proposal_path": ".goodidea/proposals/permanent/PRP-f4fa5b1354d8.md"
+      },
+      "summary": "企业AI转型四阶段：理解AI入企的分析积木",
+      "timestamp": "2026-08-13T22:22:28+08:00",
+      "transaction_id": "permanent-20260813-ai-stages"
+    },
     "permanent-20260813-career-strategy": {
       "action": "permanent-propose",
       "result": {
