@@ -15,4 +15,4 @@ source_ids: []
 
 ## 产生情境
 
-https://mp.weixin.qq.com/s/xIjJUEGvAkuibz9YZYE9IQ （公众号：灵感回路，2026-02-15，万字长文）
+[https://mp.weixin.qq.com/s/xIjJUEGvAkuibz9YZYE9IQ](https://mp.weixin.qq.com/s/xIjJUEGvAkuibz9YZYE9IQ) （公众号：灵感回路，2026-02-15，万字长文）
