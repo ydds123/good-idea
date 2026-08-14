@@ -195,3 +195,5 @@
 
 [2026-08-13T22:51:45+08:00] permanent-revise | 职业规划已失效：行业选择是长出来的 | tx=permanent-revise-20260813-career-origin
 
+[2026-08-14T23:39:45+08:00] capture-finalize | 确认本轮 1 张闪念 | tx=finalize-goal-20260814
+
