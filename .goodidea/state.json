@@ -1349,6 +1349,17 @@
       "timestamp": "2026-08-13T21:10:50+08:00",
       "transaction_id": "todo-20260813-workbench"
     },
+    "todo-action-closure-20260814-b": {
+      "action": "capture-todo",
+      "result": {
+        "id": "TODO-20260814-a5b82c29",
+        "path": "待办空间/2026-08-14-待办行动闭环方案（未开始档+必填原因+48h预警）实施.md",
+        "type": "todo"
+      },
+      "summary": "待办行动闭环方案（未开始档+必填原因+48h预警）实施",
+      "timestamp": "2026-08-14T23:40:03+08:00",
+      "transaction_id": "todo-action-closure-20260814-b"
+    },
     "todo-ai-industry-mother-20260810": {
       "action": "capture-todo",
       "result": {

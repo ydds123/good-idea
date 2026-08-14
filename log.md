@@ -197,3 +197,5 @@
 
 [2026-08-14T23:39:45+08:00] capture-finalize | 确认本轮 1 张闪念 | tx=finalize-goal-20260814
 
+[2026-08-14T23:40:03+08:00] capture-todo | 待办行动闭环方案（未开始档+必填原因+48h预警）实施 | tx=todo-action-closure-20260814-b
+
