@@ -451,6 +451,17 @@
       "timestamp": "2026-08-10T00:34:51+08:00",
       "transaction_id": "interesting-path-to-nowhere-20260810"
     },
+    "learn-list-20260814": {
+      "action": "capture-todo",
+      "result": {
+        "id": "TODO-20260814-4ef4ba98",
+        "path": "待办空间/2026-08-14-近期学习清单（AI生图-AI领导力-曾鸣二刷-动机心理学应用）.md",
+        "type": "todo"
+      },
+      "summary": "近期学习清单（AI生图/AI领导力/曾鸣二刷/动机心理学应用）",
+      "timestamp": "2026-08-14T23:44:21+08:00",
+      "transaction_id": "learn-list-20260814"
+    },
     "maintain-contracts-20260809": {
       "action": "maintain-contracts",
       "result": {
