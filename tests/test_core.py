@@ -2536,12 +2536,20 @@ updated_at: "2026-08-04T00:00:00+08:00"
             transaction_id="tx-transition-dismiss",
         )
         self.assertEqual(dismissed["result"]["status"], "dismissed")
-        with self.assertRaises(ValidationError):
-            self.service.capture_transition(
-                flash_id,
-                status="processed",
-                transaction_id="tx-transition-flash-processed",
-            )
+        # 手动归档合法（2026-08-15：processed 由永久卡接纳自动设置，也允许手动归档）
+        archived = self.service.capture_transition(
+            flash_id,
+            status="processed",
+            transaction_id="tx-transition-flash-processed",
+        )
+        self.assertEqual(archived["result"]["status"], "processed")
+        # 归档后可回退到待处理
+        back = self.service.capture_transition(
+            flash_id,
+            status="pending",
+            transaction_id="tx-transition-flash-pending-back",
+        )
+        self.assertEqual(back["result"]["status"], "pending")
         replay = self.service.capture_transition(
             flash_id,
             status="dismissed",
