@@ -117,6 +117,17 @@ def build_parser() -> argparse.ArgumentParser:
     revise_note.add_argument("--id", required=True)
     revise_note.add_argument("--text", required=True)
     revise_note.add_argument("--confirm-user-authored", action="store_true")
+    discuss_note = capture_sub.add_parser(
+        "discuss",
+        help="记录围绕卡片的讨论过程原文（时间线 JSON，挂卡片 discussion_log）",
+    )
+    discuss_note.add_argument("--note-id", required=True)
+    discuss_note.add_argument("--text", required=True)
+    discuss_note.add_argument(
+        "--role", choices=["user", "assistant"], required=True,
+        help="条目角色：user=用户原文；assistant=Agent 原文",
+    )
+    discuss_note.add_argument("--transaction-id")
     revise_note.add_argument("--transaction-id")
     transition = capture_sub.add_parser(
         "transition", help="流转轻量记录的生命周期状态"
@@ -605,6 +616,13 @@ def dispatch(args: argparse.Namespace) -> tuple[dict[str, Any], int]:
             args.id,
             note=args.text,
             confirmed_by_user=args.confirm_user_authored,
+            transaction_id=args.transaction_id,
+        )
+    elif args.command == "capture" and args.capture_command == "discuss":
+        result = service.capture_discuss(
+            args.note_id,
+            text=args.text,
+            role=args.role,
             transaction_id=args.transaction_id,
         )
     elif args.command == "capture" and args.capture_command == "transition":

@@ -576,6 +576,77 @@ class GoodIdeaService:
             result=result,
         )
 
+    def capture_discuss(
+        self,
+        note_id: str,
+        *,
+        text: str,
+        role: str,
+        transaction_id: str | None = None,
+    ) -> dict[str, Any]:
+        """讨论过程原文记录（2026-08-15 用户拍板）。
+
+        围绕轻量卡片（闪念/有意思/待办）的讨论过程——用户原文与 Agent 原文
+        ——按时间线追加到独立 JSON 文件（.goodidea/runtime/discussions/<id>.json，
+        Git 忽略的内部层），卡片 frontmatter 写 discussion_log 关联。
+        讨论不因结论（转/不转永久卡）而丢失；未转时原文仍挂在卡片下，可延续。
+        只记录原文，不转化、不结构化摘要。
+        """
+        if role not in ("user", "assistant"):
+            raise ValidationError("role 只能是 user 或 assistant")
+        if not text.strip():
+            raise ValidationError("讨论内容不能为空")
+        found = self.repo.find_note(note_id)
+        if not found or found[2].get("type") not in {
+            "flash",
+            "interesting",
+            "todo",
+        }:
+            raise ValidationError(f"找不到轻量记录：{note_id}")
+        rel, text_note, metadata = found
+        txid = transaction_id or new_transaction_id("capture-discuss")
+        if existing := self._idempotent(txid):
+            return existing
+        timestamp = now_iso()
+        # 讨论记录文件（Git 忽略的内部层，时间线原文）
+        log_rel = (
+            Path(".goodidea") / "runtime" / "discussions" / f"{note_id}.json"
+        )
+        log_path = self.repo.root / log_rel
+        if log_path.exists():
+            log = json.loads(log_path.read_text(encoding="utf-8"))
+        else:
+            log = {"note_id": note_id, "created_at": timestamp, "entries": []}
+        log["entries"].append(
+            {"role": role, "text": text, "recorded_at": timestamp}
+        )
+        log["updated_at"] = timestamp
+        log_path.parent.mkdir(parents=True, exist_ok=True)
+        log_path.write_text(
+            json.dumps(log, ensure_ascii=False, indent=2) + "\n",
+            encoding="utf-8",
+        )
+        # 卡片 frontmatter 关联（CLI 维护）
+        metadata["discussion_log"] = log_rel.as_posix()
+        metadata["updated_at"] = timestamp
+        updated = replace_frontmatter(text_note, metadata)
+        state = self.repo.read_state()
+        result = {
+            "id": note_id,
+            "path": rel.as_posix(),
+            "type": metadata["type"],
+            "discussion_log": log_rel.as_posix(),
+            "entry_count": len(log["entries"]),
+        }
+        return self.repo.commit(
+            transaction_id=txid,
+            action="capture-discuss",
+            summary=metadata["title"],
+            writes={rel: updated},
+            state=state,
+            result=result,
+        )
+
     def capture_transition(
         self,
         note_id: str,

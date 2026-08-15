@@ -779,6 +779,45 @@ class GoodIdeaCoreTests(unittest.TestCase):
         )
         self.assertEqual(state["formal_result"]["flashes"][0]["id"], finalized["result"]["flashes"][0]["id"])
 
+    def test_capture_discuss_records_timeline_and_links(self):
+        # 讨论原文（用户+Agent）按时间线入档，frontmatter 关联，幂等
+        flash = self.service.capture(
+            "flash", text="讨论记录测试", transaction_id="tx-disc-test"
+        )
+        fid = flash["result"]["id"]
+        r1 = self.service.capture_discuss(
+            fid, text="用户原文：我觉得这个值得讨论", role="user",
+            transaction_id="tx-disc-1",
+        )
+        self.assertEqual(r1["result"]["entry_count"], 1)
+        r2 = self.service.capture_discuss(
+            fid, text="Agent 原文：先看永久卡再查闪念", role="assistant",
+            transaction_id="tx-disc-2",
+        )
+        self.assertEqual(r2["result"]["entry_count"], 2)
+        log = json.loads(
+            (self.root / r2["result"]["discussion_log"]).read_text(encoding="utf-8")
+        )
+        self.assertEqual(len(log["entries"]), 2)
+        self.assertEqual(log["entries"][0]["role"], "user")
+        self.assertEqual(log["entries"][1]["role"], "assistant")
+        # 原文不被转化
+        self.assertIn("我觉得这个值得讨论", log["entries"][0]["text"])
+        # frontmatter 关联（CLI 维护）
+        _, _, meta = self.repo.find_note(fid)
+        self.assertEqual(meta["discussion_log"], r2["result"]["discussion_log"])
+        # 幂等重放
+        replay = self.service.capture_discuss(
+            fid, text="重复", role="user", transaction_id="tx-disc-1"
+        )
+        self.assertTrue(replay["idempotent"])
+        # role 校验
+        with self.assertRaises(ValidationError):
+            self.service.capture_discuss(
+                fid, text="x", role="system", transaction_id="tx-disc-bad"
+            )
+        self.assertTrue(self.service.lint()["ok"])
+
     def test_tampered_source_does_not_block_runtime_or_flash_finalize(self):
         captured = self.service.source_commit(
             self.preview(), motivation="这不是纯确认文本", transaction_id="capture-before-tamper"
