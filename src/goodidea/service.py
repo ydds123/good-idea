@@ -2001,7 +2001,7 @@ class GoodIdeaService:
 
         只改 Frontmatter 的 tags 字段，不触碰快照区、不触发哈希变化。
         传空列表即清除标签；重跑同命令传新值即整体替换（修正路径）。
-        标签约束：全中文专有名词、去重、最多 2 条。
+        标签约束：全中文专有名词、去重；数量由对话层与用户商定，不做上限校验。
         """
         txid = transaction_id or new_transaction_id("maintain-source-tags")
         if existing := self._idempotent(txid):
@@ -2020,8 +2020,6 @@ class GoodIdeaService:
                 raise ValidationError(f"来源标签必须是全中文专有名词：{tag}")
             if tag not in cleaned:
                 cleaned.append(tag)
-        if len(cleaned) > 2:
-            raise ValidationError("来源标签最多 2 条")
         current = list(source_meta.get("tags") or [])
         writes: dict[Path, str | bytes] = {}
         if current != cleaned:

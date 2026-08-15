@@ -2783,12 +2783,15 @@ class SourceTagsTests(unittest.TestCase):
             self.service.maintain_source_tags(
                 source_id=source_id, tags=["SkillHub"], transaction_id="tx-tags-bad"
             )
-        with self.assertRaises(ValidationError):
-            self.service.maintain_source_tags(
-                source_id=source_id,
-                tags=["炒饭会", "闭门会", "第三个"],
-                transaction_id="tx-tags-too-many",
-            )
+        # 数量不限：3 个及以上合法标签应通过（2026-08-13 取消 ≤2 条上限）
+        multi = self.service.maintain_source_tags(
+            source_id=source_id,
+            tags=["炒饭会", "闭门会", "第三个"],
+            transaction_id="tx-tags-multi",
+        )
+        self.assertFalse(multi["result"]["no_change"])
+        _, _, meta_multi = self.repo.find_note(source_id)
+        self.assertEqual(meta_multi["tags"], ["炒饭会", "闭门会", "第三个"])
         with self.assertRaises(ValidationError):
             self.service.maintain_source_tags(
                 source_id="SRC-不存在", tags=["炒饭会"], transaction_id="tx-tags-missing"
