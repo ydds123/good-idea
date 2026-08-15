@@ -126,6 +126,13 @@ def build_parser() -> argparse.ArgumentParser:
     )
     update.add_argument("--confirm-user-authored", action="store_true")
     update.add_argument("--transaction-id")
+    retitle = capture_sub.add_parser(
+        "retitle", help="用户确认后修改轻量记录标题并重命名文件、同步引用"
+    )
+    retitle.add_argument("--id", required=True)
+    retitle.add_argument("--title", required=True)
+    retitle.add_argument("--confirm-user-authored", action="store_true")
+    retitle.add_argument("--transaction-id")
     revise_anchors = capture_sub.add_parser("revise-source-anchors")
     revise_anchors.add_argument("--flash-id", required=True)
     revise_anchors.add_argument("--manifest-file", required=True)
@@ -567,6 +574,13 @@ def dispatch(args: argparse.Namespace) -> tuple[dict[str, Any], int]:
         result = service.capture_update(
             args.id,
             text=update_text,
+            confirmed_by_user=args.confirm_user_authored,
+            transaction_id=args.transaction_id,
+        )
+    elif args.command == "capture" and args.capture_command == "retitle":
+        result = service.capture_retitle(
+            args.id,
+            title=args.title,
             confirmed_by_user=args.confirm_user_authored,
             transaction_id=args.transaction_id,
         )

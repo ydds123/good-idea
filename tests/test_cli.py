@@ -181,6 +181,66 @@ class GoodIdeaCliTests(unittest.TestCase):
         self.assertEqual(drifted.returncode, 1)
         self.assertIn("Obsidian 未启用自动更新链接", drifted.stdout)
 
+    def test_capture_retitle_public_cli_renames_and_stays_clean(self):
+        created = run_cli(
+            "--root",
+            str(self.root),
+            "capture",
+            "todo",
+            "--text",
+            "通过 CLI 重命名待办，验证文件与索引同步",
+            "--title",
+            "重命名前标题",
+            "--transaction-id",
+            "cli-retitle-create",
+        )
+        self.assertEqual(created.returncode, 0, created.stderr)
+        note_id = json.loads(created.stdout)["result"]["id"]
+        old_path = json.loads(created.stdout)["result"]["path"]
+
+        no_confirm = run_cli(
+            "--root",
+            str(self.root),
+            "capture",
+            "retitle",
+            "--id",
+            note_id,
+            "--title",
+            "未确认的标题",
+            "--transaction-id",
+            "cli-retitle-no-confirm",
+        )
+        self.assertEqual(no_confirm.returncode, 2)
+
+        renamed = run_cli(
+            "--root",
+            str(self.root),
+            "capture",
+            "retitle",
+            "--id",
+            note_id,
+            "--title",
+            "重命名后标题",
+            "--confirm-user-authored",
+            "--transaction-id",
+            "cli-retitle-do",
+        )
+        self.assertEqual(renamed.returncode, 0, renamed.stderr)
+        result = json.loads(renamed.stdout)["result"]
+        self.assertTrue(result["renamed"])
+        new_path = result["path"]
+        self.assertNotEqual(new_path, old_path)
+        self.assertFalse((self.root / old_path).exists())
+        self.assertTrue((self.root / new_path).is_file())
+        note_text = (self.root / new_path).read_text(encoding="utf-8")
+        self.assertIn('title: "重命名后标题"', note_text)
+        self.assertIn("# 重命名后标题", note_text)
+        self.assertNotIn(old_path[:-3], note_text)
+
+        verified = run_cli("--root", str(self.root), "verify")
+        self.assertEqual(verified.returncode, 0, verified.stderr)
+        self.assertTrue(json.loads(verified.stdout)["ok"])
+
     def test_direct_expression_formation_witness_public_cli(self):
         draft = self.base / "direct-permanent.md"
         draft.write_text(

@@ -2549,6 +2549,89 @@ updated_at: "2026-08-04T00:00:00+08:00"
         self.assertTrue(replay["idempotent"])
         self.assertTrue(self.service.lint()["ok"])
 
+    def test_capture_retitle_renames_file_and_rewrites_references(self):
+        todo = self.service.capture(
+            "todo",
+            text="这条待办将被重命名，验证文件与引用同步更新",
+            title="旧标题待办",
+            context="重命名前的产生情境",
+            transaction_id="tx-retitle-target",
+        )
+        note_id = todo["result"]["id"]
+        old_path = todo["result"]["path"]
+        # 先建一张引用该待办的闪念（wikilink 用旧路径 + 旧标题）
+        referencing = self.service.capture(
+            "flash",
+            text=f"引用测试：[[{old_path[:-3]}|旧标题待办]] 在讨论中被提到",
+            title="引用待办的闪念",
+            transaction_id="tx-retitle-referrer",
+        )
+        ref_id = referencing["result"]["id"]
+        # 未确认时拒绝
+        with self.assertRaises(ValidationError):
+            self.service.capture_retitle(
+                note_id,
+                title="未确认的新标题",
+                confirmed_by_user=False,
+                transaction_id="tx-retitle-no-confirm",
+            )
+        # 执行重命名
+        renamed = self.service.capture_retitle(
+            note_id,
+            title="新标题待办",
+            confirmed_by_user=True,
+            transaction_id="tx-retitle-do",
+        )
+        self.assertEqual(renamed["result"]["id"], note_id)
+        self.assertTrue(renamed["result"]["renamed"])
+        new_path = renamed["result"]["path"]
+        self.assertNotEqual(new_path, old_path)
+        # 旧文件已删除，新文件存在且 frontmatter/正文标题已更新
+        self.assertFalse((self.repo.root / old_path).exists())
+        self.assertTrue((self.repo.root / new_path).exists())
+        note = self.repo.find_note(note_id)
+        self.assertEqual(note[2]["title"], "新标题待办")
+        self.assertIn("# 新标题待办", note[1])
+        self.assertIn("## 原始记录", note[1])
+        self.assertIn("重命名前的产生情境", note[1])
+        # 引用闪念中的 wikilink 已同步为新路径 + 新标题
+        ref_note = self.repo.find_note(ref_id)
+        self.assertIn(f"[[{new_path[:-3]}|新标题待办]]", ref_note[1])
+        self.assertNotIn(old_path[:-3], ref_note[1])
+        # 幂等重放
+        replay = self.service.capture_retitle(
+            note_id,
+            title="再次重命名不应生效",
+            confirmed_by_user=True,
+            transaction_id="tx-retitle-do",
+        )
+        self.assertTrue(replay["idempotent"])
+        # 与当前标题相同拒绝
+        with self.assertRaises(ValidationError):
+            self.service.capture_retitle(
+                note_id,
+                title="新标题待办",
+                confirmed_by_user=True,
+                transaction_id="tx-retitle-same",
+            )
+        # 空标题拒绝
+        with self.assertRaises(ValidationError):
+            self.service.capture_retitle(
+                note_id,
+                title="   ",
+                confirmed_by_user=True,
+                transaction_id="tx-retitle-blank",
+            )
+        # 不存在的记录拒绝
+        with self.assertRaises(ValidationError):
+            self.service.capture_retitle(
+                "TODO-20260809-00000000",
+                title="不存在的记录",
+                confirmed_by_user=True,
+                transaction_id="tx-retitle-missing",
+            )
+        self.assertTrue(self.service.lint()["ok"])
+
     def _two_connected_permanent_cards(self):
         captured = self.service.source_commit(
             self.preview(),

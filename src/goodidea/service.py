@@ -648,6 +648,106 @@ class GoodIdeaService:
             result=result,
         )
 
+    def capture_retitle(
+        self,
+        note_id: str,
+        *,
+        title: str,
+        confirmed_by_user: bool,
+        transaction_id: str | None = None,
+    ) -> dict[str, Any]:
+        if not confirmed_by_user:
+            raise ValidationError("标题修改只能写入用户亲自确认的新标题")
+        new_title = title.strip()
+        if not _meaningful(new_title, minimum=2):
+            raise ValidationError("新标题必须包含实际含义")
+        found = self.repo.find_note(note_id)
+        if not found or found[2].get("type") not in {
+            "flash",
+            "interesting",
+            "todo",
+        }:
+            raise ValidationError(f"找不到轻量记录：{note_id}")
+        rel, text, metadata = found
+        old_title = str(metadata.get("title", ""))
+        if new_title == old_title:
+            raise ValidationError("新标题与当前标题相同，无需修改")
+        txid = transaction_id or new_transaction_id("capture-retitle")
+        if existing := self._idempotent(txid):
+            return existing
+        timestamp = now_iso()
+        note_type = metadata["type"]
+        location = TYPE_LOCATIONS[note_type]
+        # 计算新路径；与现有文件冲突时递增序号（同 maintain-filenames 逻辑）
+        reserved = {rel}
+        collision = 1
+        while True:
+            candidate = location / dated_filename(
+                new_title, str(metadata["created_at"]), collision=collision
+            )
+            if candidate not in reserved and not candidate.exists():
+                break
+            collision += 1
+        new_rel = candidate
+        metadata["title"] = new_title
+        metadata["updated_at"] = timestamp
+        # 更新正文首行标题，再写回 frontmatter
+        lines = text.split("\n")
+        for i, line in enumerate(lines):
+            if line.startswith("# "):
+                lines[i] = f"# {new_title}"
+                break
+        updated_text = replace_frontmatter("\n".join(lines), metadata)
+        writes: dict[Path, str | bytes] = {}
+        deletes: set[Path] = set()
+        if new_rel != rel:
+            deletes.add(rel)
+            # 全库重写引用旧路径/旧标题的 wikilink（来源快照受保护）
+            replacements = {rel.with_suffix("").as_posix(): new_rel.with_suffix("").as_posix()}
+            for note_type_, location_ in TYPE_LOCATIONS.items():
+                for path in sorted((self.repo.root / location_).glob("*.md")):
+                    other_rel = path.relative_to(self.repo.root)
+                    if other_rel == rel:
+                        continue
+                    note_text = path.read_text(encoding="utf-8")
+                    note_meta, _ = parse_document(note_text)
+                    protect = note_meta.get("type") == "source"
+                    rewritten = _rewrite_wiki_paths(
+                        note_text, replacements, protect_snapshot=protect
+                    )
+                    rewritten = _rewrite_default_alias(
+                        rewritten,
+                        new_rel.with_suffix("").as_posix(),
+                        old_title,
+                        new_title,
+                        protect_snapshot=protect,
+                    )
+                    if rewritten != note_text:
+                        writes[other_rel] = rewritten
+            state = _rewrite_exact_paths(
+                self.repo.read_state(), {rel.as_posix(): new_rel.as_posix()}
+            )
+        else:
+            state = self.repo.read_state()
+        writes[new_rel] = updated_text
+        result = {
+            "id": note_id,
+            "path": new_rel.as_posix(),
+            "type": note_type,
+            "renamed": new_rel != rel,
+            "from": rel.as_posix(),
+            "to": new_rel.as_posix(),
+        }
+        return self.repo.commit(
+            transaction_id=txid,
+            action="capture-retitle",
+            summary=new_title,
+            writes=writes,
+            deletes=deletes,
+            state=state,
+            result=result,
+        )
+
     def capture_finalize(
         self,
         runtime: CaptureRuntime,
