@@ -275,6 +275,18 @@
       "timestamp": "2026-08-15T16:11:59+08:00",
       "transaction_id": "capture-transition-20260815161159-94326ac0"
     },
+    "capture-transition-20260815181110-e5c7001d": {
+      "action": "capture-transition",
+      "result": {
+        "id": "FLA-20260814-f19390c3",
+        "path": "闪念空间/已处理/2026-08-14-目标规划方法论：目标层级金字塔、目标系统理论（等效性-多效性）与目标特征.md",
+        "status": "processed",
+        "type": "flash"
+      },
+      "summary": "目标规划方法论：目标层级金字塔、目标系统理论（等效性/多效性）与目标特征",
+      "timestamp": "2026-08-15T18:11:10+08:00",
+      "transaction_id": "capture-transition-20260815181110-e5c7001d"
+    },
     "capture-valuate-20260815160837-372d6caf": {
       "action": "capture-valuate",
       "result": {

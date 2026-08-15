@@ -391,3 +391,5 @@
 
 [2026-08-15T18:02:38+08:00] capture-transition | 待办行动闭环方案（未开始档+必填原因+48h预警）实施 | tx=close-todo-action-loop-v2
 
+[2026-08-15T18:11:10+08:00] capture-transition | 目标规划方法论：目标层级金字塔、目标系统理论（等效性/多效性）与目标特征 | tx=capture-transition-20260815181110-e5c7001d
+
