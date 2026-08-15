@@ -3432,12 +3432,41 @@ updated_at: "2026-08-04T00:00:00+08:00"
         )
         self.assertEqual(result["result"]["status"], "processed")
         self.assertIn("已处理", result["result"]["path"])
-        # 可回退（待处理 ↔ 已处理 双向）
+        # 回退
         back = self.service.capture_transition(
             fid, status="pending", transaction_id="tx-flash-arch-back"
         )
         self.assertEqual(back["result"]["status"], "pending")
         self.assertNotIn("已处理", back["result"]["path"])
+
+    def test_capture_transition_flash_fermenting(self):
+        # 发酵中：讨论裁决不转的闪念进入中间态（留档等待激发）
+        flash = self.service.capture(
+            "flash", text="讨论过但裁决不转的闪念", transaction_id="tx-flash-ferm"
+        )
+        fid = flash["result"]["id"]
+        result = self.service.capture_transition(
+            fid, status="fermenting", transaction_id="tx-flash-ferm-run"
+        )
+        self.assertEqual(result["result"]["status"], "fermenting")
+        self.assertIn("发酵中", result["result"]["path"])
+        # 可回退
+        back = self.service.capture_transition(
+            fid, status="pending", transaction_id="tx-flash-ferm-back"
+        )
+        self.assertEqual(back["result"]["status"], "pending")
+        # 发酵中闪念可作为形成来源（激发 → permanent accept 自动转已处理）
+        ferment = self.service.capture(
+            "flash", text="发酵中的形成来源闪念", transaction_id="tx-flash-ferm2"
+        )
+        fid2 = ferment["result"]["id"]
+        self.service.capture_transition(
+            fid2, status="fermenting", transaction_id="tx-flash-ferm2-run"
+        )
+        _, _, meta = self.repo.find_note(fid2)
+        self.assertEqual(meta["status"], "fermenting")
+        # lint 覆盖发酵中/ 子目录
+        self.assertTrue(self.service.lint()["ok"])
 
     def test_capture_retitle_renames_file_and_rewrites_references(self):
         todo = self.service.capture(

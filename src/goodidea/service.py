@@ -2420,7 +2420,7 @@ class GoodIdeaService:
                 raise ValidationError(f"已放弃闪念不能直接作为形成来源：{from_id}")
             if from_meta.get("status") == "processed":
                 continue
-            if from_meta.get("status") != "pending":
+            if from_meta.get("status") not in {"pending", "fermenting"}:
                 raise IntegrityError(f"闪念状态不能转换为已处理：{from_id}")
             from_meta = copy.deepcopy(from_meta)
             from_meta["status"] = "processed"

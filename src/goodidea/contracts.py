@@ -48,6 +48,7 @@ ENUM_ZH: dict[str, str] = {
     "index": "索引",
     # status（跨类型共用词，译法 = 原 STATUS_LABELS）
     "pending": "待处理",
+    "fermenting": "发酵中",
     "processed": "已处理",
     "dismissed": "已放弃",
     "complete": "完整",
@@ -190,7 +191,7 @@ def normalize_flash_event(
 NOTE_SPECS: dict[str, dict[str, Any]] = {
     "flash": {
         "location": Path("闪念空间"), "heading": "闪念", "default": "pending",
-        "statuses": {"pending", "processed", "dismissed"},
+        "statuses": {"pending", "fermenting", "processed", "dismissed"},
         "required": {"source_ids"}, "id": re.compile(r"^FLA-[0-9]{8}-[0-9a-f]{8}$"),
     },
     "source": {
@@ -247,5 +248,6 @@ TODO_STATUS_DIRS: dict[str, Path] = {
 # 已放弃（dismissed）暂不映射归档目录：transition 到 dismissed 时文件保持原位，sync 跳过。
 FLASH_STATUS_DIRS: dict[str, Path] = {
     "pending": Path("闪念空间"),
+    "fermenting": Path("闪念空间/发酵中"),
     "processed": Path("闪念空间/已处理"),
 }
