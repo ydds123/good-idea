@@ -285,3 +285,5 @@
 
 [2026-08-15T16:42:41+08:00] capture-valuate | AI产业链思考沉淀：算力/模型/应用平台层级梳理 → 永久母题 | tx=capture-valuate-20260815164241-197a946f
 
+[2026-08-15T16:42:41+08:00] capture-valuate | 如何更好地使用你（Hermes精装配置研究） | tx=capture-valuate-20260815164241-9e315a07
+
