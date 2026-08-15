@@ -629,7 +629,15 @@ class GoodIdeaService:
         # 卡片 frontmatter 关联（CLI 维护）
         metadata["discussion_log"] = log_rel.as_posix()
         metadata["updated_at"] = timestamp
-        updated = replace_frontmatter(text_note, metadata)
+        # 卡片正文"讨论记录"导航区（CLI 机械维护，人类可读证据）
+        log_summary = (
+            f"讨论档案：`{log_rel.as_posix()}`（{len(log['entries'])} 条时间线原文，"
+            f"最后更新 {timestamp[:16]}）\n\n"
+            "> 讨论过程原文按时间线记录在档案文件，`capture discuss` 逐轮追加；"
+            "结论沉淀按「原文归原文、结论归结论」——Agent 不生产摘要。"
+        )
+        note_text = replace_section(text_note, "讨论记录", log_summary)
+        updated = replace_frontmatter(note_text, metadata)
         state = self.repo.read_state()
         result = {
             "id": note_id,

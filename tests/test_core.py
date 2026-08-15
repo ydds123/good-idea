@@ -806,6 +806,10 @@ class GoodIdeaCoreTests(unittest.TestCase):
         # frontmatter 关联（CLI 维护）
         _, _, meta = self.repo.find_note(fid)
         self.assertEqual(meta["discussion_log"], r2["result"]["discussion_log"])
+        # 正文"讨论记录"导航区（人类可读证据）
+        _, body, _ = self.repo.find_note(fid)
+        self.assertIn("## 讨论记录", body)
+        self.assertIn(r2["result"]["discussion_log"], body)
         # 幂等重放
         replay = self.service.capture_discuss(
             fid, text="重复", role="user", transaction_id="tx-disc-1"
