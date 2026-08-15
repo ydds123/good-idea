@@ -389,3 +389,5 @@
 
 [2026-08-15T18:00:59+08:00] capture-transition | 近期学习清单（AI生图/AI领导力/曾鸣二刷/动机心理学应用） | tx=migrate-todo-ns-learning
 
+[2026-08-15T18:02:38+08:00] capture-transition | 待办行动闭环方案（未开始档+必填原因+48h预警）实施 | tx=close-todo-action-loop-v2
+
