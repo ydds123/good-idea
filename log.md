@@ -211,3 +211,5 @@
 
 [2026-08-15T10:51:07+08:00] capture-transition | 看看朱镕基的讲话实录这套书，了解一下 | tx=capture-transition-20260815105107-817c4b9b
 
+[2026-08-15T10:51:08+08:00] capture-transition | 明天（8/14）看论文 | tx=capture-transition-20260815105108-f017512c
+
