@@ -128,6 +128,15 @@ def build_parser() -> argparse.ArgumentParser:
         help="条目角色：user=用户原文；assistant=Agent 原文",
     )
     discuss_note.add_argument("--transaction-id")
+    summarize_note = capture_sub.add_parser(
+        "summarize",
+        help="基于一次讨论的原文时间线生成核心摘要，追加到卡片'讨论摘要'区（需用户确认）",
+    )
+    summarize_note.add_argument("--note-id", required=True)
+    summarize_note.add_argument("--window", required=True, help="讨论时间窗口，如 2026-08-15 18:52 — 19:15")
+    summarize_note.add_argument("--text", required=True, help="用户确认的摘要全文（保留讨论血肉）")
+    summarize_note.add_argument("--confirm-user-authored", action="store_true")
+    summarize_note.add_argument("--transaction-id")
     revise_note.add_argument("--transaction-id")
     transition = capture_sub.add_parser(
         "transition", help="流转轻量记录的生命周期状态"
@@ -623,6 +632,14 @@ def dispatch(args: argparse.Namespace) -> tuple[dict[str, Any], int]:
             args.note_id,
             text=args.text,
             role=args.role,
+            transaction_id=args.transaction_id,
+        )
+    elif args.command == "capture" and args.capture_command == "summarize":
+        result = service.capture_summarize(
+            args.note_id,
+            window=args.window,
+            summary=args.text,
+            confirmed_by_user=args.confirm_user_authored,
             transaction_id=args.transaction_id,
         )
     elif args.command == "capture" and args.capture_command == "transition":

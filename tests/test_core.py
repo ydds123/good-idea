@@ -822,6 +822,46 @@ class GoodIdeaCoreTests(unittest.TestCase):
             )
         self.assertTrue(self.service.lint()["ok"])
 
+    def test_capture_summarize_appends_confirmed_summary(self):
+        # 讨论摘要：用户确认门禁 + 时间窗口条目 + 编号递增 + 幂等
+        flash = self.service.capture(
+            "flash", text="摘要测试", transaction_id="tx-sum-test"
+        )
+        fid = flash["result"]["id"]
+        # 未确认 → 拒绝
+        with self.assertRaises(ValidationError):
+            self.service.capture_summarize(
+                fid, window="2026-08-15 10:00 — 11:00",
+                summary="第一次讨论的核心内容，保留血肉的摘要。",
+                confirmed_by_user=False, transaction_id="tx-sum-noconf",
+            )
+        r1 = self.service.capture_summarize(
+            fid, window="2026-08-15 10:00 — 11:00",
+            summary="第一次讨论的核心内容，保留血肉的摘要。",
+            confirmed_by_user=True, transaction_id="tx-sum-1",
+        )
+        self.assertEqual(r1["result"]["summary_count"], 1)
+        _, body, _ = self.repo.find_note(fid)
+        self.assertIn("## 讨论摘要", body)
+        self.assertIn("2026-08-15 10:00 — 11:00", body)
+        self.assertIn("第 1 次讨论", body)
+        self.assertNotIn("- - **", body, "add_list_item 前缀不应重复")
+        # 第二次追加，编号递增
+        r2 = self.service.capture_summarize(
+            fid, window="2026-08-16 10:00 — 11:00",
+            summary="第二次讨论的内容。",
+            confirmed_by_user=True, transaction_id="tx-sum-2",
+        )
+        self.assertEqual(r2["result"]["summary_count"], 2)
+        _, body2, _ = self.repo.find_note(fid)
+        self.assertIn("第 2 次讨论", body2)
+        # 幂等重放
+        replay = self.service.capture_summarize(
+            fid, window="x", summary="重复", confirmed_by_user=True,
+            transaction_id="tx-sum-1",
+        )
+        self.assertTrue(replay["idempotent"])
+
     def test_tampered_source_does_not_block_runtime_or_flash_finalize(self):
         captured = self.service.source_commit(
             self.preview(), motivation="这不是纯确认文本", transaction_id="capture-before-tamper"

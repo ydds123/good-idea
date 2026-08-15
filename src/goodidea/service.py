@@ -655,6 +655,76 @@ class GoodIdeaService:
             result=result,
         )
 
+    def capture_summarize(
+        self,
+        note_id: str,
+        *,
+        window: str,
+        summary: str,
+        confirmed_by_user: bool,
+        transaction_id: str | None = None,
+    ) -> dict[str, Any]:
+        """讨论摘要落盘（2026-08-15 用户拍板）。
+
+        基于一次讨论的原文时间线生成的核心摘要，追加到卡片"讨论摘要"区
+        （CLI 机械维护）。摘要保留讨论血肉：关键原话与细节直接摘录，
+        结构在叙述中自然流动，不贴分类标签；内容只来自原文（不新增），
+        必须经用户确认（--confirm-user-authored）后才落盘。
+        """
+        if not confirmed_by_user:
+            raise ValidationError("讨论摘要必须经用户确认后才能落盘")
+        if not _meaningful(summary, minimum=20):
+            raise ValidationError("摘要必须包含用户确认的实质内容")
+        if not window.strip():
+            raise ValidationError("摘要必须带讨论时间窗口")
+        found = self.repo.find_note(note_id)
+        if not found or found[2].get("type") not in {
+            "flash",
+            "interesting",
+            "todo",
+        }:
+            raise ValidationError(f"找不到轻量记录：{note_id}")
+        rel, text_note, metadata = found
+        txid = transaction_id or new_transaction_id("capture-summarize")
+        if existing := self._idempotent(txid):
+            return existing
+        timestamp = now_iso()
+        # 统计已有摘要条目数（编号"第 N 次讨论"）
+        body_start = text_note.find("\n---", 4)
+        body = text_note[body_start + 5:] if body_start >= 0 else text_note
+        existing_count = 0
+        for line in body.splitlines():
+            if line.startswith("- **") and "｜" in line:
+                existing_count += 1
+        # 摘要条目：时间窗口 + 血肉正文（多行，4 空格缩进续行；
+        # add_list_item_to_section 会自动加 "- " 前缀）
+        indented = "\n".join(
+            f"    {line}" if line.strip() else line
+            for line in summary.strip().splitlines()
+        )
+        entry = (
+            f"**{window.strip()}**｜第 {existing_count + 1} 次讨论\n\n"
+            f"{indented}"
+        )
+        text_note = add_list_item_to_section(text_note, "讨论摘要", entry)
+        metadata["updated_at"] = timestamp
+        text_note = replace_frontmatter(text_note, metadata)
+        state = self.repo.read_state()
+        result = {
+            "id": note_id,
+            "path": rel.as_posix(),
+            "type": metadata["type"],
+            "summary_count": existing_count + 1,
+        }
+        return self.repo.commit(
+            transaction_id=txid,
+            action="capture-summarize",
+            summary=metadata["title"],
+            writes={rel: text_note},
+            state=state,
+            result=result,
+        )
+
     def capture_transition(
         self,
         note_id: str,
