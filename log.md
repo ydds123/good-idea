@@ -375,3 +375,5 @@
 
 [2026-08-15T18:00:57+08:00] capture-transition | 看板：记录 good idea 各类型卡片的每周增长情况 | tx=migrate-todo-cancel-kanban
 
+[2026-08-15T18:00:57+08:00] capture-transition | 为 Good Idea 增加用户画像/记忆摘要层（类 ChatGPT 记忆） | tx=migrate-todo-ns-profile
+
