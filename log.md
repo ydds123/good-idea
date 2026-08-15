@@ -203,3 +203,5 @@
 
 [2026-08-14T23:44:21+08:00] capture-todo | 近期学习清单（AI生图/AI领导力/曾鸣二刷/动机心理学应用） | tx=learn-list-20260814
 
+[2026-08-15T09:13:32+08:00] capture-transition | 修正闪念捕获recipe措辞：只删填充词，保留思考纹理 | tx=recipe-fix-done-20260815
+

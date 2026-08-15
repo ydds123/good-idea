@@ -815,6 +815,18 @@
       "timestamp": "2026-08-14T23:43:03+08:00",
       "transaction_id": "recipe-fix-20260814"
     },
+    "recipe-fix-done-20260815": {
+      "action": "capture-transition",
+      "result": {
+        "id": "TODO-20260814-4517ec0d",
+        "path": "待办空间/2026-08-14-修正闪念捕获recipe措辞：只删填充词，保留思考纹理.md",
+        "status": "done",
+        "type": "todo"
+      },
+      "summary": "修正闪念捕获recipe措辞：只删填充词，保留思考纹理",
+      "timestamp": "2026-08-15T09:13:32+08:00",
+      "transaction_id": "recipe-fix-done-20260815"
+    },
     "refresh-196-name-fix": {
       "action": "source-refresh-propose",
       "result": {
