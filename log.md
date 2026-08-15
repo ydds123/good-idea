@@ -265,3 +265,5 @@
 
 [2026-08-15T16:40:32+08:00] capture-valuate | 为 Good Idea 增加用户画像/记忆摘要层（类 ChatGPT 记忆） | tx=capture-valuate-20260815164031-a0918a06
 
+[2026-08-15T16:40:32+08:00] capture-valuate | AI产业链思考沉淀：算力/模型/应用平台层级梳理 → 永久母题 | tx=capture-valuate-20260815164032-422d60d3
+
