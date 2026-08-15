@@ -363,3 +363,5 @@
 
 [2026-08-15T17:03:40+08:00] capture-valuate | 开源AI电影《Hell Grind》：视频领域的控制论实践学习项目 | tx=capture-valuate-20260815170340-ab2afdda
 
+[2026-08-15T17:03:40+08:00] capture-valuate | 看板：记录 good idea 各类型卡片的每周增长情况 | tx=capture-valuate-20260815170340-a62c978a
+
