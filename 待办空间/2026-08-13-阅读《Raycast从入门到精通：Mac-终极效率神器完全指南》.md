@@ -6,7 +6,7 @@ status: "进行中"
 created_at: "2026-08-13T10:12:06+08:00"
 updated_at: "2026-08-15T17:01:56+08:00"
 source_ids: []
-priority: 4
+priority: 5
 need_type: "能力"
 goal_id: "工具效能"
 equifinality: "高"
