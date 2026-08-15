@@ -387,3 +387,5 @@
 
 [2026-08-15T18:00:59+08:00] capture-transition | 阅读《Raycast从入门到精通：Mac 终极效率神器完全指南》 | tx=migrate-todo-ns-raycast
 
+[2026-08-15T18:00:59+08:00] capture-transition | 近期学习清单（AI生图/AI领导力/曾鸣二刷/动机心理学应用） | tx=migrate-todo-ns-learning
+

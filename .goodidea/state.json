@@ -6797,6 +6797,18 @@
       "timestamp": "2026-08-15T18:00:58+08:00",
       "transaction_id": "migrate-todo-ns-hermes"
     },
+    "migrate-todo-ns-learning": {
+      "action": "capture-transition",
+      "result": {
+        "id": "TODO-20260814-4ef4ba98",
+        "path": "待办空间/2026-08-14-近期学习清单（AI生图-AI领导力-曾鸣二刷-动机心理学应用）.md",
+        "status": "not_started",
+        "type": "todo"
+      },
+      "summary": "近期学习清单（AI生图/AI领导力/曾鸣二刷/动机心理学应用）",
+      "timestamp": "2026-08-15T18:00:59+08:00",
+      "transaction_id": "migrate-todo-ns-learning"
+    },
     "migrate-todo-ns-profile": {
       "action": "capture-transition",
       "result": {
