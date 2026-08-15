@@ -2849,18 +2849,21 @@ updated_at: "2026-08-04T00:00:00+08:00"
             todo_a["result"]["id"],
             need_type="能力", goal_id="行业职业", equifinality="高",
             multifinality="高", success_probability="高",
+            rationale="测试理由：为求职补弹药；目标服务行业理解；路径多；一石多鸟；内容现成",
             transaction_id="tx-val-a-run",
         )
         self.service.capture_valuate(
             todo_c["result"]["id"],
             need_type="自主", goal_id="认知中枢", equifinality="中",
             multifinality="中", success_probability="中",
+            rationale="测试理由：为求职补弹药；目标服务行业理解；路径多；一石多鸟；内容现成",
             transaction_id="tx-val-c-run",
         )
         done = self.service.capture_valuate(
             todo_b["result"]["id"],
             need_type="自主", goal_id="认知中枢", equifinality="低",
             multifinality="低", success_probability="低",
+            rationale="测试理由：为求职补弹药；目标服务行业理解；路径多；一石多鸟；内容现成",
             transaction_id="tx-val-b-run",
         )
         ranked = done["result"]["ranked"]
@@ -2882,6 +2885,7 @@ updated_at: "2026-08-04T00:00:00+08:00"
             todo_b["result"]["id"],
             need_type="自主", goal_id="认知中枢", equifinality="低",
             multifinality="低", success_probability="低",
+            rationale="测试理由：为求职补弹药；目标服务行业理解；路径多；一石多鸟；内容现成",
             transaction_id="tx-val-b-run",
         )
         self.assertTrue(replay["idempotent"])
@@ -2896,18 +2900,21 @@ updated_at: "2026-08-04T00:00:00+08:00"
             self.service.capture_valuate(
                 tid, need_type="幻想", goal_id="认知中枢",
                 equifinality="高", multifinality="高", success_probability="高",
+                rationale="测试理由：为求职补弹药；目标服务行业理解；路径多；一石多鸟；内容现成",
                 transaction_id="tx-val-bad-need",
             )
         with self.assertRaises(ValidationError):
             self.service.capture_valuate(
                 tid, need_type="能力", goal_id="不存在目标",
                 equifinality="高", multifinality="高", success_probability="高",
+                rationale="测试理由：为求职补弹药；目标服务行业理解；路径多；一石多鸟；内容现成",
                 transaction_id="tx-val-bad-goal",
             )
         with self.assertRaises(ValidationError):
             self.service.capture_valuate(
                 tid, need_type="能力", goal_id="认知中枢",
                 equifinality="高", multifinality="超高", success_probability="高",
+                rationale="测试理由：为求职补弹药；目标服务行业理解；路径多；一石多鸟；内容现成",
                 transaction_id="tx-val-bad-multi",
             )
         # 非待办（闪念）拒绝估价
@@ -2918,6 +2925,7 @@ updated_at: "2026-08-04T00:00:00+08:00"
             self.service.capture_valuate(
                 flash["result"]["id"], need_type="能力", goal_id="认知中枢",
                 equifinality="高", multifinality="高", success_probability="高",
+                rationale="测试理由：为求职补弹药；目标服务行业理解；路径多；一石多鸟；内容现成",
                 transaction_id="tx-val-bad-type",
             )
 
@@ -2935,6 +2943,7 @@ updated_at: "2026-08-04T00:00:00+08:00"
             valued["result"]["id"],
             need_type="能力", goal_id="工具效能", equifinality="低",
             multifinality="低", success_probability="低",
+            rationale="测试理由：为求职补弹药；目标服务行业理解；路径多；一石多鸟；内容现成",
             transaction_id="tx-val-lv-run",
         )
         ranked = done["result"]["ranked"]
@@ -2960,6 +2969,7 @@ updated_at: "2026-08-04T00:00:00+08:00"
             open_todo["result"]["id"],
             need_type="能力", goal_id="工具效能", equifinality="中",
             multifinality="中", success_probability="中",
+            rationale="测试理由：为求职补弹药；目标服务行业理解；路径多；一石多鸟；内容现成",
             transaction_id="tx-val-open-run",
         )
         ranked_ids = {item["id"] for item in result["result"]["ranked"]}
@@ -2970,7 +2980,60 @@ updated_at: "2026-08-04T00:00:00+08:00"
                 done_todo["result"]["id"],
                 need_type="能力", goal_id="工具效能", equifinality="高",
                 multifinality="高", success_probability="高",
+                rationale="测试理由",
                 transaction_id="tx-val-done-reject",
+            )
+
+    def test_capture_valuate_writes_rationale_section(self):
+        # 估价理由写入卡片"估价依据"区（含得分与优先级），重估替换不重复追加
+        todo = self.service.capture(
+            "todo", text="理由区测试待办", title="理由测试",
+            transaction_id="tx-val-rat",
+        )
+        tid = todo["result"]["id"]
+        self.service.capture_valuate(
+            tid,
+            need_type="能力", goal_id="行业职业", equifinality="高",
+            multifinality="高", success_probability="高",
+            rationale=(
+                "- 需求类型：能力 —— 为求职期行业理解补弹药\n"
+                "- 高阶目标：行业职业 —— 直接服务求职主线\n"
+                "- 等效性：高 —— 内容现成、整理路径多\n"
+                "- 多效性：高 —— 行业理解×面试弹药×母题复利\n"
+                "- 成功概率：高 —— 思考已沉淀，只差落地"
+            ),
+            transaction_id="tx-val-rat-run",
+        )
+        rel, text, _ = self.repo.find_note(tid)
+        self.assertIn("## 估价依据", text)
+        self.assertIn("- 需求类型：能力 —— 为求职期行业理解补弹药", text)
+        self.assertIn("期望×价值：9 分", text)
+        self.assertIn("优先级 P1", text)
+        # 理由区只出现一次（位于正文末尾）
+        self.assertEqual(text.count("## 估价依据"), 1)
+        # 重估：理由区整体替换，不追加第二段
+        self.service.capture_valuate(
+            tid,
+            need_type="能力", goal_id="行业职业", equifinality="中",
+            multifinality="中", success_probability="中",
+            rationale="- 修正：等效性降为中，多效性降为中，概率降为中",
+            transaction_id="tx-val-rat-rerun",
+        )
+        _, text2, meta2 = self.repo.find_note(tid)
+        self.assertEqual(text2.count("## 估价依据"), 1)
+        self.assertNotIn("为求职期行业理解补弹药", text2)
+        self.assertIn("- 修正：等效性降为中，多效性降为中，概率降为中", text2)
+        self.assertIn("期望×价值：4 分", text2)
+        self.assertEqual(meta2["equifinality"], "medium")
+        self.assertTrue(self.service.lint()["ok"])
+        # 空理由拒绝（机制不接受黑箱估价）
+        with self.assertRaises(ValidationError):
+            self.service.capture_valuate(
+                tid,
+                need_type="能力", goal_id="行业职业", equifinality="高",
+                multifinality="高", success_probability="高",
+                rationale="   ",
+                transaction_id="tx-val-rat-empty",
             )
 
     def test_capture_retitle_renames_file_and_rewrites_references(self):

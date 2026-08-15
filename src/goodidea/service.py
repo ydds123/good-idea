@@ -42,6 +42,7 @@ from .notes import (
     remove_list_item_from_section,
     remove_section,
     render_note,
+    replace_section,
     render_flash_event,
     render_source_anchors,
     render_source_note,
@@ -792,15 +793,21 @@ class GoodIdeaService:
         equifinality: str,
         multifinality: str,
         success_probability: str,
+        rationale: str,
         transaction_id: str | None = None,
     ) -> dict[str, Any]:
         """待办估价（2026-08-15 用户拍板：目标规划方法论五段流程的落盘命令）。
 
-        Agent 按方法论完成语义判断（需求类型/高阶目标/等效性/多效性/成功概率），
-        本命令校验枚举合法性、写回中文标签，并按期望×价值规则确定性重算全部
-        待办的 priority 排序：主键=概率×多效性（期望×价值），tie-break=等效性，
-        未估价待办排最后按创建时间。一次事务完成标签写入与全局重排。
+        Agent 按方法论完成语义判断（需求类型/高阶目标/等效性/多效性/成功概率）
+        并给出可审计的推理理由（rationale，必填——机制不接受黑箱估价），
+        本命令校验枚举合法性、写回中文标签、把理由写入卡片"估价依据"区
+        （CLI 机械维护，含确定性得分与优先级），并按期望×价值规则确定性
+        重算全部"进行中"待办的 priority：主键=概率×多效性（期望×价值），
+        tie-break=等效性，未估价待办排最后按创建时间。
         """
+        rationale = rationale.strip()
+        if not rationale:
+            raise ValidationError("估价必须提供理由（--rationale）：机制不接受黑箱估价")
         found = self.repo.find_note(note_id)
         if not found or found[2].get("type") != "todo":
             raise ValidationError(f"找不到待办：{note_id}")
@@ -845,11 +852,23 @@ class GoodIdeaService:
         priority_map = dict(ranked)
 
         writes: dict[Path, str | bytes] = {}
-        # 目标卡片：标签 + priority 一次写入
+        # 目标卡片：标签 + priority + "估价依据"区一次写入（CLI 机械维护，推理链摊开）
         metadata.update(normalized)
         metadata["priority"] = priority_map[rel]
         metadata["updated_at"] = timestamp
-        writes[rel] = replace_frontmatter(text, metadata)
+        score = (
+            VALUATION_LEVELS[normalized["success_probability"]]
+            * VALUATION_LEVELS[normalized["multifinality"]]
+        )
+        rationale_block = (
+            f"{rationale}\n\n"
+            f"- 期望×价值：{score} 分"
+            f"（概率 {ENUM_ZH[normalized['success_probability']]} × 多效 {ENUM_ZH[normalized['multifinality']]}）"
+            f"→ 优先级 P{priority_map[rel]}（{len(todos)} 条进行中待办）"
+        )
+        updated_text = replace_frontmatter(text, metadata)
+        updated_text = replace_section(updated_text, "估价依据", rationale_block)
+        writes[rel] = updated_text
         # 其余卡片：priority 变化才写入
         for other_rel, priority in ranked:
             if other_rel == rel:

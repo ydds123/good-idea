@@ -134,6 +134,11 @@ def build_parser() -> argparse.ArgumentParser:
     valuate.add_argument("--equifinality", required=True, help="等效性：高/中/低")
     valuate.add_argument("--multifinality", required=True, help="多效性：高/中/低")
     valuate.add_argument("--probability", required=True, help="成功概率：高/中/低")
+    valuate.add_argument(
+        "--rationale",
+        required=True,
+        help="估价理由（必填，机制不接受黑箱）：逐条说明为什么给这个需求类型/高阶目标/等效性/多效性/成功概率",
+    )
     valuate.add_argument("--transaction-id")
     update = capture_sub.add_parser(
         "update", help="用户确认后整体更新轻量记录的原始记录正文"
@@ -596,6 +601,7 @@ def dispatch(args: argparse.Namespace) -> tuple[dict[str, Any], int]:
             equifinality=_enum_arg(args.equifinality),
             multifinality=_enum_arg(args.multifinality),
             success_probability=_enum_arg(args.probability),
+            rationale=args.rationale,
             transaction_id=args.transaction_id,
         )
     elif args.command == "capture" and args.capture_command == "update":
