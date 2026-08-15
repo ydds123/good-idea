@@ -567,6 +567,7 @@ class GoodIdeaService:
         *,
         status: str,
         transaction_id: str | None = None,
+        accept_dirty: bool = False,
     ) -> dict[str, Any]:
         found = self.repo.find_note(note_id)
         if not found or found[2].get("type") not in {
@@ -598,27 +599,11 @@ class GoodIdeaService:
         writes: dict[Path, str | bytes] = {}
         deletes: set[Path] = set()
         if note_type == "todo":
-            target_dir = TODO_STATUS_DIRS[status]
-            target_rel = target_dir / rel.name
-            if target_rel != rel:
-                # 全库重写引用旧路径的 wikilink（来源快照区除外）
-                replacements = {
-                    rel.with_suffix("").as_posix(): target_rel.with_suffix("").as_posix()
-                }
-                for note_type_, location_ in note_scan_entries():
-                    for path in sorted((self.repo.root / location_).glob("*.md")):
-                        other_rel = path.relative_to(self.repo.root)
-                        if other_rel == rel:
-                            continue
-                        note_text = path.read_text(encoding="utf-8")
-                        note_meta, _ = parse_document(note_text)
-                        protect = note_meta.get("type") == "source"
-                        rewritten = _rewrite_wiki_paths(
-                            note_text, replacements, protect_snapshot=protect
-                        )
-                        if rewritten != note_text:
-                            writes[other_rel] = rewritten
-                deletes.add(rel)
+            relocation_writes, relocation_deletes, target_rel = self._relocate_todo(
+                rel, status
+            )
+            writes.update(relocation_writes)
+            deletes.update(relocation_deletes)
         result = {
             "id": note_id,
             "path": target_rel.as_posix(),
@@ -634,6 +619,145 @@ class GoodIdeaService:
             deletes=deletes,
             state=state,
             result=result,
+            accept_dirty=accept_dirty,
+        )
+
+    def _relocate_todo(
+        self, rel: Path, status: str
+    ) -> tuple[dict[Path, str | bytes], set[Path], Path]:
+        """待办状态归档：计算目标目录路径，全库重写引用旧路径的 wikilink。
+
+        来源快照区受保护不参与替换；返回（引用改写 writes、旧路径 deletes、目标路径）。
+        """
+        target_dir = TODO_STATUS_DIRS[status]
+        target_rel = target_dir / rel.name
+        writes: dict[Path, str | bytes] = {}
+        deletes: set[Path] = set()
+        if target_rel != rel:
+            replacements = {
+                rel.with_suffix("").as_posix(): target_rel.with_suffix("").as_posix()
+            }
+            for note_type_, location_ in note_scan_entries():
+                for path in sorted((self.repo.root / location_).glob("*.md")):
+                    other_rel = path.relative_to(self.repo.root)
+                    if other_rel == rel:
+                        continue
+                    note_text = path.read_text(encoding="utf-8")
+                    note_meta, _ = parse_document(note_text)
+                    protect = note_meta.get("type") == "source"
+                    rewritten = _rewrite_wiki_paths(
+                        note_text, replacements, protect_snapshot=protect
+                    )
+                    if rewritten != note_text:
+                        writes[other_rel] = rewritten
+            deletes.add(rel)
+        return writes, deletes, target_rel
+
+    def capture_sync_todos(
+        self, *, transaction_id: str | None = None
+    ) -> dict[str, Any]:
+        """扫描待办归档目录，把 frontmatter 状态与所在目录不一致的待办归位。
+
+        阅读层（Obsidian note-database）手动修改 status 后，文件状态与目录脱节：
+        本命令把用户已表达的状态作为事实，一次事务完成所有归档移动、全库引用
+        重写、frontmatter 规范化与聚焦提交。状态值无法识别的文件跳过并报告。
+        """
+        moves: list[dict[str, Any]] = []
+        skipped: list[dict[str, Any]] = []
+        seen: set[Path] = set()
+        for location in TODO_STATUS_DIRS.values():
+            for path in sorted((self.repo.root / location).glob("*.md")):
+                rel = path.relative_to(self.repo.root)
+                if rel in seen:
+                    continue
+                seen.add(rel)
+                try:
+                    text = path.read_text(encoding="utf-8")
+                    metadata, _ = parse_document(text)
+                except (OSError, ValidationError) as exc:
+                    skipped.append(
+                        {"path": rel.as_posix(), "reason": f"解析失败：{exc}"}
+                    )
+                    continue
+                if metadata.get("type") != "todo":
+                    continue
+                status = metadata.get("status")
+                if status not in TODO_STATUS_DIRS:
+                    skipped.append(
+                        {"path": rel.as_posix(), "reason": f"无法识别状态：{status!r}"}
+                    )
+                    continue
+                target_dir = TODO_STATUS_DIRS[status]
+                target_rel = target_dir / rel.name
+                if target_rel == rel:
+                    continue
+                moves.append(
+                    {
+                        "id": metadata.get("id"),
+                        "from": rel.as_posix(),
+                        "path": target_rel.as_posix(),
+                        "status": status,
+                    }
+                )
+        if not moves:
+            return {"moved": [], "skipped": skipped, "synced": False}
+
+        txid = transaction_id or new_transaction_id("capture-sync")
+        if existing := self._idempotent(txid):
+            return existing
+        timestamp = now_iso()
+
+        replacements = {
+            Path(item["from"])
+            .with_suffix("")
+            .as_posix(): Path(item["path"]).with_suffix("").as_posix()
+            for item in moves
+        }
+        move_sources = {Path(item["from"]) for item in moves}
+        originals: dict[Path, tuple[str, dict[str, Any]]] = {}
+        for location in TODO_STATUS_DIRS.values():
+            for path in sorted((self.repo.root / location).glob("*.md")):
+                rel = path.relative_to(self.repo.root)
+                if rel in move_sources:
+                    text = path.read_text(encoding="utf-8")
+                    originals[rel] = (text, parse_document(text)[0])
+
+        writes: dict[Path, str | bytes] = {}
+        deletes: set[Path] = set()
+        # 全库引用重写（跳过移动源本身，其目标内容单独生成）
+        for note_type_, location_ in note_scan_entries():
+            for path in sorted((self.repo.root / location_).glob("*.md")):
+                other_rel = path.relative_to(self.repo.root)
+                if other_rel in move_sources:
+                    continue
+                note_text = path.read_text(encoding="utf-8")
+                note_meta, _ = parse_document(note_text)
+                protect = note_meta.get("type") == "source"
+                rewritten = _rewrite_wiki_paths(
+                    note_text, replacements, protect_snapshot=protect
+                )
+                if rewritten != note_text:
+                    writes[other_rel] = rewritten
+        # 移动源：正文应用全局替换，frontmatter 规范化，写入目标路径
+        for item in moves:
+            rel = Path(item["from"])
+            target_rel = Path(item["path"])
+            text, metadata = originals[rel]
+            text = _rewrite_wiki_paths(text, replacements, protect_snapshot=False)
+            metadata["updated_at"] = timestamp
+            writes[target_rel] = replace_frontmatter(text, metadata)
+            deletes.add(rel)
+
+        state = self.repo.read_state()
+        return self.repo.commit(
+            transaction_id=txid,
+            action="capture-sync",
+            summary=f"归档 {len(moves)} 条待办",
+            writes=writes,
+            deletes=deletes,
+            state=state,
+            result={"moved": moves, "skipped": skipped},
+            accept_dirty=True,
         )
 
     def capture_update(

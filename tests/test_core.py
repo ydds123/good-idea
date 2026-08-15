@@ -2596,6 +2596,129 @@ updated_at: "2026-08-04T00:00:00+08:00"
         )
         self.assertTrue(self.service.lint()["ok"])
 
+    def test_parse_document_accepts_bare_yaml_scalars(self):
+        # Obsidian note-database 插件写回 frontmatter 时字符串脱引号（裸 YAML 标量）
+        text = (
+            "---\n"
+            'id: "TODO-20260813-a1f99bd8"\n'
+            "type: 待办\n"
+            "title: 看看朱镕基的讲话实录这套书，了解一下\n"
+            "status: 已完成\n"
+            "created_at: 2026-08-13T22:37:58+08:00\n"
+            "source_ids: []\n"
+            "---\n"
+            "# 正文\n"
+        )
+        metadata, body = parse_document(text)
+        self.assertEqual(metadata["id"], "TODO-20260813-a1f99bd8")
+        self.assertEqual(metadata["type"], "todo")
+        self.assertEqual(metadata["status"], "done")
+        self.assertEqual(metadata["title"], "看看朱镕基的讲话实录这套书，了解一下")
+        self.assertEqual(metadata["created_at"], "2026-08-13T22:37:58+08:00")
+        self.assertEqual(metadata["source_ids"], [])
+        self.assertEqual(body, "# 正文\n")
+
+    def test_transition_accept_dirty_takes_external_edit_as_input(self):
+        # 阅读层手动修改（裸 YAML + 未提交）后，transition 默认拒绝、--accept-dirty 接纳并归档
+        todo = self.service.capture(
+            "todo",
+            text="这条待办在 Obsidian 里被手动改成已完成",
+            title="手动修改的待办",
+            transaction_id="tx-dirty-create",
+        )
+        todo_id = todo["result"]["id"]
+        old_rel = Path(todo["result"]["path"])
+        path = self.repo.root / old_rel
+        text = path.read_text(encoding="utf-8")
+        path.write_text(
+            text.replace('status: "进行中"', "status: 已完成"), encoding="utf-8"
+        )
+        # 裸 YAML 下 CLI 仍能解析并找到记录（不再"找不到轻量记录"）
+        self.assertEqual(self.repo.find_note(todo_id)[2]["status"], "done")
+        # 不带 accept-dirty：事务保护拒绝
+        with self.assertRaises(GitError):
+            self.service.capture_transition(
+                todo_id, status="done", transaction_id="tx-dirty-reject"
+            )
+        # 带 accept-dirty：文件当前内容视为用户意图，完成归档 + 规范化
+        done = self.service.capture_transition(
+            todo_id, status="done", transaction_id="tx-dirty-accept", accept_dirty=True
+        )
+        self.assertEqual(done["result"]["status"], "done")
+        new_rel, new_text, new_meta = self.repo.find_note(todo_id)
+        self.assertTrue(new_rel.as_posix().startswith("待办空间/已完成/"))
+        # frontmatter 已规范化为 JSON 风格
+        self.assertIn('status: "已完成"', new_text)
+        self.assertFalse((self.repo.root / old_rel).exists())
+        self.assertTrue(self.service.lint()["ok"])
+
+    def test_capture_sync_archives_all_out_of_place_todos(self):
+        # 用户在阅读层批量手动改状态后，sync 一次事务全部归位
+        first = self.service.capture(
+            "todo",
+            text="手动改完成的待办甲",
+            title="待办甲",
+            transaction_id="tx-sync-a",
+        )
+        second = self.service.capture(
+            "todo",
+            text="手动改取消的待办乙",
+            title="待办乙",
+            transaction_id="tx-sync-b",
+        )
+        third = self.service.capture(
+            "todo",
+            text="保持进行中的待办丙",
+            title="待办丙",
+            transaction_id="tx-sync-c",
+        )
+        # 模拟 note-database：脱引号 + 改状态
+        for todo, new_status in ((first, "已完成"), (second, "已取消")):
+            rel = Path(todo["result"]["path"])
+            path = self.repo.root / rel
+            text = path.read_text(encoding="utf-8")
+            path.write_text(
+                text.replace('status: "进行中"', f"status: {new_status}"),
+                encoding="utf-8",
+            )
+        result = self.service.capture_sync_todos(transaction_id="tx-sync-run")
+        self.assertEqual(len(result["result"]["moved"]), 2)
+        moved_paths = {item["path"] for item in result["result"]["moved"]}
+        self.assertTrue(any(p.startswith("待办空间/已完成/") for p in moved_paths))
+        self.assertTrue(any(p.startswith("待办空间/已取消/") for p in moved_paths))
+        # 未改动的待办保持原位
+        third_rel = Path(third["result"]["path"])
+        self.assertTrue((self.repo.root / third_rel).exists())
+        self.assertEqual(
+            self.repo.find_note(first["result"]["id"])[2]["status"], "done"
+        )
+        self.assertEqual(
+            self.repo.find_note(second["result"]["id"])[2]["status"], "cancelled"
+        )
+        self.assertTrue(self.service.lint()["ok"])
+        # 再跑一次无变化：不产生事务
+        noop = self.service.capture_sync_todos()
+        self.assertFalse(noop["synced"])
+
+    def test_capture_sync_reports_unrecognized_status(self):
+        todo = self.service.capture(
+            "todo",
+            text="状态被手动改成非法值",
+            title="非法状态待办",
+            transaction_id="tx-sync-bad",
+        )
+        rel = Path(todo["result"]["path"])
+        path = self.repo.root / rel
+        text = path.read_text(encoding="utf-8")
+        path.write_text(
+            text.replace('status: "进行中"', "status: 完成"), encoding="utf-8"
+        )
+        result = self.service.capture_sync_todos(transaction_id="tx-sync-bad-run")
+        self.assertFalse(result["synced"])
+        self.assertEqual(len(result["skipped"]), 1)
+        self.assertIn("无法识别状态", result["skipped"][0]["reason"])
+        self.assertTrue((self.repo.root / rel).exists())
+
     def test_capture_retitle_renames_file_and_rewrites_references(self):
         todo = self.service.capture(
             "todo",

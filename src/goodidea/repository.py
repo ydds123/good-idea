@@ -202,6 +202,7 @@ class Repository:
         result: dict[str, Any],
         deletes: set[Path] | None = None,
         validate_sources: bool = True,
+        accept_dirty: bool = False,
     ) -> dict[str, Any]:
         existing = self.transaction_result(transaction_id)
         if existing:
@@ -249,7 +250,7 @@ class Repository:
             ["status", "--porcelain", "--", *[path.as_posix() for path in target_paths]],
             check=True,
         ).stdout.strip()
-        if dirty_targets:
+        if dirty_targets and not accept_dirty:
             raise GitError(
                 "事务目标已有未提交变更，拒绝覆盖或混入自动提交："
                 + dirty_targets.replace("\n", "; ")
