@@ -837,7 +837,7 @@ class GoodIdeaCoreTests(unittest.TestCase):
             )
         r1 = self.service.capture_summarize(
             fid, window="2026-08-15 10:00 — 11:00",
-            summary="第一次讨论的核心内容，保留血肉的摘要。",
+            summary="第一次讨论的核心内容：围绕价值判断展开澄清，保留血肉的摘要正文。",
             confirmed_by_user=True, transaction_id="tx-sum-1",
         )
         self.assertEqual(r1["result"]["summary_count"], 1)
@@ -849,7 +849,7 @@ class GoodIdeaCoreTests(unittest.TestCase):
         # 第二次追加，编号递增
         r2 = self.service.capture_summarize(
             fid, window="2026-08-16 10:00 — 11:00",
-            summary="第二次讨论的内容。",
+            summary="第二次讨论的核心内容：继续澄清并形成新的连接判断。",
             confirmed_by_user=True, transaction_id="tx-sum-2",
         )
         self.assertEqual(r2["result"]["summary_count"], 2)
