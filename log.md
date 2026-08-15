@@ -213,3 +213,5 @@
 
 [2026-08-15T10:51:08+08:00] capture-transition | 明天（8/14）看论文 | tx=capture-transition-20260815105108-f017512c
 
+[2026-08-15T12:15:11+08:00] capture-sync | 归档 6 条记录 | tx=capture-sync-20260815121511-42b56cb7
+
