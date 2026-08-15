@@ -6809,6 +6809,18 @@
       "timestamp": "2026-08-15T18:00:57+08:00",
       "transaction_id": "migrate-todo-ns-profile"
     },
+    "migrate-todo-ns-raycast": {
+      "action": "capture-transition",
+      "result": {
+        "id": "TODO-20260813-505dda9b",
+        "path": "待办空间/2026-08-13-阅读《Raycast从入门到精通：Mac-终极效率神器完全指南》.md",
+        "status": "not_started",
+        "type": "todo"
+      },
+      "summary": "阅读《Raycast从入门到精通：Mac 终极效率神器完全指南》",
+      "timestamp": "2026-08-15T18:00:59+08:00",
+      "transaction_id": "migrate-todo-ns-raycast"
+    },
     "permanent-20260813-agency": {
       "action": "permanent-propose",
       "result": {

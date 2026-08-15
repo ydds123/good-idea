@@ -385,3 +385,5 @@
 
 [2026-08-15T18:00:58+08:00] capture-transition | 去炒饭会行业分析工作台的开源 Git 地址看看是否已开源、能否获取 | tx=migrate-todo-ns-chaofan
 
+[2026-08-15T18:00:59+08:00] capture-transition | 阅读《Raycast从入门到精通：Mac 终极效率神器完全指南》 | tx=migrate-todo-ns-raycast
+
