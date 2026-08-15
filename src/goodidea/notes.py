@@ -5,7 +5,7 @@ import re
 from pathlib import Path
 from typing import Any
 
-from .contracts import ENUM_ZH, NOTE_SPECS
+from .contracts import ENUM_ZH, NOTE_SPECS, TODO_STATUS_DIRS
 from .errors import IntegrityError, ValidationError
 from .metadata import dump_frontmatter, parse_document, replace_frontmatter
 
@@ -22,6 +22,32 @@ _LEGACY_NOTE_PLACEHOLDER = (
 
 TYPE_LOCATIONS = {kind: spec["location"] for kind, spec in NOTE_SPECS.items()}
 INDEX_HEADINGS = {kind: spec["heading"] for kind, spec in NOTE_SPECS.items()}
+
+
+def note_scan_dirs(note_type: str) -> list[Path]:
+    """该类型卡片可能存在的所有目录。
+
+    待办按状态归档（2026-08-15 用户拍板）：根目录=进行中，已完成/ 与 已取消/
+    为状态子目录，扫描时必须全部覆盖，否则归档卡片脱离系统管理。
+    """
+    if note_type == "todo":
+        return sorted({TYPE_LOCATIONS["todo"], *TODO_STATUS_DIRS.values()})
+    return [TYPE_LOCATIONS[note_type]]
+
+
+def note_scan_entries() -> list[tuple[str, Path]]:
+    """(note_type, location) 全库扫描入口，todo 展开为全部状态目录。"""
+    seen: dict[Path, str] = {}
+    for kind, spec in NOTE_SPECS.items():
+        seen[spec["location"]] = kind
+    for status_dir in TODO_STATUS_DIRS.values():
+        seen.setdefault(status_dir, "todo")
+    return [
+        (note_type, location)
+        for location, note_type in sorted(
+            seen.items(), key=lambda item: item[0].as_posix()
+        )
+    ]
 
 # 状态显示标签 = 契约层中文枚举值（ENUM_ZH），单一事实源
 STATUS_LABELS = ENUM_ZH

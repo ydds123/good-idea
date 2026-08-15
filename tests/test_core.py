@@ -2549,6 +2549,53 @@ updated_at: "2026-08-04T00:00:00+08:00"
         self.assertTrue(replay["idempotent"])
         self.assertTrue(self.service.lint()["ok"])
 
+    def test_todo_transition_moves_file_between_status_dirs(self):
+        # 待办按状态归档（2026-08-15 用户拍板）：根=进行中，已完成/、已取消/ 各归其位
+        todo = self.service.capture(
+            "todo",
+            text="验证状态目录流转：进行中→已完成→进行中→已取消",
+            title="状态目录流转测试",
+            transaction_id="tx-status-dir-create",
+        )
+        todo_id = todo["result"]["id"]
+        root_path = todo["result"]["path"]
+        self.assertFalse(root_path.startswith("待办空间/已完成/"))
+        self.assertTrue((self.repo.root / root_path).exists())
+
+        # 已完成 → 移入 待办空间/已完成/
+        done = self.service.capture_transition(
+            todo_id, status="done", transaction_id="tx-status-dir-done"
+        )
+        done_path = done["result"]["path"]
+        self.assertEqual(done_path, "待办空间/已完成/" + root_path.rsplit("/", 1)[-1])
+        self.assertFalse((self.repo.root / root_path).exists())
+        self.assertTrue((self.repo.root / done_path).exists())
+        self.assertEqual(self.repo.find_note(todo_id)[0].as_posix(), done_path)
+
+        # 已取消 → 移入 待办空间/已取消/
+        cancelled = self.service.capture_transition(
+            todo_id, status="cancelled", transaction_id="tx-status-dir-cancel"
+        )
+        cancelled_path = cancelled["result"]["path"]
+        self.assertEqual(cancelled_path, "待办空间/已取消/" + root_path.rsplit("/", 1)[-1])
+        self.assertFalse((self.repo.root / done_path).exists())
+        self.assertTrue((self.repo.root / cancelled_path).exists())
+
+        # 改回进行中 → 移回根目录
+        reopened = self.service.capture_transition(
+            todo_id, status="open", transaction_id="tx-status-dir-reopen"
+        )
+        self.assertEqual(reopened["result"]["path"], root_path)
+        self.assertFalse((self.repo.root / cancelled_path).exists())
+        self.assertTrue((self.repo.root / root_path).exists())
+
+        # 归档中的待办仍可被 lint 与 review 识别（不脱离系统管理）
+        self.assertTrue(self.service.lint()["ok"])
+        self.service.capture_transition(
+            todo_id, status="done", transaction_id="tx-status-dir-done-final"
+        )
+        self.assertTrue(self.service.lint()["ok"])
+
     def test_capture_retitle_renames_file_and_rewrites_references(self):
         todo = self.service.capture(
             "todo",

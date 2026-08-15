@@ -962,7 +962,8 @@ canonical_url: https://example.com/declared-only
             "--transaction-id", "cli-update-do",
         )
         self.assertEqual(updated.returncode, 0, updated.stderr)
-        todo_note_after = (self.root / json.loads(todo.stdout)["result"]["path"]).read_text(
+        # 已完成待办已归档到 待办空间/已完成/（2026-08-15 状态目录契约）
+        todo_note_after = (self.root / json.loads(transitioned.stdout)["result"]["path"]).read_text(
             encoding="utf-8"
         )
         self.assertIn("## 原始记录\n\n更新后的完整正文", todo_note_after)

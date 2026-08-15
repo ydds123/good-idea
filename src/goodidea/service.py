@@ -21,6 +21,7 @@ from .contracts import (
     FORMATION_WITNESS_ROOT,
     NOTE_SPECS,
     PERMANENT_CARD_TYPES,
+    TODO_STATUS_DIRS,
     localize_enums,
 )
 from .errors import GitError, IntegrityError, ValidationError
@@ -31,6 +32,8 @@ from .notes import (
     dated_filename,
     extract_snapshot,
     normalize_source_layout,
+    note_scan_dirs,
+    note_scan_entries,
     remove_list_item_from_section,
     remove_section,
     render_note,
@@ -590,17 +593,45 @@ class GoodIdeaService:
         metadata["updated_at"] = timestamp
         text = replace_frontmatter(text, metadata)
         state = self.repo.read_state()
+        # 待办按状态归档（2026-08-15 用户拍板）：状态变化时把文件移到对应状态目录
+        target_rel = rel
+        writes: dict[Path, str | bytes] = {}
+        deletes: set[Path] = set()
+        if note_type == "todo":
+            target_dir = TODO_STATUS_DIRS[status]
+            target_rel = target_dir / rel.name
+            if target_rel != rel:
+                # 全库重写引用旧路径的 wikilink（来源快照区除外）
+                replacements = {
+                    rel.with_suffix("").as_posix(): target_rel.with_suffix("").as_posix()
+                }
+                for note_type_, location_ in note_scan_entries():
+                    for path in sorted((self.repo.root / location_).glob("*.md")):
+                        other_rel = path.relative_to(self.repo.root)
+                        if other_rel == rel:
+                            continue
+                        note_text = path.read_text(encoding="utf-8")
+                        note_meta, _ = parse_document(note_text)
+                        protect = note_meta.get("type") == "source"
+                        rewritten = _rewrite_wiki_paths(
+                            note_text, replacements, protect_snapshot=protect
+                        )
+                        if rewritten != note_text:
+                            writes[other_rel] = rewritten
+                deletes.add(rel)
         result = {
             "id": note_id,
-            "path": rel.as_posix(),
+            "path": target_rel.as_posix(),
             "type": note_type,
             "status": status,
         }
+        writes[target_rel] = text
         return self.repo.commit(
             transaction_id=txid,
             action="capture-transition",
             summary=metadata["title"],
-            writes={rel: text},
+            writes=writes,
+            deletes=deletes,
             state=state,
             result=result,
         )
@@ -677,7 +708,11 @@ class GoodIdeaService:
             return existing
         timestamp = now_iso()
         note_type = metadata["type"]
-        location = TYPE_LOCATIONS[note_type]
+        # 目标目录：todo 按状态归档保持当前目录；其余类型用固定目录
+        if note_type == "todo":
+            location = rel.parent
+        else:
+            location = TYPE_LOCATIONS[note_type]
         # 计算新路径；与现有文件冲突时递增序号（同 maintain-filenames 逻辑）
         reserved = {rel}
         collision = 1
@@ -704,7 +739,7 @@ class GoodIdeaService:
             deletes.add(rel)
             # 全库重写引用旧路径/旧标题的 wikilink（来源快照受保护）
             replacements = {rel.with_suffix("").as_posix(): new_rel.with_suffix("").as_posix()}
-            for note_type_, location_ in TYPE_LOCATIONS.items():
+            for note_type_, location_ in note_scan_entries():
                 for path in sorted((self.repo.root / location_).glob("*.md")):
                     other_rel = path.relative_to(self.repo.root)
                     if other_rel == rel:
@@ -1341,7 +1376,7 @@ class GoodIdeaService:
                     source_rel.with_suffix("").as_posix():
                     new_source_rel.with_suffix("").as_posix()
                 }
-                for note_type, location in TYPE_LOCATIONS.items():
+                for note_type, location in note_scan_entries():
                     for path in sorted((self.repo.root / location).glob("*.md")):
                         rel = path.relative_to(self.repo.root)
                         note_text = (
@@ -1897,7 +1932,7 @@ class GoodIdeaService:
             return existing
         self.repo.preflight_integrity()
         notes: list[tuple[Path, str, dict[str, Any]]] = []
-        for note_type, location in TYPE_LOCATIONS.items():
+        for note_type, location in note_scan_entries():
             for path in sorted((self.repo.root / location).glob("*.md")):
                 rel = path.relative_to(self.repo.root)
                 text = path.read_text(encoding="utf-8")
@@ -1916,7 +1951,11 @@ class GoodIdeaService:
                 item[0].as_posix(),
             ),
         ):
-            location = TYPE_LOCATIONS[str(metadata["type"])]
+            # todo 按状态归档：candidate 保持在当前状态目录，不把已完成/已取消移回根目录
+            if metadata["type"] == "todo":
+                location = old_rel.parent
+            else:
+                location = TYPE_LOCATIONS[str(metadata["type"])]
             collision = 1
             while True:
                 candidate = location / dated_filename(
@@ -2166,7 +2205,7 @@ class GoodIdeaService:
         writes: dict[Path, str | bytes] = {}
         deletes: set[Path] = set()
         cleaned_fields = 0
-        for note_type, location in TYPE_LOCATIONS.items():
+        for note_type, location in note_scan_entries():
             for path in sorted((self.repo.root / location).glob("*.md")):
                 rel = path.relative_to(self.repo.root)
                 text = path.read_text(encoding="utf-8")
@@ -2233,7 +2272,7 @@ class GoodIdeaService:
             return existing
         state = self.repo.read_state()
         writes: dict[Path, str | bytes] = {}
-        for note_type, location in TYPE_LOCATIONS.items():
+        for note_type, location in note_scan_entries():
             for path in sorted((self.repo.root / location).glob("*.md")):
                 rel = path.relative_to(self.repo.root)
                 text = path.read_text(encoding="utf-8")
@@ -2483,22 +2522,25 @@ class GoodIdeaService:
         pending: list[dict[str, Any]] = []
         stale: list[str] = []
         for note_type in ("flash", "interesting", "todo", "source"):
-            for path in sorted((self.repo.root / TYPE_LOCATIONS[note_type]).glob("*.md")):
-                text = path.read_text(encoding="utf-8")
-                metadata, _ = parse_document(text)
-                if metadata.get("status") in {"pending", "open", "partial", "failed"}:
-                    item = {
-                            "id": metadata["id"],
-                            "type": metadata["type"],
-                            "title": metadata["title"],
-                            "status": metadata["status"],
-                            "path": path.relative_to(self.repo.root).as_posix(),
-                        }
-                    if note_type == "flash" and metadata.get("status") == "pending":
-                        deadline = datetime.fromisoformat(metadata["created_at"]) + FLASH_STALE_AFTER
-                        item["stale"] = now >= deadline
-                        if item["stale"]:
-                            stale.append(str(metadata["id"]))
+            for scan_dir in (
+                note_scan_dirs(note_type) if note_type == "todo" else [TYPE_LOCATIONS[note_type]]
+            ):
+                for path in sorted((self.repo.root / scan_dir).glob("*.md")):
+                    text = path.read_text(encoding="utf-8")
+                    metadata, _ = parse_document(text)
+                    if metadata.get("status") in {"pending", "open", "partial", "failed"}:
+                        item = {
+                                "id": metadata["id"],
+                                "type": metadata["type"],
+                                "title": metadata["title"],
+                                "status": metadata["status"],
+                                "path": path.relative_to(self.repo.root).as_posix(),
+                            }
+                        if note_type == "flash" and metadata.get("status") == "pending":
+                            deadline = datetime.fromisoformat(metadata["created_at"]) + FLASH_STALE_AFTER
+                            item["stale"] = now >= deadline
+                            if item["stale"]:
+                                stale.append(str(metadata["id"]))
                     pending.append(item)
         return {"pending": pending, "stale": stale, "count": len(pending), "write": False}
 
@@ -2507,7 +2549,7 @@ class GoodIdeaService:
         warnings: list[str] = []
         seen_ids: dict[str, str] = {}
         all_notes: list[tuple[Path, str, dict[str, Any]]] = []
-        for expected_type, location in TYPE_LOCATIONS.items():
+        for expected_type, location in note_scan_entries():
             for path in sorted((self.repo.root / location).glob("*.md")):
                 rel = path.relative_to(self.repo.root)
                 try:

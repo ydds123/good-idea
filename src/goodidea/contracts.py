@@ -193,3 +193,11 @@ NOTE_SPECS: dict[str, dict[str, Any]] = {
         "id": re.compile(r"^IDX-[0-9]{8}-[0-9a-f]{8}$"),
     },
 }
+
+# 待办按状态归档（2026-08-15 用户拍板）：根目录=进行中，已完成/ 与 已取消/ 为状态子目录。
+# capture transition 流转状态时按此移动文件；扫描待办时需同时覆盖这些目录。
+TODO_STATUS_DIRS: dict[str, Path] = {
+    "open": Path("待办空间"),
+    "done": Path("待办空间/已完成"),
+    "cancelled": Path("待办空间/已取消"),
+}
