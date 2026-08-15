@@ -217,3 +217,5 @@
 
 [2026-08-15T16:08:37+08:00] capture-valuate | 为 Good Idea 增加用户画像/记忆摘要层（类 ChatGPT 记忆） | tx=capture-valuate-20260815160837-372d6caf
 
+[2026-08-15T16:08:38+08:00] capture-valuate | 闪念卡片每晚 8 点飞书预警机制 | tx=capture-valuate-20260815160838-bfff52a0
+
