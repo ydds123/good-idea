@@ -4,14 +4,14 @@ type: "待办"
 title: "为 Good Idea 增加用户画像/记忆摘要层（类 ChatGPT 记忆）"
 status: "进行中"
 created_at: "2026-08-09T21:42:30+08:00"
-updated_at: "2026-08-15T17:01:54+08:00"
+updated_at: "2026-08-15T17:01:55+08:00"
 source_ids: []
 need_type: "能力"
 goal_id: "认知中枢"
 equifinality: "高"
 multifinality: "高"
 success_probability: "中"
-priority: 1
+priority: 2
 distance: "中"
 specificity: "具体"
 ---
