@@ -241,3 +241,5 @@
 
 [2026-08-15T16:08:41+08:00] capture-valuate | 明天（8/14）看论文 | tx=capture-valuate-20260815160841-cb311111
 
+[2026-08-15T16:11:59+08:00] capture-transition | 闪念卡片每晚 8 点飞书预警机制 | tx=capture-transition-20260815161159-94326ac0
+
