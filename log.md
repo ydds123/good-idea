@@ -209,3 +209,5 @@
 
 [2026-08-15T10:41:22+08:00] capture-transition | 修正闪念捕获recipe措辞：只删填充词，保留思考纹理 | tx=migrate-todo-done-20260815
 
+[2026-08-15T10:51:07+08:00] capture-transition | 看看朱镕基的讲话实录这套书，了解一下 | tx=capture-transition-20260815105107-817c4b9b
+
