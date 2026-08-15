@@ -6725,6 +6725,18 @@
       "timestamp": "2026-08-11T23:08:31+08:00",
       "transaction_id": "migrate-enums-zh-20260811"
     },
+    "migrate-todo-cancel-kanban": {
+      "action": "capture-transition",
+      "result": {
+        "id": "TODO-20260810-b13fdb88",
+        "path": "待办空间/已取消/2026-08-10-看板：记录-good-idea-各类型卡片的每周增长情况.md",
+        "status": "cancelled",
+        "type": "todo"
+      },
+      "summary": "看板：记录 good idea 各类型卡片的每周增长情况",
+      "timestamp": "2026-08-15T18:00:57+08:00",
+      "transaction_id": "migrate-todo-cancel-kanban"
+    },
     "migrate-todo-done-20260815": {
       "action": "capture-transition",
       "result": {

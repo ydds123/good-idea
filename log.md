@@ -373,3 +373,5 @@
 
 [2026-08-15T17:03:41+08:00] capture-valuate | 近期学习清单（AI生图/AI领导力/曾鸣二刷/动机心理学应用） | tx=capture-valuate-20260815170341-73e3a3fa
 
+[2026-08-15T18:00:57+08:00] capture-transition | 看板：记录 good idea 各类型卡片的每周增长情况 | tx=migrate-todo-cancel-kanban
+
