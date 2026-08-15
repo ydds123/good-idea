@@ -11,6 +11,7 @@ from pathlib import Path
 from typing import Any
 
 from .contracts import (
+    FLASH_STATUS_DIRS,
     FORMATION_WITNESS_ROOT,
     TODO_STATUS_DIRS,
     TRANSACTION_ID_PATTERN,
@@ -94,6 +95,10 @@ class Repository:
             directory = self.root / status_dir
             if directory.is_symlink():
                 raise IntegrityError(f"内容目录不得为符号链接：{status_dir}")
+        for status_dir in FLASH_STATUS_DIRS.values():
+            directory = self.root / status_dir
+            if directory.is_symlink():
+                raise IntegrityError(f"内容目录不得为符号链接：{status_dir}")
         if not validate_sources:
             return
         source_dir = self.root / TYPE_LOCATIONS["source"]
@@ -113,7 +118,12 @@ class Repository:
     def find_note(
         self, note_id: str
     ) -> tuple[Path, str, dict[str, Any]] | None:
-        for location in (*TYPE_LOCATIONS.values(), *TODO_STATUS_DIRS.values(), FORMATION_WITNESS_ROOT):
+        for location in (
+            *TYPE_LOCATIONS.values(),
+            *TODO_STATUS_DIRS.values(),
+            *FLASH_STATUS_DIRS.values(),
+            FORMATION_WITNESS_ROOT,
+        ):
             for path in sorted((self.root / location).glob("*.md")):
                 try:
                     text = path.read_text(encoding="utf-8")
@@ -131,7 +141,11 @@ class Repository:
     ) -> dict[Path, str]:
         deleted = deletes or set()
         notes: dict[Path, str] = {}
-        for location in (*TYPE_LOCATIONS.values(), *TODO_STATUS_DIRS.values()):
+        for location in (
+            *TYPE_LOCATIONS.values(),
+            *TODO_STATUS_DIRS.values(),
+            *FLASH_STATUS_DIRS.values(),
+        ):
             for path in sorted((self.root / location).glob("*.md")):
                 rel = path.relative_to(self.root)
                 if rel not in deleted:

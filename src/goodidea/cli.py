@@ -119,11 +119,11 @@ def build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="目标文件已有用户手动修改时放行（文件当前内容视为本事务输入）",
     )
-    sync_todos = capture_sub.add_parser(
+    sync = capture_sub.add_parser(
         "sync",
-        help="扫描待办归档目录，把阅读层手动修改状态后脱节的待办归位",
+        help="扫描待办/闪念归档目录，把阅读层手动修改状态后脱节的记录归位",
     )
-    sync_todos.add_argument("--transaction-id")
+    sync.add_argument("--transaction-id")
     update = capture_sub.add_parser(
         "update", help="用户确认后整体更新轻量记录的原始记录正文"
     )
@@ -576,7 +576,7 @@ def dispatch(args: argparse.Namespace) -> tuple[dict[str, Any], int]:
             accept_dirty=args.accept_dirty,
         )
     elif args.command == "capture" and args.capture_command == "sync":
-        result = service.capture_sync_todos(transaction_id=args.transaction_id)
+        result = service.capture_sync(transaction_id=args.transaction_id)
     elif args.command == "capture" and args.capture_command == "update":
         if args.text_file:
             if args.text:

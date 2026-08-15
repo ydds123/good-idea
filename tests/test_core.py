@@ -2681,7 +2681,7 @@ updated_at: "2026-08-04T00:00:00+08:00"
                 text.replace('status: "进行中"', f"status: {new_status}"),
                 encoding="utf-8",
             )
-        result = self.service.capture_sync_todos(transaction_id="tx-sync-run")
+        result = self.service.capture_sync(transaction_id="tx-sync-run")
         self.assertEqual(len(result["result"]["moved"]), 2)
         moved_paths = {item["path"] for item in result["result"]["moved"]}
         self.assertTrue(any(p.startswith("待办空间/已完成/") for p in moved_paths))
@@ -2697,7 +2697,7 @@ updated_at: "2026-08-04T00:00:00+08:00"
         )
         self.assertTrue(self.service.lint()["ok"])
         # 再跑一次无变化：不产生事务
-        noop = self.service.capture_sync_todos()
+        noop = self.service.capture_sync()
         self.assertFalse(noop["synced"])
 
     def test_capture_sync_reports_unrecognized_status(self):
@@ -2713,11 +2713,123 @@ updated_at: "2026-08-04T00:00:00+08:00"
         path.write_text(
             text.replace('status: "进行中"', "status: 完成"), encoding="utf-8"
         )
-        result = self.service.capture_sync_todos(transaction_id="tx-sync-bad-run")
+        result = self.service.capture_sync(transaction_id="tx-sync-bad-run")
         self.assertFalse(result["synced"])
         self.assertEqual(len(result["skipped"]), 1)
         self.assertIn("无法识别状态", result["skipped"][0]["reason"])
         self.assertTrue((self.repo.root / rel).exists())
+
+    def test_flash_sync_archives_processed_flashes_into_subdir(self):
+        # 闪念与待办同构：sync 扫描闪念归档目录，已处理归位、待处理保持
+        pending = self.service.capture(
+            "flash",
+            text="这条闪念保持待处理，不应移动",
+            transaction_id="tx-flash-sync-pending",
+        )
+        processed = self.service.capture(
+            "flash",
+            text="这条闪念在阅读层被手动标为已处理，sync 应归档",
+            transaction_id="tx-flash-sync-processed",
+        )
+        rel = Path(processed["result"]["path"])
+        path = self.repo.root / rel
+        text = path.read_text(encoding="utf-8")
+        path.write_text(
+            text.replace('status: "待处理"', "status: 已处理"), encoding="utf-8"
+        )
+        result = self.service.capture_sync(transaction_id="tx-flash-sync-run")
+        self.assertEqual(len(result["result"]["moved"]), 1)
+        moved_path = result["result"]["moved"][0]["path"]
+        self.assertTrue(moved_path.startswith("闪念空间/已处理/"))
+        # 待处理闪念保持原位；已处理闪念状态与位置一致
+        pending_rel = Path(pending["result"]["path"])
+        self.assertTrue((self.repo.root / pending_rel).exists())
+        self.assertEqual(
+            self.repo.find_note(processed["result"]["id"])[2]["status"], "processed"
+        )
+        self.assertTrue(self.service.lint()["ok"])
+        # 已归档闪念仍在系统管理内（note_scan_entries 覆盖子目录），review 不再列出
+        reviewed = self.service.review()
+        reviewed_ids = {item["id"] for item in reviewed["pending"]}
+        self.assertIn(pending["result"]["id"], reviewed_ids)
+        self.assertNotIn(processed["result"]["id"], reviewed_ids)
+        # 回退：状态改回待处理，sync 移回根目录
+        archived_path = self.repo.root / Path(moved_path)
+        text = archived_path.read_text(encoding="utf-8")
+        archived_path.write_text(
+            text.replace('status: "已处理"', "status: 待处理"), encoding="utf-8"
+        )
+        back = self.service.capture_sync(transaction_id="tx-flash-sync-back")
+        self.assertEqual(len(back["result"]["moved"]), 1)
+        back_path = back["result"]["moved"][0]["path"]
+        self.assertTrue(back_path.startswith("闪念空间/"))
+        self.assertFalse(back_path.startswith("闪念空间/已处理/"))
+        self.assertEqual(self.repo.find_note(processed["result"]["id"])[0], rel)
+
+    def test_review_lists_only_pending_and_ignores_processed(self):
+        # 回归：review 曾因 pending.append 缩进错误在首个非待处理卡片处崩溃/重复
+        self.service.capture(
+            "flash",
+            text="这条闪念将被手动标为已处理",
+            transaction_id="tx-review-done",
+        )
+        pending = self.service.capture(
+            "flash",
+            text="这条闪念保持待处理，应出现在回顾清单",
+            transaction_id="tx-review-pending",
+        )
+        processed_id = self.service.capture(
+            "flash",
+            text="另一条将被手动标为已处理",
+            transaction_id="tx-review-done2",
+        )["result"]["id"]
+        # 模拟阅读层手动标已处理（暂不归档，根目录仍平铺）
+        rel = self.repo.find_note(processed_id)[0]
+        path = self.repo.root / rel
+        text = path.read_text(encoding="utf-8")
+        path.write_text(
+            text.replace('status: "待处理"', "status: 已处理"), encoding="utf-8"
+        )
+        reviewed = self.service.review()
+        reviewed_ids = {item["id"] for item in reviewed["pending"]}
+        self.assertIn(pending["result"]["id"], reviewed_ids)
+        self.assertNotIn(processed_id, reviewed_ids)
+
+    def test_permanent_accept_archives_source_flash_and_rewrites_link(self):
+        # 永久卡接纳时，形成来源闪念自动归档到 闪念空间/已处理/，卡片链接指向新路径
+        captured = self.service.capture(
+            "flash",
+            text="这张闪念将作为永久卡的形成来源，accept 时应自动归档",
+            transaction_id="tx-accept-flash",
+        )
+        flash_id = captured["result"]["id"]
+        proposal = self.service.permanent_propose(
+            "permanent",
+            draft="# 接纳归档联动\n\n永久卡接纳时闪念应自动归档并保持链接有效。\n",
+            from_ids=[flash_id],
+            formation_sources_confirmed=True,
+            transaction_id="tx-accept-flash-propose",
+        )
+        accepted = self.service.permanent_accept(
+            proposal["result"]["proposal_id"],
+            confirmed_by_user=True,
+            transaction_id="tx-accept-flash-run",
+        )
+        # 闪念已归档到 闪念空间/已处理/
+        new_rel, new_text, new_meta = self.repo.find_note(flash_id)
+        self.assertTrue(new_rel.as_posix().startswith("闪念空间/已处理/"))
+        self.assertEqual(new_meta["status"], "processed")
+        # 永久卡形成来源链接指向新路径，旧路径不再出现
+        card_text = (self.repo.root / accepted["result"]["card_path"]).read_text(
+            encoding="utf-8"
+        )
+        old_stem = "闪念空间/" + captured["result"]["path"].rsplit("/", 1)[-1][:-3]
+        self.assertIn(new_rel.with_suffix("").as_posix(), card_text)
+        self.assertNotIn(old_stem, card_text)
+        self.assertTrue(self.service.lint()["ok"])
+        # review 不再列出已归档闪念
+        reviewed_ids = {item["id"] for item in self.service.review()["pending"]}
+        self.assertNotIn(flash_id, reviewed_ids)
 
     def test_capture_retitle_renames_file_and_rewrites_references(self):
         todo = self.service.capture(

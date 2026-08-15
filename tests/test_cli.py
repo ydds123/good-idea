@@ -860,7 +860,14 @@ canonical_url: https://example.com/declared-only
             "永久空间/永久卡片", "永久空间/母题卡片",
             "永久空间/行动卡片", "永久空间/索引卡片",
         ):
-            notes = list((self.root / directory).glob("*.md"))
+            base = self.root / directory
+            if directory == "闪念空间":
+                # 形成来源闪念在 accept 时归档到 已处理/ 子目录（2026-08-15 拍板）
+                notes = sorted(
+                    [*base.glob("*.md"), *(base / "已处理").glob("*.md")]
+                )
+            else:
+                notes = list(base.glob("*.md"))
             self.assertTrue(notes, directory)
             for note in notes:
                 self.assertRegex(note.name, r"^\d{4}-\d{2}-\d{2}-.+\.md$")

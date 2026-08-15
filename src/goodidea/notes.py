@@ -5,7 +5,7 @@ import re
 from pathlib import Path
 from typing import Any
 
-from .contracts import ENUM_ZH, NOTE_SPECS, TODO_STATUS_DIRS
+from .contracts import ENUM_ZH, FLASH_STATUS_DIRS, NOTE_SPECS, TODO_STATUS_DIRS
 from .errors import IntegrityError, ValidationError
 from .metadata import dump_frontmatter, parse_document, replace_frontmatter
 
@@ -28,10 +28,13 @@ def note_scan_dirs(note_type: str) -> list[Path]:
     """该类型卡片可能存在的所有目录。
 
     待办按状态归档（2026-08-15 用户拍板）：根目录=进行中，已完成/ 与 已取消/
-    为状态子目录，扫描时必须全部覆盖，否则归档卡片脱离系统管理。
+    为状态子目录，扫描时必须全部覆盖，否则归档卡片脱离系统管理。闪念同构：
+    根目录=待处理，已处理/ 为状态子目录。
     """
     if note_type == "todo":
         return sorted({TYPE_LOCATIONS["todo"], *TODO_STATUS_DIRS.values()})
+    if note_type == "flash":
+        return sorted({TYPE_LOCATIONS["flash"], *FLASH_STATUS_DIRS.values()})
     return [TYPE_LOCATIONS[note_type]]
 
 
@@ -42,6 +45,8 @@ def note_scan_entries() -> list[tuple[str, Path]]:
         seen[spec["location"]] = kind
     for status_dir in TODO_STATUS_DIRS.values():
         seen.setdefault(status_dir, "todo")
+    for status_dir in FLASH_STATUS_DIRS.values():
+        seen.setdefault(status_dir, "flash")
     return [
         (note_type, location)
         for location, note_type in sorted(

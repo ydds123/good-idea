@@ -17,6 +17,7 @@ from .capture import CaptureRuntime
 from .contracts import (
     ENUM_FIELDS,
     FLASH_STALE_AFTER,
+    FLASH_STATUS_DIRS,
     FORMATION_WITNESS_ID_PATTERN,
     FORMATION_WITNESS_ROOT,
     NOTE_SPECS,
@@ -594,13 +595,20 @@ class GoodIdeaService:
         metadata["updated_at"] = timestamp
         text = replace_frontmatter(text, metadata)
         state = self.repo.read_state()
-        # 待办按状态归档（2026-08-15 用户拍板）：状态变化时把文件移到对应状态目录
+        # 状态归档（2026-08-15 用户拍板）：状态变化时把文件移到对应状态目录
         target_rel = rel
         writes: dict[Path, str | bytes] = {}
         deletes: set[Path] = set()
         if note_type == "todo":
-            relocation_writes, relocation_deletes, target_rel = self._relocate_todo(
-                rel, status
+            relocation_writes, relocation_deletes, target_rel = self._relocate_note(
+                rel, status, TODO_STATUS_DIRS
+            )
+            writes.update(relocation_writes)
+            deletes.update(relocation_deletes)
+        elif note_type == "flash" and status in FLASH_STATUS_DIRS:
+            # 闪念与待办同构：待处理=根目录，已处理=已处理/ 子目录（dismissed 无归档目录，保持原位）
+            relocation_writes, relocation_deletes, target_rel = self._relocate_note(
+                rel, status, FLASH_STATUS_DIRS
             )
             writes.update(relocation_writes)
             deletes.update(relocation_deletes)
@@ -622,14 +630,16 @@ class GoodIdeaService:
             accept_dirty=accept_dirty,
         )
 
-    def _relocate_todo(
-        self, rel: Path, status: str
+    def _relocate_note(
+        self, rel: Path, status: str, status_dirs: dict[str, Path]
     ) -> tuple[dict[Path, str | bytes], set[Path], Path]:
-        """待办状态归档：计算目标目录路径，全库重写引用旧路径的 wikilink。
+        """状态归档：计算目标目录路径，全库重写引用旧路径的 wikilink。
 
-        来源快照区受保护不参与替换；返回（引用改写 writes、旧路径 deletes、目标路径）。
+        待办/闪念共用（TODO_STATUS_DIRS / FLASH_STATUS_DIRS）。来源快照区受保护
+        不参与替换；返回（引用改写 writes、旧路径 deletes、目标路径）。
+        status 必须存在于 status_dirs，否则 KeyError。
         """
-        target_dir = TODO_STATUS_DIRS[status]
+        target_dir = status_dirs[status]
         target_rel = target_dir / rel.name
         writes: dict[Path, str | bytes] = {}
         deletes: set[Path] = set()
@@ -653,52 +663,60 @@ class GoodIdeaService:
             deletes.add(rel)
         return writes, deletes, target_rel
 
-    def capture_sync_todos(
+    def capture_sync(
         self, *, transaction_id: str | None = None
     ) -> dict[str, Any]:
-        """扫描待办归档目录，把 frontmatter 状态与所在目录不一致的待办归位。
+        """扫描待办/闪念归档目录，把 frontmatter 状态与所在目录不一致的记录归位。
 
         阅读层（Obsidian note-database）手动修改 status 后，文件状态与目录脱节：
         本命令把用户已表达的状态作为事实，一次事务完成所有归档移动、全库引用
-        重写、frontmatter 规范化与聚焦提交。状态值无法识别的文件跳过并报告。
+        重写、frontmatter 规范化与聚焦提交。状态值无法识别的文件跳过并报告；
+        闪念 dismissed 暂无归档目录，保持原位跳过。
         """
+        status_dirs_by_type: dict[str, dict[str, Path]] = {
+            "todo": TODO_STATUS_DIRS,
+            "flash": FLASH_STATUS_DIRS,
+        }
         moves: list[dict[str, Any]] = []
         skipped: list[dict[str, Any]] = []
         seen: set[Path] = set()
-        for location in TODO_STATUS_DIRS.values():
-            for path in sorted((self.repo.root / location).glob("*.md")):
-                rel = path.relative_to(self.repo.root)
-                if rel in seen:
-                    continue
-                seen.add(rel)
-                try:
-                    text = path.read_text(encoding="utf-8")
-                    metadata, _ = parse_document(text)
-                except (OSError, ValidationError) as exc:
-                    skipped.append(
-                        {"path": rel.as_posix(), "reason": f"解析失败：{exc}"}
+        for note_type, status_dirs in status_dirs_by_type.items():
+            for location in status_dirs.values():
+                for path in sorted((self.repo.root / location).glob("*.md")):
+                    rel = path.relative_to(self.repo.root)
+                    if rel in seen:
+                        continue
+                    seen.add(rel)
+                    try:
+                        text = path.read_text(encoding="utf-8")
+                        metadata, _ = parse_document(text)
+                    except (OSError, ValidationError) as exc:
+                        skipped.append(
+                            {"path": rel.as_posix(), "reason": f"解析失败：{exc}"}
+                        )
+                        continue
+                    if metadata.get("type") != note_type:
+                        continue
+                    status = metadata.get("status")
+                    if status not in status_dirs:
+                        if note_type == "flash" and status == "dismissed":
+                            continue
+                        skipped.append(
+                            {"path": rel.as_posix(), "reason": f"无法识别状态：{status!r}"}
+                        )
+                        continue
+                    target_dir = status_dirs[status]
+                    target_rel = target_dir / rel.name
+                    if target_rel == rel:
+                        continue
+                    moves.append(
+                        {
+                            "id": metadata.get("id"),
+                            "from": rel.as_posix(),
+                            "path": target_rel.as_posix(),
+                            "status": status,
+                        }
                     )
-                    continue
-                if metadata.get("type") != "todo":
-                    continue
-                status = metadata.get("status")
-                if status not in TODO_STATUS_DIRS:
-                    skipped.append(
-                        {"path": rel.as_posix(), "reason": f"无法识别状态：{status!r}"}
-                    )
-                    continue
-                target_dir = TODO_STATUS_DIRS[status]
-                target_rel = target_dir / rel.name
-                if target_rel == rel:
-                    continue
-                moves.append(
-                    {
-                        "id": metadata.get("id"),
-                        "from": rel.as_posix(),
-                        "path": target_rel.as_posix(),
-                        "status": status,
-                    }
-                )
         if not moves:
             return {"moved": [], "skipped": skipped, "synced": False}
 
@@ -715,12 +733,13 @@ class GoodIdeaService:
         }
         move_sources = {Path(item["from"]) for item in moves}
         originals: dict[Path, tuple[str, dict[str, Any]]] = {}
-        for location in TODO_STATUS_DIRS.values():
-            for path in sorted((self.repo.root / location).glob("*.md")):
-                rel = path.relative_to(self.repo.root)
-                if rel in move_sources:
-                    text = path.read_text(encoding="utf-8")
-                    originals[rel] = (text, parse_document(text)[0])
+        for status_dirs in status_dirs_by_type.values():
+            for location in status_dirs.values():
+                for path in sorted((self.repo.root / location).glob("*.md")):
+                    rel = path.relative_to(self.repo.root)
+                    if rel in move_sources:
+                        text = path.read_text(encoding="utf-8")
+                        originals[rel] = (text, parse_document(text)[0])
 
         writes: dict[Path, str | bytes] = {}
         deletes: set[Path] = set()
@@ -752,7 +771,7 @@ class GoodIdeaService:
         return self.repo.commit(
             transaction_id=txid,
             action="capture-sync",
-            summary=f"归档 {len(moves)} 条待办",
+            summary=f"归档 {len(moves)} 条记录",
             writes=writes,
             deletes=deletes,
             state=state,
@@ -1857,6 +1876,46 @@ class GoodIdeaService:
                 f"形成于 {wiki_link(found[0], found[2]['title'])}",
             )
         writes: dict[Path, str | bytes] = {}
+        deletes: set[Path] = set()
+        # 形成来源闪念：pending→processed 并归档到 闪念空间/已处理/，全库引用同步重写
+        flash_moves: list[tuple[Path, Path]] = []
+        for from_id in checked_from_ids:
+            found = found_sources[from_id]
+            if found[2].get("type") != "flash":
+                continue
+            from_rel, from_text, from_meta = found
+            if from_meta.get("status") == "dismissed":
+                raise ValidationError(f"已放弃闪念不能直接作为形成来源：{from_id}")
+            if from_meta.get("status") == "processed":
+                continue
+            if from_meta.get("status") != "pending":
+                raise IntegrityError(f"闪念状态不能转换为已处理：{from_id}")
+            from_meta = copy.deepcopy(from_meta)
+            from_meta["status"] = "processed"
+            from_meta["updated_at"] = timestamp
+            reloc_writes, reloc_deletes, target_rel = self._relocate_note(
+                from_rel, "processed", FLASH_STATUS_DIRS
+            )
+            writes.update(reloc_writes)
+            deletes.update(reloc_deletes)
+            flash_moves.append((from_rel, target_rel))
+            from_text = _rewrite_wiki_paths(
+                from_text,
+                {
+                    from_rel.with_suffix("").as_posix(): target_rel.with_suffix("").as_posix()
+                },
+                protect_snapshot=False,
+            )
+            writes[target_rel] = replace_frontmatter(from_text, from_meta)
+        if flash_moves:
+            # 永久卡"形成来源"导航区链接指向归档后的新路径
+            replacements = {
+                old.with_suffix("").as_posix(): new.with_suffix("").as_posix()
+                for old, new in flash_moves
+            }
+            card_body = _rewrite_wiki_paths(
+                card_body, replacements, protect_snapshot=False
+            )
         if witness_rel is not None:
             witness_metadata = {
                 "id": witness_id,
@@ -1881,21 +1940,6 @@ class GoodIdeaService:
             )
         card_text = dump_frontmatter(metadata) + card_body
         writes[card_rel] = card_text
-        for from_id in checked_from_ids:
-            found = found_sources[from_id]
-            if found[2].get("type") != "flash":
-                continue
-            from_rel, from_text, from_meta = found
-            if from_meta.get("status") == "dismissed":
-                raise ValidationError(f"已放弃闪念不能直接作为形成来源：{from_id}")
-            if from_meta.get("status") == "processed":
-                continue
-            if from_meta.get("status") != "pending":
-                raise IntegrityError(f"闪念状态不能转换为已处理：{from_id}")
-            from_meta = copy.deepcopy(from_meta)
-            from_meta["status"] = "processed"
-            from_meta["updated_at"] = timestamp
-            writes[from_rel] = replace_frontmatter(from_text, from_meta)
         result = {
             "proposal_id": proposal_id,
             "card_id": card_id,
@@ -1910,7 +1954,7 @@ class GoodIdeaService:
             action="permanent-accept",
             summary=title,
             writes=writes,
-            deletes={proposal_rel},
+            deletes=deletes | {proposal_rel},
             state=state,
             result=result,
         )
@@ -2665,7 +2709,7 @@ class GoodIdeaService:
                             item["stale"] = now >= deadline
                             if item["stale"]:
                                 stale.append(str(metadata["id"]))
-                    pending.append(item)
+                        pending.append(item)
         return {"pending": pending, "stale": stale, "count": len(pending), "write": False}
 
     def lint(self, *, verify_git: bool = False) -> dict[str, Any]:
