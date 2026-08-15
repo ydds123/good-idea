@@ -860,11 +860,13 @@ class GoodIdeaService:
             VALUATION_LEVELS[normalized["success_probability"]]
             * VALUATION_LEVELS[normalized["multifinality"]]
         )
-        rationale_block = (
-            f"{rationale}\n\n"
-            f"- 期望×价值：{score} 分"
-            f"（概率 {ENUM_ZH[normalized['success_probability']]} × 多效 {ENUM_ZH[normalized['multifinality']]}）"
-            f"→ 优先级 P{priority_map[rel]}（{len(todos)} 条进行中待办）"
+        rationale_block = self._render_rationale_table(
+            rationale,
+            score=score,
+            priority=priority_map[rel],
+            todo_count=len(todos),
+            probability_zh=ENUM_ZH[normalized["success_probability"]],
+            multifinality_zh=ENUM_ZH[normalized["multifinality"]],
         )
         updated_text = replace_frontmatter(text, metadata)
         updated_text = replace_section(updated_text, "估价依据", rationale_block)
@@ -907,6 +909,53 @@ class GoodIdeaService:
                 "ranked": result_ranked,
             },
         )
+
+    @staticmethod
+    def _render_rationale_table(
+        rationale: str,
+        *,
+        score: int,
+        priority: int,
+        todo_count: int,
+        probability_zh: str,
+        multifinality_zh: str,
+    ) -> str:
+        """估价依据渲染为 Markdown 表格（CLI 机械维护，格式统一可审计）。
+
+        解析 '维度：判定 —— 说明' 形式的行（维度必须是五个标签之一），
+        渲染成 内容|内容说明 两列表格；无法解析的行原样保留（容错）。
+        末尾追加确定性得分与优先级。
+        """
+        dims = ("需求类型", "高阶目标", "等效性", "多效性", "成功概率")
+        pattern = re.compile(r"^[-*]?\s*(.+?)[：:]\s*(.+?)\s*——\s*(.+)$")
+        rows: list[tuple[str, str, str]] = []
+        leftover: list[str] = []
+        for line in rationale.strip().splitlines():
+            line = line.strip()
+            if not line:
+                continue
+            m = pattern.match(line)
+            if m and m.group(1).strip() in dims:
+                rows.append((m.group(1).strip(), m.group(2).strip(), m.group(3).strip()))
+            else:
+                leftover.append(line)
+        if rows:
+            table = ["| 内容 | 内容说明 |", "| --- | --- |"]
+            table.extend(
+                f"| {dim}：{judgment} | {explanation} |"
+                for dim, judgment, explanation in rows
+            )
+            body = "\n".join(table)
+        else:
+            body = rationale.strip()
+        if leftover:
+            body += "\n\n" + "\n".join(leftover)
+        body += (
+            f"\n\n- 期望×价值：{score} 分"
+            f"（概率 {probability_zh} × 多效 {multifinality_zh}）"
+            f"→ 优先级 P{priority}（{todo_count} 条进行中待办）"
+        )
+        return body
 
     @staticmethod
     def _rank_todos(
