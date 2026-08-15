@@ -277,3 +277,5 @@
 
 [2026-08-15T16:40:33+08:00] capture-valuate | 阅读《Raycast从入门到精通：Mac 终极效率神器完全指南》 | tx=capture-valuate-20260815164033-2a0b0c4e
 
+[2026-08-15T16:40:33+08:00] capture-valuate | 待办行动闭环方案（未开始档+必填原因+48h预警）实施 | tx=capture-valuate-20260815164033-dc043ae6
+
