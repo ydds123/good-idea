@@ -4,9 +4,9 @@ type: "待办"
 title: "阅读《Raycast从入门到精通：Mac 终极效率神器完全指南》"
 status: "进行中"
 created_at: "2026-08-13T10:12:06+08:00"
-updated_at: "2026-08-15T16:49:43+08:00"
+updated_at: "2026-08-15T17:01:54+08:00"
 source_ids: []
-priority: 7
+priority: 6
 need_type: "能力"
 goal_id: "工具效能"
 equifinality: "高"
