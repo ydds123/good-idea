@@ -309,3 +309,5 @@
 
 [2026-08-15T16:46:47+08:00] capture-valuate | 看板：记录 good idea 各类型卡片的每周增长情况 | tx=capture-valuate-20260815164647-626ded17
 
+[2026-08-15T16:46:47+08:00] capture-valuate | 去炒饭会行业分析工作台的开源 Git 地址看看是否已开源、能否获取 | tx=capture-valuate-20260815164647-6a13fe7c
+
