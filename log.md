@@ -383,3 +383,5 @@
 
 [2026-08-15T18:00:58+08:00] capture-transition | 开源AI电影《Hell Grind》：视频领域的控制论实践学习项目 | tx=migrate-todo-ns-hellgrind
 
+[2026-08-15T18:00:58+08:00] capture-transition | 去炒饭会行业分析工作台的开源 Git 地址看看是否已开源、能否获取 | tx=migrate-todo-ns-chaofan
+
