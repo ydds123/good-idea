@@ -423,3 +423,5 @@
 
 [2026-08-15T19:15:24+08:00] capture-discuss | 打字其实并不是一个很自然的人机交互动作——打字更多是为了适应机器，而不是人的想法 | tx=discuss-typewriter-test-02
 
+[2026-08-15T19:35:13+08:00] capture-summarize | 打字其实并不是一个很自然的人机交互动作——打字更多是为了适应机器，而不是人的想法 | tx=summarize-typewriter-20260815-01
+
