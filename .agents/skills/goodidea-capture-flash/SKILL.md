@@ -69,7 +69,7 @@ description: "捕捉 Good idea 闪念及多轮认知会话。用户正在表达�
 
 围绕闪念卡讨论（无论是否讨论转永久卡）时：
 
-1. **讨论过程**：用 `capture discuss --note-id <id> --role user|assistant --text <原文>` 逐轮记录双方**原文**（时间线 JSON，`.goodidea/runtime/discussions/<id>.json`，frontmatter `discussion_log` 关联）。只记录原文，**不转化、不结构化摘要**。
+1. **讨论过程**：用 `capture discuss --note-id <id> --role user|assistant --text <原文>` 逐轮记录双方**原文**（时间线 JSON，`.goodidea/runtime/discussions/<id>.json`，frontmatter `discussion_log` 关联）。只记录原文，**不转化、不结构化摘要**。**同一卡片始终追加同一档案文件**（单文件时间线，不开新文件——讨论从上次停处延续）。
 2. **讨论产生结论**：先问用户是否转永久卡——
    - **转** → 转交 `goodidea-form-permanent` 流程（澄清→结构化→覆盖检查→用户确认→propose/accept）；
    - **不转** → 结论以**用户原话**经确认后进演化记录（`capture revise`，其语义就是逐字追加用户亲自写下的内容），或留在 discussion_log 等发酵。
