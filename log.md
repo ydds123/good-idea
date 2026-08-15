@@ -311,3 +311,5 @@
 
 [2026-08-15T16:46:47+08:00] capture-valuate | 去炒饭会行业分析工作台的开源 Git 地址看看是否已开源、能否获取 | tx=capture-valuate-20260815164647-6a13fe7c
 
+[2026-08-15T16:46:47+08:00] capture-valuate | 阅读《Raycast从入门到精通：Mac 终极效率神器完全指南》 | tx=capture-valuate-20260815164647-90dadb0b
+
