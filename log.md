@@ -381,3 +381,5 @@
 
 [2026-08-15T18:00:58+08:00] capture-transition | 如何更好地使用你（Hermes精装配置研究） | tx=migrate-todo-ns-hermes
 
+[2026-08-15T18:00:58+08:00] capture-transition | 开源AI电影《Hell Grind》：视频领域的控制论实践学习项目 | tx=migrate-todo-ns-hellgrind
+

@@ -6761,6 +6761,18 @@
       "timestamp": "2026-08-15T18:00:58+08:00",
       "transaction_id": "migrate-todo-ns-ai-chain"
     },
+    "migrate-todo-ns-hellgrind": {
+      "action": "capture-transition",
+      "result": {
+        "id": "TODO-20260810-92f84ca8",
+        "path": "待办空间/2026-08-10-开源AI电影《Hell-Grind》：视频领域的控制论实践学习项目.md",
+        "status": "not_started",
+        "type": "todo"
+      },
+      "summary": "开源AI电影《Hell Grind》：视频领域的控制论实践学习项目",
+      "timestamp": "2026-08-15T18:00:58+08:00",
+      "transaction_id": "migrate-todo-ns-hellgrind"
+    },
     "migrate-todo-ns-hermes": {
       "action": "capture-transition",
       "result": {
