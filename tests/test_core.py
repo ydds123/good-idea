@@ -855,12 +855,17 @@ class GoodIdeaCoreTests(unittest.TestCase):
         self.assertEqual(r2["result"]["summary_count"], 2)
         _, body2, _ = self.repo.find_note(fid)
         self.assertIn("第 2 次讨论", body2)
-        # 幂等重放
+        # 幂等重放（参数需通过前置校验，返回首次结果）
         replay = self.service.capture_summarize(
-            fid, window="x", summary="重复", confirmed_by_user=True,
+            fid, window="x",
+            summary="重复重放的长摘要文本用于幂等校验验证机制正常运作。",
+            confirmed_by_user=True,
             transaction_id="tx-sum-1",
         )
         self.assertTrue(replay["idempotent"])
+        _, body3, _ = self.repo.find_note(fid)
+        self.assertIn("第 1 次讨论", body3)
+        self.assertNotIn("重复重放", body3)
 
     def test_tampered_source_does_not_block_runtime_or_flash_finalize(self):
         captured = self.service.source_commit(
