@@ -315,3 +315,5 @@
 
 [2026-08-15T16:46:48+08:00] capture-valuate | 待办行动闭环方案（未开始档+必填原因+48h预警）实施 | tx=capture-valuate-20260815164648-e16ee56d
 
+[2026-08-15T16:46:48+08:00] capture-valuate | 近期学习清单（AI生图/AI领导力/曾鸣二刷/动机心理学应用） | tx=capture-valuate-20260815164648-6aacd897
+
