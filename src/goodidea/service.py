@@ -941,13 +941,13 @@ class GoodIdeaService:
                 leftover.append(line)
         if rows:
             # 按固定维度顺序排序（需求类型→高阶目标→等效性→多效性→成功概率），
-            # 内容列只放判定值，维度由行序隐含
+            # 三列：对象（维度）| 内容（判定值）| 说明（理由）
             dim_index = {dim: i for i, dim in enumerate(dims)}
             rows.sort(key=lambda row: dim_index[row[0]])
-            table = ["| 内容 | 说明 |", "| --- | --- |"]
+            table = ["| 对象 | 内容 | 说明 |", "| --- | --- | --- |"]
             table.extend(
-                f"| {judgment} | {explanation} |"
-                for _, judgment, explanation in rows
+                f"| {dim} | {judgment} | {explanation} |"
+                for dim, judgment, explanation in rows
             )
             body = "\n".join(table)
         else:
