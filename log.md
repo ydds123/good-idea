@@ -237,3 +237,5 @@
 
 [2026-08-15T16:08:41+08:00] capture-valuate | 看看朱镕基的讲话实录这套书，了解一下 | tx=capture-valuate-20260815160841-95b08072
 
+[2026-08-15T16:08:41+08:00] capture-valuate | 修正闪念捕获recipe措辞：只删填充词，保留思考纹理 | tx=capture-valuate-20260815160841-e6b7b1df
+
