@@ -269,3 +269,5 @@
 
 [2026-08-15T16:40:32+08:00] capture-valuate | 如何更好地使用你（Hermes精装配置研究） | tx=capture-valuate-20260815164032-60581295
 
+[2026-08-15T16:40:32+08:00] capture-valuate | 开源AI电影《Hell Grind》：视频领域的控制论实践学习项目 | tx=capture-valuate-20260815164032-b2a07f49
+
