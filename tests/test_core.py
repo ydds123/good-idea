@@ -872,7 +872,7 @@ class GoodIdeaCoreTests(unittest.TestCase):
             summary="第一次讨论的升级版摘要：结构保留 MECE 与金字塔，血肉完整。",
             confirmed_by_user=True, transaction_id="tx-sum-3",
         )
-        self.assertEqual(r3["result"]["summary_count"], 1, "同窗口覆盖不增加条目数")
+        self.assertEqual(r3["result"]["summary_count"], 2, "同窗口覆盖不增加条目数（仍是第 1+第 2 次讨论）")
         _, body4, _ = self.repo.find_note(fid)
         self.assertIn("升级版摘要", body4)
         self.assertNotIn("围绕价值判断展开澄清", body4, "旧摘要已被替换")
