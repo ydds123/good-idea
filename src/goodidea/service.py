@@ -702,11 +702,25 @@ class GoodIdeaService:
             f"    {line}" if line.strip() else line
             for line in summary.strip().splitlines()
         )
-        entry = (
-            f"**{window.strip()}**｜第 {existing_count + 1} 次讨论\n\n"
-            f"{indented}"
-        )
-        text_note = add_list_item_to_section(text_note, "讨论摘要", entry)
+        entry_marker = f"- **{window.strip()}**"
+        if entry_marker in text_note:
+            # 同窗口条目存在 → 覆盖重写（同一讨论的摘要升级，不新增编号）
+            start = text_note.find(entry_marker)
+            next_item = text_note.find("\n- **", start + len(entry_marker))
+            if next_item < 0:
+                next_item = len(text_note)
+            new_block = (
+                f"{entry_marker}｜第 {existing_count} 次讨论\n\n{indented}"
+            )
+            text_note = text_note[:start] + new_block + text_note[next_item:]
+            result_count = existing_count
+        else:
+            entry = (
+                f"**{window.strip()}**｜第 {existing_count + 1} 次讨论\n\n"
+                f"{indented}"
+            )
+            text_note = add_list_item_to_section(text_note, "讨论摘要", entry)
+            result_count = existing_count + 1
         metadata["updated_at"] = timestamp
         text_note = replace_frontmatter(text_note, metadata)
         state = self.repo.read_state()
@@ -714,7 +728,7 @@ class GoodIdeaService:
             "id": note_id,
             "path": rel.as_posix(),
             "type": metadata["type"],
-            "summary_count": existing_count + 1,
+            "summary_count": result_count,
         }
         return self.repo.commit(
             transaction_id=txid,

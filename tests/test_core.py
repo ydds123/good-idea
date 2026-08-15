@@ -866,6 +866,16 @@ class GoodIdeaCoreTests(unittest.TestCase):
         _, body3, _ = self.repo.find_note(fid)
         self.assertIn("第 1 次讨论", body3)
         self.assertNotIn("重复重放", body3)
+        # 同窗口覆盖：同一讨论的摘要升级，不新增编号
+        r3 = self.service.capture_summarize(
+            fid, window="2026-08-15 10:00 — 11:00",
+            summary="第一次讨论的升级版摘要：结构保留 MECE 与金字塔，血肉完整。",
+            confirmed_by_user=True, transaction_id="tx-sum-3",
+        )
+        self.assertEqual(r3["result"]["summary_count"], 1, "同窗口覆盖不增加条目数")
+        _, body4, _ = self.repo.find_note(fid)
+        self.assertIn("升级版摘要", body4)
+        self.assertNotIn("围绕价值判断展开澄清", body4, "旧摘要已被替换")
 
     def test_tampered_source_does_not_block_runtime_or_flash_finalize(self):
         captured = self.service.source_commit(
