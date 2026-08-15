@@ -804,6 +804,8 @@ class GoodIdeaService:
         found = self.repo.find_note(note_id)
         if not found or found[2].get("type") != "todo":
             raise ValidationError(f"找不到待办：{note_id}")
+        if found[2].get("status") != "open":
+            raise ValidationError("只对进行中的待办估价；已完成/已取消请用 capture transition 流转")
         rel, text, metadata = found
         labels = {
             "need_type": need_type,
@@ -828,7 +830,7 @@ class GoodIdeaService:
             return existing
         timestamp = now_iso()
 
-        # 收集全部待办（含状态归档子目录），按期望×价值确定性排序
+        # 收集全部"进行中"待办（已完成/已取消归档不产生行动，不参与估价排序）
         todos: list[tuple[Path, dict[str, Any]]] = []
         for location in TODO_STATUS_DIRS.values():
             for path in sorted((self.repo.root / location).glob("*.md")):
@@ -836,7 +838,7 @@ class GoodIdeaService:
                     meta, _ = parse_document(path.read_text(encoding="utf-8"))
                 except (OSError, ValidationError):
                     continue
-                if meta.get("type") != "todo":
+                if meta.get("type") != "todo" or meta.get("status") != "open":
                     continue
                 todos.append((path.relative_to(self.repo.root), meta))
         ranked = self._rank_todos(todos)

@@ -2943,6 +2943,36 @@ updated_at: "2026-08-04T00:00:00+08:00"
         self.assertEqual(self.repo.find_note(valued["result"]["id"])[2]["priority"], 1)
         self.assertEqual(self.repo.find_note(unvalued["result"]["id"])[2]["priority"], 2)
 
+    def test_capture_valuate_skips_non_open_todos(self):
+        # 已完成/已取消待办不产生行动：不参与估价排序，且拒绝直接估价
+        done_todo = self.service.capture(
+            "todo", text="这条已完成，不应被估价", title="已完成待办",
+            transaction_id="tx-val-done",
+        )
+        open_todo = self.service.capture(
+            "todo", text="进行中待办", title="进行中",
+            transaction_id="tx-val-open",
+        )
+        self.service.capture_transition(
+            done_todo["result"]["id"], status="done", transaction_id="tx-val-done-tx"
+        )
+        result = self.service.capture_valuate(
+            open_todo["result"]["id"],
+            need_type="能力", goal_id="工具效能", equifinality="中",
+            multifinality="中", success_probability="中",
+            transaction_id="tx-val-open-run",
+        )
+        ranked_ids = {item["id"] for item in result["result"]["ranked"]}
+        self.assertNotIn(done_todo["result"]["id"], ranked_ids)
+        self.assertEqual(len(result["result"]["ranked"]), 1)
+        with self.assertRaises(ValidationError):
+            self.service.capture_valuate(
+                done_todo["result"]["id"],
+                need_type="能力", goal_id="工具效能", equifinality="高",
+                multifinality="高", success_probability="高",
+                transaction_id="tx-val-done-reject",
+            )
+
     def test_capture_retitle_renames_file_and_rewrites_references(self):
         todo = self.service.capture(
             "todo",
