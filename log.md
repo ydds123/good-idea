@@ -377,3 +377,5 @@
 
 [2026-08-15T18:00:57+08:00] capture-transition | 为 Good Idea 增加用户画像/记忆摘要层（类 ChatGPT 记忆） | tx=migrate-todo-ns-profile
 
+[2026-08-15T18:00:58+08:00] capture-transition | AI产业链思考沉淀：算力/模型/应用平台层级梳理 → 永久母题 | tx=migrate-todo-ns-ai-chain
+

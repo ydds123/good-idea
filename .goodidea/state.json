@@ -6749,6 +6749,18 @@
       "timestamp": "2026-08-15T10:41:22+08:00",
       "transaction_id": "migrate-todo-done-20260815"
     },
+    "migrate-todo-ns-ai-chain": {
+      "action": "capture-transition",
+      "result": {
+        "id": "TODO-20260810-b63907fe",
+        "path": "待办空间/2026-08-10-AI产业链思考沉淀：算力-模型-应用平台层级梳理-→-永久母题.md",
+        "status": "not_started",
+        "type": "todo"
+      },
+      "summary": "AI产业链思考沉淀：算力/模型/应用平台层级梳理 → 永久母题",
+      "timestamp": "2026-08-15T18:00:58+08:00",
+      "transaction_id": "migrate-todo-ns-ai-chain"
+    },
     "migrate-todo-ns-profile": {
       "action": "capture-transition",
       "result": {
