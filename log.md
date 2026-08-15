@@ -243,3 +243,5 @@
 
 [2026-08-15T16:11:59+08:00] capture-transition | 闪念卡片每晚 8 点飞书预警机制 | tx=capture-transition-20260815161159-94326ac0
 
+[2026-08-15T16:12:03+08:00] capture-valuate | AI产业链思考沉淀：算力/模型/应用平台层级梳理 → 永久母题 | tx=capture-valuate-20260815161203-499dc9c8
+
