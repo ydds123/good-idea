@@ -287,6 +287,18 @@
       "timestamp": "2026-08-15T18:11:10+08:00",
       "transaction_id": "capture-transition-20260815181110-e5c7001d"
     },
+    "capture-transition-20260815200101-c8d60521": {
+      "action": "capture-transition",
+      "result": {
+        "id": "FLA-20260812-8d33bcb8",
+        "path": "闪念空间/发酵中/2026-08-12-打字其实并不是一个很自然的人机交互动作——打字更多是为了适应机器，而不是人的想法.md",
+        "status": "fermenting",
+        "type": "flash"
+      },
+      "summary": "打字其实并不是一个很自然的人机交互动作——打字更多是为了适应机器，而不是人的想法",
+      "timestamp": "2026-08-15T20:01:01+08:00",
+      "transaction_id": "capture-transition-20260815200101-c8d60521"
+    },
     "capture-valuate-20260815160837-372d6caf": {
       "action": "capture-valuate",
       "result": {
