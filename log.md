@@ -299,3 +299,5 @@
 
 [2026-08-15T16:42:42+08:00] capture-valuate | 近期学习清单（AI生图/AI领导力/曾鸣二刷/动机心理学应用） | tx=capture-valuate-20260815164242-41b0daf5
 
+[2026-08-15T16:46:46+08:00] capture-valuate | 为 Good Idea 增加用户画像/记忆摘要层（类 ChatGPT 记忆） | tx=capture-valuate-20260815164646-fc3b9606
+
