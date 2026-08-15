@@ -708,7 +708,76 @@ class GoodIdeaCoreTests(unittest.TestCase):
         removed = runtime.cleanup_completed(
             current_time=datetime.now().astimezone() + timedelta(days=2)
         )
+        # 会话存档永久保留（2026-08-15 拍板）：cleanup 只清维护缓存，不删会话
         self.assertEqual(removed, [session_id])
+        self.assertTrue(runtime._session_dir(session_id, completed=True).is_dir())
+
+    def test_capture_cleanup_keeps_session_archive(self):
+        # completed-captures 会话存档永久保留（2026-08-15 拍板：讨论原文是认知资产）
+        runtime, session_id, _, proposal_id = self._capture_session_with_proposal()
+        self.service.capture_finalize(
+            runtime,
+            session_id,
+            proposal_id=proposal_id,
+            confirmed_by_user=True,
+            transaction_id="cleanup-keeps-archive-finalize",
+        )
+        directory = runtime._session_dir(session_id, completed=True)
+        self.assertTrue(directory.is_dir())
+        runtime.cleanup_completed(
+            current_time=datetime.now().astimezone() + timedelta(days=2)
+        )
+        self.assertTrue(directory.is_dir(), "completed-captures 会话存档应永久保留")
+        # 会话原文（用户口述 entries）仍在
+        state = json.loads((directory / "session.json").read_text(encoding="utf-8"))
+        self.assertTrue(state["entries"])
+
+    def test_capture_append_assistant_role_records_discussion(self):
+        # Agent 输出以 assistant 条目入档：不重置 proposal、不进入正式追溯
+        runtime, session_id, _, proposal_id = self._capture_session_with_proposal()
+        session_dir = runtime._session_dir(session_id)
+        before = json.loads((session_dir / "session.json").read_text(encoding="utf-8"))
+        proposal_before = before["proposal"]
+        runtime.append(
+            session_id,
+            text="Agent 的澄清问题与讨论摘要",
+            context_refs=[],
+            transaction_id="assistant-note-1",
+            role="assistant",
+        )
+        after = json.loads((session_dir / "session.json").read_text(encoding="utf-8"))
+        self.assertEqual(after["entries"][-1]["role"], "assistant")
+        self.assertEqual(after["proposal"], proposal_before, "assistant 条目不重置 proposal")
+        # finalize 正常，正式闪念只追溯用户表达
+        finalized = self.service.capture_finalize(
+            runtime,
+            session_id,
+            proposal_id=proposal_id,
+            confirmed_by_user=True,
+            transaction_id="finalize-with-assistant-notes",
+        )
+        self.assertEqual(finalized["result"]["flash_count"], 1)
+
+    def test_capture_finalize_writes_capture_session_link(self):
+        # 落卡 frontmatter 写 capture_session，卡片可回溯讨论会话存档
+        runtime, session_id, _, proposal_id = self._capture_session_with_proposal()
+        finalized = self.service.capture_finalize(
+            runtime,
+            session_id,
+            proposal_id=proposal_id,
+            confirmed_by_user=True,
+            transaction_id="finalize-session-link",
+        )
+        flash_path = self.root / finalized["result"]["flashes"][0]["path"]
+        text = flash_path.read_text(encoding="utf-8")
+        self.assertIn(f'capture_session: "{session_id}"', text)
+        # 会话存档与卡片路径互指
+        state = json.loads(
+            (
+                runtime._session_dir(session_id, completed=True) / "session.json"
+            ).read_text(encoding="utf-8")
+        )
+        self.assertEqual(state["formal_result"]["flashes"][0]["id"], finalized["result"]["flashes"][0]["id"])
 
     def test_tampered_source_does_not_block_runtime_or_flash_finalize(self):
         captured = self.service.source_commit(

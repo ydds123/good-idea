@@ -79,6 +79,10 @@ def build_parser() -> argparse.ArgumentParser:
     append.add_argument("--session-id", required=True)
     append.add_argument("--text", required=True)
     append.add_argument("--context-ref", action="append", default=[])
+    append.add_argument(
+        "--role", choices=["user", "assistant"], default="user",
+        help="条目角色：user=用户口述（进入正式候选）；assistant=Agent 输出（仅作讨论记录入档）",
+    )
     append.add_argument("--transaction-id", required=True)
     propose_capture = capture_sub.add_parser("propose")
     propose_capture.add_argument("--session-id", required=True)
@@ -545,6 +549,7 @@ def dispatch(args: argparse.Namespace) -> tuple[dict[str, Any], int]:
             text=args.text,
             context_refs=args.context_ref,
             transaction_id=args.transaction_id,
+            role=args.role,
         )
     elif args.command == "capture" and args.capture_command == "propose":
         runtime = CaptureRuntime(repo.root)

@@ -209,9 +209,12 @@ class CaptureRuntime:
         text: str,
         context_refs: list[str],
         transaction_id: str,
+        role: str = "user",
     ) -> dict[str, Any]:
         if not text.strip():
             raise ValidationError("追加内容不能为空")
+        if role not in ("user", "assistant"):
+            raise ValidationError("role 只能是 user 或 assistant")
         if existing := self._global_result(transaction_id):
             return {"idempotent": True, **existing}
         directory = self._find_session_dir(session_id)
@@ -228,16 +231,20 @@ class CaptureRuntime:
             timestamp = now_iso()
             entry_id = f"ENT-{secrets.token_hex(6)}"
             state["entries"].append(
-                {"entry_id": entry_id, "role": "user", "text": text, "recorded_at": timestamp}
+                {"entry_id": entry_id, "role": role, "text": text, "recorded_at": timestamp}
             )
+            if role == "user":
+                # 用户口述：新内容进入正式候选，重置 proposal 等待重新提议
+                state["proposal"] = None
+                state["status"] = "active"
+            # assistant 条目（2026-08-15：Agent 输出作为讨论记录入档，
+            # 不重置 proposal、不进入正式闪念追溯）
             known = {item["ref"] for item in state.get("contexts", [])}
             for raw in context_refs:
                 ref = raw.strip()
                 if ref and ref not in known:
                     state.setdefault("contexts", []).append({"ref": ref, "status": "unchecked"})
                     known.add(ref)
-            state["proposal"] = None
-            state["status"] = "active"
             state["updated_at"] = timestamp
             result = {
                 "session_id": session_id,
@@ -516,8 +523,13 @@ class CaptureRuntime:
         return cancelled
 
     def cleanup_completed(self, *, current_time: datetime | None = None) -> list[str]:
+        """清理已完成会话的后台维护临时资产。
+
+        2026-08-15 用户拍板：会话存档（含用户口述原稿与讨论记录）是认知资产，
+        永久保留、不删除；本命令只清理维护任务产生的临时缓存。
+        """
         now = current_time or datetime.now().astimezone()
-        removed: list[str] = []
+        cleaned: list[str] = []
         for directory in sorted(self.completed.iterdir()):
             if not directory.is_dir():
                 continue
@@ -532,9 +544,8 @@ class CaptureRuntime:
                 cache = self.maintenance_assets / str(job.get("job_id"))
                 if cache.is_dir() and not cache.is_symlink():
                     shutil.rmtree(cache)
-            shutil.rmtree(directory)
-            removed.append(str(state["session_id"]))
-        return removed
+            cleaned.append(str(state["session_id"]))
+        return cleaned
 
     def transition(
         self,
@@ -607,7 +618,14 @@ class CaptureRuntime:
             raise ValidationError("捕获会话没有可确认的最新候选")
         if proposal.get("proposal_id") != proposal_id:
             raise ValidationError("只能确认最新闪念候选")
-        if proposal.get("last_entry_id") != state.get("entries", [])[-1].get("entry_id"):
+        if proposal.get("last_entry_id") != next(
+            (
+                item["entry_id"]
+                for item in reversed(state.get("entries", []))
+                if item.get("role") == "user"
+            ),
+            None,
+        ):
             raise ValidationError("候选生成后出现新表达，必须重新审阅")
         return directory, state
 

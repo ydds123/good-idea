@@ -1352,6 +1352,8 @@ class GoodIdeaService:
                 "created_at": created_at,
                 "updated_at": timestamp,
                 "source_ids": [],
+                # 讨论会话关联（2026-08-15：卡片可回溯到自己的讨论过程存档）
+                "capture_session": session_id,
             }
             writes[rel] = render_flash_event(metadata, candidate)
             formal_flashes.append(
