@@ -3006,8 +3006,9 @@ updated_at: "2026-08-04T00:00:00+08:00"
         )
         rel, text, _ = self.repo.find_note(tid)
         self.assertIn("## 估价依据", text)
-        self.assertIn("| 需求类型：能力 | 为求职期行业理解补弹药 |", text)
-        self.assertIn("| 高阶目标：行业职业 | 直接服务求职主线 |", text)
+        self.assertIn("| 内容 | 说明 |", text)
+        self.assertIn("| 能力 | 为求职期行业理解补弹药 |", text)
+        self.assertIn("| 行业职业 | 直接服务求职主线 |", text)
         self.assertIn("期望×价值：9 分", text)
         self.assertIn("优先级 P1", text)
         # 理由区只出现一次（位于正文末尾）
