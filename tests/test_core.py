@@ -2831,6 +2831,118 @@ updated_at: "2026-08-04T00:00:00+08:00"
         reviewed_ids = {item["id"] for item in self.service.review()["pending"]}
         self.assertNotIn(flash_id, reviewed_ids)
 
+    def test_capture_valuate_writes_labels_and_ranks_todos(self):
+        # 期望×价值排序：概率×多效性主键，等效性 tie-break；标签中文写回 frontmatter
+        todo_a = self.service.capture(
+            "todo", text="高概率高多效：产业链母题", title="母题甲",
+            transaction_id="tx-val-a",
+        )
+        todo_b = self.service.capture(
+            "todo", text="低概率低多效：看板统计", title="看板乙",
+            transaction_id="tx-val-b",
+        )
+        todo_c = self.service.capture(
+            "todo", text="中概率中多效：行动闭环", title="闭环丙",
+            transaction_id="tx-val-c",
+        )
+        self.service.capture_valuate(
+            todo_a["result"]["id"],
+            need_type="能力", goal_id="行业职业", equifinality="高",
+            multifinality="高", success_probability="高",
+            transaction_id="tx-val-a-run",
+        )
+        self.service.capture_valuate(
+            todo_c["result"]["id"],
+            need_type="自主", goal_id="认知中枢", equifinality="中",
+            multifinality="中", success_probability="中",
+            transaction_id="tx-val-c-run",
+        )
+        done = self.service.capture_valuate(
+            todo_b["result"]["id"],
+            need_type="自主", goal_id="认知中枢", equifinality="低",
+            multifinality="低", success_probability="低",
+            transaction_id="tx-val-b-run",
+        )
+        ranked = done["result"]["ranked"]
+        self.assertEqual(ranked[0]["id"], todo_a["result"]["id"])
+        self.assertEqual(ranked[1]["id"], todo_c["result"]["id"])
+        self.assertEqual(ranked[2]["id"], todo_b["result"]["id"])
+        # 标签中文写回 frontmatter，内部值英文
+        rel_a, text_a, meta_a = self.repo.find_note(todo_a["result"]["id"])
+        self.assertEqual(meta_a["need_type"], "competence")
+        self.assertEqual(meta_a["goal_id"], "goal_career")
+        self.assertEqual(meta_a["success_probability"], "high")
+        self.assertEqual(meta_a["priority"], 1)
+        self.assertIn('need_type: "能力"', text_a)
+        self.assertIn('goal_id: "行业职业"', text_a)
+        self.assertIn("priority: 1", text_a)
+        self.assertTrue(self.service.lint()["ok"])
+        # 幂等重放返回原结果
+        replay = self.service.capture_valuate(
+            todo_b["result"]["id"],
+            need_type="自主", goal_id="认知中枢", equifinality="低",
+            multifinality="低", success_probability="低",
+            transaction_id="tx-val-b-run",
+        )
+        self.assertTrue(replay["idempotent"])
+
+    def test_capture_valuate_rejects_invalid_labels(self):
+        todo = self.service.capture(
+            "todo", text="非法标签测试", title="非法标签",
+            transaction_id="tx-val-bad",
+        )
+        tid = todo["result"]["id"]
+        with self.assertRaises(ValidationError):
+            self.service.capture_valuate(
+                tid, need_type="幻想", goal_id="认知中枢",
+                equifinality="高", multifinality="高", success_probability="高",
+                transaction_id="tx-val-bad-need",
+            )
+        with self.assertRaises(ValidationError):
+            self.service.capture_valuate(
+                tid, need_type="能力", goal_id="不存在目标",
+                equifinality="高", multifinality="高", success_probability="高",
+                transaction_id="tx-val-bad-goal",
+            )
+        with self.assertRaises(ValidationError):
+            self.service.capture_valuate(
+                tid, need_type="能力", goal_id="认知中枢",
+                equifinality="高", multifinality="超高", success_probability="高",
+                transaction_id="tx-val-bad-multi",
+            )
+        # 非待办（闪念）拒绝估价
+        flash = self.service.capture(
+            "flash", text="闪念不能被估价", transaction_id="tx-val-flash"
+        )
+        with self.assertRaises(ValidationError):
+            self.service.capture_valuate(
+                flash["result"]["id"], need_type="能力", goal_id="认知中枢",
+                equifinality="高", multifinality="高", success_probability="高",
+                transaction_id="tx-val-bad-type",
+            )
+
+    def test_capture_valuate_ranks_unvalued_last(self):
+        # 未估价待办排最后（按创建时间），已估价按期望×价值
+        unvalued = self.service.capture(
+            "todo", text="未估价待办应排最后", title="未估价",
+            transaction_id="tx-val-unv",
+        )
+        valued = self.service.capture(
+            "todo", text="低价值已估价", title="已估价",
+            transaction_id="tx-val-lv",
+        )
+        done = self.service.capture_valuate(
+            valued["result"]["id"],
+            need_type="能力", goal_id="工具效能", equifinality="低",
+            multifinality="低", success_probability="低",
+            transaction_id="tx-val-lv-run",
+        )
+        ranked = done["result"]["ranked"]
+        self.assertEqual(ranked[0]["id"], valued["result"]["id"])
+        self.assertEqual(ranked[1]["id"], unvalued["result"]["id"])
+        self.assertEqual(self.repo.find_note(valued["result"]["id"])[2]["priority"], 1)
+        self.assertEqual(self.repo.find_note(unvalued["result"]["id"])[2]["priority"], 2)
+
     def test_capture_retitle_renames_file_and_rewrites_references(self):
         todo = self.service.capture(
             "todo",

@@ -124,6 +124,17 @@ def build_parser() -> argparse.ArgumentParser:
         help="扫描待办/闪念归档目录，把阅读层手动修改状态后脱节的记录归位",
     )
     sync.add_argument("--transaction-id")
+    valuate = capture_sub.add_parser(
+        "valuate",
+        help="待办估价：写入需求类型/高阶目标/等效性/多效性/成功概率标签，按期望×价值重排全部待办",
+    )
+    valuate.add_argument("--id", required=True)
+    valuate.add_argument("--need", required=True, help="需求类型：自主/能力/归属")
+    valuate.add_argument("--goal", required=True, help="高阶目标：认知中枢/行业职业/创作能力/工具效能")
+    valuate.add_argument("--equifinality", required=True, help="等效性：高/中/低")
+    valuate.add_argument("--multifinality", required=True, help="多效性：高/中/低")
+    valuate.add_argument("--probability", required=True, help="成功概率：高/中/低")
+    valuate.add_argument("--transaction-id")
     update = capture_sub.add_parser(
         "update", help="用户确认后整体更新轻量记录的原始记录正文"
     )
@@ -577,6 +588,16 @@ def dispatch(args: argparse.Namespace) -> tuple[dict[str, Any], int]:
         )
     elif args.command == "capture" and args.capture_command == "sync":
         result = service.capture_sync(transaction_id=args.transaction_id)
+    elif args.command == "capture" and args.capture_command == "valuate":
+        result = service.capture_valuate(
+            args.id,
+            need_type=_enum_arg(args.need),
+            goal_id=_enum_arg(args.goal),
+            equifinality=_enum_arg(args.equifinality),
+            multifinality=_enum_arg(args.multifinality),
+            success_probability=_enum_arg(args.probability),
+            transaction_id=args.transaction_id,
+        )
     elif args.command == "capture" and args.capture_command == "update":
         if args.text_file:
             if args.text:

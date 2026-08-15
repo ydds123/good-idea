@@ -15,14 +15,18 @@ from typing import Any
 
 from .capture import CaptureRuntime
 from .contracts import (
+    ENUM_EN,
     ENUM_FIELDS,
+    ENUM_ZH,
     FLASH_STALE_AFTER,
     FLASH_STATUS_DIRS,
     FORMATION_WITNESS_ID_PATTERN,
     FORMATION_WITNESS_ROOT,
+    GOAL_SPECS,
     NOTE_SPECS,
     PERMANENT_CARD_TYPES,
     TODO_STATUS_DIRS,
+    VALUATION_LEVELS,
     localize_enums,
 )
 from .errors import GitError, IntegrityError, ValidationError
@@ -778,6 +782,149 @@ class GoodIdeaService:
             result={"moved": moves, "skipped": skipped},
             accept_dirty=True,
         )
+
+    def capture_valuate(
+        self,
+        note_id: str,
+        *,
+        need_type: str,
+        goal_id: str,
+        equifinality: str,
+        multifinality: str,
+        success_probability: str,
+        transaction_id: str | None = None,
+    ) -> dict[str, Any]:
+        """待办估价（2026-08-15 用户拍板：目标规划方法论五段流程的落盘命令）。
+
+        Agent 按方法论完成语义判断（需求类型/高阶目标/等效性/多效性/成功概率），
+        本命令校验枚举合法性、写回中文标签，并按期望×价值规则确定性重算全部
+        待办的 priority 排序：主键=概率×多效性（期望×价值），tie-break=等效性，
+        未估价待办排最后按创建时间。一次事务完成标签写入与全局重排。
+        """
+        found = self.repo.find_note(note_id)
+        if not found or found[2].get("type") != "todo":
+            raise ValidationError(f"找不到待办：{note_id}")
+        rel, text, metadata = found
+        labels = {
+            "need_type": need_type,
+            "goal_id": goal_id,
+            "equifinality": equifinality,
+            "multifinality": multifinality,
+            "success_probability": success_probability,
+        }
+        normalized: dict[str, str] = {}
+        for key, value in labels.items():
+            if value not in ENUM_EN and value not in ENUM_ZH:
+                raise ValidationError(f"{key} 不允许值 {value!r}；可选：高/中/低、自主/能力/归属、四个高阶目标")
+            normalized[key] = ENUM_EN.get(value, value)
+        if normalized["goal_id"] not in GOAL_SPECS:
+            raise ValidationError(f"高阶目标必须是 {sorted(GOAL_SPECS)} 之一")
+        for key in ("equifinality", "multifinality", "success_probability"):
+            if normalized[key] not in VALUATION_LEVELS:
+                raise ValidationError(f"{key} 必须是 高/中/低")
+
+        txid = transaction_id or new_transaction_id("capture-valuate")
+        if existing := self._idempotent(txid):
+            return existing
+        timestamp = now_iso()
+
+        # 收集全部待办（含状态归档子目录），按期望×价值确定性排序
+        todos: list[tuple[Path, dict[str, Any]]] = []
+        for location in TODO_STATUS_DIRS.values():
+            for path in sorted((self.repo.root / location).glob("*.md")):
+                try:
+                    meta, _ = parse_document(path.read_text(encoding="utf-8"))
+                except (OSError, ValidationError):
+                    continue
+                if meta.get("type") != "todo":
+                    continue
+                todos.append((path.relative_to(self.repo.root), meta))
+        ranked = self._rank_todos(todos)
+        priority_map = dict(ranked)
+
+        writes: dict[Path, str | bytes] = {}
+        # 目标卡片：标签 + priority 一次写入
+        metadata.update(normalized)
+        metadata["priority"] = priority_map[rel]
+        metadata["updated_at"] = timestamp
+        writes[rel] = replace_frontmatter(text, metadata)
+        # 其余卡片：priority 变化才写入
+        for other_rel, priority in ranked:
+            if other_rel == rel:
+                continue
+            current_path = self.repo.root / other_rel
+            current_text = current_path.read_text(encoding="utf-8")
+            current_meta, _ = parse_document(current_text)
+            if current_meta.get("priority") == priority:
+                continue
+            current_meta["priority"] = priority
+            current_meta["updated_at"] = timestamp
+            writes[other_rel] = replace_frontmatter(current_text, current_meta)
+
+        state = self.repo.read_state()
+        result_ranked = [
+            {
+                "id": meta.get("id"),
+                "title": meta.get("title"),
+                "priority": priority_map[rel_path],
+                "path": rel_path.as_posix(),
+            }
+            for rel_path, meta in todos
+        ]
+        result_ranked.sort(key=lambda item: item["priority"])
+        return self.repo.commit(
+            transaction_id=txid,
+            action="capture-valuate",
+            summary=metadata["title"],
+            writes=writes,
+            deletes=set(),
+            state=state,
+            result={
+                "id": note_id,
+                "labels": normalized,
+                "priority": priority_map[rel],
+                "ranked": result_ranked,
+            },
+        )
+
+    @staticmethod
+    def _rank_todos(
+        todos: list[tuple[Path, dict[str, Any]]],
+    ) -> list[tuple[Path, int]]:
+        """期望×价值排序：概率×多效性降序，等效性 tie-break，未估价排最后按创建时间。"""
+        def score(meta: dict[str, Any]) -> tuple[int, ...] | None:
+            if not all(
+                key in meta
+                for key in ("need_type", "goal_id", "equifinality", "multifinality", "success_probability")
+            ):
+                return None
+            p = VALUATION_LEVELS.get(meta.get("success_probability", ""), 0)
+            m = VALUATION_LEVELS.get(meta.get("multifinality", ""), 0)
+            e = VALUATION_LEVELS.get(meta.get("equifinality", ""), 0)
+            return (p * m, p, m, e)
+
+        valued: list[tuple[Path, dict[str, Any], tuple[int, ...]]] = []
+        unvalued: list[tuple[Path, dict[str, Any]]] = []
+        for rel, meta in todos:
+            s = score(meta)
+            if s is None:
+                unvalued.append((rel, meta))
+            else:
+                valued.append((rel, meta, s))
+        valued.sort(
+            key=lambda item: (
+                -item[2][0], -item[2][1],
+                -item[2][2], -item[2][3],
+                item[0].as_posix(),
+            )
+        )
+        unvalued.sort(key=lambda item: (item[1].get("created_at", ""), item[0].as_posix()))
+        ranked: list[tuple[Path, int]] = []
+        for rank, (rel, _, _) in enumerate(valued, start=1):
+            ranked.append((rel, rank))
+        for rank, (rel, _) in enumerate(unvalued, start=len(valued) + 1):
+            ranked.append((rel, rank))
+        return ranked
 
     def capture_update(
         self,

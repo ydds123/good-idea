@@ -67,9 +67,35 @@ ENUM_ZH: dict[str, str] = {
     "user_verbatim": "用户原文",
     "user_body_agent_title": "仅提炼标题",
     "user_confirmed_agent_structured": "用户确认·Agent结构化",
+    # 待办估价标签（2026-08-15 用户拍板：按目标规划方法论五段流程加工）
+    "autonomy": "自主",
+    "competence": "能力",
+    "relatedness": "归属",
+    "goal_cognition": "认知中枢",
+    "goal_career": "行业职业",
+    "goal_creation": "创作能力",
+    "goal_tools": "工具效能",
+    "high": "高",
+    "medium": "中",
+    "low": "低",
 }
 ENUM_EN: dict[str, str] = {zh: en for en, zh in ENUM_ZH.items()}
-ENUM_FIELDS = frozenset({"type", "status", "authoring_mode", "card_type", "capture_status"})
+ENUM_FIELDS = frozenset({
+    "type", "status", "authoring_mode", "card_type", "capture_status",
+    # 待办估价标签（2026-08-15）：文件层中文、内部英文，读写边界归一化
+    "need_type", "goal_id", "equifinality", "multifinality", "success_probability",
+})
+
+# 高阶目标定义（2026-08-15 从待办素材抽象，供估价排序与 Agent 加工参考；演化时扩展）
+GOAL_SPECS: dict[str, dict[str, str]] = {
+    "goal_cognition": {"name": "认知中枢", "desc": "让 good idea 成为替你思考的系统"},
+    "goal_career": {"name": "行业职业", "desc": "行业理解与职业跃迁"},
+    "goal_creation": {"name": "创作能力", "desc": "AI 创作能力谱系（生图→视频→控制论实践）"},
+    "goal_tools": {"name": "工具效能", "desc": "让日常工具链顺手"},
+}
+
+# 估价分级（期望×价值排序：概率=期望，多效性=价值杠杆代理）
+VALUATION_LEVELS = {"high": 3, "medium": 2, "low": 1}
 
 
 def localize_enums(metadata: dict[str, Any]) -> dict[str, Any]:
