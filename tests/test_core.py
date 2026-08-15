@@ -3,6 +3,7 @@ from __future__ import annotations
 import base64
 import hashlib
 import json
+import re
 import subprocess
 import tempfile
 import unittest
@@ -2631,7 +2632,7 @@ updated_at: "2026-08-04T00:00:00+08:00"
         path = self.repo.root / old_rel
         text = path.read_text(encoding="utf-8")
         path.write_text(
-            text.replace('status: "进行中"', "status: 已完成"), encoding="utf-8"
+            text.replace('status: "未开始"', "status: 已完成"), encoding="utf-8"
         )
         # 裸 YAML 下 CLI 仍能解析并找到记录（不再"找不到轻量记录"）
         self.assertEqual(self.repo.find_note(todo_id)[2]["status"], "done")
@@ -2672,13 +2673,13 @@ updated_at: "2026-08-04T00:00:00+08:00"
             title="待办丙",
             transaction_id="tx-sync-c",
         )
-        # 模拟 note-database：脱引号 + 改状态
+        # 模拟 note-database：脱引号 + 改状态（新建待办默认 未开始）
         for todo, new_status in ((first, "已完成"), (second, "已取消")):
             rel = Path(todo["result"]["path"])
             path = self.repo.root / rel
             text = path.read_text(encoding="utf-8")
             path.write_text(
-                text.replace('status: "进行中"', f"status: {new_status}"),
+                text.replace('status: "未开始"', f"status: {new_status}"),
                 encoding="utf-8",
             )
         result = self.service.capture_sync(transaction_id="tx-sync-run")
@@ -2711,7 +2712,7 @@ updated_at: "2026-08-04T00:00:00+08:00"
         path = self.repo.root / rel
         text = path.read_text(encoding="utf-8")
         path.write_text(
-            text.replace('status: "进行中"', "status: 完成"), encoding="utf-8"
+            text.replace('status: "未开始"', "status: 完成"), encoding="utf-8"
         )
         result = self.service.capture_sync(transaction_id="tx-sync-bad-run")
         self.assertFalse(result["synced"])
@@ -3064,6 +3065,184 @@ updated_at: "2026-08-04T00:00:00+08:00"
                 specificity="具体",
                 rationale="   ",
                 transaction_id="tx-val-rat-empty",
+            )
+
+    def test_capture_todo_defaults_to_not_started_with_reason(self):
+        # 48h 行动窗口（2026-08-15 拍板）：新建待办默认未开始，记录 not_started_at 计时基准
+        todo = self.service.capture(
+            "todo",
+            text="摄入澄清测试：为求职期行业理解补弹药",
+            title="澄清待办",
+            reason="求职期需要补行业理解，直接服务主线",
+            transaction_id="tx-ns-create",
+        )
+        todo_id = todo["result"]["id"]
+        _, text, meta = self.repo.find_note(todo_id)
+        self.assertEqual(meta["status"], "not_started")
+        self.assertIn("not_started_at", meta)
+        self.assertEqual(meta["not_started_at"], meta["created_at"])
+        self.assertIn("## 为什么做", text)
+        self.assertIn("求职期需要补行业理解，直接服务主线", text)
+        # 闪念/有意思不参与待办行动窗口：无 not_started_at
+        flash = self.service.capture(
+            "flash", text="闪念不带行动窗口", transaction_id="tx-ns-flash"
+        )
+        _, _, flash_meta = self.repo.find_note(flash["result"]["id"])
+        self.assertNotIn("not_started_at", flash_meta)
+
+    def test_capture_sweep_expires_stale_not_started_todos(self):
+        # 未开始超 48h 未动 → 已过期：移入 待办空间/已过期/，全库引用重写
+        todo = self.service.capture(
+            "todo", text="这条超时未开始，应被 sweep 过期", title="超时待办",
+            transaction_id="tx-sweep-stale",
+        )
+        todo_id = todo["result"]["id"]
+        old_path = todo["result"]["path"]
+        # 造一张引用它的闪念（wikilink 旧路径）
+        ref = self.service.capture(
+            "flash",
+            text=f"引用过期待办：[[{old_path[:-3]}]] 在讨论中被提到",
+            title="引用待办",
+            transaction_id="tx-sweep-ref",
+        )
+        ref_id = ref["result"]["id"]
+        # 把 not_started_at 改成 48h 之前（模拟时间流逝；测试内直接改文件）
+        rel = Path(old_path)
+        path = self.repo.root / rel
+        text = path.read_text(encoding="utf-8")
+        # not_started_at 是创建时刻写入的，直接定位替换
+        match = re.search(r'not_started_at: "([^"]+)"', text)
+        self.assertIsNotNone(match)
+        past = (datetime.now().astimezone() - timedelta(hours=49)).isoformat(timespec="seconds")
+        path.write_text(text.replace(match.group(0), f'not_started_at: "{past}"'), encoding="utf-8")
+
+        result = self.service.capture_sweep(transaction_id="tx-sweep-run")
+        self.assertFalse(result["idempotent"])
+        self.assertEqual(len(result["result"]["expired"]), 1)
+        self.assertEqual(result["result"]["expired"][0]["id"], todo_id)
+        # 已过期：文件移入 待办空间/已过期/，状态 expired，计时基准清除
+        new_rel, new_text, new_meta = self.repo.find_note(todo_id)
+        self.assertTrue(new_rel.as_posix().startswith("待办空间/已过期/"))
+        self.assertEqual(new_meta["status"], "expired")
+        self.assertNotIn("not_started_at", new_meta)
+        # 引用已重写
+        _, ref_text, _ = self.repo.find_note(ref_id)
+        self.assertIn(new_rel.with_suffix("").as_posix(), ref_text)
+        self.assertNotIn(old_path[:-3], ref_text)
+        self.assertTrue(self.service.lint()["ok"])
+
+    def test_capture_sweep_keeps_fresh_and_in_progress(self):
+        # 48h 内未开始不动；进行中不参与窗口
+        fresh = self.service.capture(
+            "todo", text="刚建的未开始，不应过期", title="新鲜待办",
+            transaction_id="tx-sweep-fresh",
+        )
+        in_progress = self.service.capture(
+            "todo", text="进行中不参与 48h 窗口", title="进行中待办",
+            transaction_id="tx-sweep-open",
+        )
+        self.service.capture_transition(
+            in_progress["result"]["id"], status="open", transaction_id="tx-sweep-open-tx"
+        )
+        result = self.service.capture_sweep(transaction_id="tx-sweep-fresh-run")
+        self.assertFalse(result["swept"])
+        self.assertEqual(len(result["expired"]), 0)
+        self.assertEqual(
+            self.repo.find_note(fresh["result"]["id"])[2]["status"], "not_started"
+        )
+        self.assertEqual(
+            self.repo.find_note(in_progress["result"]["id"])[2]["status"], "open"
+        )
+        # 无过期项时不产生事务：swept=False
+        self.assertFalse(result.get("swept"))
+
+    def test_capture_sweep_skips_missing_marker(self):
+        # 存量待办迁移前无 not_started_at：跳过并报告，不误判
+        todo = self.service.capture(
+            "todo", text="缺少计时基准的待办", title="无基准待办",
+            transaction_id="tx-sweep-nomarker",
+        )
+        rel = Path(todo["result"]["path"])
+        path = self.repo.root / rel
+        text = path.read_text(encoding="utf-8")
+        match = re.search(r'\nnot_started_at: "[^"]+"', text)
+        self.assertIsNotNone(match)
+        path.write_text(text.replace(match.group(0), ""), encoding="utf-8")
+        result = self.service.capture_sweep(transaction_id="tx-sweep-nomarker-run")
+        self.assertFalse(result["swept"])
+        self.assertEqual(len(result["skipped"]), 1)
+        self.assertIn("not_started_at", result["skipped"][0]["reason"])
+
+    def test_todo_recommit_from_expired_renews_timer(self):
+        # 已过期裁决：重新承诺（transition 回 未开始）→ 移回根目录 + 刷新计时基准
+        todo = self.service.capture(
+            "todo", text="过期后重新承诺的待办", title="重新承诺待办",
+            transaction_id="tx-recommit-create",
+        )
+        todo_id = todo["result"]["id"]
+        # 直接置为已过期（模拟 sweep 后状态）
+        self.service.capture_transition(
+            todo_id, status="expired", transaction_id="tx-recommit-expire"
+        )
+        _, _, expired_meta = self.repo.find_note(todo_id)
+        self.assertEqual(expired_meta["status"], "expired")
+        self.assertNotIn("not_started_at", expired_meta)
+        # 重新承诺：回未开始，移回根目录，重新计时
+        recommitted = self.service.capture_transition(
+            todo_id, status="not_started", transaction_id="tx-recommit-back"
+        )
+        self.assertEqual(recommitted["result"]["status"], "not_started")
+        new_rel, _, new_meta = self.repo.find_note(todo_id)
+        self.assertFalse(new_rel.as_posix().startswith("待办空间/已过期/"))
+        self.assertTrue(new_rel.as_posix().startswith("待办空间/"))
+        self.assertIn("not_started_at", new_meta)
+        # 干掉：已过期 → 已取消
+        self.service.capture_transition(
+            todo_id, status="expired", transaction_id="tx-recommit-expire2"
+        )
+        killed = self.service.capture_transition(
+            todo_id, status="cancelled", transaction_id="tx-recommit-kill"
+        )
+        self.assertEqual(killed["result"]["status"], "cancelled")
+        cancel_rel, _, _ = self.repo.find_note(todo_id)
+        self.assertTrue(cancel_rel.as_posix().startswith("待办空间/已取消/"))
+        self.assertTrue(self.service.lint()["ok"])
+
+    def test_capture_valuate_skips_expired_todos(self):
+        # 已过期待办不产生行动：不参与估价排序，且拒绝直接估价
+        expired_todo = self.service.capture(
+            "todo", text="这条已过期，不应被估价", title="已过期待办",
+            transaction_id="tx-val-expired",
+        )
+        action_todo = self.service.capture(
+            "todo", text="行动集待办", title="行动集",
+            transaction_id="tx-val-action",
+        )
+        self.service.capture_transition(
+            expired_todo["result"]["id"], status="expired",
+            transaction_id="tx-val-expired-tx",
+        )
+        result = self.service.capture_valuate(
+            action_todo["result"]["id"],
+            need_type="能力", goal_id="工具效能", equifinality="中",
+            multifinality="中", success_probability="中",
+            distance="中",
+            specificity="具体",
+            rationale="测试理由：为求职补弹药；目标服务行业理解；路径多；一石多鸟；内容现成",
+            transaction_id="tx-val-action-run",
+        )
+        ranked_ids = {item["id"] for item in result["result"]["ranked"]}
+        self.assertNotIn(expired_todo["result"]["id"], ranked_ids)
+        self.assertEqual(len(result["result"]["ranked"]), 1)
+        with self.assertRaises(ValidationError):
+            self.service.capture_valuate(
+                expired_todo["result"]["id"],
+                need_type="能力", goal_id="工具效能", equifinality="高",
+                multifinality="高", success_probability="高",
+                distance="中",
+                specificity="具体",
+                rationale="测试理由",
+                transaction_id="tx-val-expired-reject",
             )
 
     def test_capture_retitle_renames_file_and_rewrites_references(self):

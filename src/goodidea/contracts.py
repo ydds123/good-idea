@@ -14,6 +14,8 @@ FORMATION_WITNESS_ROOT = Path(".goodidea/formation-witnesses")
 FLASH_EVENT_FORMAT_VERSION = 2
 
 FLASH_STALE_AFTER = timedelta(hours=48)
+# 待办 48h 行动窗口（2026-08-15 拍板）：未开始超 48h 未动 → 已过期（capture sweep）
+TODO_STALE_AFTER = timedelta(hours=48)
 CAPTURE_RECOVERY_WINDOW = timedelta(hours=24)
 PERMANENT_CARD_TYPES = frozenset({"permanent", "mother", "action", "index"})
 CAPTURE_ACTIVE_STATES = frozenset({"active", "reviewing", "paused"})
@@ -55,6 +57,8 @@ ENUM_ZH: dict[str, str] = {
     "open": "进行中",
     "done": "已完成",
     "cancelled": "已取消",
+    "not_started": "未开始",
+    "expired": "已过期",
     "active": "有效",
     "revised": "已修订",
     "retired": "已停用",
@@ -201,8 +205,8 @@ NOTE_SPECS: dict[str, dict[str, Any]] = {
         "id": re.compile(r"^INT-[0-9]{8}-[0-9a-f]{8}$"),
     },
     "todo": {
-        "location": Path("待办空间"), "heading": "待办", "default": "open",
-        "statuses": {"open", "done", "cancelled"}, "required": {"source_ids"},
+        "location": Path("待办空间"), "heading": "待办", "default": "not_started",
+        "statuses": {"not_started", "open", "done", "cancelled", "expired"}, "required": {"source_ids"},
         "id": re.compile(r"^TODO-[0-9]{8}-[0-9a-f]{8}$"),
     },
     "permanent": {
@@ -227,10 +231,14 @@ NOTE_SPECS: dict[str, dict[str, Any]] = {
     },
 }
 
-# 待办按状态归档（2026-08-15 用户拍板）：根目录=进行中，已完成/ 与 已取消/ 为状态子目录。
-# capture transition 流转状态时按此移动文件；扫描待办时需同时覆盖这些目录。
+# 待办按状态归档（2026-08-15 用户拍板，v2 扩展）：根目录=未开始+进行中（行动清单），
+# 已过期/ 与 已完成/ 与 已取消/ 为状态子目录。capture transition 流转状态时按此移动文件；
+# 扫描待办时需同时覆盖这些目录。48h 行动窗口（2026-08-15 拍板）：未开始超 48h 未动
+# → capture sweep 转已过期；判定基准=最近一次进入未开始的时刻（not_started_at）。
 TODO_STATUS_DIRS: dict[str, Path] = {
+    "not_started": Path("待办空间"),
     "open": Path("待办空间"),
+    "expired": Path("待办空间/已过期"),
     "done": Path("待办空间/已完成"),
     "cancelled": Path("待办空间/已取消"),
 }

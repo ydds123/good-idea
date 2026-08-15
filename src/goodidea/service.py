@@ -28,6 +28,7 @@ from .contracts import (
     PERMANENT_CARD_TYPES,
     TODO_STATUS_DIRS,
     VALUATION_LEVELS,
+    TODO_STALE_AFTER,
     localize_enums,
 )
 from .errors import GitError, IntegrityError, ValidationError
@@ -479,6 +480,7 @@ class GoodIdeaService:
         title: str = "",
         context: str = "",
         source_id: str = "",
+        reason: str = "",
         transaction_id: str | None = None,
     ) -> dict[str, Any]:
         if kind not in {"flash", "interesting", "todo"}:
@@ -502,7 +504,13 @@ class GoodIdeaService:
             "updated_at": timestamp,
             "source_ids": [source_id] if source_id else [],
         }
+        if kind == "todo":
+            # 48h 行动窗口（2026-08-15 拍板）：未开始计时基准=进入未开始的时刻
+            metadata["not_started_at"] = timestamp
         sections = [("原始记录", text)]
+        if kind == "todo" and reason.strip():
+            # 摄入澄清（2026-08-15 拍板）：用户确认过的动机原话写入卡片正文，属于用户认知正文
+            sections.append(("为什么做", reason.strip()))
         if context:
             sections.append(("产生情境", context))
         if source_id:
@@ -599,6 +607,13 @@ class GoodIdeaService:
         timestamp = now_iso()
         metadata["status"] = status
         metadata["updated_at"] = timestamp
+        if note_type == "todo":
+            if status == "not_started":
+                # 重新承诺（2026-08-15 拍板）：进入未开始重新计时 48h 行动窗口
+                metadata["not_started_at"] = timestamp
+            elif status in ("open", "done", "cancelled", "expired") and "not_started_at" in metadata:
+                # 退出未开始：清除计时基准（进行中不参与 48h 窗口）
+                metadata.pop("not_started_at", None)
         text = replace_frontmatter(text, metadata)
         state = self.repo.read_state()
         # 状态归档（2026-08-15 用户拍板）：状态变化时把文件移到对应状态目录
@@ -785,6 +800,119 @@ class GoodIdeaService:
             accept_dirty=True,
         )
 
+    def capture_sweep(
+        self,
+        *,
+        now: datetime | None = None,
+        transaction_id: str | None = None,
+    ) -> dict[str, Any]:
+        """48h 行动窗口扫描（2026-08-15 拍板）：未开始超 48h 未动 → 已过期。
+
+        判定基准 = 最近一次进入未开始的时刻（not_started_at，进入时由 CLI 记录）；
+        未开始且 now - not_started_at >= 48h 的待办批量转 已过期，移入
+        待办空间/已过期/ 并全库重写 wikilink。进行中不参与窗口（开始即退出）。
+        返回移动清单；无过期项时不产生事务。not_started_at 缺失视为刚进入
+        未开始（存量待办迁移时补齐），跳过并报告。
+        """
+        now = now or datetime.now().astimezone()
+        txid = transaction_id or new_transaction_id("capture-sweep")
+        if existing := self._idempotent(txid):
+            return existing
+        root_dir = self.repo.root / TODO_STATUS_DIRS["not_started"]
+        expired: list[dict[str, Any]] = []
+        skipped: list[dict[str, Any]] = []
+        for path in sorted(root_dir.glob("*.md")):
+            rel = path.relative_to(self.repo.root)
+            try:
+                text = path.read_text(encoding="utf-8")
+                metadata, _ = parse_document(text)
+            except (OSError, ValidationError) as exc:
+                skipped.append({"path": rel.as_posix(), "reason": f"解析失败：{exc}"})
+                continue
+            if metadata.get("type") != "todo" or metadata.get("status") != "not_started":
+                continue
+            marker = metadata.get("not_started_at")
+            if not marker:
+                skipped.append(
+                    {"path": rel.as_posix(), "reason": "缺少 not_started_at，跳过（迁移时补齐）"}
+                )
+                continue
+            try:
+                entered = datetime.fromisoformat(str(marker))
+            except ValueError:
+                skipped.append(
+                    {"path": rel.as_posix(), "reason": f"not_started_at 无法解析：{marker!r}"}
+                )
+                continue
+            if now - entered >= TODO_STALE_AFTER:
+                expired.append(
+                    {
+                        "id": metadata.get("id"),
+                        "path": rel.as_posix(),
+                        "status": "expired",
+                        "entered_at": str(marker),
+                    }
+                )
+        if not expired:
+            return {"expired": [], "skipped": skipped, "swept": False}
+
+        timestamp = now_iso()
+
+        target_dir = TODO_STATUS_DIRS["expired"]
+        replacements = {
+            Path(item["path"]).with_suffix("").as_posix(): (
+                target_dir / Path(item["path"]).name
+            ).with_suffix("").as_posix()
+            for item in expired
+        }
+        move_sources = {Path(item["path"]) for item in expired}
+        originals: dict[Path, tuple[str, dict[str, Any]]] = {}
+        for path in sorted(root_dir.glob("*.md")):
+            rel = path.relative_to(self.repo.root)
+            if rel in move_sources:
+                originals[rel] = (path.read_text(encoding="utf-8"), parse_document(path.read_text(encoding="utf-8"))[0])
+
+        writes: dict[Path, str | bytes] = {}
+        deletes: set[Path] = set()
+        # 全库引用重写（跳过移动源本身，其目标内容单独生成）
+        for note_type_, location_ in note_scan_entries():
+            for path in sorted((self.repo.root / location_).glob("*.md")):
+                other_rel = path.relative_to(self.repo.root)
+                if other_rel in move_sources:
+                    continue
+                note_text = path.read_text(encoding="utf-8")
+                note_meta, _ = parse_document(note_text)
+                protect = note_meta.get("type") == "source"
+                rewritten = _rewrite_wiki_paths(
+                    note_text, replacements, protect_snapshot=protect
+                )
+                if rewritten != note_text:
+                    writes[other_rel] = rewritten
+        # 移动源：状态转已过期、清除计时基准、正文应用全局替换，写入目标路径
+        for item in expired:
+            rel = Path(item["path"])
+            target_rel = target_dir / rel.name
+            text, metadata = originals[rel]
+            text = _rewrite_wiki_paths(text, replacements, protect_snapshot=False)
+            metadata["status"] = "expired"
+            metadata["updated_at"] = timestamp
+            metadata.pop("not_started_at", None)
+            writes[target_rel] = replace_frontmatter(text, metadata)
+            deletes.add(rel)
+
+        state = self.repo.read_state()
+        return self.repo.commit(
+            transaction_id=txid,
+            action="capture-sweep",
+            summary=f"过期 {len(expired)} 条待办",
+            writes=writes,
+            deletes=deletes,
+            state=state,
+            result={"expired": expired, "skipped": skipped},
+            # 文件当前内容视为事务输入（阅读层可能手动改过标签/状态；选中即已确认超时）
+            accept_dirty=True,
+        )
+
     def capture_valuate(
         self,
         note_id: str,
@@ -814,8 +942,8 @@ class GoodIdeaService:
         found = self.repo.find_note(note_id)
         if not found or found[2].get("type") != "todo":
             raise ValidationError(f"找不到待办：{note_id}")
-        if found[2].get("status") != "open":
-            raise ValidationError("只对进行中的待办估价；已完成/已取消请用 capture transition 流转")
+        if found[2].get("status") not in {"not_started", "open"}:
+            raise ValidationError("只对行动清单（未开始/进行中）的待办估价；已过期/已完成/已取消请用 capture transition 流转")
         rel, text, metadata = found
         labels = {
             "need_type": need_type,
@@ -846,15 +974,16 @@ class GoodIdeaService:
             return existing
         timestamp = now_iso()
 
-        # 收集全部"进行中"待办（已完成/已取消归档不产生行动，不参与估价排序）
+        # 收集行动集待办（未开始+进行中；已过期/已完成/已取消归档不产生行动，不参与估价排序）
         todos: list[tuple[Path, dict[str, Any]]] = []
-        for location in TODO_STATUS_DIRS.values():
+        scan_locations = sorted({loc for loc in TODO_STATUS_DIRS.values()})
+        for location in scan_locations:
             for path in sorted((self.repo.root / location).glob("*.md")):
                 try:
                     meta, _ = parse_document(path.read_text(encoding="utf-8"))
                 except (OSError, ValidationError):
                     continue
-                if meta.get("type") != "todo" or meta.get("status") != "open":
+                if meta.get("type") != "todo" or meta.get("status") not in {"not_started", "open"}:
                     continue
                 todos.append((path.relative_to(self.repo.root), meta))
         # 目标卡片用更新后的 metadata 参与重排（否则刚写入的新标签排不进正确位置）
@@ -2935,7 +3064,7 @@ class GoodIdeaService:
                 for path in sorted((self.repo.root / scan_dir).glob("*.md")):
                     text = path.read_text(encoding="utf-8")
                     metadata, _ = parse_document(text)
-                    if metadata.get("status") in {"pending", "open", "partial", "failed"}:
+                    if metadata.get("status") in {"pending", "open", "partial", "failed", "not_started"}:
                         item = {
                                 "id": metadata["id"],
                                 "type": metadata["type"],

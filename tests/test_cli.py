@@ -2,10 +2,12 @@ from __future__ import annotations
 
 import json
 import os
+import re
 import subprocess
 import sys
 import tempfile
 import unittest
+from datetime import datetime, timedelta
 from pathlib import Path
 
 from tests.support import initialize_test_vault
@@ -1092,6 +1094,63 @@ canonical_url: https://example.com/declared-only
             (self.root / json.loads(pending_conn.stdout)["result"]["proposal_path"]).exists()
         )
 
+        linted = run_cli("--root", str(self.root), "lint")
+        self.assertEqual(linted.returncode, 0, linted.stderr)
+        self.assertTrue(json.loads(linted.stdout)["ok"])
+        verified = run_cli("--root", str(self.root), "verify")
+        self.assertEqual(verified.returncode, 0, verified.stderr)
+        self.assertTrue(json.loads(verified.stdout)["ok"])
+
+    def test_capture_todo_reason_and_sweep_cli(self):
+        # CLI 端到端：capture todo --reason 写"为什么做"区；sweep 过期未开始待办
+        created = run_cli(
+            "--root", str(self.root), "capture", "todo",
+            "--text", "CLI 层验证 48h 行动窗口：超时未开始应被 sweep 过期",
+            "--title", "CLI 行动窗口待办",
+            "--reason", "验证 sweep 端到端链路，覆盖摄入澄清与过期扫描",
+            "--transaction-id", "cli-sweep-create",
+        )
+        self.assertEqual(created.returncode, 0, created.stderr)
+        todo_id = json.loads(created.stdout)["result"]["id"]
+        todo_path = json.loads(created.stdout)["result"]["path"]
+        # 新建默认未开始 + 为什么做区
+        todo_text = (self.root / todo_path).read_text(encoding="utf-8")
+        self.assertIn("status: \"未开始\"", todo_text)
+        self.assertIn("## 为什么做", todo_text)
+        self.assertIn("验证 sweep 端到端链路", todo_text)
+        # 把计时基准改到 49h 前（模拟时间流逝）
+        marker = re.search(r'not_started_at: "[^"]+"', todo_text)
+        self.assertIsNotNone(marker)
+        past = (datetime.now().astimezone() - timedelta(hours=49)).isoformat(timespec="seconds")
+        (self.root / todo_path).write_text(
+            todo_text.replace(marker.group(0), f'not_started_at: "{past}"'),
+            encoding="utf-8",
+        )
+        swept = run_cli(
+            "--root", str(self.root), "capture", "sweep",
+            "--transaction-id", "cli-sweep-run",
+        )
+        self.assertEqual(swept.returncode, 0, swept.stderr)
+        result = json.loads(swept.stdout)["result"]
+        self.assertEqual(len(result["expired"]), 1)
+        self.assertEqual(result["expired"][0]["id"], todo_id)
+        # 文件已移入已过期目录，状态已过期
+        expired_files = list((self.root / "待办空间/已过期").glob("*.md"))
+        self.assertEqual(len(expired_files), 1)
+        expired_text = expired_files[0].read_text(encoding="utf-8")
+        self.assertIn("status: \"已过期\"", expired_text)
+        self.assertNotIn("not_started_at", expired_text)
+        # 幂等重放返回原结果
+        replayed = run_cli(
+            "--root", str(self.root), "capture", "sweep",
+            "--transaction-id", "cli-sweep-run",
+        )
+        self.assertEqual(replayed.returncode, 0, replayed.stderr)
+        self.assertTrue(json.loads(replayed.stdout)["idempotent"])
+        # 再跑一次无过期项：不产生事务
+        noop = run_cli("--root", str(self.root), "capture", "sweep")
+        self.assertEqual(noop.returncode, 0, noop.stderr)
+        self.assertFalse(json.loads(noop.stdout)["swept"])
         linted = run_cli("--root", str(self.root), "lint")
         self.assertEqual(linted.returncode, 0, linted.stderr)
         self.assertTrue(json.loads(linted.stdout)["ok"])

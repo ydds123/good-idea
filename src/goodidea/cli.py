@@ -65,6 +65,12 @@ def build_parser() -> argparse.ArgumentParser:
         create.add_argument("--context", default="")
         create.add_argument("--source-id", default="")
         create.add_argument("--transaction-id")
+        if kind == "todo":
+            create.add_argument(
+                "--reason",
+                default="",
+                help="为什么做这件事（动机/价值，写入卡片\"为什么做\"区；摄入澄清后用户确认的原话）",
+            )
     start = capture_sub.add_parser("start")
     start.add_argument("--text", required=True)
     start.add_argument("--context-ref", action="append", default=[])
@@ -112,7 +118,11 @@ def build_parser() -> argparse.ArgumentParser:
         "transition", help="流转轻量记录的生命周期状态"
     )
     transition.add_argument("--id", required=True)
-    transition.add_argument("--status", required=True)
+    transition.add_argument(
+        "--status",
+        required=True,
+        help="目标状态：待办=未开始/进行中/已过期/已完成/已取消；闪念=待处理/已放弃",
+    )
     transition.add_argument("--transaction-id")
     transition.add_argument(
         "--accept-dirty",
@@ -124,6 +134,11 @@ def build_parser() -> argparse.ArgumentParser:
         help="扫描待办/闪念归档目录，把阅读层手动修改状态后脱节的记录归位",
     )
     sync.add_argument("--transaction-id")
+    sweep = capture_sub.add_parser(
+        "sweep",
+        help="48h 行动窗口扫描：未开始超 48h 未动的待办转已过期并移入归档目录",
+    )
+    sweep.add_argument("--transaction-id")
     valuate = capture_sub.add_parser(
         "valuate",
         help="待办估价：写入需求类型/高阶目标/等效性/多效性/成功概率标签，按期望×价值重排全部待办",
@@ -513,6 +528,7 @@ def dispatch(args: argparse.Namespace) -> tuple[dict[str, Any], int]:
             title=args.title,
             context=args.context,
             source_id=args.source_id,
+            reason=getattr(args, "reason", ""),
             transaction_id=args.transaction_id,
         )
     elif args.command == "capture" and args.capture_command == "start":
@@ -595,6 +611,8 @@ def dispatch(args: argparse.Namespace) -> tuple[dict[str, Any], int]:
         )
     elif args.command == "capture" and args.capture_command == "sync":
         result = service.capture_sync(transaction_id=args.transaction_id)
+    elif args.command == "capture" and args.capture_command == "sweep":
+        result = service.capture_sweep(transaction_id=args.transaction_id)
     elif args.command == "capture" and args.capture_command == "valuate":
         result = service.capture_valuate(
             args.id,
