@@ -205,3 +205,5 @@
 
 [2026-08-15T09:13:32+08:00] capture-transition | 修正闪念捕获recipe措辞：只删填充词，保留思考纹理 | tx=recipe-fix-done-20260815
 
+[2026-08-15T09:24:23+08:00] maintain-index | 重新生成不展示摘要的内容索引 | tx=reindex-title-fix-20260815
+

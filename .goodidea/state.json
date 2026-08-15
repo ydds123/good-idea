@@ -863,6 +863,15 @@
       "timestamp": "2026-08-12T20:14:12+08:00",
       "transaction_id": "refresh-aiagent-report-20260812-002"
     },
+    "reindex-title-fix-20260815": {
+      "action": "maintain-index",
+      "result": {
+        "no_change": false
+      },
+      "summary": "重新生成不展示摘要的内容索引",
+      "timestamp": "2026-08-15T09:24:23+08:00",
+      "transaction_id": "reindex-title-fix-20260815"
+    },
     "remove-content-summaries-20260809": {
       "action": "maintain-metadata",
       "result": {
