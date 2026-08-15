@@ -594,9 +594,8 @@ class GoodIdeaService:
         rel, text, metadata = found
         note_type = metadata["type"]
         allowed = set(NOTE_SPECS[note_type]["statuses"])
-        if note_type == "flash":
-            # processed 由系统在永久卡片接纳时自动设置，不开放手动流转
-            allowed.discard("processed")
+        # flash 的 processed 由系统在永久卡片接纳时自动设置，也允许手动归档
+        # （2026-08-15：认知生命周期完成、转化为机制/被消化后，用户确认归档）
         if status not in allowed:
             raise ValidationError(
                 f"{note_type} 不允许状态 {status}；可选：{sorted(allowed)}"

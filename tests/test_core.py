@@ -3245,6 +3245,25 @@ updated_at: "2026-08-04T00:00:00+08:00"
                 transaction_id="tx-val-expired-reject",
             )
 
+    def test_capture_transition_flash_manual_archive(self):
+        # 认知生命周期完成的闪念可手动归档到 已处理（processed 不再只限永久卡接纳）
+        flash = self.service.capture(
+            "flash", text="认知生命周期完成的闪念（已转化为机制）",
+            transaction_id="tx-flash-arch",
+        )
+        fid = flash["result"]["id"]
+        result = self.service.capture_transition(
+            fid, status="processed", transaction_id="tx-flash-arch-run"
+        )
+        self.assertEqual(result["result"]["status"], "processed")
+        self.assertIn("已处理", result["result"]["path"])
+        # 可回退（待处理 ↔ 已处理 双向）
+        back = self.service.capture_transition(
+            fid, status="pending", transaction_id="tx-flash-arch-back"
+        )
+        self.assertEqual(back["result"]["status"], "pending")
+        self.assertNotIn("已处理", back["result"]["path"])
+
     def test_capture_retitle_renames_file_and_rewrites_references(self):
         todo = self.service.capture(
             "todo",
