@@ -215,3 +215,5 @@
 
 [2026-08-15T12:15:11+08:00] capture-sync | 归档 6 条记录 | tx=capture-sync-20260815121511-42b56cb7
 
+[2026-08-15T16:08:37+08:00] capture-valuate | 为 Good Idea 增加用户画像/记忆摘要层（类 ChatGPT 记忆） | tx=capture-valuate-20260815160837-372d6caf
+

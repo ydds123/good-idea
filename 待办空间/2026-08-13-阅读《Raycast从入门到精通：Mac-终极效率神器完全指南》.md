@@ -4,8 +4,9 @@ type: "待办"
 title: "阅读《Raycast从入门到精通：Mac 终极效率神器完全指南》"
 status: "进行中"
 created_at: "2026-08-13T10:12:06+08:00"
-updated_at: "2026-08-13T10:12:06+08:00"
+updated_at: "2026-08-15T16:08:37+08:00"
 source_ids: []
+priority: 7
 ---
 # 阅读《Raycast从入门到精通：Mac 终极效率神器完全指南》
 
