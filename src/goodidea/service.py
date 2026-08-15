@@ -15,6 +15,7 @@ from typing import Any
 
 from .capture import CaptureRuntime
 from .contracts import (
+    DISTANCE_LEVELS,
     ENUM_EN,
     ENUM_FIELDS,
     ENUM_ZH,
@@ -793,16 +794,18 @@ class GoodIdeaService:
         equifinality: str,
         multifinality: str,
         success_probability: str,
+        distance: str,
+        specificity: str,
         rationale: str,
         transaction_id: str | None = None,
     ) -> dict[str, Any]:
         """待办估价（2026-08-15 用户拍板：目标规划方法论五段流程的落盘命令）。
 
-        Agent 按方法论完成语义判断（需求类型/高阶目标/等效性/多效性/成功概率）
-        并给出可审计的推理理由（rationale，必填——机制不接受黑箱估价），
-        本命令校验枚举合法性、写回中文标签、把理由写入卡片"估价依据"区
-        （CLI 机械维护，含确定性得分与优先级），并按期望×价值规则确定性
-        重算全部"进行中"待办的 priority：主键=概率×多效性（期望×价值），
+        Agent 按方法论完成语义判断（需求类型/高阶目标/等效性/多效性/成功概率/
+        距离/具体性——覆盖方法论六特征）并给出可审计的推理理由（rationale，必填
+        ——机制不接受黑箱估价），本命令校验枚举合法性、写回中文标签、把理由写入
+        卡片"估价依据"区（CLI 机械维护，含确定性得分与优先级），并按期望×价值
+        ×距离规则确定性重算全部"进行中"待办的 priority：主键=概率×多效性×距离，
         tie-break=等效性，未估价待办排最后按创建时间。
         """
         rationale = rationale.strip()
@@ -820,17 +823,23 @@ class GoodIdeaService:
             "equifinality": equifinality,
             "multifinality": multifinality,
             "success_probability": success_probability,
+            "distance": distance,
+            "specificity": specificity,
         }
         normalized: dict[str, str] = {}
         for key, value in labels.items():
             if value not in ENUM_EN and value not in ENUM_ZH:
-                raise ValidationError(f"{key} 不允许值 {value!r}；可选：高/中/低、自主/能力/归属、四个高阶目标")
+                raise ValidationError(f"{key} 不允许值 {value!r}；可选：高/中/低、自主/能力/归属、四个高阶目标、近/中/远、具体/模糊")
             normalized[key] = ENUM_EN.get(value, value)
         if normalized["goal_id"] not in GOAL_SPECS:
             raise ValidationError(f"高阶目标必须是 {sorted(GOAL_SPECS)} 之一")
         for key in ("equifinality", "multifinality", "success_probability"):
             if normalized[key] not in VALUATION_LEVELS:
                 raise ValidationError(f"{key} 必须是 高/中/低")
+        if normalized["distance"] not in DISTANCE_LEVELS:
+            raise ValidationError("distance 必须是 近/中/远")
+        if normalized["specificity"] not in ("specific", "vague"):
+            raise ValidationError("specificity 必须是 具体/模糊")
 
         txid = transaction_id or new_transaction_id("capture-valuate")
         if existing := self._idempotent(txid):
@@ -848,17 +857,23 @@ class GoodIdeaService:
                 if meta.get("type") != "todo" or meta.get("status") != "open":
                     continue
                 todos.append((path.relative_to(self.repo.root), meta))
+        # 目标卡片用更新后的 metadata 参与重排（否则刚写入的新标签排不进正确位置）
+        metadata.update(normalized)
+        todos = [
+            (rel, metadata) if other_rel == rel else (other_rel, other_meta)
+            for other_rel, other_meta in todos
+        ]
         ranked = self._rank_todos(todos)
         priority_map = dict(ranked)
 
         writes: dict[Path, str | bytes] = {}
         # 目标卡片：标签 + priority + "估价依据"区一次写入（CLI 机械维护，推理链摊开）
-        metadata.update(normalized)
         metadata["priority"] = priority_map[rel]
         metadata["updated_at"] = timestamp
         score = (
             VALUATION_LEVELS[normalized["success_probability"]]
             * VALUATION_LEVELS[normalized["multifinality"]]
+            * DISTANCE_LEVELS[normalized["distance"]]
         )
         rationale_block = self._render_rationale_table(
             rationale,
@@ -867,6 +882,7 @@ class GoodIdeaService:
             todo_count=len(todos),
             probability_zh=ENUM_ZH[normalized["success_probability"]],
             multifinality_zh=ENUM_ZH[normalized["multifinality"]],
+            distance_zh=ENUM_ZH[normalized["distance"]],
         )
         updated_text = replace_frontmatter(text, metadata)
         updated_text = replace_section(updated_text, "估价依据", rationale_block)
@@ -919,14 +935,15 @@ class GoodIdeaService:
         todo_count: int,
         probability_zh: str,
         multifinality_zh: str,
+        distance_zh: str,
     ) -> str:
         """估价依据渲染为 Markdown 表格（CLI 机械维护，格式统一可审计）。
 
-        解析 '维度：判定 —— 说明' 形式的行（维度必须是五个标签之一），
-        渲染成 内容|内容说明 两列表格；无法解析的行原样保留（容错）。
+        解析 '维度：判定 —— 说明' 形式的行（维度必须是七个标签之一），
+        渲染成 对象|内容|说明 三列表格；无法解析的行原样保留（容错）。
         末尾追加确定性得分与优先级。
         """
-        dims = ("需求类型", "高阶目标", "等效性", "多效性", "成功概率")
+        dims = ("需求类型", "高阶目标", "等效性", "多效性", "成功概率", "距离", "具体性")
         pattern = re.compile(r"^[-*]?\s*(.+?)[：:]\s*(.+?)\s*——\s*(.+)$")
         rows: list[tuple[str, str, str]] = []
         leftover: list[str] = []
@@ -955,8 +972,8 @@ class GoodIdeaService:
         if leftover:
             body += "\n\n" + "\n".join(leftover)
         body += (
-            f"\n\n- 期望×价值：{score} 分"
-            f"（概率 {probability_zh} × 多效 {multifinality_zh}）"
+            f"\n\n- 期望×价值×距离：{score} 分"
+            f"（概率 {probability_zh} × 多效 {multifinality_zh} × 距离 {distance_zh}）"
             f"→ 优先级 P{priority}（{todo_count} 条进行中待办）"
         )
         return body
@@ -965,17 +982,18 @@ class GoodIdeaService:
     def _rank_todos(
         todos: list[tuple[Path, dict[str, Any]]],
     ) -> list[tuple[Path, int]]:
-        """期望×价值排序：概率×多效性降序，等效性 tie-break，未估价排最后按创建时间。"""
+        """期望×价值×距离排序：概率×多效性×距离降序，等效性 tie-break，未估价排最后按创建时间。"""
         def score(meta: dict[str, Any]) -> tuple[int, ...] | None:
             if not all(
                 key in meta
-                for key in ("need_type", "goal_id", "equifinality", "multifinality", "success_probability")
+                for key in ("need_type", "goal_id", "equifinality", "multifinality", "success_probability", "distance", "specificity")
             ):
                 return None
             p = VALUATION_LEVELS.get(meta.get("success_probability", ""), 0)
             m = VALUATION_LEVELS.get(meta.get("multifinality", ""), 0)
+            d = DISTANCE_LEVELS.get(meta.get("distance", ""), 0)
             e = VALUATION_LEVELS.get(meta.get("equifinality", ""), 0)
-            return (p * m, p, m, e)
+            return (p * m * d, p, m, d, e)
 
         valued: list[tuple[Path, dict[str, Any], tuple[int, ...]]] = []
         unvalued: list[tuple[Path, dict[str, Any]]] = []

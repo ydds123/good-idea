@@ -78,12 +78,18 @@ ENUM_ZH: dict[str, str] = {
     "high": "高",
     "medium": "中",
     "low": "低",
+    # 距离/具体性（2026-08-15 补全方法论六特征）
+    "near": "近",
+    "far": "远",
+    "specific": "具体",
+    "vague": "模糊",
 }
 ENUM_EN: dict[str, str] = {zh: en for en, zh in ENUM_ZH.items()}
 ENUM_FIELDS = frozenset({
     "type", "status", "authoring_mode", "card_type", "capture_status",
     # 待办估价标签（2026-08-15）：文件层中文、内部英文，读写边界归一化
     "need_type", "goal_id", "equifinality", "multifinality", "success_probability",
+    "distance", "specificity",
 })
 
 # 高阶目标定义（2026-08-15 从待办素材抽象，供估价排序与 Agent 加工参考；演化时扩展）
@@ -94,8 +100,9 @@ GOAL_SPECS: dict[str, dict[str, str]] = {
     "goal_tools": {"name": "工具效能", "desc": "让日常工具链顺手"},
 }
 
-# 估价分级（期望×价值排序：概率=期望，多效性=价值杠杆代理）
+# 估价分级（期望×价值×距离排序：概率=期望，多效性=价值杠杆代理，距离=动力权重）
 VALUATION_LEVELS = {"high": 3, "medium": 2, "low": 1}
+DISTANCE_LEVELS = {"near": 3, "medium": 2, "far": 1}
 
 
 def localize_enums(metadata: dict[str, Any]) -> dict[str, Any]:

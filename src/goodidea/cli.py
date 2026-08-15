@@ -134,10 +134,12 @@ def build_parser() -> argparse.ArgumentParser:
     valuate.add_argument("--equifinality", required=True, help="等效性：高/中/低")
     valuate.add_argument("--multifinality", required=True, help="多效性：高/中/低")
     valuate.add_argument("--probability", required=True, help="成功概率：高/中/低")
+    valuate.add_argument("--distance", required=True, help="目标距离：近/中/远")
+    valuate.add_argument("--specificity", required=True, help="目标具体性：具体/模糊")
     valuate.add_argument(
         "--rationale",
         required=True,
-        help="估价理由（必填，机制不接受黑箱）：逐条说明为什么给这个需求类型/高阶目标/等效性/多效性/成功概率",
+        help="估价理由（必填，机制不接受黑箱）：逐条说明为什么给这个需求类型/高阶目标/等效性/多效性/成功概率/距离/具体性",
     )
     valuate.add_argument("--transaction-id")
     update = capture_sub.add_parser(
@@ -601,6 +603,8 @@ def dispatch(args: argparse.Namespace) -> tuple[dict[str, Any], int]:
             equifinality=_enum_arg(args.equifinality),
             multifinality=_enum_arg(args.multifinality),
             success_probability=_enum_arg(args.probability),
+            distance=_enum_arg(args.distance),
+            specificity=_enum_arg(args.specificity),
             rationale=args.rationale,
             transaction_id=args.transaction_id,
         )
