@@ -6761,6 +6761,18 @@
       "timestamp": "2026-08-15T18:00:58+08:00",
       "transaction_id": "migrate-todo-ns-ai-chain"
     },
+    "migrate-todo-ns-hermes": {
+      "action": "capture-transition",
+      "result": {
+        "id": "TODO-20260810-3545d96a",
+        "path": "待办空间/2026-08-10-如何更好地使用你（Hermes精装配置研究）.md",
+        "status": "not_started",
+        "type": "todo"
+      },
+      "summary": "如何更好地使用你（Hermes精装配置研究）",
+      "timestamp": "2026-08-15T18:00:58+08:00",
+      "transaction_id": "migrate-todo-ns-hermes"
+    },
     "migrate-todo-ns-profile": {
       "action": "capture-transition",
       "result": {

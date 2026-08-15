@@ -379,3 +379,5 @@
 
 [2026-08-15T18:00:58+08:00] capture-transition | AI产业链思考沉淀：算力/模型/应用平台层级梳理 → 永久母题 | tx=migrate-todo-ns-ai-chain
 
+[2026-08-15T18:00:58+08:00] capture-transition | 如何更好地使用你（Hermes精装配置研究） | tx=migrate-todo-ns-hermes
+
