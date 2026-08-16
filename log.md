@@ -451,3 +451,5 @@
 
 [2026-08-16T17:21:45+08:00] permanent-accept | AI 产业价值流架构：八层一条链，治理横贯 | tx=permanent-propose-20260816172145-f40c7f97-accept
 
+[2026-08-16T17:25:32+08:00] maintain-index | 重新生成不展示摘要的内容索引 | tx=reindex-after-flash-removal-2
+
