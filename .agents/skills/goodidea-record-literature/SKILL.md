@@ -24,11 +24,13 @@ description: "保存或刷新网页、微信公众号和外部 UTF-8 Markdown/TX
 
        uv run goodidea --root <仓库> source preview --local-file <外部文档> --title <标题> --author <作者> --published-at <日期> --output <仓库外preview.json>
 
-7. 用同一事务创建来源与闪念：
+7. 用同一事务保存来源：**默认只保存来源**，保存动机（`--motivation`）作保存记录但不生成闪念。**只有用户明确说"沉淀为闪念/记成闪念"时才加 `--flash`** 把动机沉淀为关联闪念（2026-08-16 用户拍板：保存动机 ≠ 沉淀闪念的授权，触发前提是用户明确要求）：
 
        uv run goodidea --root <仓库> source commit --preview-file <preview.json> --motivation <用户原话> --transaction-id <稳定事务ID>
+       # 用户明确要求沉淀为闪念时：
+       uv run goodidea --root <仓库> source commit --preview-file <preview.json> --motivation <用户原话> --flash --transaction-id <稳定事务ID>
 
-8. 运行 goodidea verify，默认报告来源与闪念的标题、路径、抓取状态和图片失败项；ID 只在排错或后续命令确实需要时提供。
+8. 运行 goodidea verify，默认报告来源的标题、路径、抓取状态和图片失败项；用户明确要求沉淀的动机闪念一并报告。ID 只在排错或后续命令确实需要时提供。
 
 ### 捕获完成后的后台来源维护
 

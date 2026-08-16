@@ -244,6 +244,11 @@ def build_parser() -> argparse.ArgumentParser:
     )
     source_commit.add_argument("--preview-file", required=True)
     source_commit.add_argument("--motivation", default="")
+    source_commit.add_argument(
+        "--flash",
+        action="store_true",
+        help="用户明确要求时才把保存动机沉淀为闪念；默认只保存来源",
+    )
     source_commit.add_argument("--attach-flash-ids", default="")
     source_commit.add_argument("--anchor-explanation", default="")
     source_commit.add_argument("--maintenance-job-id", default="")
@@ -722,6 +727,7 @@ def dispatch(args: argparse.Namespace) -> tuple[dict[str, Any], int]:
             attach_flash_ids=_split_ids(args.attach_flash_ids),
             anchor_explanation=args.anchor_explanation,
             maintenance_job_id=args.maintenance_job_id,
+            create_flash=args.flash,
             transaction_id=args.transaction_id,
         )
     elif args.command == "source" and args.source_command == "refresh":

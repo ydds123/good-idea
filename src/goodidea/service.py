@@ -1673,6 +1673,7 @@ class GoodIdeaService:
         attach_flash_ids: list[str] | None = None,
         anchor_explanation: str = "",
         maintenance_job_id: str = "",
+        create_flash: bool = False,
         transaction_id: str | None = None,
     ) -> dict[str, Any]:
         attached_ids = list(dict.fromkeys(attach_flash_ids or []))
@@ -1702,7 +1703,10 @@ class GoodIdeaService:
             else identity_key
         )
         title = str(preview.get("title") or fallback_title).strip()
-        flash_ids = attached_ids or [stable_id("FLA", f"{txid}:{motivation}")]
+        # 动机闪念只在用户明确要求沉淀时创建（2026-08-16 用户拍板：默认只保存来源）
+        flash_ids = attached_ids or (
+            [stable_id("FLA", f"{txid}:{motivation}")] if create_flash else []
+        )
         timestamp = now_iso()
         state = self.repo.read_state()
         writes: dict[Path, str | bytes] = {}
@@ -1723,7 +1727,11 @@ class GoodIdeaService:
                 attached_flashes.append(found)
         existing_source = self.repo.find_note(source_id)
         source_created = existing_source is None
-        flash_title = motivation.strip().splitlines()[0][:40] if not attached_ids else ""
+        flash_title = (
+            motivation.strip().splitlines()[0][:40]
+            if create_flash and not attached_ids
+            else ""
+        )
 
         if existing_source is not None:
             source_rel, source_note, source_meta = existing_source
@@ -1841,7 +1849,7 @@ class GoodIdeaService:
                 writes[flash_rel] = replace_frontmatter(flash_note, flash_meta)
                 flash_links.append(wiki_link(flash_rel, str(flash_meta["title"])))
                 flash_paths.append(flash_rel.as_posix())
-        else:
+        elif flash_ids:
             flash_id = flash_ids[0]
             flash_rel = self._new_note_path("flash", flash_title, timestamp)
             flash_meta = {
@@ -1884,10 +1892,10 @@ class GoodIdeaService:
             "source_created": source_created,
             "flash_ids": flash_ids,
             "flash_paths": flash_paths,
-            "flash_created": not bool(attached_ids),
+            "flash_created": not bool(attached_ids) and bool(flash_ids),
             "image_failures": failures,
         }
-        if not attached_ids:
+        if not attached_ids and flash_ids:
             result["flash_id"] = flash_ids[0]
             result["flash_path"] = flash_paths[0]
         committed = self.repo.commit(

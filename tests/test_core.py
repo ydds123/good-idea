@@ -148,7 +148,8 @@ class GoodIdeaCoreTests(unittest.TestCase):
         )
         with self.assertRaises(ValidationError):
             self.service.source_commit(
-                self.preview(), motivation="可以", transaction_id="tx-gate"
+                self.preview(), motivation="可以", transaction_id="tx-gate",
+            create_flash=True,
             )
         self.assertEqual(git(self.root, "rev-parse", "HEAD"), before_head)
         after_files = sorted(
@@ -290,11 +291,13 @@ class GoodIdeaCoreTests(unittest.TestCase):
         first = self.service.source_commit(
             self.preview(), motivation="保存用于形成第一条闪念。",
             transaction_id="anchor-first-source",
+        create_flash=True,
         )
         second_preview = self.local_preview(filename="第二来源.md", title="第二来源")
         second = self.service.source_commit(
             second_preview, motivation="保存用于形成第二条闪念。",
             transaction_id="anchor-second-source",
+        create_flash=True,
         )
         first_flash = self.repo.find_note(first["result"]["flash_id"])
         first_meta = first_flash[2]
@@ -879,7 +882,8 @@ class GoodIdeaCoreTests(unittest.TestCase):
 
     def test_tampered_source_does_not_block_runtime_or_flash_finalize(self):
         captured = self.service.source_commit(
-            self.preview(), motivation="这不是纯确认文本", transaction_id="capture-before-tamper"
+            self.preview(), motivation="这不是纯确认文本", transaction_id="capture-before-tamper",
+        create_flash=True,
         )
         source_path = self.root / captured["result"]["source_path"]
         source_path.write_text(
@@ -996,6 +1000,7 @@ class GoodIdeaCoreTests(unittest.TestCase):
             self.preview(),
             motivation="这篇文章提醒我，判断必须进入行动才能得到校验",
             transaction_id="tx-source-1",
+        create_flash=True,
         )
         data = result["result"]
         source = (self.root / data["source_path"]).read_text(encoding="utf-8")
@@ -1024,6 +1029,7 @@ class GoodIdeaCoreTests(unittest.TestCase):
             self.preview(),
             motivation="这篇文章提醒我，判断必须进入行动才能得到校验",
             transaction_id="tx-source-1",
+        create_flash=True,
         )
         self.assertTrue(replay["idempotent"])
         self.assertEqual(git(self.root, "rev-parse", "HEAD"), head)
@@ -1032,6 +1038,7 @@ class GoodIdeaCoreTests(unittest.TestCase):
             self.preview(),
             motivation="我还想用它检查已有卡片有没有只停留在文字层面",
             transaction_id="tx-source-2",
+        create_flash=True,
         )
         self.assertFalse(second["result"]["source_created"])
         self.assertEqual(second["result"]["source_id"], data["source_id"])
@@ -1046,12 +1053,36 @@ class GoodIdeaCoreTests(unittest.TestCase):
             self.preview(text=marker),
             motivation="我要保留这段提示注入作为安全研究样本",
             transaction_id="untrusted-source-data",
+        create_flash=True,
         )
         source = (self.root / result["result"]["source_path"]).read_text(
             encoding="utf-8"
         )
         self.assertIn(marker, source)
         self.assertFalse((self.root / "evil.txt").exists())
+
+    def test_source_commit_default_does_not_create_motivation_flash(self):
+        # 动机闪念触发前提（2026-08-16 用户拍板）：只有用户明确要求沉淀（--flash）
+        # 才创建动机闪念；默认只保存来源，来源卡「关联闪念」区为空。
+        result = self.service.source_commit(
+            self.preview(),
+            motivation="保存这份材料用于行业讨论的上下文。",
+            transaction_id="tx-source-no-flash",
+        )
+        data = result["result"]
+        self.assertTrue(data["source_created"])
+        self.assertFalse(data["flash_created"])
+        self.assertEqual(data["flash_ids"], [])
+        self.assertEqual(data["flash_paths"], [])
+        self.assertNotIn("flash_id", data)
+        # 闪念空间没有被写入
+        flash_files = sorted((self.root / "闪念空间").glob("*.md"))
+        self.assertEqual(flash_files, [])
+        # 来源卡存在且「关联闪念」区为空
+        source = (self.root / data["source_path"]).read_text(encoding="utf-8")
+        self.assertIn("## 关联闪念", source)
+        self.assertNotIn("[[", source)
+        self.assertTrue(self.service.lint()["ok"])
 
     def test_local_source_is_atomic_deduplicated_and_never_leaks_host_path(self):
         preview = self.local_preview()
@@ -1062,6 +1093,7 @@ class GoodIdeaCoreTests(unittest.TestCase):
             preview,
             motivation="这份本地资料让我意识到可能性空间需要由反馈持续校正。",
             transaction_id="tx-local-source-1",
+        create_flash=True,
         )
         data = first["result"]
         source_rel = Path(data["source_path"])
@@ -1091,6 +1123,7 @@ class GoodIdeaCoreTests(unittest.TestCase):
             moved_copy,
             motivation="同一份资料也可以帮助我比较出卷人思维与考生思维。",
             transaction_id="tx-local-source-2",
+        create_flash=True,
         )["result"]
         self.assertFalse(second["source_created"])
         self.assertEqual(second["source_id"], data["source_id"])
@@ -1131,6 +1164,7 @@ class GoodIdeaCoreTests(unittest.TestCase):
                 preview,
                 motivation="这条动机不能让伪造的本地来源身份进入仓库。",
                 transaction_id="tx-local-forged-identity",
+            create_flash=True,
             )
         self.assertEqual(git(self.root, "rev-parse", "HEAD"), before_head)
         self.assertEqual(
@@ -1155,6 +1189,7 @@ class GoodIdeaCoreTests(unittest.TestCase):
             with_header,
             motivation="我要验证正文自带信息头时快照不再重复插入作者与日期。",
             transaction_id="tx-snapshot-no-dup-header",
+        create_flash=True,
         )["result"]
         note = (self.root / Path(captured["source_path"])).read_text(
             encoding="utf-8"
@@ -1171,6 +1206,7 @@ class GoodIdeaCoreTests(unittest.TestCase):
             plain,
             motivation="对照组：正文不带信息头时仍插入作者与日期。",
             transaction_id="tx-snapshot-with-dup-header",
+        create_flash=True,
         )["result"]
         note = (self.root / Path(captured["source_path"])).read_text(
             encoding="utf-8"
@@ -1184,6 +1220,7 @@ class GoodIdeaCoreTests(unittest.TestCase):
             self.preview(),
             motivation="我要验证旧溯源格式可以安全迁移到原文优先结构。",
             transaction_id="tx-source-layout-base",
+        create_flash=True,
         )["result"]
         rel = Path(captured["source_path"])
         current = (self.root / rel).read_text(encoding="utf-8")
@@ -1246,6 +1283,7 @@ class GoodIdeaCoreTests(unittest.TestCase):
             self.preview(),
             motivation="我要验证旧版中间笔记不会被系统静默删除。",
             transaction_id="tx-source-note-safety-base",
+        create_flash=True,
         )["result"]
         rel = Path(captured["source_path"])
         current = (self.root / rel).read_text(encoding="utf-8")
@@ -1344,6 +1382,7 @@ class GoodIdeaCoreTests(unittest.TestCase):
             self.preview(text="来源快照必须在元数据迁移前后逐字一致。"),
             motivation="我需要验证删除旧摘要字段不会改变受保护的来源快照。",
             transaction_id="tx-metadata-source",
+        create_flash=True,
         )["result"]
         for card_type, title in (
             ("permanent", "旧永久卡片摘要"),
@@ -1430,6 +1469,7 @@ class GoodIdeaCoreTests(unittest.TestCase):
         captured = self.service.source_commit(
             self.preview(), motivation="用旧结构夹具验证契约收敛不会损坏正式内容。",
             transaction_id="contracts-source",
+        create_flash=True,
         )["result"]
         proposal = self.service.permanent_propose(
             "permanent",
@@ -1489,6 +1529,7 @@ class GoodIdeaCoreTests(unittest.TestCase):
             self.preview(),
             motivation="我要验证改文件名后来源和闪念仍保持双向关联",
             transaction_id="tx-before-filename-maintenance",
+        create_flash=True,
         )["result"]
         source_rel = Path(captured["source_path"])
         flash_rel = Path(captured["flash_path"])
@@ -1539,6 +1580,7 @@ class GoodIdeaCoreTests(unittest.TestCase):
             self.preview(),
             motivation="我要验证改文件名后来源和闪念仍保持双向关联",
             transaction_id="tx-before-filename-maintenance",
+        create_flash=True,
         )
         self.assertTrue(replay["idempotent"])
         self.assertEqual(replay["result"]["source_path"], source_rel.as_posix())
@@ -1658,6 +1700,7 @@ class GoodIdeaCoreTests(unittest.TestCase):
             self.preview(),
             motivation="我需要测试受保护快照是否真的能阻止后续写入",
             transaction_id="tx-tamper-source",
+        create_flash=True,
         )
         source_path = self.root / result["result"]["source_path"]
         source_path.write_text(
@@ -1674,6 +1717,7 @@ class GoodIdeaCoreTests(unittest.TestCase):
             self.preview(),
             motivation="我要追踪网页后续变化，但不能静默覆盖旧内容",
             transaction_id="tx-refresh-source",
+        create_flash=True,
         )
         source_id = initial["result"]["source_id"]
         updated_preview = self.preview("正文第二版，包含新的证据")
@@ -1703,6 +1747,7 @@ class GoodIdeaCoreTests(unittest.TestCase):
         initial = self.service.source_commit(
             self.preview(), motivation="我要确认来源改标题时不会留下断链。",
             transaction_id="tx-refresh-title-source",
+        create_flash=True,
         )["result"]
         changed = self.preview("标题变化后的正文")
         changed["title"] = "更新后的示例文章"
@@ -1732,6 +1777,7 @@ class GoodIdeaCoreTests(unittest.TestCase):
             original_preview,
             motivation="我要用这份本地资料持续检验 AI 生成与人的反馈关系。",
             transaction_id="tx-local-refresh-source",
+        create_flash=True,
         )["result"]
         source_id = original["source_id"]
         original_note = self.repo.find_note(source_id)
@@ -1794,6 +1840,7 @@ class GoodIdeaCoreTests(unittest.TestCase):
             local_preview,
             motivation="我要验证本地来源的身份字段不能被手工混用或篡改。",
             transaction_id="tx-local-lint-base",
+        create_flash=True,
         )["result"]
         source_path = self.root / captured["source_path"]
         original_source = source_path.read_text(encoding="utf-8")
@@ -1830,6 +1877,7 @@ class GoodIdeaCoreTests(unittest.TestCase):
             self.preview(),
             motivation="我要验证网页来源不会混入本地文件身份字段。",
             transaction_id="tx-web-local-fields-lint",
+        create_flash=True,
         )["result"]
         source_path = self.root / captured["source_path"]
         text = source_path.read_text(encoding="utf-8")
@@ -1848,6 +1896,7 @@ class GoodIdeaCoreTests(unittest.TestCase):
             self.preview(),
             motivation="我认为系统成功必须同时改善外部知识和人的判断能力",
             transaction_id="tx-cognition-source",
+        create_flash=True,
         )
         ids = captured["result"]
         permanent_draft = """# 系统成功必须包含人的能力增长
@@ -2012,6 +2061,7 @@ class GoodIdeaCoreTests(unittest.TestCase):
             self.preview(),
             motivation="验证预授权模式在一次调用内完成候选与正式创建。",
             transaction_id="tx-preauthorize-source",
+        create_flash=True,
         )["result"]
         draft = "# 预授权创建永久卡片\n\n用户在确认草稿的同时授权正式创建，候选形成后不再需要第二次确认。\n"
         result = self.service.permanent_propose(
@@ -2045,6 +2095,7 @@ class GoodIdeaCoreTests(unittest.TestCase):
             self.preview(),
             motivation="验证未预授权时行为与两阶段流程完全一致。",
             transaction_id="tx-two-stage-source",
+        create_flash=True,
         )["result"]
         draft = "# 两阶段创建永久卡片\n\n未预授权时候选先形成，等待用户在候选形成后的第二次确认。\n"
         proposal = self.service.permanent_propose(
@@ -2080,6 +2131,7 @@ class GoodIdeaCoreTests(unittest.TestCase):
             self.preview(),
             motivation="验证预授权不会放宽任何既有门禁。",
             transaction_id="tx-preauthorize-gate-source",
+        create_flash=True,
         )["result"]
         draft = "# 预授权不放松门禁\n\n即使带预授权，缺少用户确认或形成来源时仍然拒绝。\n"
         # 缺形成来源确认
@@ -2112,6 +2164,7 @@ class GoodIdeaCoreTests(unittest.TestCase):
             self.preview(),
             motivation="验证预授权事务重放不会重复创建卡片。",
             transaction_id="tx-preauthorize-replay-source",
+        create_flash=True,
         )["result"]
         draft = "# 预授权重放幂等\n\n同一事务 ID 重放必须返回原结果，不重复创建卡片。\n"
         first = self.service.permanent_propose(
@@ -2148,6 +2201,7 @@ class GoodIdeaCoreTests(unittest.TestCase):
             self.preview(),
             motivation="验证外部依据不能冒充普通永久卡片的形成来源。",
             transaction_id="tx-formation-gate-source",
+        create_flash=True,
         )["result"]
         draft = "# 外部依据不等于形成来源\n\n引用一份资料只能说明判断有依据，不能自动说明这张卡是如何形成的。\n"
         with self.assertRaises(ValidationError):
@@ -2262,6 +2316,7 @@ class GoodIdeaCoreTests(unittest.TestCase):
             self.preview(),
             motivation="验证闪念作为形成来源时不会被错误复活。",
             transaction_id="tx-formation-state-source",
+        create_flash=True,
         )["result"]
         self.service.capture_transition(
             captured["flash_id"],
@@ -2510,6 +2565,7 @@ updated_at: "2026-08-04T00:00:00+08:00"
             failed_preview,
             motivation="即使暂时抓取失败，我也要保留这个来源和稍后处理的原因",
             transaction_id="tx-failed-source",
+        create_flash=True,
         )
         failed_note = self.repo.find_note(failed["result"]["source_id"])
         self.assertEqual(failed_note[2]["capture_status"], "failed")
@@ -2522,6 +2578,7 @@ updated_at: "2026-08-04T00:00:00+08:00"
             partial_preview,
             motivation="这份资料目前不完整，但其中的线索值得以后重新抓取",
             transaction_id="tx-partial-source",
+        create_flash=True,
         )
         partial_note = self.repo.find_note(partial["result"]["source_id"])
         self.assertEqual(partial_note[2]["capture_status"], "partial")
@@ -2533,6 +2590,7 @@ updated_at: "2026-08-04T00:00:00+08:00"
             preview,
             motivation="即使图片抓取失败，我也要看到明确状态而不是静默依赖远程地址",
             transaction_id="tx-image-failure",
+        create_flash=True,
         )
         source_note = self.repo.find_note(result["result"]["source_id"])
         self.assertEqual(source_note[2]["capture_status"], "partial")
@@ -3561,6 +3619,7 @@ updated_at: "2026-08-04T00:00:00+08:00"
             self.preview(),
             motivation="用来源支撑两张正式卡片之间的连接测试",
             transaction_id="tx-disconnect-source",
+        create_flash=True,
         )
         source_id = captured["result"]["source_id"]
 
@@ -3724,7 +3783,8 @@ class SourceTagsTests(unittest.TestCase):
         if tags is not None:
             preview["tags"] = tags
         return self.service.source_commit(
-            preview, motivation="保存带标签的来源", transaction_id=transaction_id
+            preview, motivation="保存带标签的来源", transaction_id=transaction_id,
+        create_flash=True,
         )
 
     def test_tags_survive_whitelist_and_land_in_frontmatter(self):

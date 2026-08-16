@@ -70,3 +70,7 @@
 ## 2026-08-16 用户确认的待办生命周期时间契约
 
 46. 待办卡片新增两个生命周期时间字段（与 `not_started_at` 同构）：`completed_at` 进入「已完成」时写入完成时刻、退出「已完成」时清除；`expired_count` 进入「已过期」时累计 +1（`capture transition` 手动与 `capture sweep` 自动同源），只增不减，作为承诺质量的负信号——反复过期即"不是真想做"，供 review 筛清理候选。分析口径：待办「念头诞生时刻」默认等于 `created_at`（用户通常实时想起即记录），表达内容中自述更早诞生时间的以内容为准。本轮明确不落 `due_at`（口头相对时间如"明晚/周末"解析成本高、收益不明）与 `started_at`（"开始行动"无清晰可观测锚点，用户自身亦难回答）。同步修改 schema.md、service.py（capture_transition/capture_sweep）、tests 与 README.md。
+
+## 2026-08-16 用户确认的动机闪念触发前提
+
+47. `source commit --motivation` 默认**只保存来源**，保存动机作保存记录但不再自动生成闪念；**只有用户明确说"沉淀为闪念/记成闪念"时才加 `--flash`** 把动机沉淀为关联闪念（用户纠正：保存动机 ≠ 沉淀闪念的授权，自动生成是擅自扩写认知现场）。`--attach-flash-ids` 模式不受影响（只关联既有闪念）。同步修改 cli.py（新增 `--flash` 开关）、service.py（source_commit 加 create_flash，默认 False）、schema.md、项目 skill goodidea-record-literature、README 与对应测试（新增"默认不创建动机闪念"用例）。
