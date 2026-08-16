@@ -443,3 +443,5 @@
 
 [2026-08-16T11:15:39+08:00] source-refresh-propose | "北京智能体新政"解读 | tx=src-beijing-policy-image-to-markdown-propose-20260816
 
+[2026-08-16T11:17:13+08:00] source-refresh-accept | "北京智能体新政"解读 | tx=src-beijing-policy-image-to-markdown-accept-20260816
+

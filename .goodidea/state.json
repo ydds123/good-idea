@@ -7870,6 +7870,18 @@
       "timestamp": "2026-08-16T10:49:08+08:00",
       "transaction_id": "src-beijing-agent-policy-20260816"
     },
+    "src-beijing-policy-image-to-markdown-accept-20260816": {
+      "action": "source-refresh-accept",
+      "result": {
+        "proposal_id": "PRP-204ed72bc563",
+        "source_id": "SRC-2aa83596324a",
+        "source_path": "溯源空间/2026-08-16-北京智能体新政-解读.md",
+        "status": "complete"
+      },
+      "summary": "\"北京智能体新政\"解读",
+      "timestamp": "2026-08-16T11:17:13+08:00",
+      "transaction_id": "src-beijing-policy-image-to-markdown-accept-20260816"
+    },
     "src-beijing-policy-image-to-markdown-propose-20260816": {
       "action": "source-refresh-propose",
       "result": {
