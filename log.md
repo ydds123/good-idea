@@ -449,3 +449,5 @@
 
 [2026-08-16T17:21:45+08:00] permanent-propose | AI 产业价值流架构：八层一条链，治理横贯 | tx=permanent-propose-20260816172145-f40c7f97
 
+[2026-08-16T17:21:45+08:00] permanent-accept | AI 产业价值流架构：八层一条链，治理横贯 | tx=permanent-propose-20260816172145-f40c7f97-accept
+
