@@ -433,3 +433,5 @@
 
 [2026-08-16T10:44:04+08:00] source-commit | 2026 WAIC参展企业MECE分层全景 v7（主流玩家补全版） + 保存动机 | tx=src-waic-mice-20260816
 
+[2026-08-16T10:49:08+08:00] source-commit | "北京智能体新政"解读 + 保存动机 | tx=src-beijing-agent-policy-20260816
+

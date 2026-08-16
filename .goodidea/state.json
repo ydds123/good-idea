@@ -7828,6 +7828,27 @@
       "timestamp": "2026-08-13T19:15:40+08:00",
       "transaction_id": "source-yachanghui196-20260813"
     },
+    "src-beijing-agent-policy-20260816": {
+      "action": "source-commit",
+      "result": {
+        "flash_created": true,
+        "flash_id": "FLA-20260816-c64fe9f5",
+        "flash_ids": [
+          "FLA-20260816-c64fe9f5"
+        ],
+        "flash_path": "闪念空间/2026-08-16-有了-WAIC-框架理念之后，读北京市智能体新政政策发文时写的一篇文章——把算力.md",
+        "flash_paths": [
+          "闪念空间/2026-08-16-有了-WAIC-框架理念之后，读北京市智能体新政政策发文时写的一篇文章——把算力.md"
+        ],
+        "image_failures": [],
+        "source_created": true,
+        "source_id": "SRC-2aa83596324a",
+        "source_path": "溯源空间/2026-08-16-北京智能体新政-解读.md"
+      },
+      "summary": "\"北京智能体新政\"解读 + 保存动机",
+      "timestamp": "2026-08-16T10:49:08+08:00",
+      "transaction_id": "src-beijing-agent-policy-20260816"
+    },
     "src-waic-mice-20260816": {
       "action": "source-commit",
       "result": {
