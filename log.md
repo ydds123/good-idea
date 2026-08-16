@@ -445,3 +445,5 @@
 
 [2026-08-16T11:17:13+08:00] source-refresh-accept | "北京智能体新政"解读 | tx=src-beijing-policy-image-to-markdown-accept-20260816
 
+[2026-08-16T16:07:20+08:00] capture-valuate | 曾鸣书第一章二刷（本质·底层逻辑） | tx=capture-valuate-20260816160720-2212d9df
+
