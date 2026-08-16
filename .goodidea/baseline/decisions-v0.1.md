@@ -66,3 +66,7 @@
 ## 2026-08-15 用户确认的待办状态归档
 
 45. 待办按状态归档，一个状态对应一个文件夹：`待办空间/` 根目录存放 `进行中`，`待办空间/已完成/` 存放 `已完成`，`待办空间/已取消/` 存放 `已取消`。`capture transition` 流转状态时自动把卡片文件移到对应状态目录（已完成/已取消移入子目录，改回进行中移回根目录），并同步重写全库引用、索引与状态账本；所有扫描（lint/verify/review/maintain/find_note）同时覆盖根目录与两个状态子目录，归档卡片不脱离系统管理。同步修改 contracts.py（TODO_STATUS_DIRS）、notes.py（note_scan_dirs/note_scan_entries）、repository.py、service.py、schema.md、README.md 与对应测试。用户偏好：已完成事项不挡在行动队列里，档案由 git/log 承担。
+
+## 2026-08-16 用户确认的待办生命周期时间契约
+
+46. 待办卡片新增两个生命周期时间字段（与 `not_started_at` 同构）：`completed_at` 进入「已完成」时写入完成时刻、退出「已完成」时清除；`expired_count` 进入「已过期」时累计 +1（`capture transition` 手动与 `capture sweep` 自动同源），只增不减，作为承诺质量的负信号——反复过期即"不是真想做"，供 review 筛清理候选。分析口径：待办「念头诞生时刻」默认等于 `created_at`（用户通常实时想起即记录），表达内容中自述更早诞生时间的以内容为准。本轮明确不落 `due_at`（口头相对时间如"明晚/周末"解析成本高、收益不明）与 `started_at`（"开始行动"无清晰可观测锚点，用户自身亦难回答）。同步修改 schema.md、service.py（capture_transition/capture_sweep）、tests 与 README.md。

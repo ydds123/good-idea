@@ -2679,12 +2679,15 @@ updated_at: "2026-08-04T00:00:00+08:00"
         self.assertEqual(
             self.repo.find_note(todo_id)[2]["status"], "done"
         )
+        # 生命周期时间契约（2026-08-16 拍板）：进入已完成写 completed_at，退出清除
+        self.assertIn("completed_at", self.repo.find_note(todo_id)[2])
         reopened = self.service.capture_transition(
             todo_id,
             status="open",
             transaction_id="tx-transition-reopen",
         )
         self.assertEqual(reopened["result"]["status"], "open")
+        self.assertNotIn("completed_at", self.repo.find_note(todo_id)[2])
         with self.assertRaises(ValidationError):
             self.service.capture_transition(
                 todo_id,
@@ -3300,6 +3303,8 @@ updated_at: "2026-08-04T00:00:00+08:00"
         self.assertTrue(new_rel.as_posix().startswith("待办空间/已过期/"))
         self.assertEqual(new_meta["status"], "expired")
         self.assertNotIn("not_started_at", new_meta)
+        # 生命周期时间契约（2026-08-16 拍板）：进入已过期累计过期次数
+        self.assertEqual(new_meta.get("expired_count"), 1)
         # 引用已重写
         _, ref_text, _ = self.repo.find_note(ref_id)
         self.assertIn(new_rel.with_suffix("").as_posix(), ref_text)

@@ -776,6 +776,14 @@ class GoodIdeaService:
             elif status in ("open", "done", "cancelled", "expired") and "not_started_at" in metadata:
                 # 退出未开始：清除计时基准（进行中不参与 48h 窗口）
                 metadata.pop("not_started_at", None)
+            # 生命周期时间契约（2026-08-16 拍板）：completed_at 进入已完成写、退出清
+            # （与 not_started_at 同构）；expired_count 进入已过期累计（手动与 sweep 同源）
+            if status == "done":
+                metadata["completed_at"] = timestamp
+            elif status != "done" and "completed_at" in metadata:
+                metadata.pop("completed_at", None)
+            if status == "expired":
+                metadata["expired_count"] = int(metadata.get("expired_count") or 0) + 1
         text = replace_frontmatter(text, metadata)
         state = self.repo.read_state()
         # 状态归档（2026-08-15 用户拍板）：状态变化时把文件移到对应状态目录
@@ -1050,7 +1058,7 @@ class GoodIdeaService:
                 )
                 if rewritten != note_text:
                     writes[other_rel] = rewritten
-        # 移动源：状态转已过期、清除计时基准、正文应用全局替换，写入目标路径
+        # 移动源：状态转已过期、清除计时基准、累计过期计数、正文应用全局替换，写入目标路径
         for item in expired:
             rel = Path(item["path"])
             target_rel = target_dir / rel.name
@@ -1059,6 +1067,8 @@ class GoodIdeaService:
             metadata["status"] = "expired"
             metadata["updated_at"] = timestamp
             metadata.pop("not_started_at", None)
+            # 生命周期时间契约（2026-08-16 拍板）：过期计数只增不减，承诺质量负信号
+            metadata["expired_count"] = int(metadata.get("expired_count") or 0) + 1
             writes[target_rel] = replace_frontmatter(text, metadata)
             deletes.add(rel)
 
