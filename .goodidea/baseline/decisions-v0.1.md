@@ -74,3 +74,7 @@
 ## 2026-08-16 用户确认的动机闪念触发前提
 
 47. `source commit --motivation` 默认**只保存来源**，保存动机作保存记录但不再自动生成闪念；**只有用户明确说"沉淀为闪念/记成闪念"时才加 `--flash`** 把动机沉淀为关联闪念（用户纠正：保存动机 ≠ 沉淀闪念的授权，自动生成是擅自扩写认知现场）。`--attach-flash-ids` 模式不受影响（只关联既有闪念）。同步修改 cli.py（新增 `--flash` 开关）、service.py（source_commit 加 create_flash，默认 False）、schema.md、项目 skill goodidea-record-literature、README 与对应测试（新增"默认不创建动机闪念"用例）。
+
+## 2026-08-16 用户确认的来源标签弱约束放宽
+
+48. [覆盖第 43 项的"全中文"实现细节] 来源标签不再由 CLI 强制全中文：`maintain source-tags` 只做非空与去重弱约束（删除 service.py 的 `[\u4e00-\u9fff]+` 强校验），中文语境实体名、允许 AI/WAIC 等通用英文缩写（案例：用户指定"AI 研究框架"标签），内容质量由对话层维护（回到第 43 项"全中文由对话层查重维护"的原始设计）。同步修改 service.py（maintain_source_tags）、schema.md、设计方案/溯源空间来源渠道标签方案.md、测试（中英混合标签通过用例）与 README。

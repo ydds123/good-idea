@@ -3846,10 +3846,18 @@ class SourceTagsTests(unittest.TestCase):
     def test_maintain_source_tags_validation(self):
         result = self._commit_source_with_tags(["炒饭会"])
         source_id = result["result"]["source_id"]
-        with self.assertRaises(ValidationError):
-            self.service.maintain_source_tags(
-                source_id=source_id, tags=["SkillHub"], transaction_id="tx-tags-bad"
-            )
+        # 弱约束（2026-08-16 放宽，decisions 48）：中英混合标签应通过（对话层把关内容）
+        mixed = self.service.maintain_source_tags(
+            source_id=source_id, tags=["AI 研究框架"], transaction_id="tx-tags-mixed"
+        )
+        self.assertFalse(mixed["result"]["no_change"])
+        _, _, meta_mixed = self.repo.find_note(source_id)
+        self.assertEqual(meta_mixed["tags"], ["AI 研究框架"])
+        # 空字符串被跳过：与当前标签一致时不产生变化
+        empty = self.service.maintain_source_tags(
+            source_id=source_id, tags=["AI 研究框架", "  "], transaction_id="tx-tags-empty-skip"
+        )
+        self.assertTrue(empty["result"]["no_change"])
         # 数量不限：3 个及以上合法标签应通过（2026-08-13 取消 ≤2 条上限）
         multi = self.service.maintain_source_tags(
             source_id=source_id,

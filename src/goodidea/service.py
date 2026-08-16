@@ -2858,7 +2858,9 @@ class GoodIdeaService:
 
         只改 Frontmatter 的 tags 字段，不触碰快照区、不触发哈希变化。
         传空列表即清除标签；重跑同命令传新值即整体替换（修正路径）。
-        标签约束：全中文专有名词、去重；数量由对话层与用户商定，不做上限校验。
+        标签约束（2026-08-16 放宽，decisions 48）：CLI 只做非空与去重弱约束，
+        内容质量（回忆锚点实体名、中文语境、允许 AI/WAIC 等通用英文缩写）由
+        对话层维护；数量由对话层与用户商定，不做上限校验。
         """
         txid = transaction_id or new_transaction_id("maintain-source-tags")
         if existing := self._idempotent(txid):
@@ -2873,8 +2875,8 @@ class GoodIdeaService:
             tag = str(tag).strip()
             if not tag:
                 continue
-            if not re.fullmatch(r"[\u4e00-\u9fff]+", tag):
-                raise ValidationError(f"来源标签必须是全中文专有名词：{tag}")
+            # 弱约束（2026-08-16 放宽，decisions 48）：只去重，不做全中文强校验；
+            # 内容质量由对话层维护
             if tag not in cleaned:
                 cleaned.append(tag)
         current = list(source_meta.get("tags") or [])
