@@ -447,3 +447,5 @@
 
 [2026-08-16T16:07:20+08:00] capture-valuate | 曾鸣书第一章二刷（本质·底层逻辑） | tx=capture-valuate-20260816160720-2212d9df
 
+[2026-08-16T17:21:45+08:00] permanent-propose | AI 产业价值流架构：八层一条链，治理横贯 | tx=permanent-propose-20260816172145-f40c7f97
+

@@ -7299,6 +7299,17 @@
       "timestamp": "2026-08-12T19:11:55+08:00",
       "transaction_id": "permanent-propose-20260812191155-a67b1e93-accept"
     },
+    "permanent-propose-20260816172145-f40c7f97": {
+      "action": "permanent-propose",
+      "result": {
+        "card_type": "permanent",
+        "proposal_id": "PRP-9ff5aba6322e",
+        "proposal_path": ".goodidea/proposals/permanent/PRP-9ff5aba6322e.md"
+      },
+      "summary": "AI 产业价值流架构：八层一条链，治理横贯",
+      "timestamp": "2026-08-16T17:21:45+08:00",
+      "transaction_id": "permanent-propose-20260816172145-f40c7f97"
+    },
     "permanent-propose-collab-20260811-01": {
       "action": "permanent-propose",
       "result": {
