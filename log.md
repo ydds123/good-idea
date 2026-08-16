@@ -441,3 +441,5 @@
 
 [2026-08-16T11:03:33+08:00] maintain-source-tags | 来源标签已更新：2026 WAIC参展企业MECE分层全景 v7（主流玩家补全版） → ['AI 研究框架'] | tx=tags-waic-mice-20260816
 
+[2026-08-16T11:15:39+08:00] source-refresh-propose | "北京智能体新政"解读 | tx=src-beijing-policy-image-to-markdown-propose-20260816
+
