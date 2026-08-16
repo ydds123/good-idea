@@ -7828,6 +7828,27 @@
       "timestamp": "2026-08-13T19:15:40+08:00",
       "transaction_id": "source-yachanghui196-20260813"
     },
+    "src-waic-mice-20260816": {
+      "action": "source-commit",
+      "result": {
+        "flash_created": true,
+        "flash_id": "FLA-20260816-7930bc2a",
+        "flash_ids": [
+          "FLA-20260816-7930bc2a"
+        ],
+        "flash_path": "闪念空间/2026-08-16-这是我过去关于-AI-产业链思考的沉淀——把整个层级架构（算力-模型-应用平台等.md",
+        "flash_paths": [
+          "闪念空间/2026-08-16-这是我过去关于-AI-产业链思考的沉淀——把整个层级架构（算力-模型-应用平台等.md"
+        ],
+        "image_failures": [],
+        "source_created": true,
+        "source_id": "SRC-5a4ddc625cf8",
+        "source_path": "溯源空间/2026-08-16-2026-WAIC参展企业MECE分层全景-v7（主流玩家补全版）.md"
+      },
+      "summary": "2026 WAIC参展企业MECE分层全景 v7（主流玩家补全版） + 保存动机",
+      "timestamp": "2026-08-16T10:44:04+08:00",
+      "transaction_id": "src-waic-mice-20260816"
+    },
     "summarize-typewriter-20260815-01": {
       "action": "capture-summarize",
       "result": {
