@@ -439,3 +439,5 @@
 
 [2026-08-16T11:01:22+08:00] maintain-index | 重新生成不展示摘要的内容索引 | tx=reindex-after-flash-removal-20260816
 
+[2026-08-16T11:03:33+08:00] maintain-source-tags | 来源标签已更新：2026 WAIC参展企业MECE分层全景 v7（主流玩家补全版） → ['AI 研究框架'] | tx=tags-waic-mice-20260816
+
