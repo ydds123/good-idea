@@ -435,3 +435,5 @@
 
 [2026-08-16T10:49:08+08:00] source-commit | "北京智能体新政"解读 + 保存动机 | tx=src-beijing-agent-policy-20260816
 
+[2026-08-16T11:00:56+08:00] capture-transition | AI产业链思考沉淀：算力/模型/应用平台层级梳理 → 永久母题 | tx=complete-ai-chain-todo-20260816
+
