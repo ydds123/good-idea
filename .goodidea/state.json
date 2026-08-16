@@ -7339,6 +7339,15 @@
       "timestamp": "2026-08-12T20:14:12+08:00",
       "transaction_id": "refresh-aiagent-report-20260812-002"
     },
+    "reindex-after-flash-removal-20260816": {
+      "action": "maintain-index",
+      "result": {
+        "no_change": false
+      },
+      "summary": "重新生成不展示摘要的内容索引",
+      "timestamp": "2026-08-16T11:01:22+08:00",
+      "transaction_id": "reindex-after-flash-removal-20260816"
+    },
     "reindex-title-fix-20260815": {
       "action": "maintain-index",
       "result": {

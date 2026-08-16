@@ -437,3 +437,5 @@
 
 [2026-08-16T11:00:56+08:00] capture-transition | AI产业链思考沉淀：算力/模型/应用平台层级梳理 → 永久母题 | tx=complete-ai-chain-todo-20260816
 
+[2026-08-16T11:01:22+08:00] maintain-index | 重新生成不展示摘要的内容索引 | tx=reindex-after-flash-removal-20260816
+
