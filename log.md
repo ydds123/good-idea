@@ -453,3 +453,5 @@
 
 [2026-08-16T17:25:32+08:00] maintain-index | 重新生成不展示摘要的内容索引 | tx=reindex-after-flash-removal-2
 
+[2026-08-16T22:46:12+08:00] capture-revise | 去炒饭会行业分析工作台的开源 Git 地址看看是否已开源、能否获取 | tx=capture-revise-20260816224612-980500e9
+
