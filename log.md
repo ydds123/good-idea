@@ -459,3 +459,5 @@
 
 [2026-08-17T16:12:26+08:00] capture-valuate | 曾鸣书第一章二刷（本质·底层逻辑） | tx=capture-valuate-20260817161226-49c6ef41
 
+[2026-08-17T16:12:48+08:00] capture-valuate | 为 Good Idea 增加用户画像/记忆摘要层（类 ChatGPT 记忆） | tx=capture-valuate-20260817161248-1a0585ac
+
