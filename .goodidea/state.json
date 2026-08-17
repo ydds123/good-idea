@@ -6440,6 +6440,63 @@
       "timestamp": "2026-08-16T16:07:20+08:00",
       "transaction_id": "capture-valuate-20260816160720-2212d9df"
     },
+    "capture-valuate-20260817161226-49c6ef41": {
+      "action": "capture-valuate",
+      "result": {
+        "id": "TODO-20260816-6262e719",
+        "labels": {
+          "distance": "near",
+          "equifinality": "low",
+          "goal_id": "goal_career",
+          "multifinality": "high",
+          "need_type": "competence",
+          "specificity": "specific",
+          "success_probability": "high"
+        },
+        "priority": 1,
+        "ranked": [
+          {
+            "id": "TODO-20260816-6262e719",
+            "path": "待办空间/2026-08-16-曾鸣书第一章二刷（本质·底层逻辑）.md",
+            "priority": 1,
+            "title": "曾鸣书第一章二刷（本质·底层逻辑）"
+          },
+          {
+            "id": "TODO-20260814-4ef4ba98",
+            "path": "待办空间/2026-08-14-近期学习清单（AI生图-AI领导力-曾鸣二刷-动机心理学应用）.md",
+            "priority": 2,
+            "title": "近期学习清单（AI生图/AI领导力/曾鸣二刷/动机心理学应用）"
+          },
+          {
+            "id": "TODO-20260809-13e2394c",
+            "path": "待办空间/2026-08-09-为-Good-Idea-增加用户画像-记忆摘要层（类-ChatGPT-记忆）.md",
+            "priority": 3,
+            "title": "为 Good Idea 增加用户画像/记忆摘要层（类 ChatGPT 记忆）"
+          },
+          {
+            "id": "TODO-20260810-3545d96a",
+            "path": "待办空间/2026-08-10-如何更好地使用你（Hermes精装配置研究）.md",
+            "priority": 4,
+            "title": "如何更好地使用你（Hermes精装配置研究）"
+          },
+          {
+            "id": "TODO-20260813-505dda9b",
+            "path": "待办空间/2026-08-13-阅读《Raycast从入门到精通：Mac-终极效率神器完全指南》.md",
+            "priority": 5,
+            "title": "阅读《Raycast从入门到精通：Mac 终极效率神器完全指南》"
+          },
+          {
+            "id": "TODO-20260810-92f84ca8",
+            "path": "待办空间/2026-08-10-开源AI电影《Hell-Grind》：视频领域的控制论实践学习项目.md",
+            "priority": 6,
+            "title": "开源AI电影《Hell Grind》：视频领域的控制论实践学习项目"
+          }
+        ]
+      },
+      "summary": "曾鸣书第一章二刷（本质·底层逻辑）",
+      "timestamp": "2026-08-17T16:12:26+08:00",
+      "transaction_id": "capture-valuate-20260817161226-49c6ef41"
+    },
     "close-todo-action-loop-v2": {
       "action": "capture-transition",
       "result": {
