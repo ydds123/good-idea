@@ -6981,6 +6981,28 @@
       "timestamp": "2026-08-14T23:39:45+08:00",
       "transaction_id": "finalize-goal-20260814"
     },
+    "finalize-jiazhi-20260818": {
+      "action": "capture-finalize",
+      "result": {
+        "flash_count": 1,
+        "flashes": [
+          {
+            "context_refs": [],
+            "id": "FLA-20260818-7b66e90b",
+            "path": "闪念空间/2026-08-18-人生脚本解释为何，主体性自有参照系.md",
+            "source_anchors": [],
+            "source_boundary": "",
+            "title": "人生脚本解释为何，主体性自有参照系"
+          }
+        ],
+        "maintenance_job_ids": [],
+        "proposal_id": "CPR-4bcf16b9e3d0",
+        "session_id": "CAP-20260818-2e778753"
+      },
+      "summary": "确认本轮 1 张闪念",
+      "timestamp": "2026-08-18T19:55:10+08:00",
+      "transaction_id": "finalize-jiazhi-20260818"
+    },
     "finalize-skillhub-20260811": {
       "action": "capture-finalize",
       "result": {
