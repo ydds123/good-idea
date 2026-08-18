@@ -4,9 +4,9 @@ type: "待办"
 title: "开源AI电影《Hell Grind》：视频领域的控制论实践学习项目"
 status: "未开始"
 created_at: "2026-08-10T00:30:24+08:00"
-updated_at: "2026-08-17T16:12:26+08:00"
+updated_at: "2026-08-19T00:22:31+08:00"
 source_ids: []
-priority: 6
+priority: 7
 need_type: "能力"
 goal_id: "创作能力"
 equifinality: "高"
