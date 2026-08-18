@@ -475,3 +475,5 @@
 
 [2026-08-18T23:35:46+08:00] capture-finalize | 确认本轮 3 张闪念 | tx=finalize-command-20260818
 
+[2026-08-18T23:55:42+08:00] capture-todo | 输出风格模块统一规划 | tx=todo-output-style-20260818
+
