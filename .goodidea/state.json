@@ -182,6 +182,17 @@
       "timestamp": "2026-08-18T23:26:34+08:00",
       "transaction_id": "capture-revise-20260818232634-fa4e55a6"
     },
+    "capture-revise-20260818235546-5c48dc23": {
+      "action": "capture-revise",
+      "result": {
+        "id": "TODO-20260809-ab9a88c7",
+        "path": "待办空间/已完成/2026-08-09-闪念卡片每晚-8-点飞书预警机制.md",
+        "type": "todo"
+      },
+      "summary": "闪念卡片每晚 8 点飞书预警机制",
+      "timestamp": "2026-08-18T23:55:46+08:00",
+      "transaction_id": "capture-revise-20260818235546-5c48dc23"
+    },
     "capture-revise-source-anchors-20260809": {
       "action": "capture-revise-source-anchors",
       "result": {

@@ -477,3 +477,5 @@
 
 [2026-08-18T23:55:42+08:00] capture-todo | 输出风格模块统一规划 | tx=todo-output-style-20260818
 
+[2026-08-18T23:55:46+08:00] capture-revise | 闪念卡片每晚 8 点飞书预警机制 | tx=capture-revise-20260818235546-5c48dc23
+
