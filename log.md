@@ -469,3 +469,5 @@
 
 [2026-08-18T19:55:10+08:00] capture-finalize | 确认本轮 1 张闪念 | tx=finalize-jiazhi-20260818
 
+[2026-08-18T22:49:08+08:00] capture-flash | 产品老炮式问题定义与主体性同构：追问原因归属权而非执行 | tx=capture-flash-20260818224908-9d90d9da
+

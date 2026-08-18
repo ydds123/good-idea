@@ -116,6 +116,17 @@
       "timestamp": "2026-08-12T17:57:09+08:00",
       "transaction_id": "capture-flash-20260812175709-46b0a999"
     },
+    "capture-flash-20260818224908-9d90d9da": {
+      "action": "capture-flash",
+      "result": {
+        "id": "FLA-20260818-392c482c",
+        "path": "闪念空间/2026-08-18-产品老炮式问题定义与主体性同构：追问原因归属权而非执行.md",
+        "type": "flash"
+      },
+      "summary": "产品老炮式问题定义与主体性同构：追问原因归属权而非执行",
+      "timestamp": "2026-08-18T22:49:08+08:00",
+      "transaction_id": "capture-flash-20260818224908-9d90d9da"
+    },
     "capture-interesting-20260811165205-3b5c0d35": {
       "action": "capture-interesting",
       "result": {
