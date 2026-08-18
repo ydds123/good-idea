@@ -473,3 +473,5 @@
 
 [2026-08-18T23:26:34+08:00] capture-revise | 产品老炮式问题定义与主体性同构：追问原因归属权而非执行 | tx=capture-revise-20260818232634-fa4e55a6
 
+[2026-08-18T23:35:46+08:00] capture-finalize | 确认本轮 3 张闪念 | tx=finalize-command-20260818
+
