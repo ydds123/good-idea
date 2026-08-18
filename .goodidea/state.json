@@ -142,7 +142,7 @@
       "action": "capture-interesting",
       "result": {
         "id": "INT-20260818-200f76c5",
-        "path": "有意思空间/2026-08-18-用户原话：-这个有意思-——指-GitHub-仓库--DeepSeek-V4-J.md",
+        "path": "有意思空间/2026-08-18-J-Space：DeepSeek-V4-能力释放报告.md",
         "type": "interesting"
       },
       "summary": "用户原话：\"这个有意思\"——指 GitHub 仓库 [DeepSeek-V4-J",
@@ -7695,6 +7695,20 @@
       "summary": "规范化 2 份来源快照",
       "timestamp": "2026-08-09T10:55:08+08:00",
       "transaction_id": "remove-literature-layer-20260809"
+    },
+    "retitle-jspace-20260818": {
+      "action": "capture-retitle",
+      "result": {
+        "from": "有意思空间/2026-08-18-用户原话：-这个有意思-——指-GitHub-仓库--DeepSeek-V4-J.md",
+        "id": "INT-20260818-200f76c5",
+        "path": "有意思空间/2026-08-18-J-Space：DeepSeek-V4-能力释放报告.md",
+        "renamed": true,
+        "to": "有意思空间/2026-08-18-J-Space：DeepSeek-V4-能力释放报告.md",
+        "type": "interesting"
+      },
+      "summary": "J-Space：DeepSeek V4 能力释放报告",
+      "timestamp": "2026-08-18T14:24:54+08:00",
+      "transaction_id": "retitle-jspace-20260818"
     },
     "review-expire-20260806215314-b66ff66d": {
       "action": "review-expire",

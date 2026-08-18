@@ -1,13 +1,13 @@
 ---
 id: "INT-20260818-200f76c5"
 type: "有意思"
-title: "用户原话：\"这个有意思\"——指 GitHub 仓库 [DeepSeek-V4-J"
+title: "J-Space：DeepSeek V4 能力释放报告"
 status: "待处理"
 created_at: "2026-08-18T14:24:46+08:00"
-updated_at: "2026-08-18T14:24:46+08:00"
+updated_at: "2026-08-18T14:24:54+08:00"
 source_ids: []
 ---
-# 用户原话："这个有意思"——指 GitHub 仓库 [DeepSeek-V4-J
+# J-Space：DeepSeek V4 能力释放报告
 
 ## 原始记录
 
