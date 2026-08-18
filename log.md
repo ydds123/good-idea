@@ -463,3 +463,5 @@
 
 [2026-08-17T16:13:01+08:00] capture-valuate | 近期学习清单（AI生图/AI领导力/曾鸣二刷/动机心理学应用） | tx=capture-valuate-20260817161301-7089cb41
 
+[2026-08-18T14:24:47+08:00] capture-interesting | 用户原话："这个有意思"——指 GitHub 仓库 [DeepSeek-V4-J | tx=capture-interesting-20260818142446-04b7acab
+
