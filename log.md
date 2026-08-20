@@ -517,3 +517,5 @@
 
 [2026-08-20T21:57:09+08:00] permanent-accept | 指挥 AI 将成为人们新的能力瓶颈，且需要去训练 | tx=permanent-propose-command-ai-20260820-accept
 
+[2026-08-20T22:03:23+08:00] permanent-propose | 人剑合一：学 AI 的正确姿势 | tx=permanent-propose-sword-ai-20260820
+
