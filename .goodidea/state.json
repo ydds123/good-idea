@@ -6755,6 +6755,20 @@
       "timestamp": "2026-08-13T22:44:07+08:00",
       "transaction_id": "connect-20260813-agency-career"
     },
+    "connect-20260820-real": {
+      "action": "connect-propose",
+      "result": {
+        "from_id": "FLA-20260820-7592ac19",
+        "proposal_id": "PRP-6f806234c607",
+        "proposal_path": ".goodidea/proposals/connections/PRP-6f806234c607.md",
+        "rationale": "新闪念把'指挥 AI 是能力瓶颈'从'训练指挥能力'推进到'指挥资源的最优分配：谁的琐事优先处理'——同一能力瓶颈主题上的演进",
+        "relation": "演化",
+        "to_id": "FLA-20260818-5de3ffc0"
+      },
+      "summary": "连接候选：AI 处理琐事的价值杠杆，取决于是谁的琐事 → 指挥 AI 是新的能力瓶颈，且需要训练",
+      "timestamp": "2026-08-20T09:39:40+08:00",
+      "transaction_id": "connect-20260820-real"
+    },
     "connect-accept-20260813-agency-career": {
       "action": "connect-accept",
       "result": {
