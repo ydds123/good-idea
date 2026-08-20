@@ -501,3 +501,5 @@
 
 [2026-08-20T21:16:29+08:00] permanent-accept | 母题级课题：AI 图像/摄影与视觉叙事的 skill 化 | tx=permanent-accept-mother-seed-20260820
 
+[2026-08-20T21:24:46+08:00] maintain-index | 重新生成不展示摘要的内容索引 | tx=maintain-index-del-flash-20260820
+

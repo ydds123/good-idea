@@ -7386,6 +7386,15 @@
       "timestamp": "2026-08-11T23:24:28+08:00",
       "transaction_id": "maintain-index-after-test-cards-removal"
     },
+    "maintain-index-del-flash-20260820": {
+      "action": "maintain-index",
+      "result": {
+        "no_change": false
+      },
+      "summary": "重新生成不展示摘要的内容索引",
+      "timestamp": "2026-08-20T21:24:46+08:00",
+      "transaction_id": "maintain-index-del-flash-20260820"
+    },
     "migrate-enums-zh-20260811": {
       "action": "maintain-enums-zh",
       "result": {
