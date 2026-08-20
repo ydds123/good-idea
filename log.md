@@ -507,3 +507,5 @@
 
 [2026-08-20T21:48:45+08:00] permanent-revise | 主体性：行为原因的自我归属 | tx=permanent-revise-subjectivity-20260820
 
+[2026-08-20T21:48:48+08:00] capture-transition | 产品老炮式问题定义与主体性同构：追问原因归属权而非执行 | tx=flash-dismiss-subjectivity-sync-20260820
+

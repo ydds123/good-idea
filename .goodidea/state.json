@@ -7221,6 +7221,18 @@
       "timestamp": "2026-08-07T21:57:41+08:00",
       "transaction_id": "first-permanent-propose-20260807"
     },
+    "flash-dismiss-subjectivity-sync-20260820": {
+      "action": "capture-transition",
+      "result": {
+        "id": "FLA-20260818-392c482c",
+        "path": "闪念空间/已放弃/2026-08-18-产品老炮式问题定义与主体性同构：追问原因归属权而非执行.md",
+        "status": "dismissed",
+        "type": "flash"
+      },
+      "summary": "产品老炮式问题定义与主体性同构：追问原因归属权而非执行",
+      "timestamp": "2026-08-20T21:48:48+08:00",
+      "transaction_id": "flash-dismiss-subjectivity-sync-20260820"
+    },
     "flash-subjectivity-20260809-finalize": {
       "action": "capture-finalize",
       "result": {
