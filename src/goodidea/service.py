@@ -25,6 +25,7 @@ from .contracts import (
     FORMATION_WITNESS_ROOT,
     GOAL_SPECS,
     NOTE_SPECS,
+    CONNECT_GRAPH,
     PERMANENT_CARD_TYPES,
     TODO_STATUS_DIRS,
     VALUATION_LEVELS,
@@ -3033,10 +3034,12 @@ class GoodIdeaService:
             raise ValidationError("连接候选必须包含关系类型和理由")
         left = self.repo.find_note(from_id)
         right = self.repo.find_note(to_id)
-        if not left or left[2].get("type") not in PERMANENT_CARD_TYPES:
-            raise ValidationError(f"连接起点不是正式卡片：{from_id}")
-        if not right or right[2].get("type") not in PERMANENT_CARD_TYPES:
-            raise ValidationError(f"连接终点不是正式卡片：{to_id}")
+        if not left or left[2].get("type") not in CONNECT_GRAPH:
+            raise ValidationError(f"连接起点不是允许的连接端点：{from_id}")
+        if not right or right[2].get("type") not in CONNECT_GRAPH.get(
+            left[2]["type"], frozenset()
+        ):
+            raise ValidationError(f"连接终点不是允许的连接端点：{to_id}")
         txid = transaction_id or new_transaction_id("connect-propose")
         if existing := self._idempotent(txid):
             return existing

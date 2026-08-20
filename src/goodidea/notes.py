@@ -188,6 +188,16 @@ def normalize_source_layout(note: str) -> str:
     next_heading = re.search(r"(?m)^## ", note[link_start:])
     link_end = link_start + next_heading.start() if next_heading else len(note)
     links = note[link_start:link_end].strip() or "_暂无_"
+    # 保留「连接」节（2026-08-20 闪念连接通道：来源可被闪念连接，
+    # 布局规范化不得丢弃 CLI 维护的机器区；节位置在「关联闪念」之后）
+    conn_section = ""
+    conn_heading = re.search(r"(?m)^## 连接\s*$", note)
+    if conn_heading:
+        conn_start = conn_heading.end()
+        conn_next = re.search(r"(?m)^## ", note[conn_start:])
+        conn_end = conn_start + conn_next.start() if conn_next else len(note)
+        conn_content = note[conn_start:conn_end].strip() or "_暂无_"
+        conn_section = f"## 连接\n\n{conn_content}\n"
     return (
         dump_frontmatter(metadata)
         + f"# {metadata['title']}\n\n"
@@ -198,6 +208,7 @@ def normalize_source_layout(note: str) -> str:
         + "## 关联闪念\n\n"
         + links
         + "\n"
+        + conn_section
     )
 
 

@@ -229,7 +229,7 @@ good-idea/
 | `goodidea-record-literature` | 用户单纯保存/刷新外部来源，或捕获完成后的后台来源维护 | 纯来源先预读和询问动机；后台只关联已有闪念，不创建重复动机闪念 |
 | `goodidea-review-process` | 回顾待处理材料、识别陈旧闪念 | 组织处理节奏，不替用户判断内容正确性 |
 | `goodidea-form-permanent` | 用户主动发起、审查或形成永久、母题、行动或索引卡片 | 一次只问一个关键问题；普通永久卡片还需确认形成来源，提案与接纳分两次用户决定 |
-| `goodidea-connect-cards` | 判断已接纳卡片之间是否值得增加语义关系 | 只做形成关系之外的语义增益；先提候选、后由用户确认 |
+| `goodidea-connect-cards` | 判断正式卡片、闪念、来源之间是否值得增加语义关系 | 只做形成关系之外的语义增益；先提候选、后由用户确认 |
 | `goodidea-lint` | 检查快照、断链、状态、索引或 Git | 默认只报告，认知判断问题不自动修复 |
 
 `goodidea-record-literature` 中的 `literature` 指外部文献或来源，名称为了兼容现有调用而保留，并不表示系统仍有“文献笔记”这一层。
@@ -418,8 +418,8 @@ uv run goodidea --root /Users/apple/Documents/Claude/good-idea <命令>
 | `goodidea permanent withdraw` | 撤销错误或过时候选 | 是 |
 | `goodidea permanent revise` | 追加用户亲自写下的修订 | 是 |
 | `goodidea permanent feedback` | 追加用户亲自写下的行动结果和修正 | 是 |
-| `goodidea connect propose` | 创建两张正式卡片的关系候选 | 是 |
-| `goodidea connect accept` | 用户确认后写入双向语义连接 | 是 |
+| `goodidea connect propose` | 创建两张正式卡片/闪念/来源的关系候选（组合受连接图约束） | 是 |
+| `goodidea connect accept` | 用户确认后写入双向语义连接（含闪念/来源正文「连接」节） | 是 |
 | `goodidea connect withdraw` | 撤回仍待确认的连接候选 | 是 |
 | `goodidea connect disconnect` | 断开已接受的语义连接并更新账本 | 是 |
 | `goodidea lint` | 检查结构、快照、链接、状态和索引 | 否 |

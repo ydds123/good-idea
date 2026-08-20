@@ -18,6 +18,20 @@ FLASH_STALE_AFTER = timedelta(hours=48)
 TODO_STALE_AFTER = timedelta(hours=48)
 CAPTURE_RECOVERY_WINDOW = timedelta(hours=24)
 PERMANENT_CARD_TYPES = frozenset({"permanent", "mother", "action", "index"})
+
+# 语义连接端点组合图（2026-08-20 拍板：闪念连接通道）
+# 正式卡四类互通（现状保留）；闪念↔闪念、闪念↔来源（本轮新开放）；
+# 正式卡↔闪念/来源、来源↔来源 暂无需求场景，不开放。
+# 愿景：各种类型卡片都支持双向连接——以后放开组合只改此表，
+# 校验逻辑（service.connect_propose）不感知具体组合；本图必须对称。
+CONNECT_GRAPH: dict[str, frozenset[str]] = {
+    "permanent": PERMANENT_CARD_TYPES,
+    "mother": PERMANENT_CARD_TYPES,
+    "action": PERMANENT_CARD_TYPES,
+    "index": PERMANENT_CARD_TYPES,
+    "flash": frozenset({"flash", "source"}),
+    "source": frozenset({"flash"}),
+}
 CAPTURE_ACTIVE_STATES = frozenset({"active", "reviewing", "paused"})
 MAINTENANCE_STATES = (
     "pending", "processing", "maintenance_paused", "retry_pending",

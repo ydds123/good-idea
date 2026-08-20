@@ -19,6 +19,7 @@ from goodidea.notes import (
     SNAPSHOT_END,
     TYPE_LOCATIONS,
     extract_snapshot,
+    normalize_source_layout,
     snapshot_hash,
     validate_source_note,
 )
@@ -3752,6 +3753,213 @@ updated_at: "2026-08-04T00:00:00+08:00"
                 reason="连接已不存在，必须拒绝",
                 transaction_id="tx-disconnect-missing",
             )
+        self.assertTrue(self.service.lint()["ok"])
+
+
+class ConnectFlashTests(unittest.TestCase):
+    """闪念连接通道（2026-08-20 拍板）：闪念↔闪念、闪念↔来源 开放；
+    正式卡↔闪念/来源、来源↔来源 拒绝。连接跟随闪念归档。"""
+
+    def setUp(self):
+        self.temp = tempfile.TemporaryDirectory()
+        self.root = Path(self.temp.name) / "vault"
+        initialize_test_vault(self.root)
+        self.repo = Repository(self.root)
+        self.service = GoodIdeaService(self.repo)
+
+    def tearDown(self):
+        self.temp.cleanup()
+
+    def preview(self):
+        return {
+            "url": "https://example.com/connect-flash",
+            "canonical_url": "https://example.com/connect-flash",
+            "title": "连接通道测试来源",
+            "author": "作者丙",
+            "published_at": "2026-08-20",
+            "markdown": "连接通道测试正文",
+            "images": [],
+            "status": "complete",
+            "extractor": "test",
+        }
+
+    def _make_source(self, txid: str) -> str:
+        captured = self.service.source_commit(
+            self.preview(),
+            motivation="闪念连接通道测试来源",
+            transaction_id=txid,
+        )
+        return captured["result"]["source_id"]
+
+    def _make_flash(self, text: str, title: str, txid: str) -> dict:
+        return self.service.capture(
+            "flash", text=text, title=title, transaction_id=txid
+        )["result"]
+
+    def test_connect_flash_to_flash(self):
+        left = self._make_flash(
+            "左闪念：AI 琐事的价值杠杆取决于对象。", "左闪念", "tx-cf-left"
+        )
+        right = self._make_flash(
+            "右闪念：指挥 AI 是新的能力瓶颈。", "右闪念", "tx-cf-right"
+        )
+        proposal = self.service.connect_propose(
+            left["id"],
+            right["id"],
+            relation="演化",
+            rationale="右闪念把左闪念的瓶颈判断推进到指挥资源分配。",
+            transaction_id="tx-cf-propose",
+        )
+        self.service.connect_accept(
+            proposal["result"]["proposal_id"],
+            transaction_id="tx-cf-accept",
+        )
+        lf = self.repo.find_note(left["id"])
+        rf = self.repo.find_note(right["id"])
+        self.assertIn("## 连接", lf[1])
+        self.assertIn("## 连接", rf[1])
+        self.assertIn(rf[2]["title"], lf[1])
+        self.assertIn(lf[2]["title"], rf[1])
+        state = self.repo.read_state()
+        self.assertEqual(len(state["connections"]), 1)
+        self.assertTrue(self.service.lint()["ok"])
+
+    def test_connect_flash_to_source(self):
+        source_id = self._make_source("tx-cs-source")
+        flash = self._make_flash(
+            "连接来源的闪念：这份来源是例证。", "连接来源的闪念", "tx-cs-flash"
+        )
+        proposal = self.service.connect_propose(
+            flash["id"],
+            source_id,
+            relation="例证",
+            rationale="这份来源为闪念的判断提供了实例支撑。",
+            transaction_id="tx-cs-propose",
+        )
+        self.service.connect_accept(
+            proposal["result"]["proposal_id"],
+            transaction_id="tx-cs-accept",
+        )
+        src = self.repo.find_note(source_id)
+        fl = self.repo.find_note(flash["id"])
+        # 来源正文「关联闪念」之后出现「连接」节；快照哈希不受影响（lint 即证明）
+        self.assertIn("## 连接", src[1])
+        self.assertIn(fl[2]["title"], src[1])
+        self.assertIn(src[2]["title"], fl[1])
+        # 快照区保持原文，不混入连接内容
+        self.assertNotIn("## 连接", extract_snapshot(src[1])[1])
+        self.assertTrue(self.service.lint()["ok"])
+
+    def test_connect_rejects_unsupported_pairs(self):
+        source_id = self._make_source("tx-rj-source")
+        flash = self._make_flash("拒绝组合测试闪念", "拒绝组合闪念", "tx-rj-flash")
+        card_proposal = self.service.permanent_propose(
+            "permanent",
+            draft="# 拒绝组合测试卡\n\n这张永久卡用于验证不开放组合被拒。\n",
+            source_ids=[source_id],
+            from_ids=[source_id],
+            formation_sources_confirmed=True,
+            transaction_id="tx-rj-card-propose",
+        )
+        card = self.service.permanent_accept(
+            card_proposal["result"]["proposal_id"],
+            confirmed_by_user=True,
+            transaction_id="tx-rj-card-accept",
+        )["result"]
+        # 正式卡 ↔ 闪念：两个方向都拒绝
+        with self.assertRaises(ValidationError):
+            self.service.connect_propose(
+                card["card_id"], flash["id"],
+                relation="暂不开放",
+                rationale="正式卡与闪念的组合未开放。",
+                transaction_id="tx-rj-card-flash",
+            )
+        with self.assertRaises(ValidationError):
+            self.service.connect_propose(
+                flash["id"], card["card_id"],
+                relation="暂不开放",
+                rationale="正式卡与闪念的组合未开放。",
+                transaction_id="tx-rj-flash-card",
+            )
+        # 正式卡 ↔ 来源：两个方向都拒绝
+        with self.assertRaises(ValidationError):
+            self.service.connect_propose(
+                card["card_id"], source_id,
+                relation="暂不开放",
+                rationale="正式卡与来源的组合未开放。",
+                transaction_id="tx-rj-card-source",
+            )
+        with self.assertRaises(ValidationError):
+            self.service.connect_propose(
+                source_id, card["card_id"],
+                relation="暂不开放",
+                rationale="正式卡与来源的组合未开放。",
+                transaction_id="tx-rj-source-card",
+            )
+        # 来源 ↔ 来源：拒绝（来源邻接只有闪念）
+        source2 = self._make_source("tx-rj-source2")
+        with self.assertRaises(ValidationError):
+            self.service.connect_propose(
+                source_id, source2,
+                relation="暂不开放",
+                rationale="来源与来源的组合未开放。",
+                transaction_id="tx-rj-source-source",
+            )
+        # 自连：闪念也不能连接自身
+        with self.assertRaises(ValidationError):
+            self.service.connect_propose(
+                flash["id"], flash["id"],
+                relation="自连",
+                rationale="不能连接到自身。",
+                transaction_id="tx-rj-self",
+            )
+        self.assertTrue(self.service.lint()["ok"])
+
+    def test_connect_links_follow_flash_archive(self):
+        left = self._make_flash("归档测试左闪念", "归档左", "tx-ar-left")
+        right = self._make_flash("归档测试右闪念", "归档右", "tx-ar-right")
+        proposal = self.service.connect_propose(
+            left["id"], right["id"],
+            relation="呼应",
+            rationale="归档后连接应跟随闪念保留。",
+            transaction_id="tx-ar-propose",
+        )
+        self.service.connect_accept(
+            proposal["result"]["proposal_id"],
+            transaction_id="tx-ar-accept",
+        )
+        # 归档左闪念到已处理：连接保留，右闪念正文链接指向新路径
+        self.service.capture_transition(
+            left["id"], status="processed", transaction_id="tx-ar-transition"
+        )
+        left_note = self.repo.find_note(left["id"])
+        right_note = self.repo.find_note(right["id"])
+        self.assertTrue(left_note[0].as_posix().startswith("闪念空间/已处理/"))
+        self.assertIn("闪念空间/已处理/2026-08-20-归档左", right_note[1])
+        self.assertNotIn("闪念空间/2026-08-20-归档左", right_note[1])
+        self.assertIn("## 连接", left_note[1])
+        state = self.repo.read_state()
+        self.assertEqual(len(state["connections"]), 1)
+        self.assertTrue(self.service.lint()["ok"])
+
+    def test_normalize_source_layout_keeps_connection_section(self):
+        source_id = self._make_source("tx-nl-source")
+        flash = self._make_flash("布局测试闪念", "布局闪念", "tx-nl-flash")
+        proposal = self.service.connect_propose(
+            flash["id"], source_id,
+            relation="例证",
+            rationale="布局规范化不得丢弃连接节。",
+            transaction_id="tx-nl-propose",
+        )
+        self.service.connect_accept(
+            proposal["result"]["proposal_id"],
+            transaction_id="tx-nl-accept",
+        )
+        src = self.repo.find_note(source_id)
+        self.assertIn("## 连接", src[1])
+        normalized = normalize_source_layout(src[1])
+        self.assertIn("## 连接", normalized)
+        self.assertIn("布局闪念", normalized)
         self.assertTrue(self.service.lint()["ok"])
 
 
