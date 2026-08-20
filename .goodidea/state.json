@@ -177,6 +177,17 @@
       "timestamp": "2026-08-18T22:49:08+08:00",
       "transaction_id": "capture-flash-20260818224908-9d90d9da"
     },
+    "capture-flash-20260820094751-04d39d64": {
+      "action": "capture-flash",
+      "result": {
+        "id": "FLA-20260820-43624dca",
+        "path": "闪念空间/2026-08-20-Hermes-回复风格机制：桌面端-CLI-与飞书（gateway）是两套独立管.md",
+        "type": "flash"
+      },
+      "summary": "Hermes 回复风格机制：桌面端/CLI 与飞书（gateway）是两套独立管",
+      "timestamp": "2026-08-20T09:47:51+08:00",
+      "transaction_id": "capture-flash-20260820094751-04d39d64"
+    },
     "capture-interesting-20260811165205-3b5c0d35": {
       "action": "capture-interesting",
       "result": {

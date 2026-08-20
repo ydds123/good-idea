@@ -489,3 +489,5 @@
 
 [2026-08-20T09:39:40+08:00] connect-propose | 连接候选：AI 处理琐事的价值杠杆，取决于是谁的琐事 → 指挥 AI 是新的能力瓶颈，且需要训练 | tx=connect-20260820-real
 
+[2026-08-20T09:47:51+08:00] capture-flash | Hermes 回复风格机制：桌面端/CLI 与飞书（gateway）是两套独立管 | tx=capture-flash-20260820094751-04d39d64
+
