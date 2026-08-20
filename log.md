@@ -483,3 +483,5 @@
 
 [2026-08-20T00:16:24+08:00] capture-sweep | 过期 6 条待办 | tx=sweep-20260820-001400
 
+[2026-08-20T08:32:15+08:00] capture-finalize | 确认本轮 1 张闪念 | tx=capture-20260820-finalize
+

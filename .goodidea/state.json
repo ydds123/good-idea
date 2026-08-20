@@ -71,6 +71,37 @@
       "timestamp": "2026-08-07T20:59:59+08:00",
       "transaction_id": "baseline-source-layout-20260807"
     },
+    "capture-20260820-finalize": {
+      "action": "capture-finalize",
+      "result": {
+        "flash_count": 1,
+        "flashes": [
+          {
+            "context_refs": [
+              "https://mp.weixin.qq.com/s/TrFq6qkCayj6dQfziaXjPw"
+            ],
+            "id": "FLA-20260820-7592ac19",
+            "path": "闪念空间/2026-08-20-AI-处理琐事的价值杠杆，取决于是谁的琐事.md",
+            "source_anchors": [
+              {
+                "context_ref": "https://mp.weixin.qq.com/s/TrFq6qkCayj6dQfziaXjPw",
+                "explanation": "文章提出 AI 优先改造的不是最便宜的人而是最贵的人/瓶颈岗位，省下的时间本质是扩容企业最难复制的生产要素——正是'是谁的琐事'价值差异判断的论据来源。"
+              }
+            ],
+            "source_boundary": "",
+            "title": "AI 处理琐事的价值杠杆，取决于是谁的琐事"
+          }
+        ],
+        "maintenance_job_ids": [
+          "JOB-e632a3eaa3de"
+        ],
+        "proposal_id": "CPR-abea9d2aa556",
+        "session_id": "CAP-20260820-6b89840f"
+      },
+      "summary": "确认本轮 1 张闪念",
+      "timestamp": "2026-08-20T08:32:15+08:00",
+      "transaction_id": "capture-20260820-finalize"
+    },
     "capture-finalize-first-two-20260809": {
       "action": "capture-finalize",
       "result": {
