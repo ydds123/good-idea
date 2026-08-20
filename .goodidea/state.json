@@ -272,6 +272,23 @@
       "timestamp": "2026-08-09T19:01:54+08:00",
       "transaction_id": "capture-revise-source-anchors-20260809"
     },
+    "capture-sweep-20260821000933-73b58368": {
+      "action": "capture-sweep",
+      "result": {
+        "expired": [
+          {
+            "entered_at": "2026-08-18T23:55:42+08:00",
+            "id": "TODO-20260818-5f1f03f2",
+            "path": "待办空间/2026-08-18-输出风格模块统一规划.md",
+            "status": "expired"
+          }
+        ],
+        "skipped": []
+      },
+      "summary": "过期 1 条待办",
+      "timestamp": "2026-08-21T00:09:33+08:00",
+      "transaction_id": "capture-sweep-20260821000933-73b58368"
+    },
     "capture-sync-20260815121511-42b56cb7": {
       "action": "capture-sync",
       "result": {

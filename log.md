@@ -525,3 +525,5 @@
 
 [2026-08-20T22:15:56+08:00] permanent-accept | AI 的价值杠杆取决于处理的是谁的琐事 | tx=permanent-propose-trivium-ai-20260820-accept
 
+[2026-08-21T00:09:33+08:00] capture-sweep | 过期 1 条待办 | tx=capture-sweep-20260821000933-73b58368
+
