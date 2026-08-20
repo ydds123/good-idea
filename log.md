@@ -485,3 +485,5 @@
 
 [2026-08-20T08:32:15+08:00] capture-finalize | 确认本轮 1 张闪念 | tx=capture-20260820-finalize
 
+[2026-08-20T08:32:38+08:00] source-commit | AI最该优先改造的，可能不是最便宜的人，而是最贵的人 + 关联 1 张闪念 | tx=cap-20260820-srccommit
+
