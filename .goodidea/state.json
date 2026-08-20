@@ -7837,6 +7837,18 @@
       "timestamp": "2026-08-20T22:03:23+08:00",
       "transaction_id": "permanent-propose-sword-ai-20260820"
     },
+    "permanent-propose-sword-ai-20260820-accept": {
+      "action": "permanent-accept",
+      "result": {
+        "card_id": "PER-20260820-3d571ea5",
+        "card_path": "永久空间/永久卡片/2026-08-20-人剑合一：学-AI-的正确姿势.md",
+        "card_type": "permanent",
+        "proposal_id": "PRP-2356a81da7c8"
+      },
+      "summary": "人剑合一：学 AI 的正确姿势",
+      "timestamp": "2026-08-20T22:03:23+08:00",
+      "transaction_id": "permanent-propose-sword-ai-20260820-accept"
+    },
     "permanent-revise-20260813-career-origin": {
       "action": "permanent-revise",
       "result": {

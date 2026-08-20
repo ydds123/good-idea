@@ -519,3 +519,5 @@
 
 [2026-08-20T22:03:23+08:00] permanent-propose | 人剑合一：学 AI 的正确姿势 | tx=permanent-propose-sword-ai-20260820
 
+[2026-08-20T22:03:23+08:00] permanent-accept | 人剑合一：学 AI 的正确姿势 | tx=permanent-propose-sword-ai-20260820-accept
+
