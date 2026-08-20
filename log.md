@@ -513,3 +513,5 @@
 
 [2026-08-20T21:49:36+08:00] capture-transition | 人生脚本解释为何，主体性自有参照系 | tx=flash-dismiss-life-script-20260820
 
+[2026-08-20T21:57:09+08:00] permanent-propose | 指挥 AI 将成为人们新的能力瓶颈，且需要去训练 | tx=permanent-propose-command-ai-20260820
+
