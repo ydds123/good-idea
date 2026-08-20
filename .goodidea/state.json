@@ -7635,6 +7635,18 @@
       "timestamp": "2026-08-11T22:08:41+08:00",
       "transaction_id": "permanent-accept-collab-20260811-01"
     },
+    "permanent-accept-mother-seed-20260820": {
+      "action": "permanent-accept",
+      "result": {
+        "card_id": "PER-20260820-d6ae6d45",
+        "card_path": "永久空间/永久卡片/2026-08-20-母题级课题：AI-图像-摄影与视觉叙事的-skill-化.md",
+        "card_type": "permanent",
+        "proposal_id": "PRP-3c3bfb221aca"
+      },
+      "summary": "母题级课题：AI 图像/摄影与视觉叙事的 skill 化",
+      "timestamp": "2026-08-20T21:16:29+08:00",
+      "transaction_id": "permanent-accept-mother-seed-20260820"
+    },
     "permanent-accept-path-20260811-01": {
       "action": "permanent-accept",
       "result": {

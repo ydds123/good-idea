@@ -499,3 +499,5 @@
 
 [2026-08-20T21:16:02+08:00] permanent-propose | 母题级课题：AI 图像/摄影与视觉叙事的 skill 化 | tx=permanent-propose-mother-seed-20260820
 
+[2026-08-20T21:16:29+08:00] permanent-accept | 母题级课题：AI 图像/摄影与视觉叙事的 skill 化 | tx=permanent-accept-mother-seed-20260820
+
