@@ -7792,6 +7792,18 @@
       "timestamp": "2026-08-20T21:57:09+08:00",
       "transaction_id": "permanent-propose-command-ai-20260820"
     },
+    "permanent-propose-command-ai-20260820-accept": {
+      "action": "permanent-accept",
+      "result": {
+        "card_id": "PER-20260820-4c26dc06",
+        "card_path": "永久空间/永久卡片/2026-08-20-指挥-AI-将成为人们新的能力瓶颈，且需要去训练.md",
+        "card_type": "permanent",
+        "proposal_id": "PRP-292a3346b334"
+      },
+      "summary": "指挥 AI 将成为人们新的能力瓶颈，且需要去训练",
+      "timestamp": "2026-08-20T21:57:09+08:00",
+      "transaction_id": "permanent-propose-command-ai-20260820-accept"
+    },
     "permanent-propose-mother-seed-20260820": {
       "action": "permanent-propose",
       "result": {
