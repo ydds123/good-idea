@@ -491,3 +491,5 @@
 
 [2026-08-20T09:47:51+08:00] capture-flash | Hermes 回复风格机制：桌面端/CLI 与飞书（gateway）是两套独立管 | tx=capture-flash-20260820094751-04d39d64
 
+[2026-08-20T09:50:39+08:00] capture-revise | 输出风格模块统一规划 | tx=revise-20260820-style-mechanism
+
