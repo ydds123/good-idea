@@ -7860,6 +7860,18 @@
       "timestamp": "2026-08-20T22:15:56+08:00",
       "transaction_id": "permanent-propose-trivium-ai-20260820"
     },
+    "permanent-propose-trivium-ai-20260820-accept": {
+      "action": "permanent-accept",
+      "result": {
+        "card_id": "PER-20260820-3009cdcf",
+        "card_path": "永久空间/永久卡片/2026-08-20-AI-的价值杠杆取决于处理的是谁的琐事.md",
+        "card_type": "permanent",
+        "proposal_id": "PRP-e5ca3739b6aa"
+      },
+      "summary": "AI 的价值杠杆取决于处理的是谁的琐事",
+      "timestamp": "2026-08-20T22:15:56+08:00",
+      "transaction_id": "permanent-propose-trivium-ai-20260820-accept"
+    },
     "permanent-revise-20260813-career-origin": {
       "action": "permanent-revise",
       "result": {

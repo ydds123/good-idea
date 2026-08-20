@@ -523,3 +523,5 @@
 
 [2026-08-20T22:15:56+08:00] permanent-propose | AI 的价值杠杆取决于处理的是谁的琐事 | tx=permanent-propose-trivium-ai-20260820
 
+[2026-08-20T22:15:56+08:00] permanent-accept | AI 的价值杠杆取决于处理的是谁的琐事 | tx=permanent-propose-trivium-ai-20260820-accept
+
