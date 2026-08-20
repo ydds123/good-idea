@@ -2,9 +2,9 @@
 id: "FLA-20260820-43624dca"
 type: "闪念"
 title: "Hermes 回复风格机制：桌面端/CLI 与飞书（gateway）是两套独立管"
-status: "待处理"
+status: "已处理"
 created_at: "2026-08-20T09:47:51+08:00"
-updated_at: "2026-08-20T09:47:51+08:00"
+updated_at: "2026-08-20T09:50:39+08:00"
 source_ids: []
 ---
 # Hermes 回复风格机制：桌面端/CLI 与飞书（gateway）是两套独立管
