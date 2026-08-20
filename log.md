@@ -497,3 +497,5 @@
 
 [2026-08-20T10:05:47+08:00] connect-accept | AI 处理琐事的价值杠杆，取决于是谁的琐事 ↔ 指挥 AI 是新的能力瓶颈，且需要训练 | tx=connect-20260820-real-accept
 
+[2026-08-20T21:16:02+08:00] permanent-propose | 母题级课题：AI 图像/摄影与视觉叙事的 skill 化 | tx=permanent-propose-mother-seed-20260820
+
