@@ -29,7 +29,7 @@ def note_scan_dirs(note_type: str) -> list[Path]:
 
     待办按状态归档（2026-08-15 用户拍板）：根目录=进行中，已完成/ 与 已取消/
     为状态子目录，扫描时必须全部覆盖，否则归档卡片脱离系统管理。闪念同构：
-    根目录=待处理，已处理/ 为状态子目录。
+    根目录=待处理，发酵中/、已处理/、已放弃/ 为状态子目录。
     """
     if note_type == "todo":
         return sorted({TYPE_LOCATIONS["todo"], *TODO_STATUS_DIRS.values()})

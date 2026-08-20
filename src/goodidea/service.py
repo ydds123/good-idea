@@ -798,7 +798,7 @@ class GoodIdeaService:
             writes.update(relocation_writes)
             deletes.update(relocation_deletes)
         elif note_type == "flash" and status in FLASH_STATUS_DIRS:
-            # 闪念与待办同构：待处理=根目录，已处理=已处理/ 子目录（dismissed 无归档目录，保持原位）
+            # 闪念与待办同构：待处理=根目录，发酵中/已处理/已放弃=状态子目录
             relocation_writes, relocation_deletes, target_rel = self._relocate_note(
                 rel, status, FLASH_STATUS_DIRS
             )
@@ -862,8 +862,7 @@ class GoodIdeaService:
 
         阅读层（Obsidian note-database）手动修改 status 后，文件状态与目录脱节：
         本命令把用户已表达的状态作为事实，一次事务完成所有归档移动、全库引用
-        重写、frontmatter 规范化与聚焦提交。状态值无法识别的文件跳过并报告；
-        闪念 dismissed 暂无归档目录，保持原位跳过。
+        重写、frontmatter 规范化与聚焦提交。状态值无法识别的文件跳过并报告。
         """
         status_dirs_by_type: dict[str, dict[str, Path]] = {
             "todo": TODO_STATUS_DIRS,
@@ -891,8 +890,6 @@ class GoodIdeaService:
                         continue
                     status = metadata.get("status")
                     if status not in status_dirs:
-                        if note_type == "flash" and status == "dismissed":
-                            continue
                         skipped.append(
                             {"path": rel.as_posix(), "reason": f"无法识别状态：{status!r}"}
                         )
@@ -2671,7 +2668,8 @@ class GoodIdeaService:
             ),
         ):
             # todo 按状态归档：candidate 保持在当前状态目录，不把已完成/已取消移回根目录
-            if metadata["type"] == "todo":
+            # 闪念同构：发酵中/已处理/已放弃 归档目录里的卡片同样保持原位
+            if metadata["type"] in {"todo", "flash"}:
                 location = old_rel.parent
             else:
                 location = TYPE_LOCATIONS[str(metadata["type"])]

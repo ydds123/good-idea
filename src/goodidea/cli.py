@@ -145,7 +145,7 @@ def build_parser() -> argparse.ArgumentParser:
     transition.add_argument(
         "--status",
         required=True,
-        help="目标状态：待办=未开始/进行中/已过期/已完成/已取消；闪念=待处理/已放弃",
+        help="目标状态：待办=未开始/进行中/已过期/已完成/已取消；闪念=待处理/发酵中/已处理/已放弃",
     )
     transition.add_argument("--transaction-id")
     transition.add_argument(

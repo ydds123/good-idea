@@ -258,10 +258,11 @@ TODO_STATUS_DIRS: dict[str, Path] = {
     "cancelled": Path("待办空间/已取消"),
 }
 
-# 闪念按状态归档（2026-08-15 用户拍板）：根目录=待处理，已处理/ 为状态子目录，与待办同构。
-# 已放弃（dismissed）暂不映射归档目录：transition 到 dismissed 时文件保持原位，sync 跳过。
+# 闪念按状态归档（2026-08-15 用户拍板，2026-08-20 补已放弃目录）：根目录=待处理，
+# 发酵中/、已处理/、已放弃/ 为状态子目录，与待办同构。
 FLASH_STATUS_DIRS: dict[str, Path] = {
     "pending": Path("闪念空间"),
     "fermenting": Path("闪念空间/发酵中"),
     "processed": Path("闪念空间/已处理"),
+    "dismissed": Path("闪念空间/已放弃"),
 }

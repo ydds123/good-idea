@@ -2765,6 +2765,8 @@ updated_at: "2026-08-04T00:00:00+08:00"
             transaction_id="tx-transition-dismiss",
         )
         self.assertEqual(dismissed["result"]["status"], "dismissed")
+        # 已放弃有专属归档目录（2026-08-20 拍板）：文件移入 闪念空间/已放弃/
+        self.assertIn("已放弃", dismissed["result"]["path"])
         # 手动归档合法（2026-08-15：processed 由永久卡接纳自动设置，也允许手动归档）
         archived = self.service.capture_transition(
             flash_id,
@@ -3003,6 +3005,28 @@ updated_at: "2026-08-04T00:00:00+08:00"
         self.assertTrue(back_path.startswith("闪念空间/"))
         self.assertFalse(back_path.startswith("闪念空间/已处理/"))
         self.assertEqual(self.repo.find_note(processed["result"]["id"])[0], rel)
+
+    def test_flash_sync_archives_dismissed_flashes_into_subdir(self):
+        # 已放弃有专属归档目录（2026-08-20 拍板）：sync 把手动标已放弃的闪念归位
+        dismissed = self.service.capture(
+            "flash",
+            text="这条闪念在阅读层被手动标为已放弃，sync 应归档到 闪念空间/已放弃/",
+            transaction_id="tx-flash-sync-dismissed",
+        )
+        rel = Path(dismissed["result"]["path"])
+        path = self.repo.root / rel
+        text = path.read_text(encoding="utf-8")
+        path.write_text(
+            text.replace('status: "待处理"', "status: 已放弃"), encoding="utf-8"
+        )
+        result = self.service.capture_sync(transaction_id="tx-flash-sync-dismiss-run")
+        self.assertEqual(len(result["result"]["moved"]), 1)
+        moved_path = result["result"]["moved"][0]["path"]
+        self.assertTrue(moved_path.startswith("闪念空间/已放弃/"))
+        self.assertEqual(
+            self.repo.find_note(dismissed["result"]["id"])[2]["status"], "dismissed"
+        )
+        self.assertTrue(self.service.lint()["ok"])
 
     def test_review_lists_only_pending_and_ignores_processed(self):
         # 回归：review 曾因 pending.append 缩进错误在首个非待处理卡片处崩溃/重复
@@ -3530,6 +3554,49 @@ updated_at: "2026-08-04T00:00:00+08:00"
         _, _, meta = self.repo.find_note(fid2)
         self.assertEqual(meta["status"], "fermenting")
         # lint 覆盖发酵中/ 子目录
+        self.assertTrue(self.service.lint()["ok"])
+
+    def test_capture_transition_flash_dismissed_archives(self):
+        # 已放弃（2026-08-20 拍板）：裁决不值得转永久卡的归档态，文件移入 闪念空间/已放弃/
+        flash = self.service.capture(
+            "flash", text="裁决不值得转永久卡的闪念", transaction_id="tx-flash-dismiss"
+        )
+        fid = flash["result"]["id"]
+        result = self.service.capture_transition(
+            fid, status="dismissed", transaction_id="tx-flash-dismiss-run"
+        )
+        self.assertEqual(result["result"]["status"], "dismissed")
+        self.assertIn("已放弃", result["result"]["path"])
+        # 可回退：裁决翻案后恢复待处理
+        back = self.service.capture_transition(
+            fid, status="pending", transaction_id="tx-flash-dismiss-back"
+        )
+        self.assertEqual(back["result"]["status"], "pending")
+        self.assertNotIn("已放弃", back["result"]["path"])
+        # 再次放弃，确认 lint/verify 覆盖 已放弃/ 子目录，review 不再列出
+        self.service.capture_transition(
+            fid, status="dismissed", transaction_id="tx-flash-dismiss-run2"
+        )
+        self.assertTrue(self.service.lint()["ok"])
+        self.assertTrue(self.service.lint(verify_git=True)["ok"])
+        reviewed_ids = {item["id"] for item in self.service.review()["pending"]}
+        self.assertNotIn(fid, reviewed_ids)
+
+    def test_filename_maintenance_keeps_archived_flashes_in_status_dirs(self):
+        # 连带修复（2026-08-20）：maintain_filenames 不得把归档目录里的闪念移回根目录
+        flash = self.service.capture(
+            "flash", text="已归档闪念的文件名维护应保持原位", transaction_id="tx-fm-arch"
+        )
+        fid = flash["result"]["id"]
+        self.service.capture_transition(
+            fid, status="dismissed", transaction_id="tx-fm-arch-run"
+        )
+        _, _, meta = self.repo.find_note(fid)
+        self.assertEqual(meta["status"], "dismissed")
+        result = self.service.maintain_filenames(transaction_id="tx-fm-arch-maint")
+        self.assertTrue(result["result"]["no_change"])
+        _, _, meta2 = self.repo.find_note(fid)
+        self.assertEqual(meta2["status"], "dismissed")
         self.assertTrue(self.service.lint()["ok"])
 
     def test_capture_retitle_renames_file_and_rewrites_references(self):

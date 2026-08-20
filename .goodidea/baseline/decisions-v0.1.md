@@ -78,3 +78,6 @@
 ## 2026-08-16 用户确认的来源标签弱约束放宽
 
 48. [覆盖第 43 项的"全中文"实现细节] 来源标签不再由 CLI 强制全中文：`maintain source-tags` 只做非空与去重弱约束（删除 service.py 的 `[\u4e00-\u9fff]+` 强校验），中文语境实体名、允许 AI/WAIC 等通用英文缩写（案例：用户指定"AI 研究框架"标签），内容质量由对话层维护（回到第 43 项"全中文由对话层查重维护"的原始设计）。同步修改 service.py（maintain_source_tags）、schema.md、设计方案/溯源空间来源渠道标签方案.md、测试（中英混合标签通过用例）与 README。
+## 2026-08-20 用户确认的闪念已放弃归档目录
+
+49. 闪念「已放弃」状态补专属归档目录 `闪念空间/已放弃/`（2026-08-15 闪念状态归档拍板时 dismissed 暂不映射目录、文件保持原位；2026-08-20 用户在回顾闪念时提出"裁决不值得转永久卡的闪念应有专属文件夹"，确认沿用"已放弃"词）。语义：裁决不值得转永久卡的归档态——归档留痕，不被永久卡素材检索捞取，也不能作为形成来源被静默复活（permanent accept 拒绝 dismissed 作为形成来源的边界不变）；可经 `capture transition` 回退待处理。`capture transition` 流转到已放弃时自动把卡片文件移入子目录并同步重写全库引用、索引与状态账本；`capture sync` 把手动标已放弃的闪念归位；lint/verify/review/maintain/find_note/索引全部覆盖子目录，归档卡片不脱离系统管理。连带修复：`maintain_filenames` 对闪念与待办同构，归档目录（发酵中/已处理/已放弃）里的卡片保持当前状态目录，不再按根目录重定位。同步修改 contracts.py（FLASH_STATUS_DIRS）、service.py（capture_transition/capture_sync/maintain_filenames）、notes.py、cli.py（transition help）、schema.md、README.md 与对应测试。
