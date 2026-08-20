@@ -7801,6 +7801,17 @@
       "timestamp": "2026-08-13T21:04:13+08:00",
       "transaction_id": "permanent-revise-20260813-judgment-catalysis"
     },
+    "permanent-revise-subjectivity-20260820": {
+      "action": "permanent-revise",
+      "result": {
+        "card_id": "PER-20260813-96574216",
+        "card_path": "永久空间/永久卡片/2026-08-13-主体性：行为原因的自我归属.md",
+        "status": "revised"
+      },
+      "summary": "主体性：行为原因的自我归属",
+      "timestamp": "2026-08-20T21:48:45+08:00",
+      "transaction_id": "permanent-revise-subjectivity-20260820"
+    },
     "recipe-fix-20260814": {
       "action": "capture-todo",
       "result": {
