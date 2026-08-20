@@ -495,3 +495,5 @@
 
 [2026-08-20T09:50:39+08:00] capture-transition | Hermes 回复风格机制：桌面端/CLI 与飞书（gateway）是两套独立管 | tx=trans-20260820-style-mechanism
 
+[2026-08-20T10:05:47+08:00] connect-accept | AI 处理琐事的价值杠杆，取决于是谁的琐事 ↔ 指挥 AI 是新的能力瓶颈，且需要训练 | tx=connect-20260820-real-accept
+

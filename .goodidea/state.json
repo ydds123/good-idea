@@ -7,6 +7,14 @@
       "rationale": "主体性限定职业规划已失效的实施条件：职业规划卡回答'往哪走'（生成式战略：愿景+行动+反馈），主体性卡回答'为谁走'（因果归属权+价值捕获结构）；若行为原因不归属自己，愿景就不是自己的愿景，生成式战略会退化成换一家妓院继续当头牌",
       "relation": "限定",
       "to_id": "PER-20260813-2690bcf1"
+    },
+    {
+      "accepted_at": "2026-08-20T10:05:47+08:00",
+      "from_id": "FLA-20260820-7592ac19",
+      "proposal_id": "PRP-6f806234c607",
+      "rationale": "新闪念把'指挥 AI 是能力瓶颈'从'训练指挥能力'推进到'指挥资源的最优分配：谁的琐事优先处理'——同一能力瓶颈主题上的演进",
+      "relation": "演化",
+      "to_id": "FLA-20260818-5de3ffc0"
     }
   ],
   "rollbacks": [
@@ -6779,6 +6787,19 @@
       "summary": "连接候选：AI 处理琐事的价值杠杆，取决于是谁的琐事 → 指挥 AI 是新的能力瓶颈，且需要训练",
       "timestamp": "2026-08-20T09:39:40+08:00",
       "transaction_id": "connect-20260820-real"
+    },
+    "connect-20260820-real-accept": {
+      "action": "connect-accept",
+      "result": {
+        "from_id": "FLA-20260820-7592ac19",
+        "proposal_id": "PRP-6f806234c607",
+        "rationale": "新闪念把'指挥 AI 是能力瓶颈'从'训练指挥能力'推进到'指挥资源的最优分配：谁的琐事优先处理'——同一能力瓶颈主题上的演进",
+        "relation": "演化",
+        "to_id": "FLA-20260818-5de3ffc0"
+      },
+      "summary": "AI 处理琐事的价值杠杆，取决于是谁的琐事 ↔ 指挥 AI 是新的能力瓶颈，且需要训练",
+      "timestamp": "2026-08-20T10:05:47+08:00",
+      "transaction_id": "connect-20260820-real-accept"
     },
     "connect-accept-20260813-agency-career": {
       "action": "connect-accept",
