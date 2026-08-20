@@ -511,3 +511,5 @@
 
 [2026-08-20T21:49:33+08:00] permanent-revise | 主体性：行为原因的自我归属 | tx=permanent-revise-subjectivity-3rd-20260820
 
+[2026-08-20T21:49:36+08:00] capture-transition | 人生脚本解释为何，主体性自有参照系 | tx=flash-dismiss-life-script-20260820
+

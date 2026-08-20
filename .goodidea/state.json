@@ -7221,6 +7221,18 @@
       "timestamp": "2026-08-07T21:57:41+08:00",
       "transaction_id": "first-permanent-propose-20260807"
     },
+    "flash-dismiss-life-script-20260820": {
+      "action": "capture-transition",
+      "result": {
+        "id": "FLA-20260818-7b66e90b",
+        "path": "闪念空间/已放弃/2026-08-18-人生脚本解释为何，主体性自有参照系.md",
+        "status": "dismissed",
+        "type": "flash"
+      },
+      "summary": "人生脚本解释为何，主体性自有参照系",
+      "timestamp": "2026-08-20T21:49:36+08:00",
+      "transaction_id": "flash-dismiss-life-script-20260820"
+    },
     "flash-dismiss-subjectivity-sync-20260820": {
       "action": "capture-transition",
       "result": {
