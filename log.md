@@ -527,3 +527,5 @@
 
 [2026-08-21T00:09:33+08:00] capture-sweep | 过期 1 条待办 | tx=capture-sweep-20260821000933-73b58368
 
+[2026-08-21T11:38:27+08:00] maintain-index | 重新生成不展示摘要的内容索引 | tx=maintain-index-del-jspace-20260820
+
