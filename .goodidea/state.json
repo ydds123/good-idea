@@ -222,6 +222,37 @@
       "timestamp": "2026-08-21T21:43:46+08:00",
       "transaction_id": "capture-20260821-zengming-c04"
     },
+    "capture-20260821-zengming-e04": {
+      "action": "capture-finalize",
+      "result": {
+        "flash_count": 1,
+        "flashes": [
+          {
+            "context_refs": [
+              "https://my.feishu.cn/wiki/MswawKxhKikghAkrNEpcAELJnmh"
+            ],
+            "id": "FLA-20260821-35c471f6",
+            "path": "闪念空间/2026-08-21-AI-的本质：智力脱离个体，成为可反馈复利的生产要素.md",
+            "source_anchors": [
+              {
+                "context_ref": "https://my.feishu.cn/wiki/MswawKxhKikghAkrNEpcAELJnmh",
+                "explanation": "松海今日温习曾鸣《智能时代的商业组织与战略的本质》下半段，以第一性原理系统探讨'AI 的本质究竟是什么'：基础约束（智力稀缺依附个体）→ 本质定义（智力脱离个体成为可复利生产要素）→ 历史对照论证（工业/互联网革命均未解决智力供给，工业时代=认知压缩与规模执行机器，互联网=优化过的执行系统）→ 智能体阶段收束"
+              }
+            ],
+            "source_boundary": "",
+            "title": "AI 的本质：智力脱离个体，成为可反馈复利的生产要素"
+          }
+        ],
+        "maintenance_job_ids": [
+          "JOB-18df3b0129bd"
+        ],
+        "proposal_id": "CPR-90089f22f852",
+        "session_id": "CAP-20260821-4d738a51"
+      },
+      "summary": "确认本轮 1 张闪念",
+      "timestamp": "2026-08-21T22:14:16+08:00",
+      "transaction_id": "capture-20260821-zengming-e04"
+    },
     "capture-finalize-first-two-20260809": {
       "action": "capture-finalize",
       "result": {

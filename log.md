@@ -535,3 +535,5 @@
 
 [2026-08-21T21:43:46+08:00] capture-finalize | 确认本轮 1 张闪念 | tx=capture-20260821-zengming-c04
 
+[2026-08-21T22:14:16+08:00] capture-finalize | 确认本轮 1 张闪念 | tx=capture-20260821-zengming-e04
+
