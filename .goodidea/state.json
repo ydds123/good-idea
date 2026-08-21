@@ -160,6 +160,37 @@
       "timestamp": "2026-08-21T21:38:11+08:00",
       "transaction_id": "capture-20260821-zengming-a05"
     },
+    "capture-20260821-zengming-b04": {
+      "action": "capture-finalize",
+      "result": {
+        "flash_count": 1,
+        "flashes": [
+          {
+            "context_refs": [
+              "https://my.feishu.cn/wiki/MswawKxhKikghAkrNEpcAELJnmh"
+            ],
+            "id": "FLA-20260821-1dba5df4",
+            "path": "闪念空间/2026-08-21-持续生成的两层结构：稳定层是-AI-吞不掉的高地.md",
+            "source_anchors": [
+              {
+                "context_ref": "https://my.feishu.cn/wiki/MswawKxhKikghAkrNEpcAELJnmh",
+                "explanation": "松海今日温习曾鸣《智能时代的商业组织与战略的本质》时对'持续生成'的澄清：持续生成不等于无结构，分为稳定层（愿景/责任/原则/权限/评价标准/治理规则）与生成层（产品形态/任务路径/资源组合/协作关系/具体战略）；三个前提松动解释为何导向持续生成"
+              }
+            ],
+            "source_boundary": "",
+            "title": "持续生成的两层结构：稳定层是 AI 吞不掉的高地"
+          }
+        ],
+        "maintenance_job_ids": [
+          "JOB-206e7eaac099"
+        ],
+        "proposal_id": "CPR-243e4c584b28",
+        "session_id": "CAP-20260821-d9eccdda"
+      },
+      "summary": "确认本轮 1 张闪念",
+      "timestamp": "2026-08-21T21:43:02+08:00",
+      "transaction_id": "capture-20260821-zengming-b04"
+    },
     "capture-finalize-first-two-20260809": {
       "action": "capture-finalize",
       "result": {
