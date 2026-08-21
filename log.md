@@ -529,3 +529,5 @@
 
 [2026-08-21T11:38:27+08:00] maintain-index | 重新生成不展示摘要的内容索引 | tx=maintain-index-del-jspace-20260820
 
+[2026-08-21T21:38:11+08:00] capture-finalize | 确认本轮 1 张闪念 | tx=capture-20260821-zengming-a05
+

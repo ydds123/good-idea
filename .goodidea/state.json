@@ -129,6 +129,37 @@
       "timestamp": "2026-08-20T08:32:15+08:00",
       "transaction_id": "capture-20260820-finalize"
     },
+    "capture-20260821-zengming-a05": {
+      "action": "capture-finalize",
+      "result": {
+        "flash_count": 1,
+        "flashes": [
+          {
+            "context_refs": [
+              "https://my.feishu.cn/wiki/MswawKxhKikghAkrNEpcAELJnmh"
+            ],
+            "id": "FLA-20260821-e66a8e93",
+            "path": "闪念空间/2026-08-21-技术归因辨析：是技术本身不行，还是缺乏价值网络？.md",
+            "source_anchors": [
+              {
+                "context_ref": "https://my.feishu.cn/wiki/MswawKxhKikghAkrNEpcAELJnmh",
+                "explanation": "松海今日温习曾鸣《智能时代的商业组织与战略的本质》第一章'AI产业化的展开'时口述梳理：'技术基础设施化之后才发生重大产业变化'激活集装箱阅读的经历者视角，推出技术归因辨析原则与三维观察工具；煤耗观察经补名杰文斯悖论作为注脚"
+              }
+            ],
+            "source_boundary": "",
+            "title": "技术归因辨析：是技术本身不行，还是缺乏价值网络？"
+          }
+        ],
+        "maintenance_job_ids": [
+          "JOB-32665ede3e0e"
+        ],
+        "proposal_id": "CPR-a905953e3c77",
+        "session_id": "CAP-20260821-a29bedfc"
+      },
+      "summary": "确认本轮 1 张闪念",
+      "timestamp": "2026-08-21T21:38:11+08:00",
+      "transaction_id": "capture-20260821-zengming-a05"
+    },
     "capture-finalize-first-two-20260809": {
       "action": "capture-finalize",
       "result": {
