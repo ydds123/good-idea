@@ -191,6 +191,37 @@
       "timestamp": "2026-08-21T21:43:02+08:00",
       "transaction_id": "capture-20260821-zengming-b04"
     },
+    "capture-20260821-zengming-c04": {
+      "action": "capture-finalize",
+      "result": {
+        "flash_count": 1,
+        "flashes": [
+          {
+            "context_refs": [
+              "https://my.feishu.cn/wiki/MswawKxhKikghAkrNEpcAELJnmh"
+            ],
+            "id": "FLA-20260821-84635d62",
+            "path": "闪念空间/2026-08-21-未来稀缺的不是智能，是围绕智能的六种能力.md",
+            "source_anchors": [
+              {
+                "context_ref": "https://my.feishu.cn/wiki/MswawKxhKikghAkrNEpcAELJnmh",
+                "explanation": "松海今日温习曾鸣《智能时代的商业组织与战略的本质》时对'AI 改变最稀缺的东西'的梳理：过去稀缺的知识/判断/执行者/决策能力，未来被六种能力取代；并附边界澄清（低成本可调用不等于无限充足，生成答案不等于可靠完成任务）"
+              }
+            ],
+            "source_boundary": "",
+            "title": "未来稀缺的不是智能，是围绕智能的六种能力"
+          }
+        ],
+        "maintenance_job_ids": [
+          "JOB-bd63f59d4935"
+        ],
+        "proposal_id": "CPR-7365e82af1f8",
+        "session_id": "CAP-20260821-725541df"
+      },
+      "summary": "确认本轮 1 张闪念",
+      "timestamp": "2026-08-21T21:43:46+08:00",
+      "transaction_id": "capture-20260821-zengming-c04"
+    },
     "capture-finalize-first-two-20260809": {
       "action": "capture-finalize",
       "result": {
