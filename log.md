@@ -541,3 +541,5 @@
 
 [2026-08-22T21:05:25+08:00] capture-flash | 知识库+AI 的形态：以终为始，打磨成研究域并输出 | tx=capture-flash-20260822210525-36f62e52
 
+[2026-08-22T21:56:24+08:00] capture-todo | 优化闪念 skill | tx=capture-todo-20260822215623-aca6d375
+

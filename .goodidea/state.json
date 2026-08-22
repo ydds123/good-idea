@@ -526,6 +526,17 @@
       "timestamp": "2026-08-16T10:19:05+08:00",
       "transaction_id": "capture-todo-20260816101904-34e3b817"
     },
+    "capture-todo-20260822215623-aca6d375": {
+      "action": "capture-todo",
+      "result": {
+        "id": "TODO-20260822-cc578705",
+        "path": "待办空间/2026-08-22-优化闪念-skill.md",
+        "type": "todo"
+      },
+      "summary": "优化闪念 skill",
+      "timestamp": "2026-08-22T21:56:24+08:00",
+      "transaction_id": "capture-todo-20260822215623-aca6d375"
+    },
     "capture-transition-20260815105107-817c4b9b": {
       "action": "capture-transition",
       "result": {
