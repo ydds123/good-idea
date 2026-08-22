@@ -331,17 +331,6 @@
       "timestamp": "2026-08-22T21:05:25+08:00",
       "transaction_id": "capture-flash-20260822210525-36f62e52"
     },
-    "capture-flash-20260822214444-d7927ffe": {
-      "action": "capture-flash",
-      "result": {
-        "id": "FLA-20260822-66a6450a",
-        "path": "闪念空间/2026-08-22-知识库+AI-的形态：以终为始，打磨成研究域并输出-2.md",
-        "type": "flash"
-      },
-      "summary": "知识库+AI 的形态：以终为始，打磨成研究域并输出",
-      "timestamp": "2026-08-22T21:44:44+08:00",
-      "transaction_id": "capture-flash-20260822214444-d7927ffe"
-    },
     "capture-interesting-20260811165205-3b5c0d35": {
       "action": "capture-interesting",
       "result": {
