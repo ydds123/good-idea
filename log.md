@@ -539,3 +539,5 @@
 
 [2026-08-22T08:15:08+08:00] capture-transition | 曾鸣书第一章二刷（本质·底层逻辑） | tx=valu-20260822-zengming-ch1-done
 
+[2026-08-22T21:05:25+08:00] capture-flash | 知识库+AI 的形态：以终为始，打磨成研究域并输出 | tx=capture-flash-20260822210525-36f62e52
+
