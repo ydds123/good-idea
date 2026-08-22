@@ -9084,6 +9084,18 @@
       "summary": "输出风格模块统一规划",
       "timestamp": "2026-08-19T00:22:31+08:00",
       "transaction_id": "val-style-module-20260819"
+    },
+    "valu-20260822-zengming-ch1-done": {
+      "action": "capture-transition",
+      "result": {
+        "id": "TODO-20260816-6262e719",
+        "path": "待办空间/已完成/2026-08-16-曾鸣书第一章二刷（本质·底层逻辑）.md",
+        "status": "done",
+        "type": "todo"
+      },
+      "summary": "曾鸣书第一章二刷（本质·底层逻辑）",
+      "timestamp": "2026-08-22T08:15:08+08:00",
+      "transaction_id": "valu-20260822-zengming-ch1-done"
     }
   }
 }

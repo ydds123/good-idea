@@ -537,3 +537,5 @@
 
 [2026-08-21T22:14:16+08:00] capture-finalize | 确认本轮 1 张闪念 | tx=capture-20260821-zengming-e04
 
+[2026-08-22T08:15:08+08:00] capture-transition | 曾鸣书第一章二刷（本质·底层逻辑） | tx=valu-20260822-zengming-ch1-done
+
