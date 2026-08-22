@@ -9118,6 +9118,33 @@
       "summary": "曾鸣书第一章二刷（本质·底层逻辑）",
       "timestamp": "2026-08-22T08:15:08+08:00",
       "transaction_id": "valu-20260822-zengming-ch1-done"
+    },
+    "valuate-optimize-flash-skill-20260823": {
+      "action": "capture-valuate",
+      "result": {
+        "id": "TODO-20260822-cc578705",
+        "labels": {
+          "distance": "near",
+          "equifinality": "high",
+          "goal_id": "goal_cognition",
+          "multifinality": "high",
+          "need_type": "competence",
+          "specificity": "specific",
+          "success_probability": "high"
+        },
+        "priority": 1,
+        "ranked": [
+          {
+            "id": "TODO-20260822-cc578705",
+            "path": "待办空间/2026-08-22-优化闪念-skill.md",
+            "priority": 1,
+            "title": "优化闪念 skill"
+          }
+        ]
+      },
+      "summary": "优化闪念 skill",
+      "timestamp": "2026-08-23T00:18:36+08:00",
+      "transaction_id": "valuate-optimize-flash-skill-20260823"
     }
   }
 }
