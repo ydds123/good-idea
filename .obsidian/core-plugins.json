@@ -22,12 +22,12 @@
   "bases": true,
   "footnotes": false,
   "daily-notes": true,
-  "slash-command": false,
+  "slash-command": true,
   "markdown-importer": false,
   "zk-prefixer": false,
   "random-note": false,
   "slides": false,
   "audio-recorder": false,
-  "workspaces": false,
-  "webviewer": false
+  "workspaces": true,
+  "webviewer": true
 }
