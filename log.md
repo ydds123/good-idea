@@ -553,3 +553,5 @@
 
 [2026-08-23T20:41:32+08:00] permanent-propose | 持续生成的两层结构：稳定层是 AI 吞不掉的高地 | tx=propose-two-layers-20260823
 
+[2026-08-23T20:41:33+08:00] permanent-propose | 未来稀缺的不是智能，是围绕智能的六种能力 | tx=propose-six-abilities-20260823
+
