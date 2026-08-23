@@ -8971,6 +8971,18 @@
       "timestamp": "2026-08-20T09:50:39+08:00",
       "transaction_id": "trans-20260820-style-mechanism"
     },
+    "transition-flash-skill-done-20260823": {
+      "action": "capture-transition",
+      "result": {
+        "id": "TODO-20260822-cc578705",
+        "path": "待办空间/已完成/2026-08-22-优化闪念-skill.md",
+        "status": "done",
+        "type": "todo"
+      },
+      "summary": "优化闪念 skill",
+      "timestamp": "2026-08-23T14:43:28+08:00",
+      "transaction_id": "transition-flash-skill-done-20260823"
+    },
     "tx-20260812-finalize-life-script-v2": {
       "action": "capture-finalize",
       "result": {
