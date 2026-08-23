@@ -90,6 +90,7 @@
 ## 开发校验
 
 - 修改项目级 Skill 后运行 `uv run python scripts/validate-skills.py`，使用锁定的 PyYAML 开发依赖逐一调用 skill-creator 官方校验器。
+- **Skill 维护门禁（2026-08-23 松海拍板）**：对 `.agents/skills/` 下任何项目 Skill 的新增、迭代或删除，默认先走 yao-meta-skill 审查流程，禁止未经审查直接修改。四关自查：① Trigger Lab——description 含 recurring job + 触发动作 + 排除条款，与本节任务路由表对齐，近邻误路由写排除；② Boundary——SKILL.md 只留主流程/判断节点/触发排除，低频规则、补充知识、历史教训进该 Skill 的 `references/` 并在 SKILL.md 留指针；③ Context Budget——初始加载量不显著上涨，低频内容必须外置；④ Output Lab——行为级改动附可验证证据（真实场景跑通记录、fixture 或测试），改 description 时运行 `uv run python scripts/evaluate-skill-routing.py`。改完跑 validate-skills.py 与直接相关测试；删除或合并 Skill 前核对任务路由表、其他 Skill 交叉引用、cron prompt 与各平台侧记录无孤儿引用。诊断依据：`设计方案/Good idea Skills 诊断报告.md`。
 - 校验器默认从 Codex 标准安装位置发现；非标准安装使用 `--validator <quick_validate.py>` 或 `GOODIDEA_SKILL_VALIDATOR` 显式指定。
 - PyYAML 只属于开发与验收环境，不得加入 Good idea 的产品运行依赖。
 
