@@ -27,12 +27,7 @@ description: "捕捉 Good idea 闪念及多轮认知会话。用户正在表达�
 
        uv run goodidea --root <仓库> capture append --session-id <会话ID> --text <用户新表达> --transaction-id <稳定ID>
 
-4. 从用户表达识别零张、一张或多张“认知激活事件”。一张闪念不等于一个孤立要点：同一次被激活的认知信号可以包含多个内容，但必须保留清晰的研究脉络或内在逻辑。只删填充词（嗯/啊/这个）与口头重复，保留思考纹理（口语连接词、语气、自我修正、例子、比喻、转折）与原有表述顺序，再完整展示这条脉络；不得先拆成平铺要点让用户猜结构。内部 manifest 使用 `format_version: 2`，每张候选除 `title`、`body`、用户 `entry_ids` 和 `context_refs` 外，必须记录：
-
-   - 有外部上下文时使用 `source_anchors`，每项以 `context_ref` 对应一份来源，并用 `explanation` 说明该来源具体支撑什么；正式卡片中必须渲染为同一条“可点击溯源链接 + 论证说明”，不得另设纯链接的“关联来源”节；跨来源归因限制写入可选的 `source_boundary`；
-   - 没有外部来源时使用 `source_anchor`，明确写“松海本轮口述，无外部来源”，不得伪造依据；
-   - `trigger_anchor`：当时的现实背景、卡点、观察到的现象与情绪；
-   - `activated_logic`：这些内容为什么在此刻连起来，多个内容之间的逻辑关系是什么。
+4. 从用户表达识别零张、一张或多张“认知激活事件”。一张闪念不等于一个孤立要点：同一次被激活的认知信号可以包含多个内容，但必须保留清晰的研究脉络或内在逻辑。只删填充词（嗯/啊/这个）与口头重复，保留思考纹理（口语连接词、语气、自我修正、例子、比喻、转折）与原有表述顺序，再完整展示这条脉络；不得先拆成平铺要点让用户猜结构。内部 manifest 使用 `format_version: 2`，锚点字段（`source_anchors`/`source_anchor`/`trigger_anchor`/`activated_logic`/`source_boundary`）契约见 schema.md「临时捕获会话」节，此处不重复。正式卡片渲染为“可点击溯源链接 + 论证说明”单元，不得另设纯链接的“关联来源”节；无外部来源时 `source_anchor` 明确写“松海本轮口述，无外部来源”，不得伪造依据。
 
    捕获问法示例：“这段脉络里，A 触发你联想到 B，再回接 C；我这样整理有没有漏掉连接顺序？”永久阶段问法示例：“这个判断成立的边界和反例是什么？”前者可用，后者此阶段禁用。
 
@@ -77,12 +72,6 @@ description: "捕捉 Good idea 闪念及多轮认知会话。用户正在表达�
 
 不要在捕捉阶段创建永久卡片，不要生成作者观点、证据或行动方案。候选可以忠实整理用户表达，但不得增加新主张；用户确认承担最终归属门禁。正式记录不创建内容摘要，也不在 Frontmatter 保存 `summary`。
 
-## 讨论记录与结论沉淀（2026-08-15 拍板）
+## 讨论记录与结论沉淀
 
-围绕闪念卡讨论（无论是否讨论转永久卡）时：
-
-1. **讨论过程**：用 `capture discuss --note-id <id> --role user|assistant --text <原文>` 逐轮记录双方**原文**（时间线 JSON，`.goodidea/runtime/discussions/<id>.json`，frontmatter `discussion_log` 关联）。只记录原文，**不转化、不结构化摘要**。**同一卡片始终追加同一档案文件**（单文件时间线，不开新文件——讨论从上次停处延续）。
-2. **讨论产生结论**：先问用户是否转永久卡——
-   - **转** → 转交 `goodidea-form-permanent` 流程（澄清→结构化→覆盖检查→用户确认→propose/accept）；
-   - **不转** → 结论以**用户原话**经确认后进演化记录（`capture revise`，其语义就是逐字追加用户亲自写下的内容），或留在 discussion_log 等发酵。
-3. **Agent 不生产摘要**：原文归原文（discuss），结论归结论（用户确认的结构化）。不得把 Agent 整理的观点当作"演化记录"贴到卡片上。
+围绕闪念卡讨论时的留档规则（capture discuss 原文记录、结论去向、Agent 不生产摘要）见 `references/flash-discussion-archive-2026-08.md`。讨论产生结论需转永久卡时，转交 goodidea-form-permanent。
