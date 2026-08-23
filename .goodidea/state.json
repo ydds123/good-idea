@@ -63,6 +63,18 @@
       "timestamp": "2026-08-23T21:07:40+08:00",
       "transaction_id": "accept-PRP-978fc2c9107a-20260823"
     },
+    "accept-PRP-e3fd9f505018-20260823": {
+      "action": "permanent-accept",
+      "result": {
+        "card_id": "PER-20260823-d5a27ff7",
+        "card_path": "永久空间/永久卡片/2026-08-23-持续生成的两层结构：稳定层是-AI-吞不掉的高地.md",
+        "card_type": "permanent",
+        "proposal_id": "PRP-e3fd9f505018"
+      },
+      "summary": "持续生成的两层结构：稳定层是 AI 吞不掉的高地",
+      "timestamp": "2026-08-23T21:07:41+08:00",
+      "transaction_id": "accept-PRP-e3fd9f505018-20260823"
+    },
     "baseline-readable-filenames-20260807": {
       "action": "maintain-filenames",
       "result": {
