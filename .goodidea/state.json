@@ -7093,6 +7093,20 @@
       "timestamp": "2026-08-23T21:12:36+08:00",
       "transaction_id": "connect-5-20260823"
     },
+    "connect-6-20260823": {
+      "action": "connect-propose",
+      "result": {
+        "from_id": "PER-20260823-d5a27ff7",
+        "proposal_id": "PRP-038c456087b5",
+        "proposal_path": ".goodidea/proposals/connections/PRP-038c456087b5.md",
+        "rationale": "组织层与个体层呼应：生成性系统如何构造 vs 个体如何选择，愿景定方向、行动让路径显现",
+        "relation": "演化",
+        "to_id": "PER-20260813-2690bcf1"
+      },
+      "summary": "连接候选：持续生成的两层结构：稳定层是 AI 吞不掉的高地 → 职业规划已失效：行业选择是长出来的",
+      "timestamp": "2026-08-23T21:12:36+08:00",
+      "transaction_id": "connect-6-20260823"
+    },
     "connect-accept-20260813-agency-career": {
       "action": "connect-accept",
       "result": {
