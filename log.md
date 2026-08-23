@@ -551,3 +551,5 @@
 
 [2026-08-23T20:41:29+08:00] permanent-propose | AI 的本质：智力脱离个体，成为可反馈复利的生产要素 | tx=propose-ai-essence-20260823
 
+[2026-08-23T20:41:32+08:00] permanent-propose | 持续生成的两层结构：稳定层是 AI 吞不掉的高地 | tx=propose-two-layers-20260823
+
