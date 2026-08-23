@@ -711,6 +711,17 @@
       "timestamp": "2026-08-22T21:56:24+08:00",
       "transaction_id": "capture-todo-20260822215623-aca6d375"
     },
+    "capture-todo-20260823232004-a08bf124": {
+      "action": "capture-todo",
+      "result": {
+        "id": "TODO-20260823-c544aebd",
+        "path": "待办空间/2026-08-23-配置-X-书签访问通道.md",
+        "type": "todo"
+      },
+      "summary": "配置 X 书签访问通道",
+      "timestamp": "2026-08-23T23:20:04+08:00",
+      "transaction_id": "capture-todo-20260823232004-a08bf124"
+    },
     "capture-todo-cloud-account-20260823": {
       "action": "capture-todo",
       "result": {
