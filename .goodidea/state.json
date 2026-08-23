@@ -8110,6 +8110,17 @@
       "timestamp": "2026-08-23T20:41:29+08:00",
       "transaction_id": "propose-ai-essence-20260823"
     },
+    "propose-attribution-20260823": {
+      "action": "permanent-propose",
+      "result": {
+        "card_type": "permanent",
+        "proposal_id": "PRP-ff45dbe469eb",
+        "proposal_path": ".goodidea/proposals/permanent/PRP-ff45dbe469eb.md"
+      },
+      "summary": "技术归因辨析：是技术本身不行，还是缺乏价值网络？",
+      "timestamp": "2026-08-23T20:41:33+08:00",
+      "transaction_id": "propose-attribution-20260823"
+    },
     "propose-six-abilities-20260823": {
       "action": "permanent-propose",
       "result": {

@@ -555,3 +555,5 @@
 
 [2026-08-23T20:41:33+08:00] permanent-propose | 未来稀缺的不是智能，是围绕智能的六种能力 | tx=propose-six-abilities-20260823
 
+[2026-08-23T20:41:33+08:00] permanent-propose | 技术归因辨析：是技术本身不行，还是缺乏价值网络？ | tx=propose-attribution-20260823
+
