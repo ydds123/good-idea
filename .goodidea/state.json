@@ -51,6 +51,18 @@
       "timestamp": "2026-08-23T21:07:40+08:00",
       "transaction_id": "accept-PRP-15733feb6319-20260823"
     },
+    "accept-PRP-978fc2c9107a-20260823": {
+      "action": "permanent-accept",
+      "result": {
+        "card_id": "PER-20260823-e57d3409",
+        "card_path": "永久空间/永久卡片/2026-08-23-未来稀缺的不是智能，是围绕智能的六种能力.md",
+        "card_type": "permanent",
+        "proposal_id": "PRP-978fc2c9107a"
+      },
+      "summary": "未来稀缺的不是智能，是围绕智能的六种能力",
+      "timestamp": "2026-08-23T21:07:40+08:00",
+      "transaction_id": "accept-PRP-978fc2c9107a-20260823"
+    },
     "baseline-readable-filenames-20260807": {
       "action": "maintain-filenames",
       "result": {
