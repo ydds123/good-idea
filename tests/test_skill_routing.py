@@ -32,8 +32,8 @@ class SkillRoutingTests(unittest.TestCase):
             self.assertEqual(result.returncode, 0, result.stderr)
             report = json.loads((report_dir / "latest.json").read_text(encoding="utf-8"))
 
-        self.assertEqual(report["skill_count"], 6)
-        self.assertEqual(report["case_count"], 46)
+        self.assertEqual(report["skill_count"], 7)
+        self.assertEqual(report["case_count"], 48)
         self.assertEqual(report["contract_errors"], [])
         static = report["static_overlap"]
         self.assertTrue(static["ok"])

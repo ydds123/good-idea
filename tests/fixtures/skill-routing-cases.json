@@ -6,7 +6,8 @@
     "goodidea-review-process",
     "goodidea-form-permanent",
     "goodidea-connect-cards",
-    "goodidea-lint"
+    "goodidea-lint",
+    "goodidea-todo"
   ],
   "similarity_warning_threshold": 0.55,
   "minimum_primary_cases_per_skill": 3,
@@ -109,7 +110,7 @@
       "id": "capture-todo",
       "family": "unique_capture",
       "text": "帮我加个待办：周五回顾这周产生的闪念，不包含任何网页链接。",
-      "expected_primary": "goodidea-capture-flash",
+      "expected_primary": "goodidea-todo",
       "allowed_supporting": [],
       "required_supporting": [],
       "expected_conflict": false
@@ -509,6 +510,24 @@
       "family": "ambiguous_no_route",
       "text": "帮我检查一下这些卡片。",
       "expected_primary": "no_route",
+      "allowed_supporting": [],
+      "required_supporting": [],
+      "expected_conflict": false
+    },
+    {
+      "id": "capture-todo-vague",
+      "family": "unique_capture",
+      "text": "记个待办……嗯，就是那个，反正提醒我一下。",
+      "expected_primary": "goodidea-todo",
+      "allowed_supporting": [],
+      "required_supporting": [],
+      "expected_conflict": false
+    },
+    {
+      "id": "capture-todo-action",
+      "family": "unique_capture",
+      "text": "帮我记一个任务：把这周的目标规划方法论整理成卡片。",
+      "expected_primary": "goodidea-todo",
       "allowed_supporting": [],
       "required_supporting": [],
       "expected_conflict": false
