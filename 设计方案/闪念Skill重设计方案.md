@@ -137,5 +137,5 @@
 ## 七、后续事项
 
 - [x] 填充细节：矩阵定位判断标准、四象限深度参数、主线每步动作、加工检查清单（2026-08-23）
-- [ ] 重写 `.agents/skills/goodidea-capture-flash/SKILL.md`（保留 CLI 命令面：capture start/append/propose/finalize/pause/resume/discard/flash/interesting/todo/discuss/revise-source-anchors；保留 manifest 契约）
+- [x] 重写 `.agents/skills/goodidea-capture-flash/SKILL.md`（保留 CLI 命令面：capture start/append/propose/finalize/pause/resume/discard/flash/interesting/todo/discuss/revise-source-anchors；保留 manifest 契约）
 - [ ] 校验：`uv run python scripts/validate-skills.py` + 相关测试
