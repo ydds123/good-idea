@@ -549,3 +549,5 @@
 
 [2026-08-23T17:58:07+08:00] capture-todo | 研究 Cloud 官方账号方案 | tx=capture-todo-cloud-account-20260823
 
+[2026-08-23T20:41:29+08:00] permanent-propose | AI 的本质：智力脱离个体，成为可反馈复利的生产要素 | tx=propose-ai-essence-20260823
+

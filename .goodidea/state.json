@@ -8099,6 +8099,17 @@
       "timestamp": "2026-08-20T21:49:33+08:00",
       "transaction_id": "permanent-revise-subjectivity-3rd-20260820"
     },
+    "propose-ai-essence-20260823": {
+      "action": "permanent-propose",
+      "result": {
+        "card_type": "permanent",
+        "proposal_id": "PRP-15733feb6319",
+        "proposal_path": ".goodidea/proposals/permanent/PRP-15733feb6319.md"
+      },
+      "summary": "AI 的本质：智力脱离个体，成为可反馈复利的生产要素",
+      "timestamp": "2026-08-23T20:41:29+08:00",
+      "transaction_id": "propose-ai-essence-20260823"
+    },
     "recipe-fix-20260814": {
       "action": "capture-todo",
       "result": {
