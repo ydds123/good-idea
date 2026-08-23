@@ -15,6 +15,14 @@
       "rationale": "新闪念把'指挥 AI 是能力瓶颈'从'训练指挥能力'推进到'指挥资源的最优分配：谁的琐事优先处理'——同一能力瓶颈主题上的演进",
       "relation": "演化",
       "to_id": "FLA-20260818-5de3ffc0"
+    },
+    {
+      "accepted_at": "2026-08-23T21:16:37+08:00",
+      "from_id": "PER-20260823-e57d3409",
+      "proposal_id": "PRP-327af2f04320",
+      "rationale": "指挥与调度正是六种稀缺能力之一，六种能力卡是其上位框架",
+      "relation": "演化",
+      "to_id": "PER-20260820-4c26dc06"
     }
   ],
   "rollbacks": [
@@ -86,6 +94,19 @@
       "summary": "技术归因辨析：是技术本身不行，还是缺乏价值网络？",
       "timestamp": "2026-08-23T21:07:41+08:00",
       "transaction_id": "accept-PRP-ff45dbe469eb-20260823"
+    },
+    "accept-conn-PRP-327af2f04320-20260823": {
+      "action": "connect-accept",
+      "result": {
+        "from_id": "PER-20260823-e57d3409",
+        "proposal_id": "PRP-327af2f04320",
+        "rationale": "指挥与调度正是六种稀缺能力之一，六种能力卡是其上位框架",
+        "relation": "演化",
+        "to_id": "PER-20260820-4c26dc06"
+      },
+      "summary": "未来稀缺的不是智能，是围绕智能的六种能力 ↔ 指挥 AI 将成为人们新的能力瓶颈，且需要去训练",
+      "timestamp": "2026-08-23T21:16:37+08:00",
+      "transaction_id": "accept-conn-PRP-327af2f04320-20260823"
     },
     "baseline-readable-filenames-20260807": {
       "action": "maintain-filenames",
