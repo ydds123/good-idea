@@ -6982,6 +6982,20 @@
       "timestamp": "2026-08-13T19:30:54+08:00",
       "transaction_id": "confirm-refresh-196-name-fix"
     },
+    "connect-1-20260823": {
+      "action": "connect-propose",
+      "result": {
+        "from_id": "PER-20260823-e57d3409",
+        "proposal_id": "PRP-327af2f04320",
+        "proposal_path": ".goodidea/proposals/connections/PRP-327af2f04320.md",
+        "rationale": "指挥与调度正是六种稀缺能力之一，六种能力卡是其上位框架",
+        "relation": "演化",
+        "to_id": "PER-20260820-4c26dc06"
+      },
+      "summary": "连接候选：未来稀缺的不是智能，是围绕智能的六种能力 → 指挥 AI 将成为人们新的能力瓶颈，且需要去训练",
+      "timestamp": "2026-08-23T21:12:35+08:00",
+      "transaction_id": "connect-1-20260823"
+    },
     "connect-20260813-agency-career": {
       "action": "connect-propose",
       "result": {
