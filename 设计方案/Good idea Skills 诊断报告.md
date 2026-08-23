@@ -91,6 +91,16 @@
 
 核心洞察：**skill 层是系统里唯一没有工程化托底的层**——CLI 有状态机/事务/测试/回滚，skill 只有纯文本约定。重构方向不是重写 skill 内容，而是给 skill 层补上分层机制（references）、行为证据（eval）、唯一真源（归属表）三件基础设施。
 
+## 九、后续工作（2026-08-23 松海确认）
+
+### 9.1 待办内容错位（松海指出的具体案例）
+
+capture-flash 中「待办摄入澄清（B 原则/四问）」与「待办卡片四段信息架构（标题/事项/动机/情境）」「CLI 参数先查」属于**待办场景**流程，却埋在闪念 Skill 内——结构错位实证。Skill 重构时应拆出：独立待办 Skill（或明确归属），使 capture-flash 只保留"用户正在表达想法"的主流程。
+
+### 9.2 Skill 维护门禁（松海拍板）
+
+后续对 `.agents/skills/` 的新增、迭代、删除，**默认调用 yao-meta-skill 审查流程，禁止 Agent 直接改**：Trigger Lab（触发描述）→ Boundary（SKILL.md 只留主流程，低频规则进 references/）→ Context Budget（加载量）→ Output Lab（行为改动附证据）四关自查，改完跑 `scripts/validate-skills.py` + 相关测试。已落地于 Hermes 侧 goodidea-development skill「Skill 维护门禁」节；项目侧（AGENTS.md）跨平台生效待定。
+
 ## 附：审查工具
 
 - yao-meta-skill：`/Users/apple/.codex/skills/yao-meta-skill`（与 `~/.claude/skills/yao-meta-skill` 同源），VERSION 文件记录版本
