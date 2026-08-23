@@ -106,7 +106,7 @@ description: "捕捉 Good idea 闪念及多轮认知会话。用户正在表达�
 
 - 不自动转；落盘时松海裁决去向
 - 讨论出了结论：先问转不转；转 → 交接 goodidea-form-permanent；不转 → 结论用松海原话 capture revise，讨论原文 capture discuss 留档
-- 讨论留档细则（只记原文、单文件时间线、Agent 不生产摘要）见 `references/flash-discussion-archive-2026-08.md`
+- 讨论留档：只记原文，不转化、不结构化摘要；**同一卡片始终追加同一档案文件**（单文件时间线，讨论从上次停处延续）；Agent 不生产摘要——原文归原文（discuss），结论归结论（用户确认的结构化），不得把 Agent 整理的观点当作"演化记录"贴到卡片上
 - finalize 后自动把后台来源任务交给 goodidea-record-literature；捕获阶段到此结束，绝不自动进入永久卡片
 
 ## 四、底线总纲（任何时候不能破）
