@@ -7591,6 +7591,32 @@
       "timestamp": "2026-08-14T23:39:45+08:00",
       "transaction_id": "finalize-goal-20260814"
     },
+    "finalize-image-share-20260823": {
+      "action": "capture-finalize",
+      "result": {
+        "flash_count": 1,
+        "flashes": [
+          {
+            "context_refs": [
+              "永久空间/永久卡片/2026-08-20-母题级课题：AI-图像-摄影与视觉叙事的-skill-化.md"
+            ],
+            "id": "FLA-20260823-51cdd36c",
+            "path": "闪念空间/2026-08-23-AI-图像创作：从自娱自乐到分享出去.md",
+            "source_anchors": [],
+            "source_boundary": "",
+            "title": "AI 图像创作：从自娱自乐到分享出去"
+          }
+        ],
+        "maintenance_job_ids": [
+          "JOB-fc66c4144602"
+        ],
+        "proposal_id": "CPR-58d5530de6ff",
+        "session_id": "CAP-20260823-46a56563"
+      },
+      "summary": "确认本轮 1 张闪念",
+      "timestamp": "2026-08-23T23:41:27+08:00",
+      "transaction_id": "finalize-image-share-20260823"
+    },
     "finalize-jiazhi-20260818": {
       "action": "capture-finalize",
       "result": {

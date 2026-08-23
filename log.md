@@ -591,3 +591,5 @@
 
 [2026-08-23T23:20:04+08:00] capture-todo | 配置 X 书签访问通道 | tx=capture-todo-20260823232004-a08bf124
 
+[2026-08-23T23:41:27+08:00] capture-finalize | 确认本轮 1 张闪念 | tx=finalize-image-share-20260823
+
