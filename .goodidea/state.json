@@ -537,6 +537,17 @@
       "timestamp": "2026-08-22T21:56:24+08:00",
       "transaction_id": "capture-todo-20260822215623-aca6d375"
     },
+    "capture-todo-cloud-account-20260823": {
+      "action": "capture-todo",
+      "result": {
+        "id": "TODO-20260823-47707e98",
+        "path": "待办空间/2026-08-23-研究-Cloud-官方账号方案.md",
+        "type": "todo"
+      },
+      "summary": "研究 Cloud 官方账号方案",
+      "timestamp": "2026-08-23T17:58:07+08:00",
+      "transaction_id": "capture-todo-cloud-account-20260823"
+    },
     "capture-transition-20260815105107-817c4b9b": {
       "action": "capture-transition",
       "result": {

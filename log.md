@@ -547,3 +547,5 @@
 
 [2026-08-23T14:43:28+08:00] capture-transition | 优化闪念 skill | tx=transition-flash-skill-done-20260823
 
+[2026-08-23T17:58:07+08:00] capture-todo | 研究 Cloud 官方账号方案 | tx=capture-todo-cloud-account-20260823
+
