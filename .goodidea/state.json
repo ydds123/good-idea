@@ -7094,6 +7094,45 @@
       "timestamp": "2026-08-17T16:13:01+08:00",
       "transaction_id": "capture-valuate-20260817161301-7089cb41"
     },
+    "capture-valuate-20260824000654-076b1948": {
+      "action": "capture-valuate",
+      "result": {
+        "id": "TODO-20260823-c544aebd",
+        "labels": {
+          "distance": "near",
+          "equifinality": "low",
+          "goal_id": "goal_tools",
+          "multifinality": "medium",
+          "need_type": "competence",
+          "specificity": "specific",
+          "success_probability": "medium"
+        },
+        "priority": 3,
+        "ranked": [
+          {
+            "id": "TODO-20260823-def35e24",
+            "path": "待办空间/2026-08-23-一三五下午-·-AI-图像创作与分享时段.md",
+            "priority": 1,
+            "title": "一三五下午 · AI 图像创作与分享时段"
+          },
+          {
+            "id": "TODO-20260823-47707e98",
+            "path": "待办空间/2026-08-23-研究-Cloud-官方账号方案.md",
+            "priority": 2,
+            "title": "研究 Cloud 官方账号方案"
+          },
+          {
+            "id": "TODO-20260823-c544aebd",
+            "path": "待办空间/2026-08-23-配置-X-书签访问通道.md",
+            "priority": 3,
+            "title": "配置 X 书签访问通道"
+          }
+        ]
+      },
+      "summary": "配置 X 书签访问通道",
+      "timestamp": "2026-08-24T00:06:54+08:00",
+      "transaction_id": "capture-valuate-20260824000654-076b1948"
+    },
     "capture-valuate-20260824000654-5f91d8d6": {
       "action": "capture-valuate",
       "result": {
