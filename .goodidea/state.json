@@ -722,6 +722,17 @@
       "timestamp": "2026-08-23T23:20:04+08:00",
       "transaction_id": "capture-todo-20260823232004-a08bf124"
     },
+    "capture-todo-20260823234133-822ab041": {
+      "action": "capture-todo",
+      "result": {
+        "id": "TODO-20260823-def35e24",
+        "path": "待办空间/2026-08-23-一三五下午-·-AI-图像创作与分享时段.md",
+        "type": "todo"
+      },
+      "summary": "一三五下午 · AI 图像创作与分享时段",
+      "timestamp": "2026-08-23T23:41:33+08:00",
+      "transaction_id": "capture-todo-20260823234133-822ab041"
+    },
     "capture-todo-cloud-account-20260823": {
       "action": "capture-todo",
       "result": {
