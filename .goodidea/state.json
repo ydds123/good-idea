@@ -31,6 +31,14 @@
       "rationale": "谁定义问题、谁的意图被理解，决定价值归属",
       "relation": "支持",
       "to_id": "PER-20260820-3009cdcf"
+    },
+    {
+      "accepted_at": "2026-08-23T21:16:38+08:00",
+      "from_id": "PER-20260823-14676f79",
+      "proposal_id": "PRP-184b99c5f65e",
+      "rationale": "本质立论与产业结构快照互补：一张回答为什么、一张回答长什么样",
+      "relation": "支持",
+      "to_id": "PER-20260816-3a6a8d49"
     }
   ],
   "rollbacks": [
@@ -102,6 +110,19 @@
       "summary": "技术归因辨析：是技术本身不行，还是缺乏价值网络？",
       "timestamp": "2026-08-23T21:07:41+08:00",
       "transaction_id": "accept-PRP-ff45dbe469eb-20260823"
+    },
+    "accept-conn-PRP-184b99c5f65e-20260823": {
+      "action": "connect-accept",
+      "result": {
+        "from_id": "PER-20260823-14676f79",
+        "proposal_id": "PRP-184b99c5f65e",
+        "rationale": "本质立论与产业结构快照互补：一张回答为什么、一张回答长什么样",
+        "relation": "支持",
+        "to_id": "PER-20260816-3a6a8d49"
+      },
+      "summary": "AI 的本质：智力脱离个体，成为可反馈复利的生产要素 ↔ AI 产业价值流架构：八层一条链，治理横贯",
+      "timestamp": "2026-08-23T21:16:38+08:00",
+      "transaction_id": "accept-conn-PRP-184b99c5f65e-20260823"
     },
     "accept-conn-PRP-327af2f04320-20260823": {
       "action": "connect-accept",
