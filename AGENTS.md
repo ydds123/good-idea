@@ -39,7 +39,8 @@
 | 用户场景 | 必须使用的项目 Skill | CLI 入口 |
 |---|---|---|
 | 用户正在表达、补充、修正或审阅本轮闪念；即使附带网页或本地文件也不改变主路由 | `goodidea-capture-flash` | `goodidea capture start/append/propose/finalize` |
-| 用户在 Obsidian 数据库视图（阅读层）手动改过待办状态，需要收口归档 | `goodidea-capture-flash`（仅确认意图，无对话流程） | `goodidea capture sync`（批量）或 `goodidea capture transition --id … --status … --accept-dirty`（单条） |
+| 用户表达待办事项、任务或行动承诺，需要摄入澄清或 48h 行动窗口提醒 | `goodidea-todo` | `goodidea capture todo` |
+| 用户在 Obsidian 数据库视图（阅读层）手动改过待办状态，需要收口归档 | `goodidea-todo`（仅确认意图，无对话流程） | `goodidea capture sync`（批量）或 `goodidea capture transition --id … --status … --accept-dirty`（单条） |
 | 用户只要求保存/刷新资料，或捕获会话完成后的后台来源维护 | `goodidea-record-literature` | `goodidea source preview/commit/refresh` |
 | 回顾待处理内容或识别陈旧闪念 | `goodidea-review-process` | `goodidea review` |
 | 用户主动形成卡片，或为正式卡片提供本人修订与行动反馈 | `goodidea-form-permanent` | `goodidea permanent propose/accept/revise/feedback` |
