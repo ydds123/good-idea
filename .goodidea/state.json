@@ -55,6 +55,14 @@
       "rationale": "价值网络即八层价值流的运转方式，归因方法论与产业快照呼应",
       "relation": "支持",
       "to_id": "PER-20260816-3a6a8d49"
+    },
+    {
+      "accepted_at": "2026-08-23T21:16:39+08:00",
+      "from_id": "PER-20260823-d5a27ff7",
+      "proposal_id": "PRP-038c456087b5",
+      "rationale": "组织层与个体层呼应：生成性系统如何构造 vs 个体如何选择，愿景定方向、行动让路径显现",
+      "relation": "演化",
+      "to_id": "PER-20260813-2690bcf1"
     }
   ],
   "rollbacks": [
@@ -126,6 +134,19 @@
       "summary": "技术归因辨析：是技术本身不行，还是缺乏价值网络？",
       "timestamp": "2026-08-23T21:07:41+08:00",
       "transaction_id": "accept-PRP-ff45dbe469eb-20260823"
+    },
+    "accept-conn-PRP-038c456087b5-20260823": {
+      "action": "connect-accept",
+      "result": {
+        "from_id": "PER-20260823-d5a27ff7",
+        "proposal_id": "PRP-038c456087b5",
+        "rationale": "组织层与个体层呼应：生成性系统如何构造 vs 个体如何选择，愿景定方向、行动让路径显现",
+        "relation": "演化",
+        "to_id": "PER-20260813-2690bcf1"
+      },
+      "summary": "持续生成的两层结构：稳定层是 AI 吞不掉的高地 ↔ 职业规划已失效：行业选择是长出来的",
+      "timestamp": "2026-08-23T21:16:39+08:00",
+      "transaction_id": "accept-conn-PRP-038c456087b5-20260823"
     },
     "accept-conn-PRP-184b99c5f65e-20260823": {
       "action": "connect-accept",
