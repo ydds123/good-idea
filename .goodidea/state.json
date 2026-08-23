@@ -47,6 +47,14 @@
       "rationale": "互证：AI 基础设施化判断可用三点工具（可计量/可组合/可规模化）检验",
       "relation": "支持",
       "to_id": "PER-20260823-14676f79"
+    },
+    {
+      "accepted_at": "2026-08-23T21:16:39+08:00",
+      "from_id": "PER-20260823-9406d688",
+      "proposal_id": "PRP-401d4a7f4ad3",
+      "rationale": "价值网络即八层价值流的运转方式，归因方法论与产业快照呼应",
+      "relation": "支持",
+      "to_id": "PER-20260816-3a6a8d49"
     }
   ],
   "rollbacks": [
@@ -144,6 +152,19 @@
       "summary": "未来稀缺的不是智能，是围绕智能的六种能力 ↔ 指挥 AI 将成为人们新的能力瓶颈，且需要去训练",
       "timestamp": "2026-08-23T21:16:37+08:00",
       "transaction_id": "accept-conn-PRP-327af2f04320-20260823"
+    },
+    "accept-conn-PRP-401d4a7f4ad3-20260823": {
+      "action": "connect-accept",
+      "result": {
+        "from_id": "PER-20260823-9406d688",
+        "proposal_id": "PRP-401d4a7f4ad3",
+        "rationale": "价值网络即八层价值流的运转方式，归因方法论与产业快照呼应",
+        "relation": "支持",
+        "to_id": "PER-20260816-3a6a8d49"
+      },
+      "summary": "技术归因辨析：是技术本身不行，还是缺乏价值网络？ ↔ AI 产业价值流架构：八层一条链，治理横贯",
+      "timestamp": "2026-08-23T21:16:39+08:00",
+      "transaction_id": "accept-conn-PRP-401d4a7f4ad3-20260823"
     },
     "accept-conn-PRP-bfcf5996cbb5-20260823": {
       "action": "connect-accept",
