@@ -39,6 +39,18 @@
   ],
   "schema_version": "0.1",
   "transactions": {
+    "accept-PRP-15733feb6319-20260823": {
+      "action": "permanent-accept",
+      "result": {
+        "card_id": "PER-20260823-14676f79",
+        "card_path": "永久空间/永久卡片/2026-08-23-AI-的本质：智力脱离个体，成为可反馈复利的生产要素.md",
+        "card_type": "permanent",
+        "proposal_id": "PRP-15733feb6319"
+      },
+      "summary": "AI 的本质：智力脱离个体，成为可反馈复利的生产要素",
+      "timestamp": "2026-08-23T21:07:40+08:00",
+      "transaction_id": "accept-PRP-15733feb6319-20260823"
+    },
     "baseline-readable-filenames-20260807": {
       "action": "maintain-filenames",
       "result": {
