@@ -7079,6 +7079,20 @@
       "timestamp": "2026-08-23T21:12:36+08:00",
       "transaction_id": "connect-4-20260823"
     },
+    "connect-5-20260823": {
+      "action": "connect-propose",
+      "result": {
+        "from_id": "PER-20260823-9406d688",
+        "proposal_id": "PRP-401d4a7f4ad3",
+        "proposal_path": ".goodidea/proposals/connections/PRP-401d4a7f4ad3.md",
+        "rationale": "价值网络即八层价值流的运转方式，归因方法论与产业快照呼应",
+        "relation": "支持",
+        "to_id": "PER-20260816-3a6a8d49"
+      },
+      "summary": "连接候选：技术归因辨析：是技术本身不行，还是缺乏价值网络？ → AI 产业价值流架构：八层一条链，治理横贯",
+      "timestamp": "2026-08-23T21:12:36+08:00",
+      "transaction_id": "connect-5-20260823"
+    },
     "connect-accept-20260813-agency-career": {
       "action": "connect-accept",
       "result": {
