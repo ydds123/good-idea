@@ -7211,6 +7211,51 @@
       "timestamp": "2026-08-24T00:06:54+08:00",
       "transaction_id": "capture-valuate-20260824000654-e23092bd"
     },
+    "capture-valuate-20260824160606-21088659": {
+      "action": "capture-valuate",
+      "result": {
+        "id": "TODO-20260824-16a524a4",
+        "labels": {
+          "distance": "near",
+          "equifinality": "medium",
+          "goal_id": "goal_cognition",
+          "multifinality": "high",
+          "need_type": "competence",
+          "specificity": "specific",
+          "success_probability": "high"
+        },
+        "priority": 1,
+        "ranked": [
+          {
+            "id": "TODO-20260824-16a524a4",
+            "path": "待办空间/2026-08-24-学习段永平的思考方式.md",
+            "priority": 1,
+            "title": "学习段永平的思考方式"
+          },
+          {
+            "id": "TODO-20260823-def35e24",
+            "path": "待办空间/2026-08-23-一三五下午-·-AI-图像创作与分享时段.md",
+            "priority": 2,
+            "title": "一三五下午 · AI 图像创作与分享时段"
+          },
+          {
+            "id": "TODO-20260823-47707e98",
+            "path": "待办空间/2026-08-23-研究-Cloud-官方账号方案.md",
+            "priority": 3,
+            "title": "研究 Cloud 官方账号方案"
+          },
+          {
+            "id": "TODO-20260823-c544aebd",
+            "path": "待办空间/2026-08-23-配置-X-书签访问通道.md",
+            "priority": 4,
+            "title": "配置 X 书签访问通道"
+          }
+        ]
+      },
+      "summary": "学习段永平的思考方式",
+      "timestamp": "2026-08-24T16:06:06+08:00",
+      "transaction_id": "capture-valuate-20260824160606-21088659"
+    },
     "close-todo-action-loop-v2": {
       "action": "capture-transition",
       "result": {
