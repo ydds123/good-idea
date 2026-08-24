@@ -8981,6 +8981,21 @@
       "timestamp": "2026-08-09T18:49:29+08:00",
       "transaction_id": "source-control-theory-capture-20260809-v2"
     },
+    "source-duanyongping-20260824": {
+      "action": "source-commit",
+      "result": {
+        "flash_created": false,
+        "flash_ids": [],
+        "flash_paths": [],
+        "image_failures": [],
+        "source_created": true,
+        "source_id": "SRC-b8216682a382",
+        "source_path": "溯源空间/2026-08-24-身家千亿的段永平，为什么愿意在网上回答普通人的问题？.md"
+      },
+      "summary": "身家千亿的段永平，为什么愿意在网上回答普通人的问题？ + 保存动机",
+      "timestamp": "2026-08-24T09:08:07+08:00",
+      "transaction_id": "source-duanyongping-20260824"
+    },
     "source-hotdog-capture-20260809-v2": {
       "action": "source-commit",
       "result": {
