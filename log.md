@@ -613,3 +613,5 @@
 
 [2026-08-25T00:04:57+08:00] capture-valuate | 配置 X 书签访问通道 | tx=capture-valuate-20260825000457-cd8f4f58
 
+[2026-08-25T13:50:58+08:00] capture-interesting | 球球Token AI 中转站（生图 API 来源候选） | tx=capture-interesting-20260825135058-58358861
+

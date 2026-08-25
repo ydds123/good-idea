@@ -538,6 +538,17 @@
       "timestamp": "2026-08-18T14:24:47+08:00",
       "transaction_id": "capture-interesting-20260818142446-04b7acab"
     },
+    "capture-interesting-20260825135058-58358861": {
+      "action": "capture-interesting",
+      "result": {
+        "id": "INT-20260825-3a9570cd",
+        "path": "有意思空间/2026-08-25-球球Token-AI-中转站（生图-API-来源候选）.md",
+        "type": "interesting"
+      },
+      "summary": "球球Token AI 中转站（生图 API 来源候选）",
+      "timestamp": "2026-08-25T13:50:58+08:00",
+      "transaction_id": "capture-interesting-20260825135058-58358861"
+    },
     "capture-revise-20260816224612-980500e9": {
       "action": "capture-revise",
       "result": {
