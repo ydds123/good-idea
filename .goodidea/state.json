@@ -873,6 +873,18 @@
       "timestamp": "2026-08-25T21:08:59+08:00",
       "transaction_id": "capture-transition-20260825210859-2b12d19a"
     },
+    "capture-transition-20260825211336-05ae6d29": {
+      "action": "capture-transition",
+      "result": {
+        "id": "TODO-20260823-47707e98",
+        "path": "待办空间/已取消/2026-08-23-研究-Cloud-官方账号方案.md",
+        "status": "cancelled",
+        "type": "todo"
+      },
+      "summary": "研究 Cloud 官方账号方案",
+      "timestamp": "2026-08-25T21:13:36+08:00",
+      "transaction_id": "capture-transition-20260825211336-05ae6d29"
+    },
     "capture-valuate-20260815160837-372d6caf": {
       "action": "capture-valuate",
       "result": {
