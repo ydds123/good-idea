@@ -53,6 +53,7 @@
 
 ## 待办
 
+- [[待办空间/2026-08-25-看视频：Are-Agents-About-to-Replace-Software-Engineering|看视频：Are Agents About to Replace Software Engineering?]] · 未开始
 - [[待办空间/2026-08-23-配置-X-书签访问通道|配置 X 书签访问通道]] · 未开始
 - [[待办空间/2026-08-23-研究-Cloud-官方账号方案|研究 Cloud 官方账号方案]] · 未开始
 - [[待办空间/2026-08-23-一三五下午-·-AI-图像创作与分享时段|一三五下午 · AI 图像创作与分享时段]] · 未开始
