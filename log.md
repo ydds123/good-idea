@@ -619,3 +619,5 @@
 
 [2026-08-25T14:17:28+08:00] capture-interesting | 拆开 DeepSeek Harness（dsh.papertok.ai 交互式教程） | tx=capture-interesting-20260825141728-5b118ed7
 
+[2026-08-25T16:03:54+08:00] capture-valuate | 看视频：Are Agents About to Replace Software Engineering? | tx=capture-valuate-20260825160354-7792ac85
+
