@@ -549,6 +549,17 @@
       "timestamp": "2026-08-25T13:50:58+08:00",
       "transaction_id": "capture-interesting-20260825135058-58358861"
     },
+    "capture-interesting-20260825141728-5b118ed7": {
+      "action": "capture-interesting",
+      "result": {
+        "id": "INT-20260825-64992f38",
+        "path": "有意思空间/2026-08-25-拆开-DeepSeek-Harness（dsh.papertok.ai-交互式教程）.md",
+        "type": "interesting"
+      },
+      "summary": "拆开 DeepSeek Harness（dsh.papertok.ai 交互式教程）",
+      "timestamp": "2026-08-25T14:17:28+08:00",
+      "transaction_id": "capture-interesting-20260825141728-5b118ed7"
+    },
     "capture-revise-20260816224612-980500e9": {
       "action": "capture-revise",
       "result": {

@@ -617,3 +617,5 @@
 
 [2026-08-25T13:51:45+08:00] capture-todo | 看视频：Are Agents About to Replace Software Engineering? | tx=capture-todo-20260825135145-949b545b
 
+[2026-08-25T14:17:28+08:00] capture-interesting | 拆开 DeepSeek Harness（dsh.papertok.ai 交互式教程） | tx=capture-interesting-20260825141728-5b118ed7
+
