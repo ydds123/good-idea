@@ -849,6 +849,18 @@
       "timestamp": "2026-08-17T00:19:04+08:00",
       "transaction_id": "capture-transition-20260817001904-01492bc5"
     },
+    "capture-transition-20260825210731-c198713e": {
+      "action": "capture-transition",
+      "result": {
+        "id": "TODO-20260825-deed7bd8",
+        "path": "待办空间/已完成/2026-08-25-看视频：Are-Agents-About-to-Replace-Software-Engineering.md",
+        "status": "done",
+        "type": "todo"
+      },
+      "summary": "看视频：Are Agents About to Replace Software Engineering?",
+      "timestamp": "2026-08-25T21:07:31+08:00",
+      "transaction_id": "capture-transition-20260825210731-c198713e"
+    },
     "capture-valuate-20260815160837-372d6caf": {
       "action": "capture-valuate",
       "result": {

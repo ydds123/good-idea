@@ -621,3 +621,5 @@
 
 [2026-08-25T16:03:54+08:00] capture-valuate | 看视频：Are Agents About to Replace Software Engineering? | tx=capture-valuate-20260825160354-7792ac85
 
+[2026-08-25T21:07:31+08:00] capture-transition | 看视频：Are Agents About to Replace Software Engineering? | tx=capture-transition-20260825210731-c198713e
+

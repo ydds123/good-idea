@@ -2,11 +2,10 @@
 id: "TODO-20260825-deed7bd8"
 type: "待办"
 title: "看视频：Are Agents About to Replace Software Engineering?"
-status: "未开始"
+status: "已完成"
 created_at: "2026-08-25T13:51:45+08:00"
-updated_at: "2026-08-25T16:03:54+08:00"
+updated_at: "2026-08-25T21:07:31+08:00"
 source_ids: []
-not_started_at: "2026-08-25T13:51:45+08:00"
 need_type: "能力"
 goal_id: "行业职业"
 equifinality: "中"
@@ -15,6 +14,7 @@ success_probability: "高"
 distance: "近"
 specificity: "具体"
 priority: 2
+completed_at: "2026-08-25T21:07:31+08:00"
 ---
 # 看视频：Are Agents About to Replace Software Engineering?
 
