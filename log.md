@@ -627,3 +627,5 @@
 
 [2026-08-25T21:13:36+08:00] capture-transition | 研究 Cloud 官方账号方案 | tx=capture-transition-20260825211336-05ae6d29
 
+[2026-08-26T00:00:21+08:00] capture-sweep | 过期 1 条待办 | tx=capture-sweep-20260826000020-1ac8e163
+
