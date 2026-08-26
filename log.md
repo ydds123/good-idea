@@ -629,3 +629,5 @@
 
 [2026-08-26T00:00:21+08:00] capture-sweep | 过期 1 条待办 | tx=capture-sweep-20260826000020-1ac8e163
 
+[2026-08-26T13:35:15+08:00] capture-todo | 晚8点读AI原生开发手册 | tx=todo-ai-native-guide-20260826
+
