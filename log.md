@@ -631,3 +631,5 @@
 
 [2026-08-26T13:35:15+08:00] capture-todo | 晚8点读AI原生开发手册 | tx=todo-ai-native-guide-20260826
 
+[2026-08-26T13:41:01+08:00] capture-revise | 晚8点读AI原生开发手册 | tx=todo-ai-native-append-20260826b
+
