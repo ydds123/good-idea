@@ -637,6 +637,23 @@
       "timestamp": "2026-08-26T00:00:21+08:00",
       "transaction_id": "capture-sweep-20260826000020-1ac8e163"
     },
+    "capture-sweep-20260826160057-c3c78ff1": {
+      "action": "capture-sweep",
+      "result": {
+        "expired": [
+          {
+            "entered_at": "2026-08-24T09:08:00+08:00",
+            "id": "TODO-20260824-16a524a4",
+            "path": "待办空间/2026-08-24-学习段永平的思考方式.md",
+            "status": "expired"
+          }
+        ],
+        "skipped": []
+      },
+      "summary": "过期 1 条待办",
+      "timestamp": "2026-08-26T16:00:57+08:00",
+      "transaction_id": "capture-sweep-20260826160057-c3c78ff1"
+    },
     "capture-sync-20260815121511-42b56cb7": {
       "action": "capture-sync",
       "result": {
