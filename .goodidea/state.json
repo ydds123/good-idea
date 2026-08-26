@@ -7545,6 +7545,33 @@
       "timestamp": "2026-08-25T16:03:54+08:00",
       "transaction_id": "capture-valuate-20260825160354-7792ac85"
     },
+    "capture-valuate-20260826160312-7d66f232": {
+      "action": "capture-valuate",
+      "result": {
+        "id": "TODO-20260826-b7ccf803",
+        "labels": {
+          "distance": "near",
+          "equifinality": "medium",
+          "goal_id": "goal_cognition",
+          "multifinality": "medium",
+          "need_type": "competence",
+          "specificity": "specific",
+          "success_probability": "high"
+        },
+        "priority": 1,
+        "ranked": [
+          {
+            "id": "TODO-20260826-b7ccf803",
+            "path": "待办空间/2026-08-26-晚8点读AI原生开发手册.md",
+            "priority": 1,
+            "title": "晚8点读AI原生开发手册"
+          }
+        ]
+      },
+      "summary": "晚8点读AI原生开发手册",
+      "timestamp": "2026-08-26T16:03:12+08:00",
+      "transaction_id": "capture-valuate-20260826160312-7d66f232"
+    },
     "close-todo-action-loop-v2": {
       "action": "capture-transition",
       "result": {
