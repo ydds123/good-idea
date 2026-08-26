@@ -9357,6 +9357,21 @@
       "timestamp": "2026-08-24T09:08:07+08:00",
       "transaction_id": "source-duanyongping-20260824"
     },
+    "source-edgetunnel-20260826": {
+      "action": "source-commit",
+      "result": {
+        "flash_created": false,
+        "flash_ids": [],
+        "flash_paths": [],
+        "image_failures": [],
+        "source_created": true,
+        "source_id": "SRC-f74994df3257",
+        "source_path": "溯源空间/2026-08-26-Edgetunnel-部署运维与恢复手册.md"
+      },
+      "summary": "Edgetunnel 部署运维与恢复手册 + 保存动机",
+      "timestamp": "2026-08-26T19:36:14+08:00",
+      "transaction_id": "source-edgetunnel-20260826"
+    },
     "source-hotdog-capture-20260809-v2": {
       "action": "source-commit",
       "result": {

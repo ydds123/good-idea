@@ -637,3 +637,5 @@
 
 [2026-08-26T16:03:12+08:00] capture-valuate | 晚8点读AI原生开发手册 | tx=capture-valuate-20260826160312-7d66f232
 
+[2026-08-26T19:36:14+08:00] source-commit | Edgetunnel 部署运维与恢复手册 + 保存动机 | tx=source-edgetunnel-20260826
+
