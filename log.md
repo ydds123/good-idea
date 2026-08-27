@@ -695,3 +695,5 @@
 
 [2026-08-27T21:48:43+08:00] capture-revise | EAGLE评分过程数据插件 | tx=revise-eagle-seed-dims-20260827
 
+[2026-08-27T21:50:27+08:00] capture-revise | EAGLE评分过程数据插件 | tx=revise-eagle-score-semantics-20260827
+
