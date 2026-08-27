@@ -7616,6 +7616,45 @@
       "timestamp": "2026-08-26T16:03:12+08:00",
       "transaction_id": "capture-valuate-20260826160312-7d66f232"
     },
+    "capture-valuate-20260828000607-a1969ca6": {
+      "action": "capture-valuate",
+      "result": {
+        "id": "TODO-20260827-d036ff0f",
+        "labels": {
+          "distance": "medium",
+          "equifinality": "medium",
+          "goal_id": "goal_creation",
+          "multifinality": "medium",
+          "need_type": "competence",
+          "specificity": "specific",
+          "success_probability": "medium"
+        },
+        "priority": 2,
+        "ranked": [
+          {
+            "id": "TODO-20260826-b7ccf803",
+            "path": "待办空间/2026-08-26-晚8点读AI原生开发手册.md",
+            "priority": 1,
+            "title": "晚8点读AI原生开发手册"
+          },
+          {
+            "id": "TODO-20260827-d036ff0f",
+            "path": "待办空间/2026-08-27-EAGLE评分过程数据插件.md",
+            "priority": 2,
+            "title": "EAGLE评分过程数据插件"
+          },
+          {
+            "id": "TODO-20260827-53ed0e1d",
+            "path": "待办空间/2026-08-27-跑通-AI-图像创作分享链路.md",
+            "priority": 3,
+            "title": "跑通 AI 图像创作分享链路"
+          }
+        ]
+      },
+      "summary": "EAGLE评分过程数据插件",
+      "timestamp": "2026-08-28T00:06:07+08:00",
+      "transaction_id": "capture-valuate-20260828000607-a1969ca6"
+    },
     "close-todo-action-loop-v2": {
       "action": "capture-transition",
       "result": {

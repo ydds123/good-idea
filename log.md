@@ -697,3 +697,5 @@
 
 [2026-08-27T21:50:27+08:00] capture-revise | EAGLE评分过程数据插件 | tx=revise-eagle-score-semantics-20260827
 
+[2026-08-28T00:06:07+08:00] capture-valuate | EAGLE评分过程数据插件 | tx=capture-valuate-20260828000607-a1969ca6
+
