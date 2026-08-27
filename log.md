@@ -653,3 +653,5 @@
 
 [2026-08-27T21:17:39+08:00] permanent-propose | 知识库+AI 的形态：以终为始，打磨成研究域并输出 | tx=kb-ai-mother-seed-propose-v3-20260827
 
+[2026-08-27T21:18:56+08:00] permanent-accept | 知识库+AI 的形态：以终为始，打磨成研究域并输出 | tx=kb-ai-mother-seed-accept-20260827
+
