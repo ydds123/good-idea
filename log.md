@@ -655,3 +655,5 @@
 
 [2026-08-27T21:18:56+08:00] permanent-accept | 知识库+AI 的形态：以终为始，打磨成研究域并输出 | tx=kb-ai-mother-seed-accept-20260827
 
+[2026-08-27T21:19:46+08:00] connect-propose | 连接候选：人与 AI 协作的本质：把 AI 当作共同创作对象，而非执行工具 → 知识库+AI 的形态：以终为始，打磨成研究域并输出 | tx=kb-ai-connect-cocreate-20260827
+
