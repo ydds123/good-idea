@@ -663,3 +663,5 @@
 
 [2026-08-27T21:20:36+08:00] connect-accept | 指挥 AI 将成为人们新的能力瓶颈，且需要去训练 ↔ 知识库+AI 的形态：以终为始，打磨成研究域并输出 | tx=kb-ai-accept-command-20260827
 
+[2026-08-27T21:25:22+08:00] permanent-propose | 单线程深潜才有能量感 | tx=deep-focus-mother-seed-20260827
+

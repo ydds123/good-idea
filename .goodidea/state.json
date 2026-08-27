@@ -7795,6 +7795,17 @@
       "timestamp": "2026-08-04T22:24:07+08:00",
       "transaction_id": "correction-withdraw-PRP-e863027285ee"
     },
+    "deep-focus-mother-seed-20260827": {
+      "action": "permanent-propose",
+      "result": {
+        "card_type": "permanent",
+        "proposal_id": "PRP-ae3a7967a48b",
+        "proposal_path": ".goodidea/proposals/permanent/PRP-ae3a7967a48b.md"
+      },
+      "summary": "单线程深潜才有能量感",
+      "timestamp": "2026-08-27T21:25:22+08:00",
+      "transaction_id": "deep-focus-mother-seed-20260827"
+    },
     "discuss-typewriter-20260815-00": {
       "action": "capture-discuss",
       "result": {
