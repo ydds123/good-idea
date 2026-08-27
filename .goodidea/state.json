@@ -10014,6 +10014,17 @@
       "timestamp": "2026-08-14T23:40:03+08:00",
       "transaction_id": "todo-action-closure-20260814-b"
     },
+    "todo-ai-image-link-20260827": {
+      "action": "capture-todo",
+      "result": {
+        "id": "TODO-20260827-53ed0e1d",
+        "path": "待办空间/2026-08-27-跑通-AI-图像创作分享链路.md",
+        "type": "todo"
+      },
+      "summary": "跑通 AI 图像创作分享链路",
+      "timestamp": "2026-08-27T21:32:55+08:00",
+      "transaction_id": "todo-ai-image-link-20260827"
+    },
     "todo-ai-industry-mother-20260810": {
       "action": "capture-todo",
       "result": {

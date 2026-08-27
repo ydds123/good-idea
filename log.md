@@ -677,3 +677,5 @@
 
 [2026-08-27T21:32:40+08:00] permanent-revise | 母题级课题：AI 图像/摄影与视觉叙事的 skill 化 | tx=link-revise-mother-20260827
 
+[2026-08-27T21:32:55+08:00] capture-todo | 跑通 AI 图像创作分享链路 | tx=todo-ai-image-link-20260827
+
