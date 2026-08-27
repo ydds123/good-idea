@@ -639,3 +639,5 @@
 
 [2026-08-26T19:36:14+08:00] source-commit | Edgetunnel 部署运维与恢复手册 + 保存动机 | tx=source-edgetunnel-20260826
 
+[2026-08-27T19:35:41+08:00] capture-flash | 单线程深潜才有能量感 | tx=flash-deep-dive-charge-20260827
+

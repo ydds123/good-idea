@@ -8179,6 +8179,17 @@
       "timestamp": "2026-08-07T21:57:41+08:00",
       "transaction_id": "first-permanent-propose-20260807"
     },
+    "flash-deep-dive-charge-20260827": {
+      "action": "capture-flash",
+      "result": {
+        "id": "FLA-20260827-9f1e8e20",
+        "path": "闪念空间/2026-08-27-单线程深潜才有能量感.md",
+        "type": "flash"
+      },
+      "summary": "单线程深潜才有能量感",
+      "timestamp": "2026-08-27T19:35:41+08:00",
+      "transaction_id": "flash-deep-dive-charge-20260827"
+    },
     "flash-dismiss-life-script-20260820": {
       "action": "capture-transition",
       "result": {
