@@ -9388,6 +9388,17 @@
       "timestamp": "2026-08-10T00:10:15+08:00",
       "transaction_id": "revise-anthropomorphic-upgrade-20260810"
     },
+    "revise-eagle-scenario-20260827": {
+      "action": "capture-revise",
+      "result": {
+        "id": "TODO-20260827-d036ff0f",
+        "path": "待办空间/2026-08-27-EAGLE评分过程数据插件.md",
+        "type": "todo"
+      },
+      "summary": "EAGLE评分过程数据插件",
+      "timestamp": "2026-08-27T21:39:39+08:00",
+      "transaction_id": "revise-eagle-scenario-20260827"
+    },
     "revise-flash-alert-v2-20260809": {
       "action": "capture-revise",
       "result": {

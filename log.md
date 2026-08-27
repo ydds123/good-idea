@@ -683,3 +683,5 @@
 
 [2026-08-27T21:39:25+08:00] capture-transition | 一三五下午 · AI 图像创作与分享时段 | tx=cancel-135-todo-20260827
 
+[2026-08-27T21:39:39+08:00] capture-revise | EAGLE评分过程数据插件 | tx=revise-eagle-scenario-20260827
+
