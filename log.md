@@ -699,3 +699,5 @@
 
 [2026-08-28T00:06:07+08:00] capture-valuate | EAGLE评分过程数据插件 | tx=capture-valuate-20260828000607-a1969ca6
 
+[2026-08-28T00:06:07+08:00] capture-valuate | 跑通 AI 图像创作分享链路 | tx=capture-valuate-20260828000607-066a4ecd
+
