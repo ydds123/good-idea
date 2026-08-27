@@ -8291,6 +8291,17 @@
       "timestamp": "2026-08-27T21:13:11+08:00",
       "transaction_id": "kb-ai-mother-seed-propose-v2-20260827"
     },
+    "kb-ai-mother-seed-propose-v3-20260827": {
+      "action": "permanent-propose",
+      "result": {
+        "card_type": "permanent",
+        "proposal_id": "PRP-7db2f352aaac",
+        "proposal_path": ".goodidea/proposals/permanent/PRP-7db2f352aaac.md"
+      },
+      "summary": "知识库+AI 的形态：以终为始，打磨成研究域并输出",
+      "timestamp": "2026-08-27T21:17:39+08:00",
+      "transaction_id": "kb-ai-mother-seed-propose-v3-20260827"
+    },
     "kb-ai-withdraw-old-20260827": {
       "action": "permanent-withdraw",
       "result": {
