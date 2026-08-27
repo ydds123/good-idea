@@ -8280,6 +8280,17 @@
       "timestamp": "2026-08-27T21:08:37+08:00",
       "transaction_id": "kb-ai-mother-seed-propose-20260827"
     },
+    "kb-ai-withdraw-old-20260827": {
+      "action": "permanent-withdraw",
+      "result": {
+        "proposal_id": "PRP-3b09c2a71e46",
+        "reason": "草稿尺子表述有误（期望×价值应为等效性/多效性），撤销后用修正草稿重新提案",
+        "status": "withdrawn"
+      },
+      "summary": "撤销 PRP-3b09c2a71e46",
+      "timestamp": "2026-08-27T21:13:07+08:00",
+      "transaction_id": "kb-ai-withdraw-old-20260827"
+    },
     "learn-list-20260814": {
       "action": "capture-todo",
       "result": {
