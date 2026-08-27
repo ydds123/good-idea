@@ -113,7 +113,7 @@ ENUM_FIELDS = frozenset({
 
 # 高阶目标定义（2026-08-15 从待办素材抽象，供估价排序与 Agent 加工参考；演化时扩展）
 GOAL_SPECS: dict[str, dict[str, str]] = {
-    "goal_cognition": {"name": "认知中枢", "desc": "让 good idea 成为替你思考的系统"},
+    "goal_cognition": {"name": "认知中枢", "desc": "让 good idea 成为陪你思考的系统"},
     "goal_career": {"name": "行业职业", "desc": "行业理解与职业跃迁"},
     "goal_creation": {"name": "创作能力", "desc": "AI 创作能力谱系（生图→视频→控制论实践）"},
     "goal_tools": {"name": "工具效能", "desc": "让日常工具链顺手"},

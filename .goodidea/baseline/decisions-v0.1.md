@@ -81,3 +81,7 @@
 ## 2026-08-20 用户确认的闪念已放弃归档目录
 
 49. 闪念「已放弃」状态补专属归档目录 `闪念空间/已放弃/`（2026-08-15 闪念状态归档拍板时 dismissed 暂不映射目录、文件保持原位；2026-08-20 用户在回顾闪念时提出"裁决不值得转永久卡的闪念应有专属文件夹"，确认沿用"已放弃"词）。语义：裁决不值得转永久卡的归档态——归档留痕，不被永久卡素材检索捞取，也不能作为形成来源被静默复活（permanent accept 拒绝 dismissed 作为形成来源的边界不变）；可经 `capture transition` 回退待处理。`capture transition` 流转到已放弃时自动把卡片文件移入子目录并同步重写全库引用、索引与状态账本；`capture sync` 把手动标已放弃的闪念归位；lint/verify/review/maintain/find_note/索引全部覆盖子目录，归档卡片不脱离系统管理。连带修复：`maintain_filenames` 对闪念与待办同构，归档目录（发酵中/已处理/已放弃）里的卡片保持当前状态目录，不再按根目录重定位。同步修改 contracts.py（FLASH_STATUS_DIRS）、service.py（capture_transition/capture_sync/maintain_filenames）、notes.py、cli.py（transition help）、schema.md、README.md 与对应测试。
+
+## 2026-08-27 用户确认的契约措辞修正
+
+50. GOAL_SPECS 中「认知中枢」的 desc 由"让 good idea 成为替你思考的系统"改为"让 good idea 成为陪你思考的系统"（2026-08-27 用户审计发现：原措辞与 AGENTS.md 开篇"它不是……自动替用户思考的问答系统"直接冲突，也与"AI 是苏格拉底式提问者、思考展开的主体是人"的判断相悖；新措辞取自用户 8-22 闪念原话「AI 陪你思考」，并与 llm-wiki 的「AI 替你建库」形成对仗）。desc 不参与校验逻辑，仅作估价排序与 Agent 加工的语义参考；同步修改 contracts.py（一行）与 decisions 记录，schema.md 只列目标名无需同步。历史落盘内容（如已过期待办的估价理由中引用旧措辞）按"源码修复只影响未来写入"原则保留，不追改。
