@@ -8510,6 +8510,18 @@
       "timestamp": "2026-08-14T23:44:21+08:00",
       "transaction_id": "learn-list-20260814"
     },
+    "link-flash-processed-20260827": {
+      "action": "capture-transition",
+      "result": {
+        "id": "FLA-20260823-51cdd36c",
+        "path": "闪念空间/已处理/2026-08-23-AI-图像创作：从自娱自乐到分享出去.md",
+        "status": "processed",
+        "type": "flash"
+      },
+      "summary": "AI 图像创作：从自娱自乐到分享出去",
+      "timestamp": "2026-08-27T21:33:03+08:00",
+      "transaction_id": "link-flash-processed-20260827"
+    },
     "link-revise-mother-20260827": {
       "action": "permanent-revise",
       "result": {

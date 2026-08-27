@@ -679,3 +679,5 @@
 
 [2026-08-27T21:32:55+08:00] capture-todo | 跑通 AI 图像创作分享链路 | tx=todo-ai-image-link-20260827
 
+[2026-08-27T21:33:03+08:00] capture-transition | AI 图像创作：从自娱自乐到分享出去 | tx=link-flash-processed-20260827
+
