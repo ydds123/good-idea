@@ -691,3 +691,5 @@
 
 [2026-08-27T21:46:28+08:00] capture-revise | EAGLE评分过程数据插件 | tx=revise-eagle-value-prop-20260827
 
+[2026-08-27T21:47:54+08:00] capture-revise | EAGLE评分过程数据插件 | tx=revise-eagle-dim-constraint-20260827
+
