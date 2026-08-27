@@ -641,3 +641,5 @@
 
 [2026-08-27T19:35:41+08:00] capture-flash | 单线程深潜才有能量感 | tx=flash-deep-dive-charge-20260827
 
+[2026-08-27T19:58:05+08:00] capture-todo | EAGLE评分过程数据插件 | tx=todo-eagle-rating-plugin-20260827
+
