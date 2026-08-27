@@ -4002,8 +4002,11 @@ class ConnectFlashTests(unittest.TestCase):
         left_note = self.repo.find_note(left["id"])
         right_note = self.repo.find_note(right["id"])
         self.assertTrue(left_note[0].as_posix().startswith("闪念空间/已处理/"))
-        self.assertIn("闪念空间/已处理/2026-08-20-归档左", right_note[1])
-        self.assertNotIn("闪念空间/2026-08-20-归档左", right_note[1])
+        # 期望链接从实际归档路径派生，不硬编码日期（曾写死 2026-08-20 导致跨天漂移失败）
+        left_link = left_note[0].as_posix().removesuffix(".md")
+        self.assertIn(left_link, right_note[1])
+        old_link = left_link.replace("/已处理/", "/")
+        self.assertNotIn(old_link, right_note[1])
         self.assertIn("## 连接", left_note[1])
         state = self.repo.read_state()
         self.assertEqual(len(state["connections"]), 1)
