@@ -649,3 +649,5 @@
 
 [2026-08-27T21:13:11+08:00] permanent-propose | 知识库+AI 的形态：以终为始，打磨成研究域并输出 | tx=kb-ai-mother-seed-propose-v2-20260827
 
+[2026-08-27T21:17:35+08:00] permanent-withdraw | 撤销 PRP-5b17992c87a8 | tx=kb-ai-withdraw-v2-20260827
+
