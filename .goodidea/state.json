@@ -8510,6 +8510,17 @@
       "timestamp": "2026-08-14T23:44:21+08:00",
       "transaction_id": "learn-list-20260814"
     },
+    "link-revise-mother-20260827": {
+      "action": "permanent-revise",
+      "result": {
+        "card_id": "PER-20260820-d6ae6d45",
+        "card_path": "永久空间/永久卡片/2026-08-20-母题级课题：AI-图像-摄影与视觉叙事的-skill-化.md",
+        "status": "revised"
+      },
+      "summary": "母题级课题：AI 图像/摄影与视觉叙事的 skill 化",
+      "timestamp": "2026-08-27T21:32:40+08:00",
+      "transaction_id": "link-revise-mother-20260827"
+    },
     "maintain-contracts-20260809": {
       "action": "maintain-contracts",
       "result": {

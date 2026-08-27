@@ -675,3 +675,5 @@
 
 [2026-08-27T21:26:52+08:00] connect-accept | 职业规划已失效：行业选择是长出来的 ↔ 单线程深潜才有能量感 | tx=df-accept-career-20260827
 
+[2026-08-27T21:32:40+08:00] permanent-revise | 母题级课题：AI 图像/摄影与视觉叙事的 skill 化 | tx=link-revise-mother-20260827
+
