@@ -285,6 +285,18 @@
       "timestamp": "2026-08-07T20:59:59+08:00",
       "transaction_id": "baseline-source-layout-20260807"
     },
+    "cancel-135-todo-20260827": {
+      "action": "capture-transition",
+      "result": {
+        "id": "TODO-20260823-def35e24",
+        "path": "待办空间/已取消/2026-08-23-一三五下午-·-AI-图像创作与分享时段.md",
+        "status": "cancelled",
+        "type": "todo"
+      },
+      "summary": "一三五下午 · AI 图像创作与分享时段",
+      "timestamp": "2026-08-27T21:39:25+08:00",
+      "transaction_id": "cancel-135-todo-20260827"
+    },
     "cap-20260820-srccommit": {
       "action": "source-commit",
       "result": {
