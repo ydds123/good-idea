@@ -643,3 +643,5 @@
 
 [2026-08-27T19:58:05+08:00] capture-todo | EAGLE评分过程数据插件 | tx=todo-eagle-rating-plugin-20260827
 
+[2026-08-27T21:08:37+08:00] permanent-propose | 知识库+AI 的形态：以终为始，打磨成研究域并输出 | tx=kb-ai-mother-seed-propose-20260827
+
