@@ -87,6 +87,14 @@
       "rationale": "单线程深潜卡立下「多线程=耗能」的判断，其机制层解法是把琐事外包给 AI、让自己回到单线程；琐事卡正回答「AI 处理谁的琐事价值杠杆最高」——处理松海的琐事=把耗能项外包=腾出大块单线程时间。两卡在能量模式→机制设计这条链上咬合",
       "relation": "支持",
       "to_id": "PER-20260827-48166aab"
+    },
+    {
+      "accepted_at": "2026-08-27T21:26:52+08:00",
+      "from_id": "PER-20260813-2690bcf1",
+      "proposal_id": "PRP-f7e99f8aa3e1",
+      "rationale": "求职季同时调用的两个维度：职业规划卡给路径方法论（行业选择是长出来的、行动生成答案），能量卡给硬筛条件（是否提供大块单线程时间）——一个是「怎么选」，一个是「选什么」，筛选和生长同场发生",
+      "relation": "支持",
+      "to_id": "PER-20260827-48166aab"
     }
   ],
   "rollbacks": [
@@ -7825,6 +7833,19 @@
       "summary": "单线程深潜才有能量感",
       "timestamp": "2026-08-27T21:25:23+08:00",
       "transaction_id": "deep-focus-mother-seed-20260827-accept"
+    },
+    "df-accept-career-20260827": {
+      "action": "connect-accept",
+      "result": {
+        "from_id": "PER-20260813-2690bcf1",
+        "proposal_id": "PRP-f7e99f8aa3e1",
+        "rationale": "求职季同时调用的两个维度：职业规划卡给路径方法论（行业选择是长出来的、行动生成答案），能量卡给硬筛条件（是否提供大块单线程时间）——一个是「怎么选」，一个是「选什么」，筛选和生长同场发生",
+        "relation": "支持",
+        "to_id": "PER-20260827-48166aab"
+      },
+      "summary": "职业规划已失效：行业选择是长出来的 ↔ 单线程深潜才有能量感",
+      "timestamp": "2026-08-27T21:26:52+08:00",
+      "transaction_id": "df-accept-career-20260827"
     },
     "df-accept-trivials-20260827": {
       "action": "connect-accept",
