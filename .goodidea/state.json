@@ -7818,6 +7818,20 @@
       "timestamp": "2026-08-27T21:25:23+08:00",
       "transaction_id": "deep-focus-mother-seed-20260827-accept"
     },
+    "df-connect-trivials-20260827": {
+      "action": "connect-propose",
+      "result": {
+        "from_id": "PER-20260820-3009cdcf",
+        "proposal_id": "PRP-81cb439cf510",
+        "proposal_path": ".goodidea/proposals/connections/PRP-81cb439cf510.md",
+        "rationale": "单线程深潜卡立下「多线程=耗能」的判断，其机制层解法是把琐事外包给 AI、让自己回到单线程；琐事卡正回答「AI 处理谁的琐事价值杠杆最高」——处理松海的琐事=把耗能项外包=腾出大块单线程时间。两卡在能量模式→机制设计这条链上咬合",
+        "relation": "支持",
+        "to_id": "PER-20260827-48166aab"
+      },
+      "summary": "连接候选：AI 的价值杠杆取决于处理的是谁的琐事 → 单线程深潜才有能量感",
+      "timestamp": "2026-08-27T21:26:10+08:00",
+      "transaction_id": "df-connect-trivials-20260827"
+    },
     "discuss-typewriter-20260815-00": {
       "action": "capture-discuss",
       "result": {
