@@ -703,3 +703,5 @@
 
 [2026-08-28T16:01:20+08:00] capture-sweep | 过期 1 条待办 | tx=capture-sweep-20260828160120-ff02447d
 
+[2026-08-28T16:06:23+08:00] capture-valuate | EAGLE评分过程数据插件 | tx=capture-valuate-20260828160623-c0284fef
+
