@@ -707,3 +707,5 @@
 
 [2026-08-28T16:06:23+08:00] capture-valuate | 跑通 AI 图像创作分享链路 | tx=capture-valuate-20260828160623-90092a33
 
+[2026-08-28T18:26:05+08:00] capture-interesting | Lux3D：AI 3D 生成模型 | tx=lux3d-interesting-20260828
+
