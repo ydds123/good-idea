@@ -709,3 +709,5 @@
 
 [2026-08-28T18:26:05+08:00] capture-interesting | Lux3D：AI 3D 生成模型 | tx=lux3d-interesting-20260828
 
+[2026-08-28T18:29:53+08:00] source-commit | 用 Skills 搭建起自我改进的Agent 框架 + 保存动机 | tx=skill-self-improve-warp-20260828
+
