@@ -711,3 +711,5 @@
 
 [2026-08-28T18:29:53+08:00] source-commit | 用 Skills 搭建起自我改进的Agent 框架 + 保存动机 | tx=skill-self-improve-warp-20260828
 
+[2026-08-28T19:20:01+08:00] capture-revise | EAGLE评分过程数据插件 | tx=revise-eagle-global-shortcut-20260828
+
