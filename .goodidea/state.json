@@ -698,6 +698,23 @@
       "timestamp": "2026-08-26T16:00:57+08:00",
       "transaction_id": "capture-sweep-20260826160057-c3c78ff1"
     },
+    "capture-sweep-20260828160120-ff02447d": {
+      "action": "capture-sweep",
+      "result": {
+        "expired": [
+          {
+            "entered_at": "2026-08-26T13:35:15+08:00",
+            "id": "TODO-20260826-b7ccf803",
+            "path": "待办空间/2026-08-26-晚8点读AI原生开发手册.md",
+            "status": "expired"
+          }
+        ],
+        "skipped": []
+      },
+      "summary": "过期 1 条待办",
+      "timestamp": "2026-08-28T16:01:20+08:00",
+      "transaction_id": "capture-sweep-20260828160120-ff02447d"
+    },
     "capture-sync-20260815121511-42b56cb7": {
       "action": "capture-sync",
       "result": {
