@@ -713,3 +713,5 @@
 
 [2026-08-28T19:20:01+08:00] capture-revise | EAGLE评分过程数据插件 | tx=revise-eagle-global-shortcut-20260828
 
+[2026-08-30T00:03:00+08:00] capture-sweep | 过期 2 条待办 | tx=capture-sweep-20260830000300-c385eed8
+

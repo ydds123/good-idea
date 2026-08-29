@@ -715,6 +715,29 @@
       "timestamp": "2026-08-28T16:01:20+08:00",
       "transaction_id": "capture-sweep-20260828160120-ff02447d"
     },
+    "capture-sweep-20260830000300-c385eed8": {
+      "action": "capture-sweep",
+      "result": {
+        "expired": [
+          {
+            "entered_at": "2026-08-27T19:58:05+08:00",
+            "id": "TODO-20260827-d036ff0f",
+            "path": "待办空间/2026-08-27-EAGLE评分过程数据插件.md",
+            "status": "expired"
+          },
+          {
+            "entered_at": "2026-08-27T21:32:55+08:00",
+            "id": "TODO-20260827-53ed0e1d",
+            "path": "待办空间/2026-08-27-跑通-AI-图像创作分享链路.md",
+            "status": "expired"
+          }
+        ],
+        "skipped": []
+      },
+      "summary": "过期 2 条待办",
+      "timestamp": "2026-08-30T00:03:00+08:00",
+      "transaction_id": "capture-sweep-20260830000300-c385eed8"
+    },
     "capture-sync-20260815121511-42b56cb7": {
       "action": "capture-sync",
       "result": {
