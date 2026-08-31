@@ -715,3 +715,5 @@
 
 [2026-08-30T00:03:00+08:00] capture-sweep | 过期 2 条待办 | tx=capture-sweep-20260830000300-c385eed8
 
+[2026-08-31T09:29:33+08:00] capture-interesting | WikiSkill（Google Research：raw 轨迹不可变 → wi | tx=capture-interesting-20260831092933-bec7d1c4
+

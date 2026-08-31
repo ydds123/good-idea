@@ -604,6 +604,17 @@
       "timestamp": "2026-08-25T14:17:28+08:00",
       "transaction_id": "capture-interesting-20260825141728-5b118ed7"
     },
+    "capture-interesting-20260831092933-bec7d1c4": {
+      "action": "capture-interesting",
+      "result": {
+        "id": "INT-20260831-6d5e3ce7",
+        "path": "有意思空间/2026-08-31-WikiSkill（Google-Research：raw-轨迹不可变-→-wi.md",
+        "type": "interesting"
+      },
+      "summary": "WikiSkill（Google Research：raw 轨迹不可变 → wi",
+      "timestamp": "2026-08-31T09:29:33+08:00",
+      "transaction_id": "capture-interesting-20260831092933-bec7d1c4"
+    },
     "capture-revise-20260816224612-980500e9": {
       "action": "capture-revise",
       "result": {
