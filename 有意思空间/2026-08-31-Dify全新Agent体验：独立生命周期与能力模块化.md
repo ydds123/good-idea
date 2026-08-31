@@ -1,13 +1,13 @@
 ---
 id: "INT-20260831-2d89aa62"
 type: "有意思"
-title: "Dify 全新 Agent 体验：Agent 从工作流执行节点升级为独立生命周期"
+title: "Dify全新Agent体验：独立生命周期与能力模块化"
 status: "待处理"
 created_at: "2026-08-31T22:47:57+08:00"
-updated_at: "2026-08-31T22:47:57+08:00"
+updated_at: "2026-08-31T22:48:00+08:00"
 source_ids: []
 ---
-# Dify 全新 Agent 体验：Agent 从工作流执行节点升级为独立生命周期
+# Dify全新Agent体验：独立生命周期与能力模块化
 
 ## 原始记录
 

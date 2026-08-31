@@ -721,3 +721,5 @@
 
 [2026-08-31T22:47:57+08:00] capture-interesting | Dify 全新 Agent 体验：Agent 从工作流执行节点升级为独立生命周期 | tx=capture-interesting-20260831224757-23adb75e
 
+[2026-08-31T22:48:00+08:00] capture-retitle | Dify全新Agent体验：独立生命周期与能力模块化 | tx=retitle-dify-20260831
+

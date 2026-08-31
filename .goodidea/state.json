@@ -619,7 +619,7 @@
       "action": "capture-interesting",
       "result": {
         "id": "INT-20260831-2d89aa62",
-        "path": "有意思空间/2026-08-31-Dify-全新-Agent-体验：Agent-从工作流执行节点升级为独立生命周期.md",
+        "path": "有意思空间/2026-08-31-Dify全新Agent体验：独立生命周期与能力模块化.md",
         "type": "interesting"
       },
       "summary": "Dify 全新 Agent 体验：Agent 从工作流执行节点升级为独立生命周期",
@@ -9544,6 +9544,20 @@
       "summary": "规范化 2 份来源快照",
       "timestamp": "2026-08-09T10:55:08+08:00",
       "transaction_id": "remove-literature-layer-20260809"
+    },
+    "retitle-dify-20260831": {
+      "action": "capture-retitle",
+      "result": {
+        "from": "有意思空间/2026-08-31-Dify-全新-Agent-体验：Agent-从工作流执行节点升级为独立生命周期.md",
+        "id": "INT-20260831-2d89aa62",
+        "path": "有意思空间/2026-08-31-Dify全新Agent体验：独立生命周期与能力模块化.md",
+        "renamed": true,
+        "to": "有意思空间/2026-08-31-Dify全新Agent体验：独立生命周期与能力模块化.md",
+        "type": "interesting"
+      },
+      "summary": "Dify全新Agent体验：独立生命周期与能力模块化",
+      "timestamp": "2026-08-31T22:48:00+08:00",
+      "transaction_id": "retitle-dify-20260831"
     },
     "retitle-jspace-20260818": {
       "action": "capture-retitle",
