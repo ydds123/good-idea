@@ -1,13 +1,13 @@
 ---
 id: "INT-20260831-6d5e3ce7"
 type: "有意思"
-title: "WikiSkill（Google Research：raw 轨迹不可变 → wi"
+title: "WikiSkill与现有skill结合实现可进化"
 status: "待处理"
 created_at: "2026-08-31T09:29:33+08:00"
-updated_at: "2026-08-31T09:29:33+08:00"
+updated_at: "2026-08-31T09:29:36+08:00"
 source_ids: []
 ---
-# WikiSkill（Google Research：raw 轨迹不可变 → wi
+# WikiSkill与现有skill结合实现可进化
 
 ## 原始记录
 

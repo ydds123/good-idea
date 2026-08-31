@@ -717,3 +717,5 @@
 
 [2026-08-31T09:29:33+08:00] capture-interesting | WikiSkill（Google Research：raw 轨迹不可变 → wi | tx=capture-interesting-20260831092933-bec7d1c4
 
+[2026-08-31T09:29:36+08:00] capture-retitle | WikiSkill与现有skill结合实现可进化 | tx=retitle-wikiskill-20260831
+

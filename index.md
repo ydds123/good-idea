@@ -48,7 +48,7 @@
 
 ## 有意思
 
-- [[有意思空间/2026-08-31-WikiSkill（Google-Research：raw-轨迹不可变-→-wi|WikiSkill（Google Research：raw 轨迹不可变 → wi]] · 待处理
+- [[有意思空间/2026-08-31-WikiSkill与现有skill结合实现可进化|WikiSkill与现有skill结合实现可进化]] · 待处理
 - [[有意思空间/2026-08-28-Lux3D：AI-3D-生成模型|Lux3D：AI 3D 生成模型]] · 待处理
 - [[有意思空间/2026-08-25-拆开-DeepSeek-Harness（dsh.papertok.ai-交互式教程）|拆开 DeepSeek Harness（dsh.papertok.ai 交互式教程）]] · 待处理
 - [[有意思空间/2026-08-25-球球Token-AI-中转站（生图-API-来源候选）|球球Token AI 中转站（生图 API 来源候选）]] · 待处理

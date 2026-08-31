@@ -608,7 +608,7 @@
       "action": "capture-interesting",
       "result": {
         "id": "INT-20260831-6d5e3ce7",
-        "path": "有意思空间/2026-08-31-WikiSkill（Google-Research：raw-轨迹不可变-→-wi.md",
+        "path": "有意思空间/2026-08-31-WikiSkill与现有skill结合实现可进化.md",
         "type": "interesting"
       },
       "summary": "WikiSkill（Google Research：raw 轨迹不可变 → wi",
@@ -9547,6 +9547,20 @@
       "summary": "J-Space：DeepSeek V4 能力释放报告",
       "timestamp": "2026-08-18T14:24:54+08:00",
       "transaction_id": "retitle-jspace-20260818"
+    },
+    "retitle-wikiskill-20260831": {
+      "action": "capture-retitle",
+      "result": {
+        "from": "有意思空间/2026-08-31-WikiSkill（Google-Research：raw-轨迹不可变-→-wi.md",
+        "id": "INT-20260831-6d5e3ce7",
+        "path": "有意思空间/2026-08-31-WikiSkill与现有skill结合实现可进化.md",
+        "renamed": true,
+        "to": "有意思空间/2026-08-31-WikiSkill与现有skill结合实现可进化.md",
+        "type": "interesting"
+      },
+      "summary": "WikiSkill与现有skill结合实现可进化",
+      "timestamp": "2026-08-31T09:29:36+08:00",
+      "transaction_id": "retitle-wikiskill-20260831"
     },
     "review-expire-20260806215314-b66ff66d": {
       "action": "review-expire",
