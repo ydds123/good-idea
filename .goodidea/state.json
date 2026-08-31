@@ -615,6 +615,17 @@
       "timestamp": "2026-08-31T09:29:33+08:00",
       "transaction_id": "capture-interesting-20260831092933-bec7d1c4"
     },
+    "capture-interesting-20260831224757-23adb75e": {
+      "action": "capture-interesting",
+      "result": {
+        "id": "INT-20260831-2d89aa62",
+        "path": "有意思空间/2026-08-31-Dify-全新-Agent-体验：Agent-从工作流执行节点升级为独立生命周期.md",
+        "type": "interesting"
+      },
+      "summary": "Dify 全新 Agent 体验：Agent 从工作流执行节点升级为独立生命周期",
+      "timestamp": "2026-08-31T22:47:57+08:00",
+      "transaction_id": "capture-interesting-20260831224757-23adb75e"
+    },
     "capture-revise-20260816224612-980500e9": {
       "action": "capture-revise",
       "result": {

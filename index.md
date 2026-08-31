@@ -48,6 +48,7 @@
 
 ## 有意思
 
+- [[有意思空间/2026-08-31-Dify-全新-Agent-体验：Agent-从工作流执行节点升级为独立生命周期|Dify 全新 Agent 体验：Agent 从工作流执行节点升级为独立生命周期]] · 待处理
 - [[有意思空间/2026-08-31-WikiSkill与现有skill结合实现可进化|WikiSkill与现有skill结合实现可进化]] · 待处理
 - [[有意思空间/2026-08-28-Lux3D：AI-3D-生成模型|Lux3D：AI 3D 生成模型]] · 待处理
 - [[有意思空间/2026-08-25-拆开-DeepSeek-Harness（dsh.papertok.ai-交互式教程）|拆开 DeepSeek Harness（dsh.papertok.ai 交互式教程）]] · 待处理

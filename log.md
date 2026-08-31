@@ -719,3 +719,5 @@
 
 [2026-08-31T09:29:36+08:00] capture-retitle | WikiSkill与现有skill结合实现可进化 | tx=retitle-wikiskill-20260831
 
+[2026-08-31T22:47:57+08:00] capture-interesting | Dify 全新 Agent 体验：Agent 从工作流执行节点升级为独立生命周期 | tx=capture-interesting-20260831224757-23adb75e
+
