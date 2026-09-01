@@ -727,3 +727,5 @@
 
 [2026-09-02T07:25:59+08:00] maintain-index | 重新生成不展示摘要的内容索引 | tx=remove-int-dyn-judge-20260902
 
+[2026-09-02T07:26:03+08:00] capture-flash | 动态判断：贤时便用，不贤便黜 | tx=capture-flash-20260902072603-dc3d6897
+
