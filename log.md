@@ -725,3 +725,5 @@
 
 [2026-09-02T07:22:15+08:00] capture-interesting | 动态判断：贤时便用，不贤便黜 | tx=capture-interesting-20260902072215-493132b7
 
+[2026-09-02T07:25:59+08:00] maintain-index | 重新生成不展示摘要的内容索引 | tx=remove-int-dyn-judge-20260902
+

@@ -9543,6 +9543,15 @@
       "timestamp": "2026-08-09T11:50:52+08:00",
       "transaction_id": "remove-index-summaries-20260809"
     },
+    "remove-int-dyn-judge-20260902": {
+      "action": "maintain-index",
+      "result": {
+        "no_change": false
+      },
+      "summary": "重新生成不展示摘要的内容索引",
+      "timestamp": "2026-09-02T07:25:59+08:00",
+      "transaction_id": "remove-int-dyn-judge-20260902"
+    },
     "remove-literature-layer-20260809": {
       "action": "maintain-sources",
       "result": {
