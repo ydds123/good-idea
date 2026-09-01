@@ -626,6 +626,17 @@
       "timestamp": "2026-08-31T22:47:57+08:00",
       "transaction_id": "capture-interesting-20260831224757-23adb75e"
     },
+    "capture-interesting-20260902072215-493132b7": {
+      "action": "capture-interesting",
+      "result": {
+        "id": "INT-20260902-394e99d7",
+        "path": "有意思空间/2026-09-02-动态判断：贤时便用，不贤便黜.md",
+        "type": "interesting"
+      },
+      "summary": "动态判断：贤时便用，不贤便黜",
+      "timestamp": "2026-09-02T07:22:15+08:00",
+      "transaction_id": "capture-interesting-20260902072215-493132b7"
+    },
     "capture-revise-20260816224612-980500e9": {
       "action": "capture-revise",
       "result": {

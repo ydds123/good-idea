@@ -723,3 +723,5 @@
 
 [2026-08-31T22:48:00+08:00] capture-retitle | Dify全新Agent体验：独立生命周期与能力模块化 | tx=retitle-dify-20260831
 
+[2026-09-02T07:22:15+08:00] capture-interesting | 动态判断：贤时便用，不贤便黜 | tx=capture-interesting-20260902072215-493132b7
+
