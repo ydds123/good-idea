@@ -31,7 +31,7 @@
 
 ## 溯源
 
-- [[溯源空间/2026-09-04-How-to-turn-your-AI-into-a-world-class-designer|How to turn your AI into a world-class designer]] · 有更新待确认
+- [[溯源空间/2026-09-04-How-to-turn-your-AI-into-a-world-class-designer|How to turn your AI into a world-class designer]] · 完整
 - [[溯源空间/2026-09-04-苹果前-AI-设计主管复盘：如何让-AI-彻底摆脱“工业垃圾”审美，做出顶尖设计？|苹果前 AI 设计主管复盘：如何让 AI 彻底摆脱“工业垃圾”审美，做出顶尖设计？]] · 完整
 - [[溯源空间/2026-09-04-前-Apple-AI-设计专家：去除-AI-味、解锁-AI-设计创造力的-8-种技法|前 Apple AI 设计专家：去除 AI 味、解锁 AI 设计创造力的 8 种技法]] · 完整
 - [[溯源空间/2026-08-28-用-Skills-搭建起自我改进的Agent-框架|用 Skills 搭建起自我改进的Agent 框架]] · 完整
