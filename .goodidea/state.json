@@ -8962,6 +8962,17 @@
       "timestamp": "2026-08-10T00:34:51+08:00",
       "transaction_id": "interesting-path-to-nowhere-20260810"
     },
+    "interesting-pmframe-20260904": {
+      "action": "capture-interesting",
+      "result": {
+        "id": "INT-20260904-622bdb31",
+        "path": "有意思空间/2026-09-04-PMFrame.works：100-个产品设计框架库.md",
+        "type": "interesting"
+      },
+      "summary": "PMFrame.works：100 个产品设计框架库",
+      "timestamp": "2026-09-04T21:01:23+08:00",
+      "transaction_id": "interesting-pmframe-20260904"
+    },
     "kb-ai-accept-cocreate-20260827": {
       "action": "connect-accept",
       "result": {

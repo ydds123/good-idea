@@ -777,3 +777,5 @@
 
 [2026-09-04T20:49:51+08:00] source-refresh-accept | How to turn your AI into a world-class designer | tx=confirm-lenny-images-20260904
 
+[2026-09-04T21:01:23+08:00] capture-interesting | PMFrame.works：100 个产品设计框架库 | tx=interesting-pmframe-20260904
+
