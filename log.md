@@ -781,3 +781,5 @@
 
 [2026-09-04T21:20:44+08:00] capture-finalize | 确认本轮 1 张闪念 | tx=finalize-migration-essence-20260904
 
+[2026-09-04T21:23:21+08:00] capture-todo | 永久卡改名通道（permanent retitle） | tx=todo-permanent-retitle-20260904
+

@@ -11022,6 +11022,17 @@
       "timestamp": "2026-08-18T23:55:42+08:00",
       "transaction_id": "todo-output-style-20260818"
     },
+    "todo-permanent-retitle-20260904": {
+      "action": "capture-todo",
+      "result": {
+        "id": "TODO-20260904-d47d12a2",
+        "path": "待办空间/2026-09-04-永久卡改名通道（permanent-retitle）.md",
+        "type": "todo"
+      },
+      "summary": "永久卡改名通道（permanent retitle）",
+      "timestamp": "2026-09-04T21:23:21+08:00",
+      "transaction_id": "todo-permanent-retitle-20260904"
+    },
     "todo-user-profile-20260809": {
       "action": "capture-todo",
       "result": {
