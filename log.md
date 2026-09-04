@@ -789,3 +789,5 @@
 
 [2026-09-04T21:38:52+08:00] source-commit | 00后应届生告洋状，反杀企业带来的深思 + 保存动机 | tx=source-commit-wx00-20260904
 
+[2026-09-04T21:53:52+08:00] permanent-revise | 母题级课题：AI 图像/摄影与视觉叙事的 skill 化 | tx=revise-mother-position-20260904
+

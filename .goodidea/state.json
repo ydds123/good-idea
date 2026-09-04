@@ -10236,6 +10236,17 @@
       "timestamp": "2026-09-04T21:32:07+08:00",
       "transaction_id": "revise-miao-verdict-20260904"
     },
+    "revise-mother-position-20260904": {
+      "action": "permanent-revise",
+      "result": {
+        "card_id": "PER-20260820-d6ae6d45",
+        "card_path": "永久空间/永久卡片/2026-08-20-母题级课题：AI-图像-摄影与视觉叙事的-skill-化.md",
+        "status": "revised"
+      },
+      "summary": "母题级课题：AI 图像/摄影与视觉叙事的 skill 化",
+      "timestamp": "2026-09-04T21:53:52+08:00",
+      "transaction_id": "revise-mother-position-20260904"
+    },
     "revise-style-refs-20260810": {
       "action": "capture-revise",
       "result": {
