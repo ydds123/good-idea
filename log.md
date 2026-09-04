@@ -735,3 +735,5 @@
 
 [2026-09-04T11:41:48+08:00] capture-todo | 订阅 AI 服务备选渠道：WildAI | tx=capture-todo-20260904114148-e8800617
 
+[2026-09-04T11:41:48+08:00] capture-todo | 中金缪延亮 Skill：专家方法论 AI 化案例 | tx=capture-todo-20260904114148-9f5f96c6
+
