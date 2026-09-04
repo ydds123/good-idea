@@ -10272,6 +10272,25 @@
       "timestamp": "2026-09-04T20:11:31+08:00",
       "transaction_id": "source-commit-20260904-1958-lenny"
     },
+    "source-commit-20260904-2001-wx-anshu": {
+      "action": "source-commit",
+      "result": {
+        "flash_created": false,
+        "flash_ids": [
+          "FLA-20260904-9e0af55f"
+        ],
+        "flash_paths": [
+          "闪念空间/2026-09-04-AI-输出同质化：讨好所有人即无辨识度风格.md"
+        ],
+        "image_failures": [],
+        "source_created": true,
+        "source_id": "SRC-f0928844c584",
+        "source_path": "溯源空间/2026-09-04-前-Apple-AI-设计专家：去除-AI-味、解锁-AI-设计创造力的-8-种技法.md"
+      },
+      "summary": "前 Apple AI 设计专家：去除 AI 味、解锁 AI 设计创造力的 8 种技法 + 关联 1 张闪念",
+      "timestamp": "2026-09-04T20:15:10+08:00",
+      "transaction_id": "source-commit-20260904-2001-wx-anshu"
+    },
     "source-control-theory-capture-20260809-v2": {
       "action": "source-commit",
       "result": {
