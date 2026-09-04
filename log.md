@@ -747,3 +747,5 @@
 
 [2026-09-04T16:06:10+08:00] capture-valuate | 订阅 AI 服务备选渠道：WildAI | tx=capture-valuate-20260904160610-51258ae1
 
+[2026-09-04T16:06:10+08:00] capture-valuate | 研读：AI 如何成为一流设计师 | tx=capture-valuate-20260904160610-c833bddb
+
