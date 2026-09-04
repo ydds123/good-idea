@@ -765,3 +765,5 @@
 
 [2026-09-04T20:19:09+08:00] source-refresh-accept | 苹果前 AI 设计主管复盘：如何让 AI 彻底摆脱“工业垃圾”审美，做出顶尖设计？ | tx=confirm-wx2-images-20260904
 
+[2026-09-04T20:23:19+08:00] source-refresh-propose | How to turn your AI into a world-class designer | tx=refresh-lenny-images-20260904
+

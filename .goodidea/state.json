@@ -9786,6 +9786,18 @@
       "timestamp": "2026-08-12T20:14:12+08:00",
       "transaction_id": "refresh-aiagent-report-20260812-002"
     },
+    "refresh-lenny-images-20260904": {
+      "action": "source-refresh-propose",
+      "result": {
+        "proposal_id": "PRP-95d26241fa24",
+        "proposal_path": ".goodidea/proposals/source-updates/PRP-95d26241fa24.md",
+        "source_id": "SRC-f144a82ec34e",
+        "status": "update_available"
+      },
+      "summary": "How to turn your AI into a world-class designer",
+      "timestamp": "2026-09-04T20:23:19+08:00",
+      "transaction_id": "refresh-lenny-images-20260904"
+    },
     "refresh-wx1-images-20260904": {
       "action": "source-refresh-propose",
       "result": {

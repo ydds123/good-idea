@@ -2,17 +2,18 @@
 id: "SRC-f144a82ec34e"
 type: "来源"
 title: "How to turn your AI into a world-class designer"
-status: "完整"
+status: "有更新待确认"
 capture_status: "完整"
 author: "Anshu Chimala"
 published_at: "2026-09-01"
 fetched_at: "2026-09-04T20:11:31+08:00"
 created_at: "2026-09-04T20:11:31+08:00"
-updated_at: "2026-09-04T20:11:31+08:00"
+updated_at: "2026-09-04T20:23:19+08:00"
 content_sha256: "2905a79965d1620ab4a951f4b3070904677c12d402be9e763bb54759b9a69c35"
 image_failures: []
 canonical_url: "https://www.lennysnewsletter.com/p/how-to-turn-your-ai-into-a-world"
 snapshot_sha256: "0f353c3cd1275af65aa89129e02c5f170726a98114ba4840cb0fccdcb6f2cf13"
+pending_update: "PRP-95d26241fa24"
 ---
 # How to turn your AI into a world-class designer
 
