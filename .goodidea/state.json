@@ -471,6 +471,32 @@
       "timestamp": "2026-08-21T22:14:16+08:00",
       "transaction_id": "capture-20260821-zengming-e04"
     },
+    "capture-connect-lennys-20260904-e": {
+      "action": "capture-finalize",
+      "result": {
+        "flash_count": 1,
+        "flashes": [
+          {
+            "context_refs": [
+              "https://www.lennysnewsletter.com/p/how-to-turn-your-ai-into-a-world"
+            ],
+            "id": "FLA-20260904-9e0af55f",
+            "path": "闪念空间/2026-09-04-AI-输出同质化：讨好所有人即无辨识度风格.md",
+            "source_anchors": [],
+            "source_boundary": "",
+            "title": "AI 输出同质化：讨好所有人即无辨识度风格"
+          }
+        ],
+        "maintenance_job_ids": [
+          "JOB-0bbef52d12ac"
+        ],
+        "proposal_id": "CPR-fca328c10e38",
+        "session_id": "CAP-20260904-1dd24751"
+      },
+      "summary": "确认本轮 1 张闪念",
+      "timestamp": "2026-09-04T11:37:33+08:00",
+      "transaction_id": "capture-connect-lennys-20260904-e"
+    },
     "capture-finalize-first-two-20260809": {
       "action": "capture-finalize",
       "result": {
