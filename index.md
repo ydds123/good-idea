@@ -31,6 +31,7 @@
 
 ## 溯源
 
+- [[溯源空间/2026-09-04-How-to-turn-your-AI-into-a-world-class-designer|How to turn your AI into a world-class designer]] · 完整
 - [[溯源空间/2026-08-28-用-Skills-搭建起自我改进的Agent-框架|用 Skills 搭建起自我改进的Agent 框架]] · 完整
 - [[溯源空间/2026-08-26-Edgetunnel-部署运维与恢复手册|Edgetunnel 部署运维与恢复手册]] · 完整
 - [[溯源空间/2026-08-24-身家千亿的段永平，为什么愿意在网上回答普通人的问题？|身家千亿的段永平，为什么愿意在网上回答普通人的问题？]] · 完整
