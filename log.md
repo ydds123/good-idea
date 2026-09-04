@@ -785,3 +785,5 @@
 
 [2026-09-04T21:29:08+08:00] capture-revise | 中金缪延亮 Skill：专家方法论 AI 化案例 | tx=revise-miao-todo-20260904
 
+[2026-09-04T21:32:07+08:00] capture-revise | 中金缪延亮 Skill：专家方法论 AI 化案例 | tx=revise-miao-verdict-20260904
+
