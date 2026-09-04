@@ -8133,6 +8133,51 @@
       "timestamp": "2026-09-04T16:06:10+08:00",
       "transaction_id": "capture-valuate-20260904160610-c833bddb"
     },
+    "capture-valuate-20260905000521-3c29736a": {
+      "action": "capture-valuate",
+      "result": {
+        "id": "TODO-20260904-e8538a90",
+        "labels": {
+          "distance": "far",
+          "equifinality": "medium",
+          "goal_id": "goal_creation",
+          "multifinality": "high",
+          "need_type": "competence",
+          "specificity": "vague",
+          "success_probability": "low"
+        },
+        "priority": 3,
+        "ranked": [
+          {
+            "id": "TODO-20260904-07d0da00",
+            "path": "待办空间/2026-09-04-研读：AI-如何成为一流设计师.md",
+            "priority": 1,
+            "title": "研读：AI 如何成为一流设计师"
+          },
+          {
+            "id": "TODO-20260904-d47d12a2",
+            "path": "待办空间/2026-09-04-永久卡改名通道（permanent-retitle）.md",
+            "priority": 2,
+            "title": "永久卡改名通道（permanent retitle）"
+          },
+          {
+            "id": "TODO-20260904-e8538a90",
+            "path": "待办空间/2026-09-04-中金缪延亮-Skill：专家方法论-AI-化案例.md",
+            "priority": 3,
+            "title": "中金缪延亮 Skill：专家方法论 AI 化案例"
+          },
+          {
+            "id": "TODO-20260904-a6a10944",
+            "path": "待办空间/2026-09-04-订阅-AI-服务备选渠道：WildAI.md",
+            "priority": 4,
+            "title": "订阅 AI 服务备选渠道：WildAI"
+          }
+        ]
+      },
+      "summary": "中金缪延亮 Skill：专家方法论 AI 化案例",
+      "timestamp": "2026-09-05T00:05:21+08:00",
+      "transaction_id": "capture-valuate-20260905000521-3c29736a"
+    },
     "capture-valuate-20260905000521-7c2a4deb": {
       "action": "capture-valuate",
       "result": {

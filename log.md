@@ -803,3 +803,5 @@
 
 [2026-09-05T00:05:21+08:00] capture-valuate | 永久卡改名通道（permanent retitle） | tx=capture-valuate-20260905000521-7c2a4deb
 
+[2026-09-05T00:05:21+08:00] capture-valuate | 中金缪延亮 Skill：专家方法论 AI 化案例 | tx=capture-valuate-20260905000521-3c29736a
+
