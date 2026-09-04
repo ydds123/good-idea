@@ -733,3 +733,5 @@
 
 [2026-09-04T11:37:33+08:00] capture-finalize | 确认本轮 1 张闪念 | tx=capture-connect-lennys-20260904-e
 
+[2026-09-04T11:41:48+08:00] capture-todo | 订阅 AI 服务备选渠道：WildAI | tx=capture-todo-20260904114148-e8800617
+

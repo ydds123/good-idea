@@ -965,6 +965,17 @@
       "timestamp": "2026-09-04T09:13:39+08:00",
       "transaction_id": "capture-todo-20260904091339-a190c313"
     },
+    "capture-todo-20260904114148-e8800617": {
+      "action": "capture-todo",
+      "result": {
+        "id": "TODO-20260904-a6a10944",
+        "path": "待办空间/2026-09-04-订阅-AI-服务备选渠道：WildAI.md",
+        "type": "todo"
+      },
+      "summary": "订阅 AI 服务备选渠道：WildAI",
+      "timestamp": "2026-09-04T11:41:48+08:00",
+      "transaction_id": "capture-todo-20260904114148-e8800617"
+    },
     "capture-todo-cloud-account-20260823": {
       "action": "capture-todo",
       "result": {
