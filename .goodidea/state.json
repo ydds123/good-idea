@@ -928,6 +928,17 @@
       "timestamp": "2026-08-25T13:51:45+08:00",
       "transaction_id": "capture-todo-20260825135145-949b545b"
     },
+    "capture-todo-20260904091339-a190c313": {
+      "action": "capture-todo",
+      "result": {
+        "id": "TODO-20260904-07d0da00",
+        "path": "待办空间/2026-09-04-研读：AI-如何成为一流设计师.md",
+        "type": "todo"
+      },
+      "summary": "研读：AI 如何成为一流设计师",
+      "timestamp": "2026-09-04T09:13:39+08:00",
+      "transaction_id": "capture-todo-20260904091339-a190c313"
+    },
     "capture-todo-cloud-account-20260823": {
       "action": "capture-todo",
       "result": {
