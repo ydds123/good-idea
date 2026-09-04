@@ -2,17 +2,18 @@
 id: "SRC-f0928844c584"
 type: "来源"
 title: "前 Apple AI 设计专家：去除 AI 味、解锁 AI 设计创造力的 8 种技法"
-status: "完整"
+status: "有更新待确认"
 capture_status: "完整"
 author: "Designer阿东"
 published_at: "2026-09-02"
 fetched_at: "2026-09-04T20:15:10+08:00"
 created_at: "2026-09-04T20:15:10+08:00"
-updated_at: "2026-09-04T20:15:10+08:00"
+updated_at: "2026-09-04T20:17:36+08:00"
 content_sha256: "c6b212b37e4cf1b31a91a2f72669347814d20eea86a951d1a393e03ab2ed53ca"
 image_failures: []
 canonical_url: "https://mp.weixin.qq.com/s/CUOmDOf1hYtJYo3b6dv82g"
 snapshot_sha256: "642a2ec81442cadecdd0c8ff856b5fb80adedf6ab3d56f5edd2f569cfe1f5992"
+pending_update: "PRP-fcb5ff359003"
 ---
 # 前 Apple AI 设计专家：去除 AI 味、解锁 AI 设计创造力的 8 种技法
 

@@ -9762,6 +9762,18 @@
       "timestamp": "2026-08-12T20:14:12+08:00",
       "transaction_id": "refresh-aiagent-report-20260812-002"
     },
+    "refresh-wx1-images-20260904": {
+      "action": "source-refresh-propose",
+      "result": {
+        "proposal_id": "PRP-fcb5ff359003",
+        "proposal_path": ".goodidea/proposals/source-updates/PRP-fcb5ff359003.md",
+        "source_id": "SRC-f0928844c584",
+        "status": "update_available"
+      },
+      "summary": "前 Apple AI 设计专家：去除 AI 味、解锁 AI 设计创造力的 8 种技法",
+      "timestamp": "2026-09-04T20:17:36+08:00",
+      "transaction_id": "refresh-wx1-images-20260904"
+    },
     "reindex-after-flash-removal-2": {
       "action": "maintain-index",
       "result": {
