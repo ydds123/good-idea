@@ -9774,6 +9774,18 @@
       "timestamp": "2026-09-04T20:17:36+08:00",
       "transaction_id": "refresh-wx1-images-20260904"
     },
+    "refresh-wx2-images-20260904": {
+      "action": "source-refresh-propose",
+      "result": {
+        "proposal_id": "PRP-1cda64b7e7fe",
+        "proposal_path": ".goodidea/proposals/source-updates/PRP-1cda64b7e7fe.md",
+        "source_id": "SRC-774eaa267132",
+        "status": "update_available"
+      },
+      "summary": "苹果前 AI 设计主管复盘：如何让 AI 彻底摆脱“工业垃圾”审美，做出顶尖设计？",
+      "timestamp": "2026-09-04T20:17:38+08:00",
+      "transaction_id": "refresh-wx2-images-20260904"
+    },
     "reindex-after-flash-removal-2": {
       "action": "maintain-index",
       "result": {
