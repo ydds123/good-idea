@@ -767,3 +767,5 @@
 
 [2026-09-04T20:23:19+08:00] source-refresh-propose | How to turn your AI into a world-class designer | tx=refresh-lenny-images-20260904
 
+[2026-09-04T20:47:36+08:00] permanent-propose | 页面设计生成：先想透独特性，再让扩-评-收工作流把思考沉淀下来 | tx=propose-expand-review-20260904
+
