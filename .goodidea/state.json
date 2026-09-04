@@ -987,6 +987,17 @@
       "timestamp": "2026-09-04T11:41:48+08:00",
       "transaction_id": "capture-todo-20260904114148-e8800617"
     },
+    "capture-todo-20260904114404-dc4bf168": {
+      "action": "capture-todo",
+      "result": {
+        "id": "TODO-20260904-a804557e",
+        "path": "待办空间/2026-09-04-晚聊：三线串联（AI-工作流-缪延亮-同质化）.md",
+        "type": "todo"
+      },
+      "summary": "晚聊：三线串联（AI 工作流/缪延亮/同质化）",
+      "timestamp": "2026-09-04T11:44:04+08:00",
+      "transaction_id": "capture-todo-20260904114404-dc4bf168"
+    },
     "capture-todo-cloud-account-20260823": {
       "action": "capture-todo",
       "result": {
