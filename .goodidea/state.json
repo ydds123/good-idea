@@ -8906,6 +8906,28 @@
       "timestamp": "2026-08-11T10:13:28+08:00",
       "transaction_id": "finalize-skillhub-20260811"
     },
+    "finalize-valuechain-20260904": {
+      "action": "capture-finalize",
+      "result": {
+        "flash_count": 1,
+        "flashes": [
+          {
+            "context_refs": [],
+            "id": "FLA-20260904-5630d842",
+            "path": "闪念空间/2026-09-04-分配是价值链权重的函数：先掂量自己在链上的位置，再做.md",
+            "source_anchors": [],
+            "source_boundary": "",
+            "title": "分配是价值链权重的函数：先掂量自己在链上的位置，再做"
+          }
+        ],
+        "maintenance_job_ids": [],
+        "proposal_id": "CPR-40be59b0aa2f",
+        "session_id": "CAP-20260904-340c5b8d"
+      },
+      "summary": "确认本轮 1 张闪念",
+      "timestamp": "2026-09-04T22:04:44+08:00",
+      "transaction_id": "finalize-valuechain-20260904"
+    },
     "first-permanent-accept-20260807": {
       "action": "permanent-accept",
       "result": {

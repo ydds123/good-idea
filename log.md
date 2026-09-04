@@ -797,3 +797,5 @@
 
 [2026-09-04T21:58:27+08:00] source-commit | AI视频工具PMF不在制作，创业两年踩坑认知 + 保存动机 | tx=source-commit-wxrel-20260904
 
+[2026-09-04T22:04:44+08:00] capture-finalize | 确认本轮 1 张闪念 | tx=finalize-valuechain-20260904
+
