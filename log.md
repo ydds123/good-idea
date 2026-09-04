@@ -791,3 +791,5 @@
 
 [2026-09-04T21:53:52+08:00] permanent-revise | 母题级课题：AI 图像/摄影与视觉叙事的 skill 化 | tx=revise-mother-position-20260904
 
+[2026-09-04T21:53:58+08:00] connect-propose | 连接候选：母题级课题：AI 图像/摄影与视觉叙事的 skill 化 → 页面设计生成：先想透独特性，再让扩-评-收工作流把思考沉淀下来 | tx=connect-mother-expand-20260904
+

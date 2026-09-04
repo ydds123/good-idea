@@ -8362,6 +8362,20 @@
       "timestamp": "2026-09-04T20:48:13+08:00",
       "transaction_id": "connect-expand-control-20260904"
     },
+    "connect-mother-expand-20260904": {
+      "action": "connect-propose",
+      "result": {
+        "from_id": "PER-20260820-d6ae6d45",
+        "proposal_id": "PRP-0834f3929f72",
+        "proposal_path": ".goodidea/proposals/connections/PRP-0834f3929f72.md",
+        "rationale": "母题卡演化记录新增方向性之问（AI 图像 skill 化落在制作层，还是带评价闭环往智慧层/创意分发端走）；扩-评-收卡正好提供\"评\"的机制答案——评论家子代理+客观基准+停止线=把评价闭环做成可执行方法（Lenny 的工程版）。若母题卡选择\"带评价闭环\"路线，扩-评-收卡就是实现母题的直接方法参考；若选纯制作层效率路线，则此连接标记一个未被采用的岔路。连接本身把母题的方向问题与已有方法资产绑在一起，实践时两卡互相激活。",
+        "relation": "方向判据与解法连接：智慧层之问 ↔ 评价闭环方法",
+        "to_id": "PER-20260904-8abe76fb"
+      },
+      "summary": "连接候选：母题级课题：AI 图像/摄影与视觉叙事的 skill 化 → 页面设计生成：先想透独特性，再让扩-评-收工作流把思考沉淀下来",
+      "timestamp": "2026-09-04T21:53:58+08:00",
+      "transaction_id": "connect-mother-expand-20260904"
+    },
     "correction-withdraw-PRP-5a9bfa3f1970": {
       "action": "permanent-withdraw",
       "result": {
