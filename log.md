@@ -755,3 +755,5 @@
 
 [2026-09-04T20:15:10+08:00] source-commit | 前 Apple AI 设计专家：去除 AI 味、解锁 AI 设计创造力的 8 种技法 + 关联 1 张闪念 | tx=source-commit-20260904-2001-wx-anshu
 
+[2026-09-04T20:15:13+08:00] source-commit | 苹果前 AI 设计主管复盘：如何让 AI 彻底摆脱“工业垃圾”审美，做出顶尖设计？ + 关联 1 张闪念 | tx=source-commit-20260904-2001-wx-mcfon
+
