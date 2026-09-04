@@ -795,3 +795,5 @@
 
 [2026-09-04T21:58:13+08:00] connect-accept | 母题级课题：AI 图像/摄影与视觉叙事的 skill 化 ↔ 页面设计生成：先想透独特性，再让扩-评-收工作流把思考沉淀下来 | tx=connect-accept-mother-20260904
 
+[2026-09-04T21:58:27+08:00] source-commit | AI视频工具PMF不在制作，创业两年踩坑认知 + 保存动机 | tx=source-commit-wxrel-20260904
+
