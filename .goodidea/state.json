@@ -10495,6 +10495,21 @@
       "timestamp": "2026-09-04T20:15:13+08:00",
       "transaction_id": "source-commit-20260904-2001-wx-mcfon"
     },
+    "source-commit-wx00-20260904": {
+      "action": "source-commit",
+      "result": {
+        "flash_created": false,
+        "flash_ids": [],
+        "flash_paths": [],
+        "image_failures": [],
+        "source_created": true,
+        "source_id": "SRC-f6c61037e405",
+        "source_path": "溯源空间/2026-09-04-00后应届生告洋状，反杀企业带来的深思.md"
+      },
+      "summary": "00后应届生告洋状，反杀企业带来的深思 + 保存动机",
+      "timestamp": "2026-09-04T21:38:52+08:00",
+      "transaction_id": "source-commit-wx00-20260904"
+    },
     "source-control-theory-capture-20260809-v2": {
       "action": "source-commit",
       "result": {

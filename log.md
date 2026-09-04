@@ -787,3 +787,5 @@
 
 [2026-09-04T21:32:07+08:00] capture-revise | 中金缪延亮 Skill：专家方法论 AI 化案例 | tx=revise-miao-verdict-20260904
 
+[2026-09-04T21:38:52+08:00] source-commit | 00后应届生告洋状，反杀企业带来的深思 + 保存动机 | tx=source-commit-wx00-20260904
+
