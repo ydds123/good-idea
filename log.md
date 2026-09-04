@@ -745,3 +745,5 @@
 
 [2026-09-04T16:06:10+08:00] capture-valuate | 中金缪延亮 Skill：专家方法论 AI 化案例 | tx=capture-valuate-20260904160610-8bb42d24
 
+[2026-09-04T16:06:10+08:00] capture-valuate | 订阅 AI 服务备选渠道：WildAI | tx=capture-valuate-20260904160610-51258ae1
+
