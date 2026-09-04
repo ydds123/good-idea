@@ -749,3 +749,5 @@
 
 [2026-09-04T16:06:10+08:00] capture-valuate | 研读：AI 如何成为一流设计师 | tx=capture-valuate-20260904160610-c833bddb
 
+[2026-09-04T16:06:10+08:00] capture-valuate | 晚聊：标准的反思多线串联 | tx=capture-valuate-20260904160610-109bbc33
+
