@@ -743,3 +743,5 @@
 
 [2026-09-04T11:46:50+08:00] capture-retitle | 晚聊：标准的反思多线串联 | tx=retitle-late-talk-20260904
 
+[2026-09-04T16:06:10+08:00] capture-valuate | 中金缪延亮 Skill：专家方法论 AI 化案例 | tx=capture-valuate-20260904160610-8bb42d24
+
