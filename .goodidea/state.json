@@ -8821,6 +8821,28 @@
       "timestamp": "2026-08-18T19:55:10+08:00",
       "transaction_id": "finalize-jiazhi-20260818"
     },
+    "finalize-migration-essence-20260904": {
+      "action": "capture-finalize",
+      "result": {
+        "flash_count": 1,
+        "flashes": [
+          {
+            "context_refs": [],
+            "id": "FLA-20260904-fc96c6fc",
+            "path": "闪念空间/2026-09-04-迁移的本质：把方法依赖的人性默认，翻成显式机制.md",
+            "source_anchors": [],
+            "source_boundary": "",
+            "title": "迁移的本质：把方法依赖的人性默认，翻成显式机制"
+          }
+        ],
+        "maintenance_job_ids": [],
+        "proposal_id": "CPR-0cfaa67058b7",
+        "session_id": "CAP-20260904-971305d0"
+      },
+      "summary": "确认本轮 1 张闪念",
+      "timestamp": "2026-09-04T21:20:44+08:00",
+      "transaction_id": "finalize-migration-essence-20260904"
+    },
     "finalize-skillhub-20260811": {
       "action": "capture-finalize",
       "result": {

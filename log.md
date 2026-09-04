@@ -779,3 +779,5 @@
 
 [2026-09-04T21:01:23+08:00] capture-interesting | PMFrame.works：100 个产品设计框架库 | tx=interesting-pmframe-20260904
 
+[2026-09-04T21:20:44+08:00] capture-finalize | 确认本轮 1 张闪念 | tx=finalize-migration-essence-20260904
+
