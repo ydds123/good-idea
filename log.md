@@ -807,3 +807,5 @@
 
 [2026-09-05T00:05:22+08:00] capture-valuate | 研读：AI 如何成为一流设计师 | tx=capture-valuate-20260905000522-8288cf70
 
+[2026-09-05T08:05:17+08:00] capture-valuate | 订阅 AI 服务备选渠道：WildAI | tx=capture-valuate-20260905080517-c89c79ce
+
