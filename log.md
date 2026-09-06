@@ -811,3 +811,5 @@
 
 [2026-09-06T16:00:25+08:00] capture-sweep | 过期 3 条待办 | tx=capture-sweep-20260906160024-58152315
 
+[2026-09-06T16:02:43+08:00] capture-valuate | 永久卡改名通道（permanent retitle） | tx=capture-valuate-20260906160243-46e0dccc
+

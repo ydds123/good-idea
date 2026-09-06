@@ -8342,6 +8342,33 @@
       "timestamp": "2026-09-05T08:05:17+08:00",
       "transaction_id": "capture-valuate-20260905080517-c89c79ce"
     },
+    "capture-valuate-20260906160243-46e0dccc": {
+      "action": "capture-valuate",
+      "result": {
+        "id": "TODO-20260904-d47d12a2",
+        "labels": {
+          "distance": "near",
+          "equifinality": "medium",
+          "goal_id": "goal_cognition",
+          "multifinality": "medium",
+          "need_type": "competence",
+          "specificity": "specific",
+          "success_probability": "high"
+        },
+        "priority": 1,
+        "ranked": [
+          {
+            "id": "TODO-20260904-d47d12a2",
+            "path": "待办空间/2026-09-04-永久卡改名通道（permanent-retitle）.md",
+            "priority": 1,
+            "title": "永久卡改名通道（permanent retitle）"
+          }
+        ]
+      },
+      "summary": "永久卡改名通道（permanent retitle）",
+      "timestamp": "2026-09-06T16:02:43+08:00",
+      "transaction_id": "capture-valuate-20260906160243-46e0dccc"
+    },
     "close-todo-action-loop-v2": {
       "action": "capture-transition",
       "result": {
