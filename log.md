@@ -809,3 +809,5 @@
 
 [2026-09-05T08:05:17+08:00] capture-valuate | 订阅 AI 服务备选渠道：WildAI | tx=capture-valuate-20260905080517-c89c79ce
 
+[2026-09-06T16:00:25+08:00] capture-sweep | 过期 3 条待办 | tx=capture-sweep-20260906160024-58152315
+
