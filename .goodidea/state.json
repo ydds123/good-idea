@@ -265,7 +265,7 @@
       "action": "permanent-accept",
       "result": {
         "card_id": "PER-20260904-8abe76fb",
-        "card_path": "永久空间/永久卡片/2026-09-04-页面设计生成：先想透独特性，再让扩-评-收工作流把思考沉淀下来.md",
+        "card_path": "永久空间/永久卡片/2026-09-04-如何让-AI-输出高质量内容：先想透独特性，再让扩-评-收工作流把思考沉淀下来.md",
         "card_type": "permanent",
         "proposal_id": "PRP-ba17560d8f2b"
       },
@@ -10306,6 +10306,20 @@
       "summary": "Dify全新Agent体验：独立生命周期与能力模块化",
       "timestamp": "2026-08-31T22:48:00+08:00",
       "transaction_id": "retitle-dify-20260831"
+    },
+    "retitle-expand-20260906": {
+      "action": "permanent-retitle",
+      "result": {
+        "from": "永久空间/永久卡片/2026-09-04-页面设计生成：先想透独特性，再让扩-评-收工作流把思考沉淀下来.md",
+        "id": "PER-20260904-8abe76fb",
+        "path": "永久空间/永久卡片/2026-09-04-如何让-AI-输出高质量内容：先想透独特性，再让扩-评-收工作流把思考沉淀下来.md",
+        "renamed": true,
+        "to": "永久空间/永久卡片/2026-09-04-如何让-AI-输出高质量内容：先想透独特性，再让扩-评-收工作流把思考沉淀下来.md",
+        "type": "permanent"
+      },
+      "summary": "如何让 AI 输出高质量内容：先想透独特性，再让扩-评-收工作流把思考沉淀下来",
+      "timestamp": "2026-09-06T21:10:06+08:00",
+      "transaction_id": "retitle-expand-20260906"
     },
     "retitle-jspace-20260818": {
       "action": "capture-retitle",

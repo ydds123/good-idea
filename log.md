@@ -815,3 +815,5 @@
 
 [2026-09-06T21:10:05+08:00] capture-transition | 永久卡改名通道（permanent retitle） | tx=todo-done-retitle-20260906
 
+[2026-09-06T21:10:06+08:00] permanent-retitle | 如何让 AI 输出高质量内容：先想透独特性，再让扩-评-收工作流把思考沉淀下来 | tx=retitle-expand-20260906
+
