@@ -11312,6 +11312,18 @@
       "timestamp": "2026-08-26T13:35:15+08:00",
       "transaction_id": "todo-ai-native-guide-20260826"
     },
+    "todo-done-retitle-20260906": {
+      "action": "capture-transition",
+      "result": {
+        "id": "TODO-20260904-d47d12a2",
+        "path": "待办空间/已完成/2026-09-04-永久卡改名通道（permanent-retitle）.md",
+        "status": "done",
+        "type": "todo"
+      },
+      "summary": "永久卡改名通道（permanent retitle）",
+      "timestamp": "2026-09-06T21:10:05+08:00",
+      "transaction_id": "todo-done-retitle-20260906"
+    },
     "todo-duanyongping-20260824": {
       "action": "capture-todo",
       "result": {

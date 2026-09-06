@@ -2,11 +2,10 @@
 id: "TODO-20260904-d47d12a2"
 type: "待办"
 title: "永久卡改名通道（permanent retitle）"
-status: "未开始"
+status: "已完成"
 created_at: "2026-09-04T21:23:21+08:00"
-updated_at: "2026-09-06T16:02:43+08:00"
+updated_at: "2026-09-06T21:10:05+08:00"
 source_ids: []
-not_started_at: "2026-09-04T21:23:21+08:00"
 need_type: "能力"
 goal_id: "认知中枢"
 equifinality: "中"
@@ -15,6 +14,7 @@ success_probability: "高"
 distance: "近"
 specificity: "具体"
 priority: 1
+completed_at: "2026-09-06T21:10:05+08:00"
 ---
 # 永久卡改名通道（permanent retitle）
 
