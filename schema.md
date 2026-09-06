@@ -107,6 +107,10 @@ Markdown Frontmatter 是 CLI 的机器控制面，不是阅读正文。Obsidian 
 - `仅提炼标题`（user_body_agent_title）：Agent 只从用户正文提炼标题；
 - `用户确认·Agent结构化`（user_confirmed_agent_structured）：Agent 只整理用户已表达内容，且用户确认了完整结构化草稿。
 
+### 正式卡片改名契约
+
+正式类卡片（`永久卡`/`母题`/`行动`/`索引`）的标题与文件名可以通过 `permanent retitle` 面向人调整，内部 ID 与正文认知内容保持不变——标题是这张卡在数据库视图、索引与链接中的入口，允许随认识修正而不推翻已确认的正文。`formation_draft_sha256` 只描述接纳时刻的确认草稿正文，标题变更不重算；改名不自动追加演化记录条目，改名事务的说明记录在状态账本、追加日志与 Git 提交信息中，不在用户认知正文里插入机器记录。正文末尾由 CLI 机械维护的“形成来源”导航区与连接导航属于机器维护区，改名时由 CLI 同步；引用本卡的其余卡片、直接表达形成见证中的反向链接同样由 CLI 重写（来源快照区除外）。面向人调整标题是规则 5“正文锁定为确认草稿”的例外通道，只能由用户亲自确认新标题后触发，Agent 不得自行替用户定夺新标题。
+
 ### 内部候选文件
 
 候选文件位于 `.goodidea/proposals/`，不属于五个正式内容空间，也不进入人类可读索引。
@@ -205,6 +209,7 @@ finalize 同时创建可恢复的运行时维护任务。任务允许 `pending`�
 | `permanent propose` | 输入必须是用户确认后的完整草稿；结构化模式还必须带显式结构确认；普通永久卡片必须带 `--confirm-user-approved-sources`，并通过 `--from-ids` 提供至少一个可寻址形成来源，或通过 `--direct-source-file` 提供用户确认的一句具体形成情境；`--source-ids` 只表示外部依据，不能单独满足形成门禁；候选进入隐藏目录，不进入永久空间。带 `--preauthorize-accept` 时，用户在确认草稿的同时已明确授权正式创建；propose 校验通过后同一调用内继续执行 accept 的全部校验（候选与草稿哈希一致、形成来源可寻址、状态为 `pending`）并直接创建正式卡片，候选不残留；除创建确认的时机提前外，所有既有门禁照常必需 |
 | `permanent accept` | 候选、Frontmatter、正文哈希和状态账本必须一致且状态为 `pending`，并带用户在候选形成后的明确创建确认；普通永久卡片原子创建卡片及必要的直接表达见证、维护形成来源导航、删除候选，并只把 `待处理` 形成闪念转为 `已处理`；`已处理` 保持不变，`已放弃` 拒绝接纳。`permanent propose --preauthorize-accept` 提供的授权等价于本确认，仅时机提前到草稿确认时；两种路径下的 accept 校验完全一致 |
 | `permanent withdraw` | 只撤销仍为 `pending` 的候选；撤销后不可接纳，错误内容不保留在当前工作树 |
+| `permanent retitle` | 目标必须是既有正式类卡片（永久卡/母题/行动/索引）；只能改为用户亲自确认的新标题（`--confirm-user-approved`）；新标题必须非空且有实际含义；标题变化时同步重命名文件（冲突时递增序号，日期前缀仍取 `created_at`）、更新正文首行一级标题、重写全库引用旧路径或旧标题默认别名的 wikilink（来源快照区除外）、同步连接导航与形成来源见证反链，并更新状态账本中的路径；`status`、`authoring_mode`、`source_ids`、`derived_from`、`formation_draft_sha256` 与 `created_at` 保持不变，`updated_at` 更新 |
 | `permanent revise` / `permanent feedback` | 只能追加用户亲自提供并确认的内容；CLI 只机械添加区块、时间戳和规范换行 |
 | `capture revise` | 目标必须是既有轻量记录（闪念/有意思/待办）；只能追加用户亲自提供并确认的内容；追加内容必须有实际含义 |
 | `capture update` | 目标必须是既有轻量记录；只能整体更新为用户亲自提供并确认的内容；替换"原始记录"节并保留其余节 |

@@ -77,6 +77,13 @@ class GoodIdeaCliTests(unittest.TestCase):
         self.assertIn("现实结果，作为直接文本传入", feedback.stdout)
         self.assertIn("结果和调整均由用户本人提供并已确认", feedback.stdout)
 
+        retitle = run_cli("permanent", "retitle", "--help")
+        self.assertEqual(retitle.returncode, 0, retitle.stderr)
+        self.assertIn("正式类卡片", retitle.stdout)
+        self.assertIn("用户亲自确认的新标题", retitle.stdout)
+        self.assertIn("与 --confirm-user-approved 进入同一确认门禁", retitle.stdout)
+        self.assertIn("formation_draft_sha256", retitle.stdout)
+
     def test_capture_and_verify_public_commands(self):
         app = json.loads((self.root / ".obsidian/app.json").read_text(encoding="utf-8"))
         appearance = json.loads(
@@ -238,6 +245,99 @@ class GoodIdeaCliTests(unittest.TestCase):
         self.assertIn('title: "重命名后标题"', note_text)
         self.assertIn("# 重命名后标题", note_text)
         self.assertNotIn(old_path[:-3], note_text)
+
+        verified = run_cli("--root", str(self.root), "verify")
+        self.assertEqual(verified.returncode, 0, verified.stderr)
+        self.assertTrue(json.loads(verified.stdout)["ok"])
+
+    def test_permanent_retitle_public_cli_renames_and_keeps_witness_in_sync(self):
+        draft = self.base / "retitle-permanent.md"
+        draft.write_text(
+            "# 待改名的正式卡片\n\n"
+            "这张正式卡片通过 CLI 改名，验证文件、引用与见证同步。\n",
+            encoding="utf-8",
+        )
+        direct_source = self.base / "retitle-direct.txt"
+        direct_source.write_text(
+            "这张卡用于验证 CLI 正式卡片改名通道是否同步见证反链。\n",
+            encoding="utf-8",
+        )
+        proposed = run_cli(
+            "--root",
+            str(self.root),
+            "permanent",
+            "propose",
+            "--type",
+            "永久卡",
+            "--draft-file",
+            str(draft),
+            "--direct-source-file",
+            str(direct_source),
+            "--confirm-user-approved-sources",
+            "--transaction-id",
+            "cli-pretitle-propose",
+        )
+        self.assertEqual(proposed.returncode, 0, proposed.stderr)
+        proposal_id = json.loads(proposed.stdout)["result"]["proposal_id"]
+        accepted = run_cli(
+            "--root",
+            str(self.root),
+            "permanent",
+            "accept",
+            "--proposal-id",
+            proposal_id,
+            "--confirm-user-approved",
+            "--transaction-id",
+            "cli-pretitle-accept",
+        )
+        self.assertEqual(accepted.returncode, 0, accepted.stderr)
+        accept_result = json.loads(accepted.stdout)["result"]
+        card_id = accept_result["card_id"]
+        old_path = self.root / accept_result["card_path"]
+        witness_path = self.root / accept_result["formation_witness_path"]
+        self.assertIn("待改名的正式卡片", witness_path.read_text(encoding="utf-8"))
+
+        no_confirm = run_cli(
+            "--root",
+            str(self.root),
+            "permanent",
+            "retitle",
+            "--card-id",
+            card_id,
+            "--title",
+            "未确认的标题",
+            "--transaction-id",
+            "cli-pretitle-no-confirm",
+        )
+        self.assertEqual(no_confirm.returncode, 2)
+
+        renamed = run_cli(
+            "--root",
+            str(self.root),
+            "permanent",
+            "retitle",
+            "--card-id",
+            card_id,
+            "--title",
+            "改名后的正式卡片",
+            "--confirm-user-approved",
+            "--transaction-id",
+            "cli-pretitle-do",
+        )
+        self.assertEqual(renamed.returncode, 0, renamed.stderr)
+        result = json.loads(renamed.stdout)["result"]
+        self.assertTrue(result["renamed"])
+        new_path = self.root / result["path"]
+        self.assertNotEqual(new_path, old_path)
+        self.assertFalse(old_path.exists())
+        self.assertTrue(new_path.is_file())
+        card_text = new_path.read_text(encoding="utf-8")
+        self.assertIn('title: "改名后的正式卡片"', card_text)
+        self.assertIn("# 改名后的正式卡片", card_text)
+        # 形成来源见证反链同步为新路径 + 新标题；旧标题不再残留
+        witness_after = witness_path.read_text(encoding="utf-8")
+        self.assertIn(f"[[{result['path'][:-3]}|改名后的正式卡片]]", witness_after)
+        self.assertNotIn("待改名的正式卡片", witness_after)
 
         verified = run_cli("--root", str(self.root), "verify")
         self.assertEqual(verified.returncode, 0, verified.stderr)

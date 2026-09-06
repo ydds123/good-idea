@@ -85,3 +85,7 @@
 ## 2026-08-27 用户确认的契约措辞修正
 
 50. GOAL_SPECS 中「认知中枢」的 desc 由"让 good idea 成为替你思考的系统"改为"让 good idea 成为陪你思考的系统"（2026-08-27 用户审计发现：原措辞与 AGENTS.md 开篇"它不是……自动替用户思考的问答系统"直接冲突，也与"AI 是苏格拉底式提问者、思考展开的主体是人"的判断相悖；新措辞取自用户 8-22 闪念原话「AI 陪你思考」，并与 llm-wiki 的「AI 替你建库」形成对仗）。desc 不参与校验逻辑，仅作估价排序与 Agent 加工的语义参考；同步修改 contracts.py（一行）与 decisions 记录，schema.md 只列目标名无需同步。历史落盘内容（如已过期待办的估价理由中引用旧措辞）按"源码修复只影响未来写入"原则保留，不追改。
+
+## 2026-09-06 用户确认的正式卡片改名通道
+
+51. 正式类卡片（永久卡/母题/行动/索引）新增 `permanent retitle` 改名通道（2026-09-04 用户拍板走系统开发 B 方案：扩-评-收永久卡标题「页面设计生成」被指正收窄了本质——页面只是切入点，真正主题是「如何让 AI 输出高质量内容」；capture retitle 白名单只含轻量记录，正式卡无改名 CLI，标题/正文锁定为确认草稿，故补独立子命令+独立事务）。契约要点：只能改为用户亲自确认的新标题（`--confirm-user-approved`，别名 `--confirm-user-authored`）；改名同步 frontmatter title、正文首行一级标题与文件名（冲突递增序号，日期前缀仍取 `created_at`）；`status`/`authoring_mode`/`source_ids`/`derived_from`/`formation_draft_sha256`/`created_at` 保持不变（草稿哈希只描述接纳时刻正文，标题变更不重算）、`updated_at` 更新；不自动追加演化记录（改名审计走账本/log/Git，正文不塞机器记录）；重写全库引用旧路径或旧标题默认别名的 wikilink（来源快照区除外）、连接导航与直接表达形成见证反向链接（witness 目录存在时），更新状态账本路径。同步修改 service.py（permanent_retitle，正文认知内容不动）、cli.py（permanent retitle 子命令）、schema.md（命令契约表 + 正式卡片改名契约段，注明是规则 5「正文锁定为确认草稿」的用户确认例外通道）、tests 与 README CLI 表。前置流程约束：新标题由用户在对话中亲自确认（Agent 给候选方向仅作备菜），对话载体见 goodidea-form-permanent Skill。

@@ -3734,6 +3734,91 @@ updated_at: "2026-08-04T00:00:00+08:00"
         )
         return left_id, right_id, connection["result"]["proposal_id"]
 
+    def test_permanent_retitle_renames_card_and_rewrites_connections(self):
+        left_id, right_id, _ = self._two_connected_permanent_cards()
+        left = self.repo.find_note(left_id)
+        old_title = left[2]["title"]
+        old_path = left[0]
+        old_status = left[2].get("status")
+        formation_hash = left[2].get("formation_draft_sha256")
+        authoring = left[2].get("authoring_mode")
+        created = left[2].get("created_at")
+        # 右卡连接节引用左卡（旧路径 + 旧标题别名）
+        right_before = self.repo.find_note(right_id)
+        self.assertIn(
+            f"[[{old_path.with_suffix('').as_posix()}|{old_title}]]", right_before[1]
+        )
+        # 未确认时拒绝
+        with self.assertRaises(ValidationError):
+            self.service.permanent_retitle(
+                left_id,
+                title="未确认的新标题",
+                confirmed_by_user=False,
+                transaction_id="tx-per-retitle-no-confirm",
+            )
+        # 执行重命名
+        renamed = self.service.permanent_retitle(
+            left_id,
+            title="改名后的左卡片",
+            confirmed_by_user=True,
+            transaction_id="tx-per-retitle-do",
+        )
+        self.assertEqual(renamed["result"]["id"], left_id)
+        self.assertTrue(renamed["result"]["renamed"])
+        new_path = renamed["result"]["path"]
+        self.assertNotEqual(new_path, old_path)
+        # 旧文件已删除、新文件存在且 frontmatter/正文首行已更新
+        self.assertFalse((self.repo.root / old_path).exists())
+        self.assertTrue((self.repo.root / new_path).exists())
+        card = self.repo.find_note(left_id)
+        self.assertEqual(card[2]["title"], "改名后的左卡片")
+        self.assertIn("# 改名后的左卡片", card[1])
+        # 契约字段保持不变：status/authoring_mode/形成草稿哈希/created_at
+        self.assertEqual(card[2].get("status"), old_status)
+        self.assertEqual(card[2].get("authoring_mode"), authoring)
+        self.assertEqual(card[2].get("formation_draft_sha256"), formation_hash)
+        self.assertEqual(card[2].get("created_at"), created)
+        # 右卡连接节的 wikilink 已同步为新路径 + 新标题
+        right_after = self.repo.find_note(right_id)
+        self.assertIn(
+            f"[[{new_path[:-3]}|改名后的左卡片]]",
+            right_after[1],
+        )
+        self.assertNotIn(old_path.with_suffix("").as_posix(), right_after[1])
+        # 幂等重放
+        replay = self.service.permanent_retitle(
+            left_id,
+            title="重放不应再次生效",
+            confirmed_by_user=True,
+            transaction_id="tx-per-retitle-do",
+        )
+        self.assertTrue(replay["idempotent"])
+        # 与当前标题相同拒绝
+        with self.assertRaises(ValidationError):
+            self.service.permanent_retitle(
+                left_id,
+                title="改名后的左卡片",
+                confirmed_by_user=True,
+                transaction_id="tx-per-retitle-same",
+            )
+        # 空标题拒绝
+        with self.assertRaises(ValidationError):
+            self.service.permanent_retitle(
+                left_id,
+                title="   ",
+                confirmed_by_user=True,
+                transaction_id="tx-per-retitle-blank",
+            )
+        # 不存在的卡片拒绝
+        with self.assertRaises(ValidationError):
+            self.service.permanent_retitle(
+                "PER-20260904-00000000",
+                title="不存在的卡片",
+                confirmed_by_user=True,
+                transaction_id="tx-per-retitle-missing",
+            )
+        self.assertTrue(self.service.lint()["ok"])
+
     def test_connect_withdraw_removes_pending_connection_proposal(self):
         left_id, right_id, proposal_id = self._two_connected_permanent_cards()
         left_before = self.repo.find_note(left_id)

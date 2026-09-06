@@ -446,6 +446,33 @@ def build_parser() -> argparse.ArgumentParser:
     )
     feedback.add_argument("--transaction-id", help="可复用的幂等事务 ID")
 
+    retitle = permanent_sub.add_parser(
+        "retitle",
+        help="用户确认后修改正式类卡片标题并重命名文件、同步全库引用",
+        description=(
+            "修改正式类卡片（永久卡/母题/行动/索引）的标题：同步 frontmatter title、"
+            "正文首行一级标题与文件名（冲突时递增序号），并重写全库引用旧路径或"
+            "旧标题别名的 wikilink（来源快照区除外）与状态账本路径。"
+            "正文认知内容、形成来源、authoring_mode、formation_draft_sha256、"
+            "created_at 与 status 保持不变。"
+        ),
+    )
+    retitle.add_argument("--card-id", required=True, help="待改名的正式卡片 ID")
+    retitle.add_argument("--title", required=True, help="用户亲自确认的新标题")
+    retitle.add_argument(
+        "--confirm-user-approved",
+        dest="confirm_user_approved",
+        action="store_true",
+        help="用户已看到既有正式卡片并亲自确认新标题",
+    )
+    retitle.add_argument(
+        "--confirm-user-authored",
+        dest="confirm_user_approved",
+        action="store_true",
+        help="旧命令兼容别名，与 --confirm-user-approved 进入同一确认门禁",
+    )
+    retitle.add_argument("--transaction-id", help="可复用的幂等事务 ID")
+
     connect = sub.add_parser("connect", help="语义连接候选与确认")
     connect_sub = connect.add_subparsers(dest="connect_command", required=True)
     connect_propose = connect_sub.add_parser("propose")
@@ -799,6 +826,13 @@ def dispatch(args: argparse.Namespace) -> tuple[dict[str, Any], int]:
                 note=args.note,
                 confirmed_by_user=args.confirm_user_authored,
                 status=_enum_arg(args.status),
+                transaction_id=args.transaction_id,
+            )
+        elif args.permanent_command == "retitle":
+            result = service.permanent_retitle(
+                args.card_id,
+                title=args.title,
+                confirmed_by_user=args.confirm_user_approved,
                 transaction_id=args.transaction_id,
             )
         else:

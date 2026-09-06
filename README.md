@@ -422,6 +422,7 @@ uv run goodidea --root /Users/apple/Documents/Claude/good-idea <命令>
 | `goodidea permanent withdraw` | 撤销错误或过时候选 | 是 |
 | `goodidea permanent revise` | 追加用户亲自写下的修订 | 是 |
 | `goodidea permanent feedback` | 追加用户亲自写下的行动结果和修正 | 是 |
+| `goodidea permanent retitle` | 用户确认后修改正式类卡片（永久卡/母题/行动/索引）标题并重命名文件、同步全库引用 | 是 |
 | `goodidea connect propose` | 创建两张正式卡片/闪念/来源的关系候选（组合受连接图约束） | 是 |
 | `goodidea connect accept` | 用户确认后写入双向语义连接（含闪念/来源正文「连接」节） | 是 |
 | `goodidea connect withdraw` | 撤回仍待确认的连接候选 | 是 |
