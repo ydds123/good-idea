@@ -8660,6 +8660,20 @@
       "timestamp": "2026-09-04T21:53:58+08:00",
       "transaction_id": "connect-mother-expand-20260904"
     },
+    "connect-propose-20260907211652-1804368c": {
+      "action": "connect-propose",
+      "result": {
+        "from_id": "PER-20260823-14676f79",
+        "proposal_id": "PRP-c58898077f37",
+        "proposal_path": ".goodidea/proposals/connections/PRP-c58898077f37.md",
+        "rationale": "本质卡立系统侧（智力外化是什么、为什么是革命），本卡是其人侧下游推论：智力要素化之后，生产不再需要人，人的生存与成长仍锚定被需要——主要矛盾卡回答本质卡没有展开的人侧后果。",
+        "relation": "演化",
+        "to_id": "PER-20260907-0ec6679d"
+      },
+      "summary": "连接候选：AI 的本质：智力脱离个体，成为可反馈复利的生产要素 → AI 时代的主要矛盾：生产不再需要人，人仍靠\"被需要\"而活",
+      "timestamp": "2026-09-07T21:16:52+08:00",
+      "transaction_id": "connect-propose-20260907211652-1804368c"
+    },
     "correction-withdraw-PRP-5a9bfa3f1970": {
       "action": "permanent-withdraw",
       "result": {
