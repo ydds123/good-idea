@@ -8369,6 +8369,33 @@
       "timestamp": "2026-09-06T16:02:43+08:00",
       "transaction_id": "capture-valuate-20260906160243-46e0dccc"
     },
+    "capture-valuate-20260907160321-c09dd09a": {
+      "action": "capture-valuate",
+      "result": {
+        "id": "TODO-20260907-8e5c7326",
+        "labels": {
+          "distance": "near",
+          "equifinality": "medium",
+          "goal_id": "goal_tools",
+          "multifinality": "medium",
+          "need_type": "competence",
+          "specificity": "vague",
+          "success_probability": "medium"
+        },
+        "priority": 1,
+        "ranked": [
+          {
+            "id": "TODO-20260907-8e5c7326",
+            "path": "待办空间/2026-09-07-AI-反馈闭环技术栈选型.md",
+            "priority": 1,
+            "title": "AI 反馈闭环技术栈选型"
+          }
+        ]
+      },
+      "summary": "AI 反馈闭环技术栈选型",
+      "timestamp": "2026-09-07T16:03:21+08:00",
+      "transaction_id": "capture-valuate-20260907160321-c09dd09a"
+    },
     "close-todo-action-loop-v2": {
       "action": "capture-transition",
       "result": {
