@@ -8674,6 +8674,20 @@
       "timestamp": "2026-09-07T21:16:52+08:00",
       "transaction_id": "connect-propose-20260907211652-1804368c"
     },
+    "connect-propose-20260907211652-4acc8f87": {
+      "action": "connect-propose",
+      "result": {
+        "from_id": "PER-20260907-0ec6679d",
+        "proposal_id": "PRP-19d23a680a9f",
+        "proposal_path": ".goodidea/proposals/connections/PRP-19d23a680a9f.md",
+        "rationale": "职业规划失效卡给出范式迁移原因（规划→生成），本卡给出其结构性深层原因：工作装置解体后人不被需要，预测式职业规划的前提（社会结构稳定、岗位可规划）彻底消失——主要矛盾是职业规划失效的总纲背景。",
+        "relation": "支持",
+        "to_id": "PER-20260813-2690bcf1"
+      },
+      "summary": "连接候选：AI 时代的主要矛盾：生产不再需要人，人仍靠\"被需要\"而活 → 职业规划已失效：行业选择是长出来的",
+      "timestamp": "2026-09-07T21:16:52+08:00",
+      "transaction_id": "connect-propose-20260907211652-4acc8f87"
+    },
     "connect-propose-20260907211652-73c66d29": {
       "action": "connect-propose",
       "result": {
