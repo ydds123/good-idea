@@ -8674,6 +8674,20 @@
       "timestamp": "2026-09-07T21:16:52+08:00",
       "transaction_id": "connect-propose-20260907211652-1804368c"
     },
+    "connect-propose-20260907211652-73c66d29": {
+      "action": "connect-propose",
+      "result": {
+        "from_id": "PER-20260907-0ec6679d",
+        "proposal_id": "PRP-7d868a05f1fd",
+        "proposal_path": ".goodidea/proposals/connections/PRP-7d868a05f1fd.md",
+        "rationale": "判断力催化卡主张判断力可主动催化（AI立骨架+推演生隐性），但其边界自认推出来≠验证过、需实战试错升级；本卡的死结指出验证所需的真实试错场（执行）正在被AI抽走——催化路线的验证环节前提被限定。",
+        "relation": "限定",
+        "to_id": "PER-20260813-2865f96c"
+      },
+      "summary": "连接候选：AI 时代的主要矛盾：生产不再需要人，人仍靠\"被需要\"而活 → 判断力不靠熬年头，靠主动催化",
+      "timestamp": "2026-09-07T21:16:52+08:00",
+      "transaction_id": "connect-propose-20260907211652-73c66d29"
+    },
     "correction-withdraw-PRP-5a9bfa3f1970": {
       "action": "permanent-withdraw",
       "result": {
