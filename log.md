@@ -821,3 +821,5 @@
 
 [2026-09-07T16:03:21+08:00] capture-valuate | AI 反馈闭环技术栈选型 | tx=capture-valuate-20260907160321-c09dd09a
 
+[2026-09-07T21:15:46+08:00] permanent-propose | AI 时代的主要矛盾：生产不再需要人，人仍靠"被需要"而活 | tx=perm-main-contradiction-20260907
+

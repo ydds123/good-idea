@@ -9752,6 +9752,17 @@
       "timestamp": "2026-08-15T18:00:59+08:00",
       "transaction_id": "migrate-todo-ns-raycast"
     },
+    "perm-main-contradiction-20260907": {
+      "action": "permanent-propose",
+      "result": {
+        "card_type": "permanent",
+        "proposal_id": "PRP-866d9ad5823d",
+        "proposal_path": ".goodidea/proposals/permanent/PRP-866d9ad5823d.md"
+      },
+      "summary": "AI 时代的主要矛盾：生产不再需要人，人仍靠\"被需要\"而活",
+      "timestamp": "2026-09-07T21:15:46+08:00",
+      "transaction_id": "perm-main-contradiction-20260907"
+    },
     "permanent-20260813-agency": {
       "action": "permanent-propose",
       "result": {
