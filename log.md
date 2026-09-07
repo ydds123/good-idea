@@ -817,3 +817,5 @@
 
 [2026-09-06T21:10:06+08:00] permanent-retitle | 如何让 AI 输出高质量内容：先想透独特性，再让扩-评-收工作流把思考沉淀下来 | tx=retitle-expand-20260906
 
+[2026-09-07T11:39:10+08:00] capture-todo | AI 反馈闭环技术栈选型 | tx=todo-techstack-ai-loop-20260907
+
