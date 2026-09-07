@@ -823,3 +823,5 @@
 
 [2026-09-07T21:15:46+08:00] permanent-propose | AI 时代的主要矛盾：生产不再需要人，人仍靠"被需要"而活 | tx=perm-main-contradiction-20260907
 
+[2026-09-07T21:16:21+08:00] permanent-accept | AI 时代的主要矛盾：生产不再需要人，人仍靠"被需要"而活 | tx=perm-accept-main-contradiction-20260907
+
