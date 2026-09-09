@@ -900,6 +900,23 @@
       "timestamp": "2026-09-06T16:00:25+08:00",
       "transaction_id": "capture-sweep-20260906160024-58152315"
     },
+    "capture-sweep-20260909160012-8c09204d": {
+      "action": "capture-sweep",
+      "result": {
+        "expired": [
+          {
+            "entered_at": "2026-09-07T11:39:10+08:00",
+            "id": "TODO-20260907-8e5c7326",
+            "path": "待办空间/2026-09-07-AI-反馈闭环技术栈选型.md",
+            "status": "expired"
+          }
+        ],
+        "skipped": []
+      },
+      "summary": "过期 1 条待办",
+      "timestamp": "2026-09-09T16:00:13+08:00",
+      "transaction_id": "capture-sweep-20260909160012-8c09204d"
+    },
     "capture-sync-20260815121511-42b56cb7": {
       "action": "capture-sync",
       "result": {
