@@ -841,3 +841,5 @@
 
 [2026-09-11T01:51:33+08:00] capture-interesting | VLX-VR：长视频深度推理模型（短片分析/电影级逻辑推理候选） | tx=capture-interesting-20260911015133-32b0c605
 
+[2026-09-11T01:53:42+08:00] capture-revise | VLX-VR：长视频深度推理模型（短片分析/电影级逻辑推理候选） | tx=append-vlx-entry-20260911
+
