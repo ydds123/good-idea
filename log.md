@@ -839,3 +839,5 @@
 
 [2026-09-09T16:00:13+08:00] capture-sweep | 过期 1 条待办 | tx=capture-sweep-20260909160012-8c09204d
 
+[2026-09-11T01:51:33+08:00] capture-interesting | VLX-VR：长视频深度推理模型（短片分析/电影级逻辑推理候选） | tx=capture-interesting-20260911015133-32b0c605
+

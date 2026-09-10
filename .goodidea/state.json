@@ -726,6 +726,17 @@
       "timestamp": "2026-09-02T07:22:15+08:00",
       "transaction_id": "capture-interesting-20260902072215-493132b7"
     },
+    "capture-interesting-20260911015133-32b0c605": {
+      "action": "capture-interesting",
+      "result": {
+        "id": "INT-20260911-637e7d9c",
+        "path": "有意思空间/2026-09-11-VLX-VR：长视频深度推理模型（短片分析-电影级逻辑推理候选）.md",
+        "type": "interesting"
+      },
+      "summary": "VLX-VR：长视频深度推理模型（短片分析/电影级逻辑推理候选）",
+      "timestamp": "2026-09-11T01:51:33+08:00",
+      "transaction_id": "capture-interesting-20260911015133-32b0c605"
+    },
     "capture-revise-20260816224612-980500e9": {
       "action": "capture-revise",
       "result": {
