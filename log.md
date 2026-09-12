@@ -843,3 +843,5 @@
 
 [2026-09-11T01:53:42+08:00] capture-revise | VLX-VR：长视频深度推理模型（短片分析/电影级逻辑推理候选） | tx=append-vlx-entry-20260911
 
+[2026-09-12T11:48:27+08:00] source-commit | AI摄影与视觉叙事 + 保存动机 | tx=src-ai-photo-visual-narrative-20260912
+
