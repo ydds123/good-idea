@@ -845,3 +845,5 @@
 
 [2026-09-12T11:48:27+08:00] source-commit | AI摄影与视觉叙事 + 保存动机 | tx=src-ai-photo-visual-narrative-20260912
 
+[2026-09-13T21:15:25+08:00] capture-finalize | 确认本轮 1 张闪念 | tx=finalize-oct-release-20260913
+
