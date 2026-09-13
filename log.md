@@ -847,3 +847,5 @@
 
 [2026-09-13T21:15:25+08:00] capture-finalize | 确认本轮 1 张闪念 | tx=finalize-oct-release-20260913
 
+[2026-09-13T21:15:53+08:00] source-commit | 10 月发布 Good idea · 发布物骨架（2026-09-13 讨论定稿） + 关联 1 张闪念 | tx=src-skeleton-oct-release-20260913
+
