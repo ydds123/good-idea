@@ -11908,6 +11908,17 @@
       "summary": "优化闪念 skill",
       "timestamp": "2026-08-23T00:18:36+08:00",
       "transaction_id": "valuate-optimize-flash-skill-20260823"
+    },
+    "wx-aiagents-interesting-20260914": {
+      "action": "capture-interesting",
+      "result": {
+        "id": "INT-20260914-77e5a7d8",
+        "path": "有意思空间/2026-09-14-O'Reilly《AI-Agents》配套开源代码库.md",
+        "type": "interesting"
+      },
+      "summary": "O'Reilly《AI Agents》配套开源代码库",
+      "timestamp": "2026-09-14T19:44:29+08:00",
+      "transaction_id": "wx-aiagents-interesting-20260914"
     }
   }
 }

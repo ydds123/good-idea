@@ -849,3 +849,5 @@
 
 [2026-09-13T21:15:53+08:00] source-commit | 10 月发布 Good idea · 发布物骨架（2026-09-13 讨论定稿） + 关联 1 张闪念 | tx=src-skeleton-oct-release-20260913
 
+[2026-09-14T19:44:29+08:00] capture-interesting | O'Reilly《AI Agents》配套开源代码库 | tx=wx-aiagents-interesting-20260914
+
