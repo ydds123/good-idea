@@ -24,6 +24,7 @@ from .contracts import (
     FORMATION_WITNESS_ID_PATTERN,
     FORMATION_WITNESS_ROOT,
     GOAL_SPECS,
+    LIGHT_NOTE_BODY_SECTIONS,
     NOTE_SPECS,
     CONNECT_GRAPH,
     PERMANENT_CARD_TYPES,
@@ -1323,6 +1324,7 @@ class GoodIdeaService:
         *,
         text: str,
         confirmed_by_user: bool,
+        section: str | None = None,
         transaction_id: str | None = None,
     ) -> dict[str, Any]:
         if not confirmed_by_user:
@@ -1337,19 +1339,34 @@ class GoodIdeaService:
         }:
             raise ValidationError(f"找不到轻量记录：{note_id}")
         rel, note_text, metadata = found
+        kind = metadata["type"]
+        allowed_sections = LIGHT_NOTE_BODY_SECTIONS[kind]
+        target_section = (section or "").strip()
+        if not target_section:
+            # 默认节＝卡片现有的正文节（单次落盘闪念是「原始记录」，
+            # 多轮捕获 finalize 的闪念是「闪念内容」），都没有才用类型首选节
+            target_section = next(
+                (name for name in allowed_sections if f"\n## {name}\n" in note_text),
+                allowed_sections[0],
+            )
+        if target_section not in allowed_sections:
+            raise ValidationError(
+                f"{kind} 的正文节只允许：{'、'.join(allowed_sections)}"
+            )
         txid = transaction_id or new_transaction_id("capture-update")
         if existing := self._idempotent(txid):
             return existing
         timestamp = now_iso()
         user_text = _normalize_user_entry(text)
-        note_text = replace_section(note_text, "原始记录", user_text)
+        note_text = replace_section(note_text, target_section, user_text)
         metadata["updated_at"] = timestamp
         note_text = replace_frontmatter(note_text, metadata)
         state = self.repo.read_state()
         result = {
             "id": note_id,
             "path": rel.as_posix(),
-            "type": metadata["type"],
+            "type": kind,
+            "section": target_section,
         }
         return self.repo.commit(
             transaction_id=txid,

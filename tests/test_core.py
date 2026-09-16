@@ -3948,6 +3948,68 @@ class ConnectFlashTests(unittest.TestCase):
             "flash", text=text, title=title, transaction_id=txid
         )["result"]
 
+    def test_capture_update_targets_flash_body_sections(self):
+        flash = self._make_flash(
+            "闪念内容第一版：记录一次认知激活，等待补上下文。",
+            "更新目标闪念",
+            "tx-update-flash",
+        )
+        note_id = flash["id"]
+        # 单次落盘闪念的正文节是「原始记录」
+        self.assertIn("## 原始记录", self.repo.find_note(note_id)[1])
+        with self.assertRaises(ValidationError):
+            self.service.capture_update(
+                note_id,
+                text="专用通道节不得由 update 改写：来源与论证锚点。",
+                confirmed_by_user=True,
+                section="来源与论证锚点",
+                transaction_id="tx-update-flash-bad-anchor",
+            )
+        with self.assertRaises(ValidationError):
+            self.service.capture_update(
+                note_id,
+                text="未经确认的内容不得更新正文节。",
+                confirmed_by_user=False,
+                transaction_id="tx-update-flash-no-confirm",
+            )
+        # 省略 --section：默认命中卡片现有的正文节
+        updated = self.service.capture_update(
+            note_id,
+            text="原始记录第二版：补上触发物、场合与时间，事件要素齐备。",
+            confirmed_by_user=True,
+            transaction_id="tx-update-flash-body",
+        )
+        self.assertEqual(updated["result"]["section"], "原始记录")
+        # 显式指定闪念专属节，互不影响
+        self.service.capture_update(
+            note_id,
+            text="触发情境第二版：听完一场两小时的分享后写下这张卡。",
+            confirmed_by_user=True,
+            section="触发情境",
+            transaction_id="tx-update-flash-trigger",
+        )
+        self.service.capture_update(
+            note_id,
+            text="闪念内容：多轮捕获形态的正文节。",
+            confirmed_by_user=True,
+            section="闪念内容",
+            transaction_id="tx-update-flash-content",
+        )
+        # 卡片同时存在两类正文节时，默认节取表内更靠前的「闪念内容」
+        again = self.service.capture_update(
+            note_id,
+            text="闪念内容再次更新：默认节优先取闪念内容。",
+            confirmed_by_user=True,
+            transaction_id="tx-update-flash-default-pick",
+        )
+        self.assertEqual(again["result"]["section"], "闪念内容")
+        body = self.repo.find_note(note_id)[1]
+        self.assertIn("闪念内容再次更新", body)
+        self.assertIn("触发情境第二版", body)
+        self.assertIn("原始记录第二版", body)
+        self.assertNotIn("闪念内容第一版", body)
+        self.assertTrue(self.service.lint()["ok"])
+
     def test_connect_flash_to_flash(self):
         left = self._make_flash(
             "左闪念：AI 琐事的价值杠杆取决于对象。", "左闪念", "tx-cf-left"

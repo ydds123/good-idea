@@ -32,6 +32,17 @@ CONNECT_GRAPH: dict[str, frozenset[str]] = {
     "flash": frozenset({"flash", "source"}),
     "source": frozenset({"flash"}),
 }
+# 轻量记录正文节（2026-09-16 拍板：闪念正文修订通道）
+# `capture update` 的合法目标节。闪念有两种形态：单次落盘的正文节是「原始记录」，
+# 多轮捕获 finalize 的是「闪念内容」＋可选「触发情境/激活逻辑」；有意思与待办用「原始记录」。
+# 省略 --section 时默认取卡片现有的正文节（按本表顺序），都没有才用每类首个元素。
+# 「演化记录」「来源与论证锚点」不在表内——它们各有专用通道
+# （capture revise / capture revise-source-anchors），update 不得改写。
+LIGHT_NOTE_BODY_SECTIONS: dict[str, tuple[str, ...]] = {
+    "flash": ("闪念内容", "原始记录", "触发情境", "激活逻辑"),
+    "interesting": ("原始记录",),
+    "todo": ("原始记录",),
+}
 CAPTURE_ACTIVE_STATES = frozenset({"active", "reviewing", "paused"})
 MAINTENANCE_STATES = (
     "pending", "processing", "maintenance_paused", "retry_pending",

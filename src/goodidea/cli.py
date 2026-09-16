@@ -182,7 +182,8 @@ def build_parser() -> argparse.ArgumentParser:
     )
     valuate.add_argument("--transaction-id")
     update = capture_sub.add_parser(
-        "update", help="用户确认后整体更新轻量记录的原始记录正文"
+        "update",
+        help="用户确认后更新轻量记录的正文节（闪念＝闪念内容，有意思/待办＝原始记录）",
     )
     update.add_argument("--id", required=True)
     update.add_argument("--text", default="")
@@ -190,6 +191,11 @@ def build_parser() -> argparse.ArgumentParser:
         "--text-file",
         default="",
         help="从文件读取更新正文；传 - 从 stdin 读取；与 --text 二选一",
+    )
+    update.add_argument(
+        "--section",
+        default="",
+        help="要替换的正文节；省略时替换卡片现有的正文节（单次落盘闪念＝原始记录，多轮捕获闪念＝闪念内容，有意思/待办＝原始记录）；闪念还可用 触发情境/激活逻辑",
     )
     update.add_argument("--confirm-user-authored", action="store_true")
     update.add_argument("--transaction-id")
@@ -709,6 +715,7 @@ def dispatch(args: argparse.Namespace) -> tuple[dict[str, Any], int]:
             args.id,
             text=update_text,
             confirmed_by_user=args.confirm_user_authored,
+            section=args.section or None,
             transaction_id=args.transaction_id,
         )
     elif args.command == "capture" and args.capture_command == "retitle":
