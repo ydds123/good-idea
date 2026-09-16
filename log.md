@@ -851,3 +851,5 @@
 
 [2026-09-14T19:44:29+08:00] capture-interesting | O'Reilly《AI Agents》配套开源代码库 | tx=wx-aiagents-interesting-20260914
 
+[2026-09-16T22:33:14+08:00] capture-finalize | 确认本轮 1 张闪念 | tx=finalize-workshop-20260916
+
