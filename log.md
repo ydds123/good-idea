@@ -869,3 +869,5 @@
 
 [2026-09-16T23:02:16+08:00] capture-todo | 机制重构：把过重的约束改轻 | tx=todo-mechanism-refactor-20260916
 
+[2026-09-16T23:05:30+08:00] capture-revise | 机制重构：把过重的约束改轻 | tx=revise-todo-mechanism-layer-20260916
+
