@@ -853,3 +853,5 @@
 
 [2026-09-16T22:33:14+08:00] capture-finalize | 确认本轮 1 张闪念 | tx=finalize-workshop-20260916
 
+[2026-09-16T22:33:47+08:00] source-commit | AI文案工坊产品构建思路分享 + 关联 1 张闪念 | tx=src-workshop-20260916
+
