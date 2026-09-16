@@ -867,3 +867,5 @@
 
 [2026-09-16T22:58:54+08:00] connect-accept | 文案工坊分享的借鉴与特色功能之问 ↔ 10 月发布 Good idea：终局、骨架与收口的那句问句 | tx=connect-accept-workshop-20260916
 
+[2026-09-16T23:02:16+08:00] capture-todo | 机制重构：把过重的约束改轻 | tx=todo-mechanism-refactor-20260916
+
