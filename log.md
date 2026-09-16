@@ -865,3 +865,5 @@
 
 [2026-09-16T22:57:13+08:00] capture-update | 文案工坊分享的借鉴与特色功能之问 | tx=update-b-logic-20260916
 
+[2026-09-16T22:58:54+08:00] connect-accept | 文案工坊分享的借鉴与特色功能之问 ↔ 10 月发布 Good idea：终局、骨架与收口的那句问句 | tx=connect-accept-workshop-20260916
+
