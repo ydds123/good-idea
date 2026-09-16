@@ -855,3 +855,5 @@
 
 [2026-09-16T22:33:47+08:00] source-commit | AI文案工坊产品构建思路分享 + 关联 1 张闪念 | tx=src-workshop-20260916
 
+[2026-09-16T22:33:47+08:00] connect-propose | 连接候选：文案工坊分享的借鉴与特色功能之问 → 10 月发布 Good idea：终局、骨架与收口的那句问句 | tx=connect-propose-workshop-20260916
+
