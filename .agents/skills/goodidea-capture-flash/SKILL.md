@@ -57,7 +57,7 @@ description: "捕捉 Good idea 闪念及多轮认知会话。用户正在表达�
 
        uv run goodidea --root <仓库> capture context-check --session-id <会话ID> --ref <上下文> --status <readable|unreadable|partial> --fingerprint-file <临时JSON> --transaction-id <稳定ID>
 
-4. **展开**：把不充分展开到充分——加工对象 = 原始语料 + 检索内容。识别挖掘点（提到但没展开的东西）→ 每个点补「是什么」+ 揪「为什么在这里出现/和什么连」→ 按松海原始逻辑顺序串接（不重排）→ 补充融入原文不标注 → 终点检查：每个提到的概念都展开了吗？逻辑线都揪出来了吗？能独立唤起上下文吗？（对照下方加工检查清单）。一次一个问题；用户不想继续展开时立即进入校验，不强迫追问。新表达原样追加：
+4. **展开**：把不充分展开到充分——加工对象 = 原始语料 + 检索内容 + **事件要素**（何时、什么场合、由哪份材料或哪次对话触发，以及材料里他被借用的那部分要点）。识别挖掘点（提到但没展开的东西）→ 每个点补「是什么」+ 揪「为什么在这里出现/和什么连」→ 按松海原始逻辑顺序串接（不重排）→ 补充融入原文不标注 → 终点检查：每个提到的概念都展开了吗？逻辑线都揪出来了吗？**能独立唤起上下文吗——触发物、场合、时间、材料要点要齐备（只留原话的卡是把事件写成了语录）？**（对照下方加工检查清单）。**展开只做两件事：补事件事实、展开他已表达的认知；判断始终归松海，不新增观点。** 一次一个问题；用户不想继续展开时立即进入校验，不强迫追问。新表达原样追加：
 
        uv run goodidea --root <仓库> capture append --session-id <会话ID> --text <用户新表达> --transaction-id <稳定ID>
 
@@ -79,7 +79,7 @@ description: "捕捉 Good idea 闪念及多轮认知会话。用户正在表达�
 - 落盘前必须松海确认（确认门禁）
 - 提问纪律：提问与目标关联，成形即停
 
-**manifest 契约**：内部 manifest 使用 `format_version: 2`，锚点字段（`source_anchors`/`source_anchor`/`trigger_anchor`/`activated_logic`/`source_boundary`）契约见 schema.md「临时捕获会话」节，此处不重复；正式卡片渲染为"可点击溯源链接 + 论证说明"单元，不得另设纯链接的"关联来源"节；无外部来源时 `source_anchor` 明确写"松海本轮口述，无外部来源"，不得伪造依据。用户修正已生成闪念的来源锚点时，展示"链接 + 说明 + 边界"完整结果并确认后调用 `capture revise-source-anchors`；不得直接编辑 Markdown。
+**manifest 契约**：内部 manifest 使用 `format_version: 2`，锚点字段（`source_anchors`/`source_anchor`/`trigger_anchor`/`activated_logic`/`source_boundary`）契约见 schema.md「临时捕获会话」节，此处不重复；**填写时各就各位：`trigger_anchor` 装事件要素（背景、场合、触发材料与要点），`activated_logic` 装与旧卡或材料的连接及相对上一次激活的推进，`source_boundary` 装材料采用边界（哪些只作对照不作依据），`body` 装他的认知脉络（含他借用的材料要点）——判断归松海，事实性上下文由 Agent 补齐，不得补造**；正式卡片渲染为"可点击溯源链接 + 论证说明"单元，不得另设纯链接的"关联来源"节；无外部来源时 `source_anchor` 明确写"松海本轮口述，无外部来源"，不得伪造依据。用户修正已生成闪念的来源锚点时，展示"链接 + 说明 + 边界"完整结果并确认后调用 `capture revise-source-anchors`；不得直接编辑 Markdown。
 
 ## 三、情况表（与主线正交，任何时刻可能发生）
 
