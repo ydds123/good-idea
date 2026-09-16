@@ -11860,6 +11860,18 @@
       "timestamp": "2026-08-11T10:54:13+08:00",
       "transaction_id": "tx-capture-20260811-permanent-standard-finalize-01"
     },
+    "update-a-logic-20260916": {
+      "action": "capture-update",
+      "result": {
+        "id": "FLA-20260913-ad008837",
+        "path": "闪念空间/2026-09-13-10-月发布-Good-idea：终局、骨架与收口的那句问句.md",
+        "section": "激活逻辑",
+        "type": "flash"
+      },
+      "summary": "10 月发布 Good idea：终局、骨架与收口的那句问句",
+      "timestamp": "2026-09-16T22:57:12+08:00",
+      "transaction_id": "update-a-logic-20260916"
+    },
     "update-a-trigger-20260916": {
       "action": "capture-update",
       "result": {
