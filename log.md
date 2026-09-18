@@ -871,3 +871,5 @@
 
 [2026-09-16T23:05:30+08:00] capture-revise | 机制重构：把过重的约束改轻 | tx=revise-todo-mechanism-layer-20260916
 
+[2026-09-19T00:03:10+08:00] capture-sweep | 过期 1 条待办 | tx=capture-sweep-20260919000310-c59b2b85
+

@@ -947,6 +947,23 @@
       "timestamp": "2026-09-09T16:00:13+08:00",
       "transaction_id": "capture-sweep-20260909160012-8c09204d"
     },
+    "capture-sweep-20260919000310-c59b2b85": {
+      "action": "capture-sweep",
+      "result": {
+        "expired": [
+          {
+            "entered_at": "2026-09-16T23:02:16+08:00",
+            "id": "TODO-20260916-3cb3a1ba",
+            "path": "待办空间/2026-09-16-机制重构：把过重的约束改轻.md",
+            "status": "expired"
+          }
+        ],
+        "skipped": []
+      },
+      "summary": "过期 1 条待办",
+      "timestamp": "2026-09-19T00:03:10+08:00",
+      "transaction_id": "capture-sweep-20260919000310-c59b2b85"
+    },
     "capture-sync-20260815121511-42b56cb7": {
       "action": "capture-sync",
       "result": {
