@@ -873,3 +873,5 @@
 
 [2026-09-19T00:03:10+08:00] capture-sweep | 过期 1 条待办 | tx=capture-sweep-20260919000310-c59b2b85
 
+[2026-09-20T19:56:05+08:00] capture-finalize | 确认本轮 1 张闪念 | tx=flash-time-understanding-20260920-07
+

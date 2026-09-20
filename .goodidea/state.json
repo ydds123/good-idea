@@ -9529,6 +9529,28 @@
       "timestamp": "2026-08-09T23:53:46+08:00",
       "transaction_id": "flash-subjectivity-20260809-finalize"
     },
+    "flash-time-understanding-20260920-07": {
+      "action": "capture-finalize",
+      "result": {
+        "flash_count": 1,
+        "flashes": [
+          {
+            "context_refs": [],
+            "id": "FLA-20260920-3ce54311",
+            "path": "闪念空间/2026-09-20-时间并不归自己所有：有所有权，没有使用权.md",
+            "source_anchors": [],
+            "source_boundary": "",
+            "title": "时间并不归自己所有：有所有权，没有使用权"
+          }
+        ],
+        "maintenance_job_ids": [],
+        "proposal_id": "CPR-800920f1e56c",
+        "session_id": "CAP-20260920-2d40068d"
+      },
+      "summary": "确认本轮 1 张闪念",
+      "timestamp": "2026-09-20T19:56:05+08:00",
+      "transaction_id": "flash-time-understanding-20260920-07"
+    },
     "flash-visual-narrative-20260810": {
       "action": "capture-flash",
       "result": {
