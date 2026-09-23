@@ -875,3 +875,5 @@
 
 [2026-09-20T19:56:05+08:00] capture-finalize | 确认本轮 1 张闪念 | tx=flash-time-understanding-20260920-07
 
+[2026-09-23T21:38:17+08:00] capture-interesting | Palantir 式本体对 AI 的价值：六层机制拆解 | tx=capture-interesting-20260923213817-d39c40b4
+
