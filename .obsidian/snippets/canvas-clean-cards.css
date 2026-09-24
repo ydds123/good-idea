@@ -1,0 +1,35 @@
+/* 隐藏画布卡片上方的文件名标签 */
+.canvas-node-label {
+  display: none !important;
+}
+
+/* 隐藏卡片内的行内标题（inline title） */
+.canvas-node .inline-title {
+  display: none !important;
+}
+
+/* 隐藏卡片内的笔记属性（Properties / frontmatter） */
+.canvas-node .metadata-container,
+.canvas-node .markdown-embed .metadata-container,
+.canvas-node .markdown-embed-content .metadata-container {
+  display: none !important;
+}
+
+/* Live Preview / iframe 编辑态里也藏属性 */
+.mod-inside-iframe.is-live-preview .metadata-container {
+  display: none !important;
+}
+/* 卡片高度自适应：内容少自动收缩（由 dynamicHeight 驱动），
+   内容超长时以 720px 封顶并内部滚动。
+   必须同时限制外层 .canvas-node（占位高度）与容器，否则超长卡片
+   仍会以内容原始高度占位，盖住下方卡片。 */
+.canvas-node {
+  max-height: 720px !important;
+}
+.canvas-node-container {
+  max-height: 720px;
+}
+.canvas-node-content.markdown-embed {
+  max-height: 720px;
+  overflow-y: auto;
+}

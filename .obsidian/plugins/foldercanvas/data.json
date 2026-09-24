@@ -1,0 +1,14 @@
+{
+  "nodesPerRow": 4,
+  "openOnCreate": true,
+  "canvasFileName": "Good-idea",
+  "watchFolder": true,
+  "nodeWidth": 600,
+  "nodeHeight": 720,
+  "nodeSpacing": 20,
+  "maxWidth": 1000,
+  "maxHeight": 1000,
+  "maxSpacing": 100,
+  "selectedHeading": "",
+  "hideHeadingTitles": false
+}

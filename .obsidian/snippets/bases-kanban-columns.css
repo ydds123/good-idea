@@ -1,0 +1,35 @@
+/* Better Kanban Bases View：看板列宽度自适应（2026-08-12）
+ *
+ * 覆盖插件硬编码的列宽（flex: 0 0 18rem ≈ 288px）：
+ * - 列少（内容总和 < 容器宽）时 flex-grow 自动分摊剩余空间
+ * - 列多时仍横向滚动（.bases-kanban-board 自带 overflow-x: auto）
+ * - max-width 防止单列过宽导致正文预览行过长
+ */
+.bases-kanban-view .bases-kanban-column-stack {
+  flex: 1 1 18rem !important;
+  max-width: 600px;
+}
+
+/* 卡片标题改用 frontmatter title：隐藏文件名标题（插件硬编码 basename），
+   把第一个属性行（title）美化成卡片标题样式 */
+.bases-kanban-view .bases-kanban-card-link {
+  display: none;
+}
+
+.bases-kanban-view .bases-kanban-card-properties .bases-kanban-card-property:first-child {
+  font-weight: 600;
+  font-size: 1.1em;
+  line-height: 1.35;
+  margin-bottom: 4px;
+}
+
+.bases-kanban-view .bases-kanban-card-properties .bases-kanban-card-property:first-child .bases-kanban-card-property-label,
+.bases-kanban-view .bases-kanban-card-properties .bases-kanban-card-property:first-child .bases-kanban-card-property-icon {
+  display: none;
+}
+
+/* Base Board 插件：列宽自适应（默认固定 280px） */
+.base-board-column {
+  flex: 1 1 280px !important;
+  max-width: 600px;
+}

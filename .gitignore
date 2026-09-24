@@ -16,3 +16,4 @@ __pycache__/
 
 # Agent Client 会话记录区（其他 Agent 会话转录，禁止入库）
 Agent Client/
+.obsidian/plugins/agent-client/sessions/
