@@ -8495,6 +8495,21 @@
       "timestamp": "2026-09-07T16:03:21+08:00",
       "transaction_id": "capture-valuate-20260907160321-c09dd09a"
     },
+    "chaofan-opc-20260924-management": {
+      "action": "source-commit",
+      "result": {
+        "flash_created": false,
+        "flash_ids": [],
+        "flash_paths": [],
+        "image_failures": [],
+        "source_created": true,
+        "source_id": "SRC-ce14858d458c",
+        "source_path": "溯源空间/2026-09-24-管理大课.md"
+      },
+      "summary": "管理大课 + 保存动机",
+      "timestamp": "2026-09-24T09:48:21+08:00",
+      "transaction_id": "chaofan-opc-20260924-management"
+    },
     "chaofan-opc-20260924-operator": {
       "action": "source-commit",
       "result": {
