@@ -1,10 +1,3 @@
----
-status: 待处理
-claimed_at: YYYY-MM-DDTHH:MM:SS+08:00
-freshness_window: 48h
-window_ends_at: YYYY-MM-DDTHH:MM:SS+08:00
----
-
 # 松海认领的闪念标题
 
 ## 核心内容
@@ -14,9 +7,3 @@ window_ends_at: YYYY-MM-DDTHH:MM:SS+08:00
 ## 触发情境
 
 记录当时为什么会注意到它，以及未来从哪里可以继续思考。需要时链接到 `原始思考记录/` 中的完整现场。
-
-## 状态历史
-
-- YYYY-MM-DD HH:MM：松海认领，进入 `待处理`。
-
-进入 `发酵中` 时，在状态历史中追加一段自然语言备注即可。不要补写松海没有表达的理由或条件。

@@ -1,7 +1,3 @@
----
-status: "待处理"
-created_at: "2026-08-31T22:47:57+08:00"
----
 # Dify全新Agent体验：独立生命周期与能力模块化
 
 ## 保存内容
@@ -11,7 +7,3 @@ Dify 全新 Agent 体验：Agent 从工作流执行节点升级为独立生命�
 ## 保存动机
 
 2026-08-31 松海发来 Dify 官方公众号文章，觉得"有点意思"，想看看这东西能用在什么场景、怎么跟自有系统（Hermes skills / good idea / wiki-skill 实验）做结合试试。文章：https://mp.weixin.qq.com/s/7SqnaTjOQONw54vdPLPP2A
-
-## 处理历史
-
-- 2026-08-31 22:47：旧项目保存为有意思，状态为 `待处理`。
