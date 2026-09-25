@@ -1,6 +1,6 @@
 ---
 id: SRC-YYYYMMDD-NNN
-status: pending_identity
+status: 待确认身份
 created_at: YYYY-MM-DDTHH:MM:SS+08:00
 canonical_identity:
 material_type:
@@ -20,7 +20,7 @@ material_type:
 
 ## 快照
 
-### snapshot-1｜YYYY-MM-DD HH:MM｜complete / partial / failed
+### snapshot-1｜YYYY-MM-DD HH:MM｜完整 / 部分获取 / 获取失败
 
 - 获取方式：
 - 内容位置或正文：

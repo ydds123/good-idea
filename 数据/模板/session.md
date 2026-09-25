@@ -1,6 +1,6 @@
 ---
 id: SES-YYYYMMDD-NNN
-status: recording
+status: 记录中
 opened_at: YYYY-MM-DDTHH:MM:SS+08:00
 closed_at:
 continued_from:

@@ -1,0 +1,3178 @@
+{
+  "migration_id": "MIG-20260925-001",
+  "phase": "四类对象各 10 条首批试迁",
+  "generated_at": "2026-09-25T13:54:30+08:00",
+  "legacy_root": "/Users/apple/Documents/good-idea",
+  "legacy_commit": "9489f308f82bcc9896c11156aba673fdf5cabc8c",
+  "expected_freeze_commit": "9489f308f82bcc9896c11156aba673fdf5cabc8c",
+  "selection_policy": "各类选择 10 条；闪念只选择状态可按现行契约确定的记录；新 ID 序号按各类全量旧记录计算，保证后续追加稳定。",
+  "objects": [
+    {
+      "legacy_path": "有意思空间/2026-08-10-《无期迷途》游戏美术风格：AI人像创作的参考方向.md",
+      "legacy_id": "INT-20260810-dc243515",
+      "legacy_sha256": "2713e2b157a750843b316e9538c6c680dc5cd83a07cfdc193370b3b95bbf8c56",
+      "selected": true,
+      "action": "迁入",
+      "copy_mode": "复制后结构转换",
+      "target_type": "有意思",
+      "target_id": "INT-20260810-001",
+      "target_path": "数据/记录/有意思/2026-08-10-001-《无期迷途》游戏美术风格：AI人像创作的参考方向.md",
+      "status_mapping": "待处理 → 待处理",
+      "removed_fields": [
+        "type",
+        "title",
+        "updated_at",
+        "source_ids"
+      ],
+      "dependencies": [],
+      "decision": "按已确认自动规则迁入",
+      "validation": "已通过",
+      "target_sha256": "5bf2e77d398877fd383dd024ebb9b9051188e46599a44e8e26b1ead52e614fb0"
+    },
+    {
+      "legacy_path": "有意思空间/2026-08-11-Logseq-的时间旅行和图谱设计对-Goodidea-有帮助：时间旅行=回滚的.md",
+      "legacy_id": "INT-20260811-c7fef391",
+      "legacy_sha256": "92025c5026c6e1529d7b9035e8a0591d50eabc8d5a41e6ce139f74f70cca7a29",
+      "selected": true,
+      "action": "迁入",
+      "copy_mode": "复制后结构转换",
+      "target_type": "有意思",
+      "target_id": "INT-20260811-001",
+      "target_path": "数据/记录/有意思/2026-08-11-001-Logseq 的时间旅行和图谱设计对 Goodidea 有帮助：时间旅行=回滚的.md",
+      "status_mapping": "待处理 → 待处理",
+      "removed_fields": [
+        "type",
+        "title",
+        "updated_at",
+        "source_ids"
+      ],
+      "dependencies": [],
+      "decision": "按已确认自动规则迁入",
+      "validation": "已通过",
+      "target_sha256": "93ff507de668c41b4d926abe7c21567bb25645d71e2062c01ef461f5b21a9139"
+    },
+    {
+      "legacy_path": "有意思空间/2026-08-11-高级概念海报生成提示词（词义→视觉隐喻）.md",
+      "legacy_id": "INT-20260811-2b011c76",
+      "legacy_sha256": "f7b057e6f608a0ca289a18c1828413fa9e962481709db04359b88dee85b98ba8",
+      "selected": true,
+      "action": "迁入",
+      "copy_mode": "复制后结构转换",
+      "target_type": "有意思",
+      "target_id": "INT-20260811-002",
+      "target_path": "数据/记录/有意思/2026-08-11-002-高级概念海报生成提示词（词义→视觉隐喻）.md",
+      "status_mapping": "待处理 → 待处理",
+      "removed_fields": [
+        "type",
+        "title",
+        "updated_at",
+        "source_ids"
+      ],
+      "dependencies": [],
+      "decision": "按已确认自动规则迁入",
+      "validation": "已通过",
+      "target_sha256": "ebb7362dd7cf1cce6cbe9eea8932badb3c9bdaf9dcbf5e3d439adeb7cfd675bc"
+    },
+    {
+      "legacy_path": "有意思空间/2026-08-13-炒饭会196期演示的行业分析工作台（Web-Coding-开发）：输入行业→细分.md",
+      "legacy_id": "INT-20260813-4a1b215a",
+      "legacy_sha256": "51f550f4a475f1e224524a39e10dc33a7675e970b3f64f16a942578efad80f5f",
+      "selected": true,
+      "action": "迁入",
+      "copy_mode": "复制后结构转换",
+      "target_type": "有意思",
+      "target_id": "INT-20260813-001",
+      "target_path": "数据/记录/有意思/2026-08-13-001-炒饭会196期演示的行业分析工作台（Web Coding 开发）：输入行业→细分.md",
+      "status_mapping": "待处理 → 待处理",
+      "removed_fields": [
+        "type",
+        "title",
+        "updated_at",
+        "source_ids"
+      ],
+      "dependencies": [
+        {
+          "legacy_id": "SRC-aadc46966f91",
+          "target_id": "SRC-20260813-001",
+          "target_type": "外部来源",
+          "selected_in_batch": true
+        }
+      ],
+      "decision": "按已确认自动规则迁入",
+      "validation": "已通过",
+      "target_sha256": "8acee2ea63c8ef73bebcc1e4aa213cbb5b09a9fea142f23a8b545ff42cba75c3"
+    },
+    {
+      "legacy_path": "有意思空间/2026-08-25-拆开-DeepSeek-Harness（dsh.papertok.ai-交互式教程）.md",
+      "legacy_id": "INT-20260825-64992f38",
+      "legacy_sha256": "3397c65f470a30f0d6ebeb9bd196bd24bff961ce744cafdbe1b4848600dd6157",
+      "selected": true,
+      "action": "迁入",
+      "copy_mode": "复制后结构转换",
+      "target_type": "有意思",
+      "target_id": "INT-20260825-002",
+      "target_path": "数据/记录/有意思/2026-08-25-002-拆开 DeepSeek Harness（dsh.papertok.ai 交互式教程）.md",
+      "status_mapping": "待处理 → 待处理",
+      "removed_fields": [
+        "type",
+        "title",
+        "updated_at",
+        "source_ids"
+      ],
+      "dependencies": [],
+      "decision": "按已确认自动规则迁入",
+      "validation": "已通过",
+      "target_sha256": "1ffe557c67a9fccccd5b917dc038deae201116c2c773541486e6091b6a726d60"
+    },
+    {
+      "legacy_path": "有意思空间/2026-08-25-球球Token-AI-中转站（生图-API-来源候选）.md",
+      "legacy_id": "INT-20260825-3a9570cd",
+      "legacy_sha256": "a30e666fd2c116ed3bb3d4534b4ef22f3925e05cb7a23527376682ffe78129d2",
+      "selected": true,
+      "action": "迁入",
+      "copy_mode": "复制后结构转换",
+      "target_type": "有意思",
+      "target_id": "INT-20260825-001",
+      "target_path": "数据/记录/有意思/2026-08-25-001-球球Token AI 中转站（生图 API 来源候选）.md",
+      "status_mapping": "待处理 → 待处理",
+      "removed_fields": [
+        "type",
+        "title",
+        "updated_at",
+        "source_ids"
+      ],
+      "dependencies": [],
+      "decision": "按已确认自动规则迁入",
+      "validation": "已通过",
+      "target_sha256": "6308b21958e33cc91d63b09f92c91b981b768e349e4c20979dfde55765f86ecc"
+    },
+    {
+      "legacy_path": "有意思空间/2026-08-28-Lux3D：AI-3D-生成模型.md",
+      "legacy_id": "INT-20260828-f4892a5f",
+      "legacy_sha256": "b9fc455df13a991f7a4b311aeabb36a0c14e9055a5690fa746211d86061390b6",
+      "selected": true,
+      "action": "迁入",
+      "copy_mode": "复制后结构转换",
+      "target_type": "有意思",
+      "target_id": "INT-20260828-001",
+      "target_path": "数据/记录/有意思/2026-08-28-001-Lux3D：AI 3D 生成模型.md",
+      "status_mapping": "待处理 → 待处理",
+      "removed_fields": [
+        "type",
+        "title",
+        "updated_at",
+        "source_ids"
+      ],
+      "dependencies": [],
+      "decision": "按已确认自动规则迁入",
+      "validation": "已通过",
+      "target_sha256": "d41717d3c9365ed1c1bb2eb27dda927b92374535e5662f49ec538945eff03608"
+    },
+    {
+      "legacy_path": "有意思空间/2026-08-31-Dify全新Agent体验：独立生命周期与能力模块化.md",
+      "legacy_id": "INT-20260831-2d89aa62",
+      "legacy_sha256": "eaa0c96c127db3b00ccaef79c854d8a1f42df415322b257956f0576a805e7d88",
+      "selected": true,
+      "action": "迁入",
+      "copy_mode": "复制后结构转换",
+      "target_type": "有意思",
+      "target_id": "INT-20260831-002",
+      "target_path": "数据/记录/有意思/2026-08-31-002-Dify全新Agent体验：独立生命周期与能力模块化.md",
+      "status_mapping": "待处理 → 待处理",
+      "removed_fields": [
+        "type",
+        "title",
+        "updated_at",
+        "source_ids"
+      ],
+      "dependencies": [],
+      "decision": "按已确认自动规则迁入",
+      "validation": "已通过",
+      "target_sha256": "47c4bb22aeed0bc76898500b698dcde6e570a4faa4edd8186343740c9dc48c2b"
+    },
+    {
+      "legacy_path": "有意思空间/2026-08-31-WikiSkill与现有skill结合实现可进化.md",
+      "legacy_id": "INT-20260831-6d5e3ce7",
+      "legacy_sha256": "2ae3d0ab1ecac1a0b0a4519b4368e380883443cf1b6225a66ecea6d5c776df45",
+      "selected": true,
+      "action": "迁入",
+      "copy_mode": "复制后结构转换",
+      "target_type": "有意思",
+      "target_id": "INT-20260831-001",
+      "target_path": "数据/记录/有意思/2026-08-31-001-WikiSkill与现有skill结合实现可进化.md",
+      "status_mapping": "待处理 → 待处理",
+      "removed_fields": [
+        "type",
+        "title",
+        "updated_at",
+        "source_ids"
+      ],
+      "dependencies": [],
+      "decision": "按已确认自动规则迁入",
+      "validation": "已通过",
+      "target_sha256": "f7774bd2b0f3c0bb086caf44aac165eb859e174ee94d9b2afe47e1d6763970b3"
+    },
+    {
+      "legacy_path": "有意思空间/2026-09-04-PMFrame.works：100-个产品设计框架库.md",
+      "legacy_id": "INT-20260904-622bdb31",
+      "legacy_sha256": "72665d1e0d2a73384916920723a83893c5bbbdcdc7bf347a1e14c893219b1421",
+      "selected": true,
+      "action": "迁入",
+      "copy_mode": "复制后结构转换",
+      "target_type": "有意思",
+      "target_id": "INT-20260904-001",
+      "target_path": "数据/记录/有意思/2026-09-04-001-PMFrame.works：100 个产品设计框架库.md",
+      "status_mapping": "待处理 → 待处理",
+      "removed_fields": [
+        "type",
+        "title",
+        "updated_at",
+        "source_ids"
+      ],
+      "dependencies": [],
+      "decision": "按已确认自动规则迁入",
+      "validation": "已通过",
+      "target_sha256": "12601236a35e79e43e060fa4145a8345e818f19c922e4c6436f5e58debaba839"
+    },
+    {
+      "legacy_path": "有意思空间/2026-09-11-VLX-VR：长视频深度推理模型（短片分析-电影级逻辑推理候选）.md",
+      "legacy_id": "INT-20260911-637e7d9c",
+      "legacy_sha256": "738571a2db7743d2d9228e182e45e3a4fb7e29fb8cfc6fd165743c201561c92e",
+      "selected": false,
+      "action": "暂缓",
+      "copy_mode": "暂缓",
+      "target_type": "有意思",
+      "target_id": "INT-20260911-001",
+      "target_path": "数据/记录/有意思/2026-09-11-001-VLX-VR：长视频深度推理模型（短片分析／电影级逻辑推理候选）.md",
+      "status_mapping": "待处理 → 待处理",
+      "removed_fields": [
+        "type",
+        "title",
+        "updated_at",
+        "source_ids"
+      ],
+      "dependencies": [],
+      "decision": "不在首批 10 条内",
+      "validation": "未执行"
+    },
+    {
+      "legacy_path": "有意思空间/2026-09-14-O'Reilly《AI-Agents》配套开源代码库.md",
+      "legacy_id": "INT-20260914-77e5a7d8",
+      "legacy_sha256": "dd1a9476cd1ed871ac31d5623dcfe4975cdb2b41c9c2ad5c5c6d263660f5862d",
+      "selected": false,
+      "action": "暂缓",
+      "copy_mode": "暂缓",
+      "target_type": "有意思",
+      "target_id": "INT-20260914-001",
+      "target_path": "数据/记录/有意思/2026-09-14-001-O'Reilly《AI Agents》配套开源代码库.md",
+      "status_mapping": "待处理 → 待处理",
+      "removed_fields": [
+        "type",
+        "title",
+        "updated_at",
+        "source_ids"
+      ],
+      "dependencies": [],
+      "decision": "不在首批 10 条内",
+      "validation": "未执行"
+    },
+    {
+      "legacy_path": "有意思空间/2026-09-23-Palantir-式本体对-AI-的价值：六层机制拆解.md",
+      "legacy_id": "INT-20260923-78eebcee",
+      "legacy_sha256": "cd5bb2916d51d1aa3cc3ee7f7dbb8c4aeb27b6053cc94ff26a632e538d7b22f9",
+      "selected": false,
+      "action": "暂缓",
+      "copy_mode": "暂缓",
+      "target_type": "有意思",
+      "target_id": "INT-20260923-001",
+      "target_path": "数据/记录/有意思/2026-09-23-001-Palantir 式本体对 AI 的价值：六层机制拆解.md",
+      "status_mapping": "待处理 → 待处理",
+      "removed_fields": [
+        "type",
+        "title",
+        "updated_at",
+        "source_ids"
+      ],
+      "dependencies": [],
+      "decision": "不在首批 10 条内",
+      "validation": "未执行"
+    },
+    {
+      "legacy_path": "闪念空间/2026-09-02-动态判断：贤时便用，不贤便黜.md",
+      "legacy_id": "FLA-20260902-7034f80a",
+      "legacy_sha256": "e2968966ea39a7c0a74d23fa178f3da1d1d16834465768728889d5b4e21f5276",
+      "selected": false,
+      "action": "暂缓",
+      "copy_mode": "暂缓",
+      "target_type": "闪念",
+      "target_id": "FLA-20260902-001",
+      "target_path": "数据/记录/闪念/2026-09-02-001-动态判断：贤时便用，不贤便黜.md",
+      "status_mapping": "待处理 → 待处理",
+      "removed_fields": [
+        "type",
+        "title",
+        "updated_at",
+        "source_ids"
+      ],
+      "dependencies": [],
+      "decision": "不在首批 10 条内",
+      "validation": "未执行"
+    },
+    {
+      "legacy_path": "闪念空间/2026-09-04-分配是价值链权重的函数：先掂量自己在链上的位置，再做.md",
+      "legacy_id": "FLA-20260904-5630d842",
+      "legacy_sha256": "87ef91d7115cede827481b65df23f490fc850bf51799103ec2920bd6290efae5",
+      "selected": false,
+      "action": "暂缓",
+      "copy_mode": "暂缓",
+      "target_type": "闪念",
+      "target_id": "FLA-20260904-003",
+      "target_path": "数据/记录/闪念/2026-09-04-003-分配是价值链权重的函数：先掂量自己在链上的位置，再做.md",
+      "status_mapping": "待处理 → 待处理",
+      "removed_fields": [
+        "type",
+        "title",
+        "updated_at",
+        "source_ids",
+        "capture_session"
+      ],
+      "dependencies": [],
+      "decision": "不在首批 10 条内",
+      "validation": "未执行"
+    },
+    {
+      "legacy_path": "闪念空间/2026-09-04-迁移的本质：把方法依赖的人性默认，翻成显式机制.md",
+      "legacy_id": "FLA-20260904-fc96c6fc",
+      "legacy_sha256": "4ee70de55f373b724f273bb35a0c3a0aa1644fc3276637170f132d63f0721f6e",
+      "selected": false,
+      "action": "暂缓",
+      "copy_mode": "暂缓",
+      "target_type": "闪念",
+      "target_id": "FLA-20260904-002",
+      "target_path": "数据/记录/闪念/2026-09-04-002-迁移的本质：把方法依赖的人性默认，翻成显式机制.md",
+      "status_mapping": "待处理 → 待处理",
+      "removed_fields": [
+        "type",
+        "title",
+        "updated_at",
+        "source_ids",
+        "capture_session"
+      ],
+      "dependencies": [],
+      "decision": "不在首批 10 条内",
+      "validation": "未执行"
+    },
+    {
+      "legacy_path": "闪念空间/2026-09-13-10-月发布-Good-idea：终局、骨架与收口的那句问句.md",
+      "legacy_id": "FLA-20260913-ad008837",
+      "legacy_sha256": "5ad87ea8d793b258fbf9a0487e91f6b53655471e3bf4cb4f45641e1390c58a2c",
+      "selected": false,
+      "action": "暂缓",
+      "copy_mode": "暂缓",
+      "target_type": "闪念",
+      "target_id": "FLA-20260913-001",
+      "target_path": "数据/记录/闪念/2026-09-13-001-10 月发布 Good idea：终局、骨架与收口的那句问句.md",
+      "status_mapping": "待处理 → 待处理",
+      "removed_fields": [
+        "type",
+        "title",
+        "updated_at",
+        "source_ids",
+        "capture_session"
+      ],
+      "dependencies": [
+        {
+          "legacy_id": "SRC-aa3232f342ea",
+          "target_id": "SRC-20260913-001",
+          "target_type": "外部来源",
+          "selected_in_batch": false
+        }
+      ],
+      "decision": "不在首批 10 条内",
+      "validation": "未执行"
+    },
+    {
+      "legacy_path": "闪念空间/2026-09-16-文案工坊分享的借鉴与特色功能之问.md",
+      "legacy_id": "FLA-20260916-922b9ef7",
+      "legacy_sha256": "1a881f43cd4f7ba6de4920e50c19ef822722ee20a1e44e699668398c57daf6e3",
+      "selected": false,
+      "action": "暂缓",
+      "copy_mode": "暂缓",
+      "target_type": "闪念",
+      "target_id": "FLA-20260916-001",
+      "target_path": "数据/记录/闪念/2026-09-16-001-文案工坊分享的借鉴与特色功能之问.md",
+      "status_mapping": "待处理 → 待处理",
+      "removed_fields": [
+        "type",
+        "title",
+        "updated_at",
+        "source_ids",
+        "capture_session"
+      ],
+      "dependencies": [
+        {
+          "legacy_id": "SRC-c2efe21d65b9",
+          "target_id": "SRC-20260916-001",
+          "target_type": "外部来源",
+          "selected_in_batch": false
+        }
+      ],
+      "decision": "不在首批 10 条内",
+      "validation": "未执行"
+    },
+    {
+      "legacy_path": "闪念空间/2026-09-20-时间并不归自己所有：有所有权，没有使用权.md",
+      "legacy_id": "FLA-20260920-3ce54311",
+      "legacy_sha256": "fc8489cda1411789ad107084aff0fba73efa85cac190373bdea229d84d34f91e",
+      "selected": true,
+      "action": "迁入",
+      "copy_mode": "复制后结构转换",
+      "target_type": "闪念",
+      "target_id": "FLA-20260920-001",
+      "target_path": "数据/记录/闪念/2026-09-20-001-时间并不归自己所有：有所有权，没有使用权.md",
+      "status_mapping": "待处理 → 待处理",
+      "removed_fields": [
+        "type",
+        "title",
+        "updated_at",
+        "source_ids",
+        "capture_session"
+      ],
+      "dependencies": [],
+      "decision": "按已确认自动规则迁入",
+      "validation": "已通过",
+      "target_sha256": "e42938ddcaca159892521d364912f97aebd464c3f7ff971d29d1c279c35c0836"
+    },
+    {
+      "legacy_path": "闪念空间/发酵中/2026-08-12-打字其实并不是一个很自然的人机交互动作——打字更多是为了适应机器，而不是人的想法.md",
+      "legacy_id": "FLA-20260812-8d33bcb8",
+      "legacy_sha256": "686a5f8d244ae77f1a942f4f3917680fadb8057e132618282b907660fbd5d354",
+      "selected": true,
+      "action": "迁入",
+      "copy_mode": "复制后结构转换",
+      "target_type": "闪念",
+      "target_id": "FLA-20260812-001",
+      "target_path": "数据/记录/闪念/2026-08-12-001-打字其实并不是一个很自然的人机交互动作——打字更多是为了适应机器，而不是人的想法.md",
+      "status_mapping": "发酵中 → 发酵中",
+      "removed_fields": [
+        "type",
+        "title",
+        "updated_at",
+        "source_ids",
+        "discussion_log"
+      ],
+      "dependencies": [],
+      "decision": "按已确认自动规则迁入",
+      "validation": "已通过",
+      "target_sha256": "3b667b795324c7a8b06db7c00b588ce2abdab48ed416ea0f98d5fc7d9496c60e"
+    },
+    {
+      "legacy_path": "闪念空间/已处理/2026-08-09-主体性：找到自己想做的事，而不是为别人做事.md",
+      "legacy_id": "FLA-20260809-a5c6654c",
+      "legacy_sha256": "9c086049d20573a74ffd7faf35df6cc243787d0e724e81abce3c83f0754a2ee7",
+      "selected": true,
+      "action": "迁入",
+      "copy_mode": "复制后结构转换",
+      "target_type": "闪念",
+      "target_id": "FLA-20260809-003",
+      "target_path": "数据/记录/闪念/2026-08-09-003-主体性：找到自己想做的事，而不是为别人做事.md",
+      "status_mapping": "已处理 → 已形成认识",
+      "removed_fields": [
+        "type",
+        "title",
+        "updated_at",
+        "source_ids"
+      ],
+      "dependencies": [],
+      "decision": "按已确认自动规则迁入",
+      "validation": "已通过",
+      "target_sha256": "dafefa472515501abc0cdeb940dce9160de6ae75790d5e10f81b8ec493763f34"
+    },
+    {
+      "legacy_path": "闪念空间/已处理/2026-08-09-以控制论为底座，研究如何让-AI-生成超越平庸.md",
+      "legacy_id": "FLA-20260809-01ec2b01",
+      "legacy_sha256": "787c5bbc4abb87d8158e9611e466c58e8e53fe49ae046ef793357cfa735d32af",
+      "selected": true,
+      "action": "迁入",
+      "copy_mode": "复制后结构转换",
+      "target_type": "闪念",
+      "target_id": "FLA-20260809-001",
+      "target_path": "数据/记录/闪念/2026-08-09-001-以控制论为底座，研究如何让 AI 生成超越平庸.md",
+      "status_mapping": "已处理 → 已形成认识",
+      "removed_fields": [
+        "type",
+        "title",
+        "updated_at",
+        "source_ids"
+      ],
+      "dependencies": [
+        {
+          "legacy_id": "SRC-a288ab6df42c",
+          "target_id": "SRC-20260809-001",
+          "target_type": "外部来源",
+          "selected_in_batch": true
+        },
+        {
+          "legacy_id": "SRC-30c7bad12c30",
+          "target_id": "SRC-20260809-002",
+          "target_type": "外部来源",
+          "selected_in_batch": true
+        },
+        {
+          "legacy_id": "SRC-64e7413259cb",
+          "target_id": "SRC-20260809-003",
+          "target_type": "外部来源",
+          "selected_in_batch": true
+        },
+        {
+          "legacy_id": "SRC-ddf54b8b78eb",
+          "target_id": "SRC-20260811-001",
+          "target_type": "外部来源",
+          "selected_in_batch": true
+        }
+      ],
+      "decision": "按已确认自动规则迁入",
+      "validation": "已通过",
+      "target_sha256": "ce1b78f7ff2bbfa4e84813aaea433dd97702e6c111246aa19da4692c20007397"
+    },
+    {
+      "legacy_path": "闪念空间/已处理/2026-08-09-闪念卡片记录的不是孤立要点，而是一次认知激活事件.md",
+      "legacy_id": "FLA-20260809-20cb7088",
+      "legacy_sha256": "f7d0d87539776775728b27e5a3ec9fb702ed599d1f666b3f37eb43db07d1649f",
+      "selected": true,
+      "action": "迁入",
+      "copy_mode": "复制后结构转换",
+      "target_type": "闪念",
+      "target_id": "FLA-20260809-002",
+      "target_path": "数据/记录/闪念/2026-08-09-002-闪念卡片记录的不是孤立要点，而是一次认知激活事件.md",
+      "status_mapping": "已处理 → 已形成认识",
+      "removed_fields": [
+        "type",
+        "title",
+        "updated_at",
+        "source_ids"
+      ],
+      "dependencies": [],
+      "decision": "按已确认自动规则迁入",
+      "validation": "已通过",
+      "target_sha256": "01413bda3089b23f14d5de885c9dbdba923904805a360ebd870fd76dd59fae4e"
+    },
+    {
+      "legacy_path": "闪念空间/已处理/2026-08-10-《人生脚本》：主体性是产物，人生脚本是观察维度.md",
+      "legacy_id": "FLA-20260812-c2d65525",
+      "legacy_sha256": "dd8b9a3df15dba2037d5f845724c145bea1504f0cbc341421d9bd78ff6cc9714",
+      "selected": true,
+      "action": "迁入",
+      "copy_mode": "复制后结构转换",
+      "target_type": "闪念",
+      "target_id": "FLA-20260810-002",
+      "target_path": "数据/记录/闪念/2026-08-10-002-《人生脚本》：主体性是产物，人生脚本是观察维度.md",
+      "status_mapping": "已处理 → 已形成认识",
+      "removed_fields": [
+        "type",
+        "title",
+        "updated_at",
+        "source_ids"
+      ],
+      "dependencies": [],
+      "decision": "按已确认自动规则迁入",
+      "validation": "已通过",
+      "target_sha256": "237131c1ef762907371fc4394e2ccd8691e29528bb7cfdad35f528d05845c1fe"
+    },
+    {
+      "legacy_path": "闪念空间/已处理/2026-08-10-母题级课题：AI图像-摄影与视觉叙事的-skill-化.md",
+      "legacy_id": "FLA-20260810-b4aaff57",
+      "legacy_sha256": "ad45efe06323b8b421846f073e23810c5c4ef52b7e5f26e542d10dafc2fed110",
+      "selected": true,
+      "action": "迁入",
+      "copy_mode": "复制后结构转换",
+      "target_type": "闪念",
+      "target_id": "FLA-20260810-001",
+      "target_path": "数据/记录/闪念/2026-08-10-001-母题级课题：AI图像／摄影与视觉叙事的 skill 化.md",
+      "status_mapping": "已处理 → 已形成认识",
+      "removed_fields": [
+        "type",
+        "title",
+        "updated_at",
+        "source_ids"
+      ],
+      "dependencies": [],
+      "decision": "按已确认自动规则迁入",
+      "validation": "已通过",
+      "target_sha256": "671c3ea966d2b3a3d035641d66bcfb29228e2a840860dea8a6679bbf1be5f96b"
+    },
+    {
+      "legacy_path": "闪念空间/已处理/2026-08-11-普通永久卡片标准是最小任务调用循环的前置条件.md",
+      "legacy_id": "FLA-20260811-a2060081",
+      "legacy_sha256": "dba731d499e60188547680b882968b4cd8cabc038e6216dcb9a24857925cff3b",
+      "selected": true,
+      "action": "迁入",
+      "copy_mode": "复制后结构转换",
+      "target_type": "闪念",
+      "target_id": "FLA-20260811-001",
+      "target_path": "数据/记录/闪念/2026-08-11-001-普通永久卡片标准是最小任务调用循环的前置条件.md",
+      "status_mapping": "已处理 → 已形成认识",
+      "removed_fields": [
+        "type",
+        "title",
+        "updated_at",
+        "source_ids"
+      ],
+      "dependencies": [],
+      "decision": "按已确认自动规则迁入",
+      "validation": "已通过",
+      "target_sha256": "dea7730467bdbeed6188acab06b67a7c45d984b47c975b4b52865f0ce7568294"
+    },
+    {
+      "legacy_path": "闪念空间/已处理/2026-08-13-①企业AI转型四阶段（工具散点期-试点治理期-流程重构期-AI原生期）可联系昨天.md",
+      "legacy_id": "FLA-20260813-fdd1b6b2",
+      "legacy_sha256": "e2df7939b5d709e06bcd643de04f327a3dc194af03b6352d7ca85eebc79b90eb",
+      "selected": true,
+      "action": "迁入",
+      "copy_mode": "复制后结构转换",
+      "target_type": "闪念",
+      "target_id": "FLA-20260813-001",
+      "target_path": "数据/记录/闪念/2026-08-13-001-①企业AI转型四阶段（工具散点期／试点治理期／流程重构期／AI原生期）可联系昨天.md",
+      "status_mapping": "已处理 → 已形成认识",
+      "removed_fields": [
+        "type",
+        "title",
+        "updated_at",
+        "source_ids"
+      ],
+      "dependencies": [
+        {
+          "legacy_id": "SRC-aadc46966f91",
+          "target_id": "SRC-20260813-001",
+          "target_type": "外部来源",
+          "selected_in_batch": true
+        },
+        {
+          "legacy_id": "SRC-3c062d4440df",
+          "target_id": "SRC-20260813-002",
+          "target_type": "外部来源",
+          "selected_in_batch": true
+        },
+        {
+          "legacy_id": "SRC-2f9287e240b2",
+          "target_id": "SRC-20260813-003",
+          "target_type": "外部来源",
+          "selected_in_batch": true
+        }
+      ],
+      "decision": "按已确认自动规则迁入",
+      "validation": "已通过",
+      "target_sha256": "723ec62e82aa3ad582ba0f3b0f24030bfc8935c76d46959cf030e9451d562c4a"
+    },
+    {
+      "legacy_path": "闪念空间/已处理/2026-08-14-目标规划方法论：目标层级金字塔、目标系统理论（等效性-多效性）与目标特征.md",
+      "legacy_id": "FLA-20260814-f19390c3",
+      "legacy_sha256": "36535ae2b35aff096ecb3d3b4a65541a1970a07464ef519b267b225304812b95",
+      "selected": false,
+      "action": "暂缓",
+      "copy_mode": "暂缓",
+      "target_type": "闪念",
+      "target_id": "FLA-20260814-001",
+      "target_path": "数据/记录/闪念/2026-08-14-001-目标规划方法论：目标层级金字塔、目标系统理论（等效性／多效性）与目标特征.md",
+      "status_mapping": "已处理 → 待裁决",
+      "removed_fields": [
+        "type",
+        "title",
+        "updated_at",
+        "source_ids"
+      ],
+      "dependencies": [],
+      "decision": "状态需松海裁决",
+      "validation": "未执行"
+    },
+    {
+      "legacy_path": "闪念空间/已处理/2026-08-18-指挥-AI-是新的能力瓶颈，且需要训练.md",
+      "legacy_id": "FLA-20260818-5de3ffc0",
+      "legacy_sha256": "452e3a11de3bd51357105bcf61361f0262732dcb25d799a5176ea5a41c51bb8a",
+      "selected": false,
+      "action": "暂缓",
+      "copy_mode": "暂缓",
+      "target_type": "闪念",
+      "target_id": "FLA-20260818-003",
+      "target_path": "数据/记录/闪念/2026-08-18-003-指挥 AI 是新的能力瓶颈，且需要训练.md",
+      "status_mapping": "已处理 → 已形成认识",
+      "removed_fields": [
+        "type",
+        "title",
+        "updated_at",
+        "source_ids",
+        "capture_session"
+      ],
+      "dependencies": [],
+      "decision": "不在首批 10 条内",
+      "validation": "未执行"
+    },
+    {
+      "legacy_path": "闪念空间/已处理/2026-08-18-练剑人剑合一：学-AI-的正确姿势.md",
+      "legacy_id": "FLA-20260818-047d4537",
+      "legacy_sha256": "68f8b85c702b7b48ceef9a83a01be46c4c3a8c169f82a6195a91bcb11e5c9b1e",
+      "selected": false,
+      "action": "暂缓",
+      "copy_mode": "暂缓",
+      "target_type": "闪念",
+      "target_id": "FLA-20260818-004",
+      "target_path": "数据/记录/闪念/2026-08-18-004-练剑人剑合一：学 AI 的正确姿势.md",
+      "status_mapping": "已处理 → 已形成认识",
+      "removed_fields": [
+        "type",
+        "title",
+        "updated_at",
+        "source_ids",
+        "capture_session"
+      ],
+      "dependencies": [],
+      "decision": "不在首批 10 条内",
+      "validation": "未执行"
+    },
+    {
+      "legacy_path": "闪念空间/已处理/2026-08-20-AI-处理琐事的价值杠杆，取决于是谁的琐事.md",
+      "legacy_id": "FLA-20260820-7592ac19",
+      "legacy_sha256": "ff4b020a75b13ab076a7e42f5608b3d0cadd6bc8b332203d3f2972871cc990f3",
+      "selected": false,
+      "action": "暂缓",
+      "copy_mode": "暂缓",
+      "target_type": "闪念",
+      "target_id": "FLA-20260820-001",
+      "target_path": "数据/记录/闪念/2026-08-20-001-AI 处理琐事的价值杠杆，取决于是谁的琐事.md",
+      "status_mapping": "已处理 → 已形成认识",
+      "removed_fields": [
+        "type",
+        "title",
+        "updated_at",
+        "source_ids",
+        "capture_session"
+      ],
+      "dependencies": [
+        {
+          "legacy_id": "SRC-42ab50bef0c4",
+          "target_id": "SRC-20260820-001",
+          "target_type": "外部来源",
+          "selected_in_batch": false
+        }
+      ],
+      "decision": "不在首批 10 条内",
+      "validation": "未执行"
+    },
+    {
+      "legacy_path": "闪念空间/已处理/2026-08-20-Hermes-回复风格机制：桌面端-CLI-与飞书（gateway）是两套独立管.md",
+      "legacy_id": "FLA-20260820-43624dca",
+      "legacy_sha256": "c28c74148d28c0738438eb97be0256e1b4a362c05e02e86915b3decbd60fd176",
+      "selected": false,
+      "action": "暂缓",
+      "copy_mode": "暂缓",
+      "target_type": "闪念",
+      "target_id": "FLA-20260820-002",
+      "target_path": "数据/记录/闪念/2026-08-20-002-Hermes 回复风格机制：桌面端／CLI 与飞书（gateway）是两套独立管.md",
+      "status_mapping": "已处理 → 待裁决",
+      "removed_fields": [
+        "type",
+        "title",
+        "updated_at",
+        "source_ids"
+      ],
+      "dependencies": [],
+      "decision": "状态需松海裁决",
+      "validation": "未执行"
+    },
+    {
+      "legacy_path": "闪念空间/已处理/2026-08-21-AI-的本质：智力脱离个体，成为可反馈复利的生产要素.md",
+      "legacy_id": "FLA-20260821-35c471f6",
+      "legacy_sha256": "a45cb1c48b70a07a65cc1dc8086004f2430b6f7cece247a9b6bac6378cb04c88",
+      "selected": false,
+      "action": "暂缓",
+      "copy_mode": "暂缓",
+      "target_type": "闪念",
+      "target_id": "FLA-20260821-004",
+      "target_path": "数据/记录/闪念/2026-08-21-004-AI 的本质：智力脱离个体，成为可反馈复利的生产要素.md",
+      "status_mapping": "已处理 → 已形成认识",
+      "removed_fields": [
+        "type",
+        "title",
+        "updated_at",
+        "source_ids",
+        "capture_session"
+      ],
+      "dependencies": [],
+      "decision": "不在首批 10 条内",
+      "validation": "未执行"
+    },
+    {
+      "legacy_path": "闪念空间/已处理/2026-08-21-技术归因辨析：是技术本身不行，还是缺乏价值网络？.md",
+      "legacy_id": "FLA-20260821-e66a8e93",
+      "legacy_sha256": "45d0a05fb3142e166efb69392ddbb76fae104bdb263115b7be16bc22ea198c64",
+      "selected": false,
+      "action": "暂缓",
+      "copy_mode": "暂缓",
+      "target_type": "闪念",
+      "target_id": "FLA-20260821-001",
+      "target_path": "数据/记录/闪念/2026-08-21-001-技术归因辨析：是技术本身不行，还是缺乏价值网络？.md",
+      "status_mapping": "已处理 → 已形成认识",
+      "removed_fields": [
+        "type",
+        "title",
+        "updated_at",
+        "source_ids",
+        "capture_session"
+      ],
+      "dependencies": [],
+      "decision": "不在首批 10 条内",
+      "validation": "未执行"
+    },
+    {
+      "legacy_path": "闪念空间/已处理/2026-08-21-持续生成的两层结构：稳定层是-AI-吞不掉的高地.md",
+      "legacy_id": "FLA-20260821-1dba5df4",
+      "legacy_sha256": "e5e79c1987d8fefb66dbcd8d9e2f6db8cb0f00e0b22d93d26be1f19001d274dd",
+      "selected": false,
+      "action": "暂缓",
+      "copy_mode": "暂缓",
+      "target_type": "闪念",
+      "target_id": "FLA-20260821-002",
+      "target_path": "数据/记录/闪念/2026-08-21-002-持续生成的两层结构：稳定层是 AI 吞不掉的高地.md",
+      "status_mapping": "已处理 → 已形成认识",
+      "removed_fields": [
+        "type",
+        "title",
+        "updated_at",
+        "source_ids",
+        "capture_session"
+      ],
+      "dependencies": [],
+      "decision": "不在首批 10 条内",
+      "validation": "未执行"
+    },
+    {
+      "legacy_path": "闪念空间/已处理/2026-08-21-未来稀缺的不是智能，是围绕智能的六种能力.md",
+      "legacy_id": "FLA-20260821-84635d62",
+      "legacy_sha256": "d0c4bf8abbe885c2207d77584ecb9ded5679f7f63a2c428385f98745d2ff41d9",
+      "selected": false,
+      "action": "暂缓",
+      "copy_mode": "暂缓",
+      "target_type": "闪念",
+      "target_id": "FLA-20260821-003",
+      "target_path": "数据/记录/闪念/2026-08-21-003-未来稀缺的不是智能，是围绕智能的六种能力.md",
+      "status_mapping": "已处理 → 已形成认识",
+      "removed_fields": [
+        "type",
+        "title",
+        "updated_at",
+        "source_ids",
+        "capture_session"
+      ],
+      "dependencies": [],
+      "decision": "不在首批 10 条内",
+      "validation": "未执行"
+    },
+    {
+      "legacy_path": "闪念空间/已处理/2026-08-22-知识库+AI-的形态：以终为始，打磨成研究域并输出.md",
+      "legacy_id": "FLA-20260822-bbeb48b0",
+      "legacy_sha256": "860819818c5424a18dcc2e38759db9f8a9c65bb9fc6e0004ae58acb4041735a0",
+      "selected": false,
+      "action": "暂缓",
+      "copy_mode": "暂缓",
+      "target_type": "闪念",
+      "target_id": "FLA-20260822-001",
+      "target_path": "数据/记录/闪念/2026-08-22-001-知识库+AI 的形态：以终为始，打磨成研究域并输出.md",
+      "status_mapping": "已处理 → 已形成认识",
+      "removed_fields": [
+        "type",
+        "title",
+        "updated_at",
+        "source_ids"
+      ],
+      "dependencies": [],
+      "decision": "不在首批 10 条内",
+      "validation": "未执行"
+    },
+    {
+      "legacy_path": "闪念空间/已处理/2026-08-23-AI-图像创作：从自娱自乐到分享出去.md",
+      "legacy_id": "FLA-20260823-51cdd36c",
+      "legacy_sha256": "3a031c16c4e8efa25fb53ca93656d807b6a07fc9b167f567a3a8db597d8fb92b",
+      "selected": false,
+      "action": "暂缓",
+      "copy_mode": "暂缓",
+      "target_type": "闪念",
+      "target_id": "FLA-20260823-001",
+      "target_path": "数据/记录/闪念/2026-08-23-001-AI 图像创作：从自娱自乐到分享出去.md",
+      "status_mapping": "已处理 → 待裁决",
+      "removed_fields": [
+        "type",
+        "title",
+        "updated_at",
+        "source_ids",
+        "capture_session"
+      ],
+      "dependencies": [],
+      "decision": "状态需松海裁决",
+      "validation": "未执行"
+    },
+    {
+      "legacy_path": "闪念空间/已处理/2026-08-27-单线程深潜才有能量感.md",
+      "legacy_id": "FLA-20260827-9f1e8e20",
+      "legacy_sha256": "6f867f76941812746105a351474f8bd8620990d0f20ea7fb7a1970fa40aa9aac",
+      "selected": false,
+      "action": "暂缓",
+      "copy_mode": "暂缓",
+      "target_type": "闪念",
+      "target_id": "FLA-20260827-001",
+      "target_path": "数据/记录/闪念/2026-08-27-001-单线程深潜才有能量感.md",
+      "status_mapping": "已处理 → 已形成认识",
+      "removed_fields": [
+        "type",
+        "title",
+        "updated_at",
+        "source_ids"
+      ],
+      "dependencies": [],
+      "decision": "不在首批 10 条内",
+      "validation": "未执行"
+    },
+    {
+      "legacy_path": "闪念空间/已处理/2026-09-04-AI-输出同质化：讨好所有人即无辨识度风格.md",
+      "legacy_id": "FLA-20260904-9e0af55f",
+      "legacy_sha256": "d908780a9cf22dad0b59b8686f4367e7e2e613891fe6097a524235eca74644a2",
+      "selected": false,
+      "action": "暂缓",
+      "copy_mode": "暂缓",
+      "target_type": "闪念",
+      "target_id": "FLA-20260904-001",
+      "target_path": "数据/记录/闪念/2026-09-04-001-AI 输出同质化：讨好所有人即无辨识度风格.md",
+      "status_mapping": "已处理 → 已形成认识",
+      "removed_fields": [
+        "type",
+        "title",
+        "updated_at",
+        "source_ids",
+        "capture_session"
+      ],
+      "dependencies": [
+        {
+          "legacy_id": "SRC-f144a82ec34e",
+          "target_id": "SRC-20260904-001",
+          "target_type": "外部来源",
+          "selected_in_batch": false
+        },
+        {
+          "legacy_id": "SRC-f0928844c584",
+          "target_id": "SRC-20260904-002",
+          "target_type": "外部来源",
+          "selected_in_batch": false
+        },
+        {
+          "legacy_id": "SRC-774eaa267132",
+          "target_id": "SRC-20260904-003",
+          "target_type": "外部来源",
+          "selected_in_batch": false
+        }
+      ],
+      "decision": "不在首批 10 条内",
+      "validation": "未执行"
+    },
+    {
+      "legacy_path": "闪念空间/已放弃/2026-08-18-产品老炮式问题定义与主体性同构：追问原因归属权而非执行.md",
+      "legacy_id": "FLA-20260818-392c482c",
+      "legacy_sha256": "2f10292c982264a1219922c7f78592f7c4a1d09a6a1de8eed8fd2b4bb524af86",
+      "selected": false,
+      "action": "暂缓",
+      "copy_mode": "暂缓",
+      "target_type": "闪念",
+      "target_id": "FLA-20260818-002",
+      "target_path": "数据/记录/闪念/2026-08-18-002-产品老炮式问题定义与主体性同构：追问原因归属权而非执行.md",
+      "status_mapping": "已放弃 → 已放弃",
+      "removed_fields": [
+        "type",
+        "title",
+        "updated_at",
+        "source_ids"
+      ],
+      "dependencies": [],
+      "decision": "不在首批 10 条内",
+      "validation": "未执行"
+    },
+    {
+      "legacy_path": "闪念空间/已放弃/2026-08-18-人生脚本解释为何，主体性自有参照系.md",
+      "legacy_id": "FLA-20260818-7b66e90b",
+      "legacy_sha256": "e9bd4fef471d83e804d2b880d7d44ccc2e189f98f33369b397481d28971ae2d8",
+      "selected": true,
+      "action": "迁入",
+      "copy_mode": "复制后结构转换",
+      "target_type": "闪念",
+      "target_id": "FLA-20260818-001",
+      "target_path": "数据/记录/闪念/2026-08-18-001-人生脚本解释为何，主体性自有参照系.md",
+      "status_mapping": "已放弃 → 已放弃",
+      "removed_fields": [
+        "type",
+        "title",
+        "updated_at",
+        "source_ids",
+        "capture_session"
+      ],
+      "dependencies": [],
+      "decision": "按已确认自动规则迁入",
+      "validation": "已通过",
+      "target_sha256": "bbbf7954d26cc45509e7bfc563d903d742711e6b4edada1f56f56cf31b6d2fc2"
+    },
+    {
+      "legacy_path": "永久空间/永久卡片/2026-08-11-人与-AI-协作的本质：把-AI-当作共同创作对象，而非执行工具.md",
+      "legacy_id": "PER-20260811-b8c822c7",
+      "legacy_sha256": "fcde173dec62b7feb4ed696f462229f5500cb299a7a5e579f2a18297875e91ed",
+      "selected": true,
+      "action": "迁入",
+      "copy_mode": "复制后结构转换",
+      "target_type": "永久认识",
+      "target_id": "INS-20260811-002",
+      "target_path": "数据/记录/永久认识/2026-08-11-002-人与 AI 协作的本质：把 AI 当作共同创作对象，而非执行工具.md",
+      "status_mapping": "有效 → 有效",
+      "removed_fields": [
+        "type",
+        "title",
+        "updated_at",
+        "source_ids",
+        "derived_from",
+        "authoring_mode",
+        "formation_draft_sha256"
+      ],
+      "dependencies": [
+        {
+          "legacy_id": "SRC-64e7413259cb",
+          "target_id": "SRC-20260809-003",
+          "target_type": "外部来源",
+          "selected_in_batch": true
+        },
+        {
+          "legacy_id": "SRC-ddf54b8b78eb",
+          "target_id": "SRC-20260811-001",
+          "target_type": "外部来源",
+          "selected_in_batch": true
+        },
+        {
+          "legacy_id": "FLA-20260809-01ec2b01",
+          "target_id": "FLA-20260809-001",
+          "target_type": "闪念",
+          "selected_in_batch": true
+        }
+      ],
+      "decision": "按已确认自动规则迁入",
+      "validation": "已通过",
+      "target_sha256": "c432d19f5c5b122c99cd136a9531e85ae677594c0fcb8976ff1bd642472ec4a6"
+    },
+    {
+      "legacy_path": "永久空间/永久卡片/2026-08-11-以-AI-生图为实践抓手理解控制论与科学方法论，是提升驾驭-AI-素养的研究路径之一.md",
+      "legacy_id": "PER-20260811-abf32730",
+      "legacy_sha256": "0c76f5f5f66ced96e6b1373927b70aff70feeb249849867e575a6dd5d32f7bdb",
+      "selected": true,
+      "action": "迁入",
+      "copy_mode": "复制后结构转换",
+      "target_type": "永久认识",
+      "target_id": "INS-20260811-001",
+      "target_path": "数据/记录/永久认识/2026-08-11-001-以 AI 生图为实践抓手理解控制论与科学方法论，是提升驾驭 AI 素养的研究路径之一.md",
+      "status_mapping": "有效 → 有效",
+      "removed_fields": [
+        "type",
+        "title",
+        "updated_at",
+        "source_ids",
+        "derived_from",
+        "authoring_mode",
+        "formation_draft_sha256"
+      ],
+      "dependencies": [
+        {
+          "legacy_id": "SRC-64e7413259cb",
+          "target_id": "SRC-20260809-003",
+          "target_type": "外部来源",
+          "selected_in_batch": true
+        },
+        {
+          "legacy_id": "SRC-a288ab6df42c",
+          "target_id": "SRC-20260809-001",
+          "target_type": "外部来源",
+          "selected_in_batch": true
+        },
+        {
+          "legacy_id": "SRC-30c7bad12c30",
+          "target_id": "SRC-20260809-002",
+          "target_type": "外部来源",
+          "selected_in_batch": true
+        },
+        {
+          "legacy_id": "SRC-ddf54b8b78eb",
+          "target_id": "SRC-20260811-001",
+          "target_type": "外部来源",
+          "selected_in_batch": true
+        },
+        {
+          "legacy_id": "FLA-20260809-01ec2b01",
+          "target_id": "FLA-20260809-001",
+          "target_type": "闪念",
+          "selected_in_batch": true
+        }
+      ],
+      "decision": "按已确认自动规则迁入",
+      "validation": "已通过",
+      "target_sha256": "9122e5f8b2717a016f7bbba545eef3548184a122bac3f268bfcfaa4023d2a5f9"
+    },
+    {
+      "legacy_path": "永久空间/永久卡片/2026-08-12-普通永久卡片标准是最小任务调用循环的前置条件.md",
+      "legacy_id": "PER-20260812-955bd75d",
+      "legacy_sha256": "cbb9dc97cb80d92d76f074f9faaa4da7245ed3282f47a2ddbae04aae39df881a",
+      "selected": true,
+      "action": "迁入",
+      "copy_mode": "复制后结构转换",
+      "target_type": "永久认识",
+      "target_id": "INS-20260812-002",
+      "target_path": "数据/记录/永久认识/2026-08-12-002-普通永久卡片标准是最小任务调用循环的前置条件.md",
+      "status_mapping": "有效 → 有效",
+      "removed_fields": [
+        "type",
+        "title",
+        "updated_at",
+        "source_ids",
+        "derived_from",
+        "authoring_mode",
+        "formation_draft_sha256"
+      ],
+      "dependencies": [
+        {
+          "legacy_id": "FLA-20260811-a2060081",
+          "target_id": "FLA-20260811-001",
+          "target_type": "闪念",
+          "selected_in_batch": true
+        }
+      ],
+      "decision": "按已确认自动规则迁入",
+      "validation": "已通过",
+      "target_sha256": "ac386551e509fb59aac36acd9975c112f8a93fcdc9e8d8ee420d6ffa4003c5dc"
+    },
+    {
+      "legacy_path": "永久空间/永久卡片/2026-08-12-闪念卡片记录的不是孤立要点，而是一次认知激活事件.md",
+      "legacy_id": "PER-20260812-4b9ce0bd",
+      "legacy_sha256": "5356cbe0b12e680fd6fafdbd8bdaf99eb287f2c787c6221fda800ced304461ca",
+      "selected": true,
+      "action": "迁入",
+      "copy_mode": "复制后结构转换",
+      "target_type": "永久认识",
+      "target_id": "INS-20260812-001",
+      "target_path": "数据/记录/永久认识/2026-08-12-001-闪念卡片记录的不是孤立要点，而是一次认知激活事件.md",
+      "status_mapping": "有效 → 有效",
+      "removed_fields": [
+        "type",
+        "title",
+        "updated_at",
+        "source_ids",
+        "derived_from",
+        "authoring_mode",
+        "formation_draft_sha256"
+      ],
+      "dependencies": [
+        {
+          "legacy_id": "FLA-20260809-20cb7088",
+          "target_id": "FLA-20260809-002",
+          "target_type": "闪念",
+          "selected_in_batch": true
+        }
+      ],
+      "decision": "按已确认自动规则迁入",
+      "validation": "已通过",
+      "target_sha256": "6877ef0ffa399b713a188827421133d70c00bec83ec2223086e4c21f4478a14c"
+    },
+    {
+      "legacy_path": "永久空间/永久卡片/2026-08-13-主体性：行为原因的自我归属.md",
+      "legacy_id": "PER-20260813-96574216",
+      "legacy_sha256": "b80c9757f9510dcfebbca2ccefc6d25719225c561cb0bbb6930cd25e9f260e06",
+      "selected": true,
+      "action": "迁入",
+      "copy_mode": "复制后结构转换",
+      "target_type": "永久认识",
+      "target_id": "INS-20260813-004",
+      "target_path": "数据/记录/永久认识/2026-08-13-004-主体性：行为原因的自我归属.md",
+      "status_mapping": "已修订 → 有效",
+      "removed_fields": [
+        "type",
+        "title",
+        "updated_at",
+        "source_ids",
+        "derived_from",
+        "authoring_mode",
+        "formation_draft_sha256"
+      ],
+      "dependencies": [
+        {
+          "legacy_id": "FLA-20260809-a5c6654c",
+          "target_id": "FLA-20260809-003",
+          "target_type": "闪念",
+          "selected_in_batch": true
+        },
+        {
+          "legacy_id": "FLA-20260812-c2d65525",
+          "target_id": "FLA-20260810-002",
+          "target_type": "闪念",
+          "selected_in_batch": true
+        }
+      ],
+      "decision": "按已确认自动规则迁入",
+      "validation": "已通过",
+      "target_sha256": "42de6fc2b91804933924e8133866acd78b1ba07df24371a9fb1f5aa90eeec7ac"
+    },
+    {
+      "legacy_path": "永久空间/永久卡片/2026-08-13-企业AI转型四阶段：理解AI入企的分析积木.md",
+      "legacy_id": "PER-20260813-4561abd4",
+      "legacy_sha256": "ace7c266c8518b68edd2a0c2bda30967420f6528cea4a7e61aa4aff48aaac31e",
+      "selected": true,
+      "action": "迁入",
+      "copy_mode": "复制后结构转换",
+      "target_type": "永久认识",
+      "target_id": "INS-20260813-003",
+      "target_path": "数据/记录/永久认识/2026-08-13-003-企业AI转型四阶段：理解AI入企的分析积木.md",
+      "status_mapping": "有效 → 有效",
+      "removed_fields": [
+        "type",
+        "title",
+        "updated_at",
+        "source_ids",
+        "derived_from",
+        "authoring_mode",
+        "formation_draft_sha256"
+      ],
+      "dependencies": [
+        {
+          "legacy_id": "SRC-aadc46966f91",
+          "target_id": "SRC-20260813-001",
+          "target_type": "外部来源",
+          "selected_in_batch": true
+        },
+        {
+          "legacy_id": "SRC-1da957dab3d2",
+          "target_id": "SRC-20260812-001",
+          "target_type": "外部来源",
+          "selected_in_batch": true
+        },
+        {
+          "legacy_id": "FLA-20260813-fdd1b6b2",
+          "target_id": "FLA-20260813-001",
+          "target_type": "闪念",
+          "selected_in_batch": true
+        }
+      ],
+      "decision": "按已确认自动规则迁入",
+      "validation": "已通过",
+      "target_sha256": "a6465764d44bb029f576f90828fa9df4c83dd22f477614bdf8e86111fc14df11"
+    },
+    {
+      "legacy_path": "永久空间/永久卡片/2026-08-13-判断力不靠熬年头，靠主动催化.md",
+      "legacy_id": "PER-20260813-2865f96c",
+      "legacy_sha256": "049ca5c28dd5b9d82ad2a58a375cd776682a7058851d90163bfc6de97e9878f8",
+      "selected": true,
+      "action": "迁入",
+      "copy_mode": "复制后结构转换",
+      "target_type": "永久认识",
+      "target_id": "INS-20260813-001",
+      "target_path": "数据/记录/永久认识/2026-08-13-001-判断力不靠熬年头，靠主动催化.md",
+      "status_mapping": "已修订 → 有效",
+      "removed_fields": [
+        "type",
+        "title",
+        "updated_at",
+        "source_ids",
+        "derived_from",
+        "authoring_mode",
+        "formation_draft_sha256"
+      ],
+      "dependencies": [
+        {
+          "legacy_id": "SRC-aadc46966f91",
+          "target_id": "SRC-20260813-001",
+          "target_type": "外部来源",
+          "selected_in_batch": true
+        },
+        {
+          "legacy_id": "SRC-3c062d4440df",
+          "target_id": "SRC-20260813-002",
+          "target_type": "外部来源",
+          "selected_in_batch": true
+        },
+        {
+          "legacy_id": "FLA-20260813-fdd1b6b2",
+          "target_id": "FLA-20260813-001",
+          "target_type": "闪念",
+          "selected_in_batch": true
+        }
+      ],
+      "decision": "按已确认自动规则迁入",
+      "validation": "已通过",
+      "target_sha256": "0fbcd2fd402db72a77e29570725c6624aadf1c4192efbe26eec6609214be5f78"
+    },
+    {
+      "legacy_path": "永久空间/永久卡片/2026-08-13-职业规划已失效：行业选择是长出来的.md",
+      "legacy_id": "PER-20260813-2690bcf1",
+      "legacy_sha256": "57b7dbea7e616b523070b0e841df0de1e40ff8dda7509436f73f6e1babaf6b43",
+      "selected": true,
+      "action": "迁入",
+      "copy_mode": "复制后结构转换",
+      "target_type": "永久认识",
+      "target_id": "INS-20260813-002",
+      "target_path": "数据/记录/永久认识/2026-08-13-002-职业规划已失效：行业选择是长出来的.md",
+      "status_mapping": "已修订 → 有效",
+      "removed_fields": [
+        "type",
+        "title",
+        "updated_at",
+        "source_ids",
+        "derived_from",
+        "authoring_mode",
+        "formation_draft_sha256"
+      ],
+      "dependencies": [
+        {
+          "legacy_id": "SRC-2f9287e240b2",
+          "target_id": "SRC-20260813-003",
+          "target_type": "外部来源",
+          "selected_in_batch": true
+        },
+        {
+          "legacy_id": "FLA-20260813-fdd1b6b2",
+          "target_id": "FLA-20260813-001",
+          "target_type": "闪念",
+          "selected_in_batch": true
+        }
+      ],
+      "decision": "按已确认自动规则迁入",
+      "validation": "已通过",
+      "target_sha256": "7597ec9a8328e255e72951796938cd1ffa728af425367b0f535cb0d7f039c23d"
+    },
+    {
+      "legacy_path": "永久空间/永久卡片/2026-08-16-AI-产业价值流架构：八层一条链，治理横贯.md",
+      "legacy_id": "PER-20260816-3a6a8d49",
+      "legacy_sha256": "617a7a2abbbe52e1c8132cf8b0c34e5537585c61ac018da5dd911f81b88f0b12",
+      "selected": true,
+      "action": "迁入",
+      "copy_mode": "复制后结构转换",
+      "target_type": "永久认识",
+      "target_id": "INS-20260816-001",
+      "target_path": "数据/记录/永久认识/2026-08-16-001-AI 产业价值流架构：八层一条链，治理横贯.md",
+      "status_mapping": "有效 → 有效",
+      "removed_fields": [
+        "type",
+        "title",
+        "updated_at",
+        "source_ids",
+        "derived_from",
+        "authoring_mode",
+        "formation_draft_sha256"
+      ],
+      "dependencies": [
+        {
+          "legacy_id": "SRC-5a4ddc625cf8",
+          "target_id": "SRC-20260816-001",
+          "target_type": "外部来源",
+          "selected_in_batch": true
+        },
+        {
+          "legacy_id": "SRC-2aa83596324a",
+          "target_id": "SRC-20260816-002",
+          "target_type": "外部来源",
+          "selected_in_batch": true
+        }
+      ],
+      "decision": "按已确认自动规则迁入",
+      "validation": "已通过",
+      "target_sha256": "19309fad3678057bb9cce222cb604597723c6769aaa6fa62c66d8c3d460558c4"
+    },
+    {
+      "legacy_path": "永久空间/永久卡片/2026-08-20-AI-的价值杠杆取决于处理的是谁的琐事.md",
+      "legacy_id": "PER-20260820-3009cdcf",
+      "legacy_sha256": "df54f762ba6c78db26b76919081d8965893925d11364661a31f55e9a45e2282f",
+      "selected": false,
+      "action": "暂缓",
+      "copy_mode": "暂缓",
+      "target_type": "永久认识",
+      "target_id": "INS-20260820-004",
+      "target_path": "数据/记录/永久认识/2026-08-20-004-AI 的价值杠杆取决于处理的是谁的琐事.md",
+      "status_mapping": "有效 → 有效",
+      "removed_fields": [
+        "type",
+        "title",
+        "updated_at",
+        "source_ids",
+        "derived_from",
+        "authoring_mode",
+        "formation_draft_sha256"
+      ],
+      "dependencies": [
+        {
+          "legacy_id": "SRC-42ab50bef0c4",
+          "target_id": "SRC-20260820-001",
+          "target_type": "外部来源",
+          "selected_in_batch": false
+        },
+        {
+          "legacy_id": "FLA-20260820-7592ac19",
+          "target_id": "FLA-20260820-001",
+          "target_type": "闪念",
+          "selected_in_batch": false
+        }
+      ],
+      "decision": "不在首批 10 条内",
+      "validation": "未执行"
+    },
+    {
+      "legacy_path": "永久空间/永久卡片/2026-08-20-人剑合一：学-AI-的正确姿势.md",
+      "legacy_id": "PER-20260820-3d571ea5",
+      "legacy_sha256": "b925e77309a17c5c2ac63fb1775d94788cffbc3c18dac9e5ee480c615a57f3ec",
+      "selected": false,
+      "action": "暂缓",
+      "copy_mode": "暂缓",
+      "target_type": "永久认识",
+      "target_id": "INS-20260820-003",
+      "target_path": "数据/记录/永久认识/2026-08-20-003-人剑合一：学 AI 的正确姿势.md",
+      "status_mapping": "有效 → 有效",
+      "removed_fields": [
+        "type",
+        "title",
+        "updated_at",
+        "source_ids",
+        "derived_from",
+        "authoring_mode",
+        "formation_draft_sha256"
+      ],
+      "dependencies": [
+        {
+          "legacy_id": "FLA-20260818-047d4537",
+          "target_id": "FLA-20260818-004",
+          "target_type": "闪念",
+          "selected_in_batch": false
+        }
+      ],
+      "decision": "不在首批 10 条内",
+      "validation": "未执行"
+    },
+    {
+      "legacy_path": "永久空间/永久卡片/2026-08-20-指挥-AI-将成为人们新的能力瓶颈，且需要去训练.md",
+      "legacy_id": "PER-20260820-4c26dc06",
+      "legacy_sha256": "1418b6e6c3fd4fc009a1a278ab1384fb18468c6ed640c060c918d36422f5bd91",
+      "selected": false,
+      "action": "暂缓",
+      "copy_mode": "暂缓",
+      "target_type": "永久认识",
+      "target_id": "INS-20260820-002",
+      "target_path": "数据/记录/永久认识/2026-08-20-002-指挥 AI 将成为人们新的能力瓶颈，且需要去训练.md",
+      "status_mapping": "有效 → 有效",
+      "removed_fields": [
+        "type",
+        "title",
+        "updated_at",
+        "source_ids",
+        "derived_from",
+        "authoring_mode",
+        "formation_draft_sha256"
+      ],
+      "dependencies": [
+        {
+          "legacy_id": "FLA-20260818-5de3ffc0",
+          "target_id": "FLA-20260818-003",
+          "target_type": "闪念",
+          "selected_in_batch": false
+        }
+      ],
+      "decision": "不在首批 10 条内",
+      "validation": "未执行"
+    },
+    {
+      "legacy_path": "永久空间/永久卡片/2026-08-20-母题级课题：AI-图像-摄影与视觉叙事的-skill-化.md",
+      "legacy_id": "PER-20260820-d6ae6d45",
+      "legacy_sha256": "b7997d1c5638738cea91c9d432a93d1a7f448e7e03516a90799ef6fd30f90284",
+      "selected": true,
+      "action": "迁入",
+      "copy_mode": "复制后结构转换",
+      "target_type": "永久认识",
+      "target_id": "INS-20260820-001",
+      "target_path": "数据/记录/永久认识/2026-08-20-001-母题级课题：AI 图像／摄影与视觉叙事的 skill 化.md",
+      "status_mapping": "已修订 → 有效",
+      "removed_fields": [
+        "type",
+        "title",
+        "updated_at",
+        "source_ids",
+        "derived_from",
+        "authoring_mode",
+        "formation_draft_sha256"
+      ],
+      "dependencies": [
+        {
+          "legacy_id": "FLA-20260810-b4aaff57",
+          "target_id": "FLA-20260810-001",
+          "target_type": "闪念",
+          "selected_in_batch": true
+        }
+      ],
+      "decision": "按已确认自动规则迁入",
+      "validation": "已通过",
+      "target_sha256": "9e03d1ce7f99b88a42148f4300abff82a21dad30d9ee701cd28578490ef40fd4"
+    },
+    {
+      "legacy_path": "永久空间/永久卡片/2026-08-23-AI-的本质：智力脱离个体，成为可反馈复利的生产要素.md",
+      "legacy_id": "PER-20260823-14676f79",
+      "legacy_sha256": "1a67224ccd3c353276ae61f0b5dbf03b96fd1db48e45cf0638bbead048ed921d",
+      "selected": false,
+      "action": "暂缓",
+      "copy_mode": "暂缓",
+      "target_type": "永久认识",
+      "target_id": "INS-20260823-001",
+      "target_path": "数据/记录/永久认识/2026-08-23-001-AI 的本质：智力脱离个体，成为可反馈复利的生产要素.md",
+      "status_mapping": "有效 → 有效",
+      "removed_fields": [
+        "type",
+        "title",
+        "updated_at",
+        "source_ids",
+        "derived_from",
+        "authoring_mode",
+        "formation_draft_sha256"
+      ],
+      "dependencies": [
+        {
+          "legacy_id": "FLA-20260821-35c471f6",
+          "target_id": "FLA-20260821-004",
+          "target_type": "闪念",
+          "selected_in_batch": false
+        }
+      ],
+      "decision": "不在首批 10 条内",
+      "validation": "未执行"
+    },
+    {
+      "legacy_path": "永久空间/永久卡片/2026-08-23-技术归因辨析：是技术本身不行，还是缺乏价值网络？.md",
+      "legacy_id": "PER-20260823-9406d688",
+      "legacy_sha256": "bf39392c54ac7ba3040cf5e9dcf47ac04744e9065c955bb593d83b524d5485e0",
+      "selected": false,
+      "action": "暂缓",
+      "copy_mode": "暂缓",
+      "target_type": "永久认识",
+      "target_id": "INS-20260823-003",
+      "target_path": "数据/记录/永久认识/2026-08-23-003-技术归因辨析：是技术本身不行，还是缺乏价值网络？.md",
+      "status_mapping": "有效 → 有效",
+      "removed_fields": [
+        "type",
+        "title",
+        "updated_at",
+        "source_ids",
+        "derived_from",
+        "authoring_mode",
+        "formation_draft_sha256"
+      ],
+      "dependencies": [
+        {
+          "legacy_id": "FLA-20260821-e66a8e93",
+          "target_id": "FLA-20260821-001",
+          "target_type": "闪念",
+          "selected_in_batch": false
+        }
+      ],
+      "decision": "不在首批 10 条内",
+      "validation": "未执行"
+    },
+    {
+      "legacy_path": "永久空间/永久卡片/2026-08-23-持续生成的两层结构：稳定层是-AI-吞不掉的高地.md",
+      "legacy_id": "PER-20260823-d5a27ff7",
+      "legacy_sha256": "3d18b68178acdadef48e97e69411f1d797c9dc61a4cf149efb06a04426878925",
+      "selected": false,
+      "action": "暂缓",
+      "copy_mode": "暂缓",
+      "target_type": "永久认识",
+      "target_id": "INS-20260823-004",
+      "target_path": "数据/记录/永久认识/2026-08-23-004-持续生成的两层结构：稳定层是 AI 吞不掉的高地.md",
+      "status_mapping": "有效 → 有效",
+      "removed_fields": [
+        "type",
+        "title",
+        "updated_at",
+        "source_ids",
+        "derived_from",
+        "authoring_mode",
+        "formation_draft_sha256"
+      ],
+      "dependencies": [
+        {
+          "legacy_id": "FLA-20260821-1dba5df4",
+          "target_id": "FLA-20260821-002",
+          "target_type": "闪念",
+          "selected_in_batch": false
+        }
+      ],
+      "decision": "不在首批 10 条内",
+      "validation": "未执行"
+    },
+    {
+      "legacy_path": "永久空间/永久卡片/2026-08-23-未来稀缺的不是智能，是围绕智能的六种能力.md",
+      "legacy_id": "PER-20260823-e57d3409",
+      "legacy_sha256": "5fe700e12d54113729ed40f9d18414f52d8669c5261203d4d7fe8d2317e8e9e3",
+      "selected": false,
+      "action": "暂缓",
+      "copy_mode": "暂缓",
+      "target_type": "永久认识",
+      "target_id": "INS-20260823-002",
+      "target_path": "数据/记录/永久认识/2026-08-23-002-未来稀缺的不是智能，是围绕智能的六种能力.md",
+      "status_mapping": "有效 → 有效",
+      "removed_fields": [
+        "type",
+        "title",
+        "updated_at",
+        "source_ids",
+        "derived_from",
+        "authoring_mode",
+        "formation_draft_sha256"
+      ],
+      "dependencies": [
+        {
+          "legacy_id": "FLA-20260821-84635d62",
+          "target_id": "FLA-20260821-003",
+          "target_type": "闪念",
+          "selected_in_batch": false
+        }
+      ],
+      "decision": "不在首批 10 条内",
+      "validation": "未执行"
+    },
+    {
+      "legacy_path": "永久空间/永久卡片/2026-08-27-单线程深潜才有能量感.md",
+      "legacy_id": "PER-20260827-48166aab",
+      "legacy_sha256": "2f7098fdd168c3e2e38e2f80bba33891a8fe392f583d54774f469683b3fffc57",
+      "selected": false,
+      "action": "暂缓",
+      "copy_mode": "暂缓",
+      "target_type": "永久认识",
+      "target_id": "INS-20260827-002",
+      "target_path": "数据/记录/永久认识/2026-08-27-002-单线程深潜才有能量感.md",
+      "status_mapping": "有效 → 有效",
+      "removed_fields": [
+        "type",
+        "title",
+        "updated_at",
+        "source_ids",
+        "derived_from",
+        "authoring_mode",
+        "formation_draft_sha256"
+      ],
+      "dependencies": [
+        {
+          "legacy_id": "FLA-20260827-9f1e8e20",
+          "target_id": "FLA-20260827-001",
+          "target_type": "闪念",
+          "selected_in_batch": false
+        }
+      ],
+      "decision": "不在首批 10 条内",
+      "validation": "未执行"
+    },
+    {
+      "legacy_path": "永久空间/永久卡片/2026-08-27-知识库+AI-的形态：以终为始，打磨成研究域并输出.md",
+      "legacy_id": "PER-20260827-6f399470",
+      "legacy_sha256": "ddea50b23aecd06d5d0fda6ce06aff49f50bb5f82abd1b8025acb80185740b18",
+      "selected": false,
+      "action": "暂缓",
+      "copy_mode": "暂缓",
+      "target_type": "永久认识",
+      "target_id": "INS-20260827-001",
+      "target_path": "数据/记录/永久认识/2026-08-27-001-知识库+AI 的形态：以终为始，打磨成研究域并输出.md",
+      "status_mapping": "有效 → 有效",
+      "removed_fields": [
+        "type",
+        "title",
+        "updated_at",
+        "source_ids",
+        "derived_from",
+        "authoring_mode",
+        "formation_draft_sha256"
+      ],
+      "dependencies": [
+        {
+          "legacy_id": "SRC-91fc906a9943",
+          "target_id": "SRC-20260804-001",
+          "target_type": "外部来源",
+          "selected_in_batch": false
+        },
+        {
+          "legacy_id": "FLA-20260822-bbeb48b0",
+          "target_id": "FLA-20260822-001",
+          "target_type": "闪念",
+          "selected_in_batch": false
+        }
+      ],
+      "decision": "不在首批 10 条内",
+      "validation": "未执行"
+    },
+    {
+      "legacy_path": "永久空间/永久卡片/2026-09-04-如何让-AI-输出高质量内容：先想透独特性，再让扩-评-收工作流把思考沉淀下来.md",
+      "legacy_id": "PER-20260904-8abe76fb",
+      "legacy_sha256": "cc07a2906c25e13553e79b3d91d13ba745af3450ddb452cf1b4a113ac48bd000",
+      "selected": false,
+      "action": "暂缓",
+      "copy_mode": "暂缓",
+      "target_type": "永久认识",
+      "target_id": "INS-20260904-001",
+      "target_path": "数据/记录/永久认识/2026-09-04-001-如何让 AI 输出高质量内容：先想透独特性，再让扩-评-收工作流把思考沉淀下来.md",
+      "status_mapping": "有效 → 有效",
+      "removed_fields": [
+        "type",
+        "title",
+        "updated_at",
+        "source_ids",
+        "derived_from",
+        "authoring_mode",
+        "formation_draft_sha256"
+      ],
+      "dependencies": [
+        {
+          "legacy_id": "SRC-f144a82ec34e",
+          "target_id": "SRC-20260904-001",
+          "target_type": "外部来源",
+          "selected_in_batch": false
+        },
+        {
+          "legacy_id": "SRC-f0928844c584",
+          "target_id": "SRC-20260904-002",
+          "target_type": "外部来源",
+          "selected_in_batch": false
+        },
+        {
+          "legacy_id": "SRC-774eaa267132",
+          "target_id": "SRC-20260904-003",
+          "target_type": "外部来源",
+          "selected_in_batch": false
+        },
+        {
+          "legacy_id": "FLA-20260904-9e0af55f",
+          "target_id": "FLA-20260904-001",
+          "target_type": "闪念",
+          "selected_in_batch": false
+        }
+      ],
+      "decision": "不在首批 10 条内",
+      "validation": "未执行"
+    },
+    {
+      "legacy_path": "永久空间/永久卡片/2026-09-07-AI-时代的主要矛盾：生产不再需要人，人仍靠-被需要-而活.md",
+      "legacy_id": "PER-20260907-0ec6679d",
+      "legacy_sha256": "4b3e59a9440bf4802628a12d383c91d9481139c59c9d03b1a15076deeef537df",
+      "selected": false,
+      "action": "暂缓",
+      "copy_mode": "暂缓",
+      "target_type": "永久认识",
+      "target_id": "INS-20260907-001",
+      "target_path": "数据/记录/永久认识/2026-09-07-001-AI 时代的主要矛盾：生产不再需要人，人仍靠\"被需要\"而活.md",
+      "status_mapping": "有效 → 有效",
+      "removed_fields": [
+        "type",
+        "title",
+        "updated_at",
+        "source_ids",
+        "derived_from",
+        "authoring_mode",
+        "formation_draft_sha256"
+      ],
+      "dependencies": [],
+      "decision": "不在首批 10 条内",
+      "validation": "未执行"
+    },
+    {
+      "legacy_path": "溯源空间/2026-08-04-LLM-Wiki.md",
+      "legacy_id": "SRC-91fc906a9943",
+      "legacy_sha256": "58d114695b0cb85787af4f27f8e5fa1f634b4141ceb23a6cc09bb74475930520",
+      "selected": false,
+      "action": "暂缓",
+      "copy_mode": "暂缓",
+      "target_type": "外部来源",
+      "target_id": "SRC-20260804-001",
+      "target_path": "数据/记录/外部来源/2026-08-04-001-LLM Wiki.md",
+      "status_mapping": "完整 → 完整",
+      "removed_fields": [
+        "type",
+        "title",
+        "updated_at"
+      ],
+      "dependencies": [],
+      "decision": "不在首批 10 条内",
+      "validation": "未执行"
+    },
+    {
+      "legacy_path": "溯源空间/2026-08-09-8-月-9-日-可能性空间讨论.md",
+      "legacy_id": "SRC-30c7bad12c30",
+      "legacy_sha256": "25493154d0bad12e96c40cd474f68e86c3a5e95021a55b8f6efdb03a4f58a63c",
+      "selected": true,
+      "action": "迁入",
+      "copy_mode": "复制后结构转换",
+      "target_type": "外部来源",
+      "target_id": "SRC-20260809-002",
+      "target_path": "数据/记录/外部来源/2026-08-09-002-8 月 9 日 可能性空间讨论.md",
+      "status_mapping": "完整 → 完整",
+      "removed_fields": [
+        "type",
+        "title",
+        "updated_at"
+      ],
+      "dependencies": [],
+      "decision": "按已确认自动规则迁入",
+      "validation": "已通过",
+      "target_sha256": "1cdad608d0c4be2e75a90f6a10cac4e57d62e079961aeff8b93103c9a0a8adc7",
+      "snapshot_original_sha256": "87496af1db3aee86fa328d98a7a8eff02a4f3e2666705b08fc0a372004d2b35a",
+      "snapshot_target_sha256": "87496af1db3aee86fa328d98a7a8eff02a4f3e2666705b08fc0a372004d2b35a",
+      "asset_rewrites": {}
+    },
+    {
+      "legacy_path": "溯源空间/2026-08-09-控制论与科学方法论.md",
+      "legacy_id": "SRC-a288ab6df42c",
+      "legacy_sha256": "8651f9e78d015fc6ba16a7d62366ae38573233a027e91823ad8bf5b0ef1aa13c",
+      "selected": true,
+      "action": "迁入",
+      "copy_mode": "复制后结构转换",
+      "target_type": "外部来源",
+      "target_id": "SRC-20260809-001",
+      "target_path": "数据/记录/外部来源/2026-08-09-001-控制论与科学方法论.md",
+      "status_mapping": "完整 → 完整",
+      "removed_fields": [
+        "type",
+        "title",
+        "updated_at"
+      ],
+      "dependencies": [],
+      "decision": "按已确认自动规则迁入",
+      "validation": "已通过",
+      "target_sha256": "be4d517f23900939eb3acbdbc65be824ab12244f112040c25327a5a01faa76f3",
+      "snapshot_original_sha256": "e49cb40e88081c37fc6f9cf15c04e3f55dd918184bbe8e90ff74acd69dae3749",
+      "snapshot_target_sha256": "e49cb40e88081c37fc6f9cf15c04e3f55dd918184bbe8e90ff74acd69dae3749",
+      "asset_rewrites": {}
+    },
+    {
+      "legacy_path": "溯源空间/2026-08-09-来了！热狗GPT作图心法大公开！.md",
+      "legacy_id": "SRC-64e7413259cb",
+      "legacy_sha256": "00094a2e0be6d4cdf6612943ccb062b6a9bfc1d5b5a212aef8a315f04131b1c1",
+      "selected": true,
+      "action": "迁入",
+      "copy_mode": "复制后结构转换",
+      "target_type": "外部来源",
+      "target_id": "SRC-20260809-003",
+      "target_path": "数据/记录/外部来源/2026-08-09-003-来了！热狗GPT作图心法大公开！.md",
+      "status_mapping": "部分抓取 → 部分获取",
+      "removed_fields": [
+        "type",
+        "title",
+        "updated_at"
+      ],
+      "dependencies": [],
+      "decision": "按已确认自动规则迁入",
+      "validation": "已通过",
+      "target_sha256": "5ce7b8389949aebcebd925fa5fe586dcc2bf145379887f6be317a00ddb1f652e",
+      "snapshot_original_sha256": "4e329a4e23208676b5e713a81bbe539ec8c0d921d6c3947109b297165a94d744",
+      "snapshot_target_sha256": "4e329a4e23208676b5e713a81bbe539ec8c0d921d6c3947109b297165a94d744",
+      "asset_rewrites": {}
+    },
+    {
+      "legacy_path": "溯源空间/2026-08-11-对话李继刚：让AI超越平庸表现｜读完周报再来聊聊闭门会第5期精华.md",
+      "legacy_id": "SRC-ddf54b8b78eb",
+      "legacy_sha256": "c2b7055cf0bd3a49f87738d6ca44e533a2c6ce1727c4acedc5f8a3ba161ecadb",
+      "selected": true,
+      "action": "迁入",
+      "copy_mode": "复制后结构转换",
+      "target_type": "外部来源",
+      "target_id": "SRC-20260811-001",
+      "target_path": "数据/记录/外部来源/2026-08-11-001-对话李继刚：让AI超越平庸表现｜读完周报再来聊聊闭门会第5期精华.md",
+      "status_mapping": "完整 → 完整",
+      "removed_fields": [
+        "type",
+        "title",
+        "updated_at"
+      ],
+      "dependencies": [],
+      "decision": "按已确认自动规则迁入",
+      "validation": "已通过",
+      "target_sha256": "de9ed708167f6e87c67e871cec480cc48fc1d3a8cc82db91c94b8853d14ddd6d",
+      "snapshot_original_sha256": "c5fdaa2fc27e276a86496614f03ec97d1f839771d517d4ea107611878c493f97",
+      "snapshot_target_sha256": "c5fdaa2fc27e276a86496614f03ec97d1f839771d517d4ea107611878c493f97",
+      "asset_rewrites": {}
+    },
+    {
+      "legacy_path": "溯源空间/2026-08-12-2026中国企业级AI-Agent发展洞察报告.md",
+      "legacy_id": "SRC-1da957dab3d2",
+      "legacy_sha256": "1647d3089c684237c91f7bf4b97cdbb76a69addfd17b0685218148d0b1bc133f",
+      "selected": true,
+      "action": "迁入",
+      "copy_mode": "复制后结构转换",
+      "target_type": "外部来源",
+      "target_id": "SRC-20260812-001",
+      "target_path": "数据/记录/外部来源/2026-08-12-001-2026中国企业级AI Agent发展洞察报告.md",
+      "status_mapping": "完整 → 完整",
+      "removed_fields": [
+        "type",
+        "title",
+        "updated_at"
+      ],
+      "dependencies": [],
+      "decision": "按已确认自动规则迁入",
+      "validation": "已通过",
+      "target_sha256": "09dab2ac9cd265c631ac0bf40b19fe0c7d3280a87edc294e407fc3f0c0062d97",
+      "snapshot_original_sha256": "8a63677817d8905540f48d86a424e6c70cf3e6048e570f8801dab8329c00c729",
+      "snapshot_target_sha256": "e56b8af8ac22a92f7ca40fdfc3137e92018d725b732c90c361aa8a06f61fc1df",
+      "asset_rewrites": {
+        "../assets/748ddcef9b7731c8fabd74d73e16876d7efb2351be7054e4d442a862de42935d.jpg": "../../资产/748ddcef9b7731c8fabd74d73e16876d7efb2351be7054e4d442a862de42935d.jpg",
+        "../assets/c98a4d16d73365ebc822f32d8ac167f901799ba7804e5b710785fd390d78876b.jpg": "../../资产/c98a4d16d73365ebc822f32d8ac167f901799ba7804e5b710785fd390d78876b.jpg",
+        "../assets/85d0838a1ea111afdb79b352d32c339c2bb5bc3641997acba449dd417e9d823a.png": "../../资产/85d0838a1ea111afdb79b352d32c339c2bb5bc3641997acba449dd417e9d823a.png",
+        "../assets/aac80ff3b1d6f6f9eb6261fab44bc4bd292b0d564b4888982f453c9d48c105dc.jpg": "../../资产/aac80ff3b1d6f6f9eb6261fab44bc4bd292b0d564b4888982f453c9d48c105dc.jpg",
+        "../assets/e9ef5e6dbb49cb5616fc9409eb7aed06cd368e3af9e2f4993b1a57ce2a52779d.png": "../../资产/e9ef5e6dbb49cb5616fc9409eb7aed06cd368e3af9e2f4993b1a57ce2a52779d.png",
+        "../assets/49631a903926275b36614d3ad0b001b3c7229d727abf4f8a2bf4e7025c28d271.jpg": "../../资产/49631a903926275b36614d3ad0b001b3c7229d727abf4f8a2bf4e7025c28d271.jpg",
+        "../assets/3adc76861b7abe701ac55229807e74f26da02da64b75afb27e146d7524514ae2.jpg": "../../资产/3adc76861b7abe701ac55229807e74f26da02da64b75afb27e146d7524514ae2.jpg",
+        "../assets/3de114becc650d6b6a9cbf8d5ad89e97a14b716f0e3cb7f01be0858d841f95f1.png": "../../资产/3de114becc650d6b6a9cbf8d5ad89e97a14b716f0e3cb7f01be0858d841f95f1.png",
+        "../assets/55141c8a321c5e8f3d35eb1c6da87a94e12b3ad9fb40dce5154f5fb2e8742c4d.png": "../../资产/55141c8a321c5e8f3d35eb1c6da87a94e12b3ad9fb40dce5154f5fb2e8742c4d.png",
+        "../assets/5f80313e4b469280c54d47f14a1ed255f90ee439cebd54370f07d04daad99231.png": "../../资产/5f80313e4b469280c54d47f14a1ed255f90ee439cebd54370f07d04daad99231.png",
+        "../assets/1ed31b348a186c5f56141f365dc952fe827cd57548536e150728cdf54cfbb7bc.jpg": "../../资产/1ed31b348a186c5f56141f365dc952fe827cd57548536e150728cdf54cfbb7bc.jpg",
+        "../assets/f33b8f01ef63df5ed38f211311b67823d43c7fb42b9f819fd7e6796a275b343b.jpg": "../../资产/f33b8f01ef63df5ed38f211311b67823d43c7fb42b9f819fd7e6796a275b343b.jpg",
+        "../assets/651aaaaf60e8b681899c4c157248a915b2ce5e30136a3264e14cf0acbbe4d198.jpg": "../../资产/651aaaaf60e8b681899c4c157248a915b2ce5e30136a3264e14cf0acbbe4d198.jpg",
+        "../assets/3e0b2537e65d7a00c2cc94fb5123ebae6e19bb6fd62d246299ac53530753ceee.png": "../../资产/3e0b2537e65d7a00c2cc94fb5123ebae6e19bb6fd62d246299ac53530753ceee.png",
+        "../assets/5b822ac522414e89f56f5883d83eb5d267d44506948a08be2c7d4f615a57b4be.png": "../../资产/5b822ac522414e89f56f5883d83eb5d267d44506948a08be2c7d4f615a57b4be.png",
+        "../assets/978b5b83e3e391ea3622028d4f1e78e6bbf514a2754f1bfb098009e6f6cccf2b.png": "../../资产/978b5b83e3e391ea3622028d4f1e78e6bbf514a2754f1bfb098009e6f6cccf2b.png",
+        "../assets/0aa1b822a3707a0ec2f9ed44481e5c3b2cf559ecb96e97a06ffe5ae86d8c6cba.png": "../../资产/0aa1b822a3707a0ec2f9ed44481e5c3b2cf559ecb96e97a06ffe5ae86d8c6cba.png",
+        "../assets/7f3fcddb8d6f8d92b7e36625f089dd46e766ab8f7db88ea7e32b0573d3a8b16f.png": "../../资产/7f3fcddb8d6f8d92b7e36625f089dd46e766ab8f7db88ea7e32b0573d3a8b16f.png",
+        "../assets/88e7ba02bbc6f14f66dc1e932b0c3eb7a3d850b49897b0454f5dac189f09bad6.png": "../../资产/88e7ba02bbc6f14f66dc1e932b0c3eb7a3d850b49897b0454f5dac189f09bad6.png",
+        "../assets/5a8422b9abe88235f1bd165ffb8367e1bf795d3726aadcc18dfee536f44a1498.jpg": "../../资产/5a8422b9abe88235f1bd165ffb8367e1bf795d3726aadcc18dfee536f44a1498.jpg",
+        "../assets/522c49d2bc0e41256eaa6b0d8829e3f16ceb6af800a87476c9c5a4100911bdae.png": "../../资产/522c49d2bc0e41256eaa6b0d8829e3f16ceb6af800a87476c9c5a4100911bdae.png",
+        "../assets/7cfe20c85f41b4a20d5fdd8761cfe9f581a4ad382225dd84bddd58b2bbbd3003.jpg": "../../资产/7cfe20c85f41b4a20d5fdd8761cfe9f581a4ad382225dd84bddd58b2bbbd3003.jpg",
+        "../assets/d4ee32d8053d349737bd8ed1cc6d3315c353ce09f7c88c8cbf3691cb3ec87d21.png": "../../资产/d4ee32d8053d349737bd8ed1cc6d3315c353ce09f7c88c8cbf3691cb3ec87d21.png",
+        "../assets/35e3514db3d71ec5841d83049bc5c4165bedffced91be18fc9ee85d17be0c838.png": "../../资产/35e3514db3d71ec5841d83049bc5c4165bedffced91be18fc9ee85d17be0c838.png",
+        "../assets/a64277363a9fbed2d4935cbaa1dc312d7f84db62fc1bd49418853368ac2ac16f.jpg": "../../资产/a64277363a9fbed2d4935cbaa1dc312d7f84db62fc1bd49418853368ac2ac16f.jpg",
+        "../assets/e15438c187fc25bfdc95c4cf4a15595ccf8e64b3a4e0bbc46da20a062ad67cba.png": "../../资产/e15438c187fc25bfdc95c4cf4a15595ccf8e64b3a4e0bbc46da20a062ad67cba.png",
+        "../assets/be3cb6af652b947320db6dd4a82f6e0987b810b945657eaf4bb3f4233bea3d7d.png": "../../资产/be3cb6af652b947320db6dd4a82f6e0987b810b945657eaf4bb3f4233bea3d7d.png",
+        "../assets/ebc30daedf4f0b233b8abc13ad688696309ecabd3b77e97e1fbf1027ac5f6cb9.png": "../../资产/ebc30daedf4f0b233b8abc13ad688696309ecabd3b77e97e1fbf1027ac5f6cb9.png",
+        "../assets/fa044dd546a4c54cf2f51b4487df4cd90e8a64db352227f714bd6105ddd58ca1.png": "../../资产/fa044dd546a4c54cf2f51b4487df4cd90e8a64db352227f714bd6105ddd58ca1.png",
+        "../assets/a03792205792d2e8fa924d2f9e6e526bdadaed3cc61d8899bb9fe7f8fe3d6522.png": "../../资产/a03792205792d2e8fa924d2f9e6e526bdadaed3cc61d8899bb9fe7f8fe3d6522.png"
+      }
+    },
+    {
+      "legacy_path": "溯源空间/2026-08-13-AI时代职场自救法则：消失的入门梯子与用AI搭建学习路径.md",
+      "legacy_id": "SRC-aadc46966f91",
+      "legacy_sha256": "ce23708dddbe23cf85e1a38d8ebb2cf68816b0885fc4a314b235f68d84b051c3",
+      "selected": true,
+      "action": "迁入",
+      "copy_mode": "复制后结构转换",
+      "target_type": "外部来源",
+      "target_id": "SRC-20260813-001",
+      "target_path": "数据/记录/外部来源/2026-08-13-001-AI时代职场自救法则：消失的入门梯子与用AI搭建学习路径.md",
+      "status_mapping": "完整 → 完整",
+      "removed_fields": [
+        "type",
+        "title",
+        "updated_at"
+      ],
+      "dependencies": [],
+      "decision": "按已确认自动规则迁入",
+      "validation": "已通过",
+      "target_sha256": "51270001828b507fa2613c70ab586808b1740d28e367086817d73c58c113fa9b",
+      "snapshot_original_sha256": "e405484dc55f4716906119bf857dc60b0b62fd775423a801d55adcd001865255",
+      "snapshot_target_sha256": "e405484dc55f4716906119bf857dc60b0b62fd775423a801d55adcd001865255",
+      "asset_rewrites": {}
+    },
+    {
+      "legacy_path": "溯源空间/2026-08-13-广义认知行动系统分析.md",
+      "legacy_id": "SRC-3c062d4440df",
+      "legacy_sha256": "f61d529a2dba538d95e3cc740c7265a8b1f24336e6e6851136b937d14464642a",
+      "selected": true,
+      "action": "迁入",
+      "copy_mode": "复制后结构转换",
+      "target_type": "外部来源",
+      "target_id": "SRC-20260813-002",
+      "target_path": "数据/记录/外部来源/2026-08-13-002-广义认知行动系统分析.md",
+      "status_mapping": "完整 → 完整",
+      "removed_fields": [
+        "type",
+        "title",
+        "updated_at"
+      ],
+      "dependencies": [],
+      "decision": "按已确认自动规则迁入",
+      "validation": "已通过",
+      "target_sha256": "1fc917badf35967392ad166c1bfe269bcc4d13b353c529dfe2975da203dba222",
+      "snapshot_original_sha256": "546145b735d51bb10ae7b52dd11bdf81964fab8d3f71a65c5c685c673d0208d6",
+      "snapshot_target_sha256": "546145b735d51bb10ae7b52dd11bdf81964fab8d3f71a65c5c685c673d0208d6",
+      "asset_rewrites": {}
+    },
+    {
+      "legacy_path": "溯源空间/2026-08-13-阅读素材：曾鸣《智能商业》（第一章AI产业化的展开+第二章智能复利和黑洞效应）.md",
+      "legacy_id": "SRC-2f9287e240b2",
+      "legacy_sha256": "ba330af1f5985858f793600da0475db0eb3060388d84808b7b14595dca09cbd4",
+      "selected": true,
+      "action": "迁入",
+      "copy_mode": "复制后结构转换",
+      "target_type": "外部来源",
+      "target_id": "SRC-20260813-003",
+      "target_path": "数据/记录/外部来源/2026-08-13-003-阅读素材：曾鸣《智能商业》（第一章AI产业化的展开+第二章智能复利和黑洞效应）.md",
+      "status_mapping": "完整 → 完整",
+      "removed_fields": [
+        "type",
+        "title",
+        "updated_at"
+      ],
+      "dependencies": [],
+      "decision": "按已确认自动规则迁入",
+      "validation": "已通过",
+      "target_sha256": "fd05ed415cb725df3565b3c73cbe38458cc79c73d8b3ead176cc95becf0e76f5",
+      "snapshot_original_sha256": "100039c3e525ce04f41ce438bcdb3dc97155cc85c5d1c380fb978b0ecaeeca7f",
+      "snapshot_target_sha256": "0763e29793e3f4d2d34cd7717cccfb79870cc8070a5e3c42f431d3d139e9c042",
+      "asset_rewrites": {
+        "../assets/ac526ffc8bebaa90e26d126cdd52198f95b92d07bfdd50f2546ac08a25113053.png": "../../资产/ac526ffc8bebaa90e26d126cdd52198f95b92d07bfdd50f2546ac08a25113053.png"
+      }
+    },
+    {
+      "legacy_path": "溯源空间/2026-08-16-2026-WAIC参展企业MECE分层全景-v7（主流玩家补全版）.md",
+      "legacy_id": "SRC-5a4ddc625cf8",
+      "legacy_sha256": "bcfd12ed8df2d8fea1193449d5df7e748ea1e4a458e51c6d0ecf09502cac00cb",
+      "selected": true,
+      "action": "迁入",
+      "copy_mode": "复制后结构转换",
+      "target_type": "外部来源",
+      "target_id": "SRC-20260816-001",
+      "target_path": "数据/记录/外部来源/2026-08-16-001-2026 WAIC参展企业MECE分层全景 v7（主流玩家补全版）.md",
+      "status_mapping": "完整 → 完整",
+      "removed_fields": [
+        "type",
+        "title",
+        "updated_at"
+      ],
+      "dependencies": [],
+      "decision": "按已确认自动规则迁入",
+      "validation": "已通过",
+      "target_sha256": "10540651bf3daff0a433df3b04a53214abb00e62fdb04fd5a77f412ccb93dcb9",
+      "snapshot_original_sha256": "956939fd58e762251abee6e18620bf2b25cc4ac3cdc6164c7cf67c49e06fecd3",
+      "snapshot_target_sha256": "956939fd58e762251abee6e18620bf2b25cc4ac3cdc6164c7cf67c49e06fecd3",
+      "asset_rewrites": {}
+    },
+    {
+      "legacy_path": "溯源空间/2026-08-16-北京智能体新政-解读.md",
+      "legacy_id": "SRC-2aa83596324a",
+      "legacy_sha256": "f428be59ebfefbdf3c9a1b83bd0ccb846d7b9878ac48149f767e9ab0f70d8b6b",
+      "selected": true,
+      "action": "迁入",
+      "copy_mode": "复制后结构转换",
+      "target_type": "外部来源",
+      "target_id": "SRC-20260816-002",
+      "target_path": "数据/记录/外部来源/2026-08-16-002-\"北京智能体新政\"解读.md",
+      "status_mapping": "完整 → 完整",
+      "removed_fields": [
+        "type",
+        "title",
+        "updated_at"
+      ],
+      "dependencies": [],
+      "decision": "按已确认自动规则迁入",
+      "validation": "已通过",
+      "target_sha256": "769f44a1683555d4157c5143aac221bedec614d7709f89064995e733e66f248a",
+      "snapshot_original_sha256": "85cb24fcda7244b491e7ac38cf83a114d2f7f393977f15c146f9b8274be3e0d3",
+      "snapshot_target_sha256": "17ef4ced9ad9b0f4492247919495a3c753e790d125b39ce7e16132cab47c246c",
+      "asset_rewrites": {
+        "../assets/da41b7a1a7c607e8cedecd46453cbfc50642fef9640d2a65e46b2860db6acb6f.png": "../../资产/da41b7a1a7c607e8cedecd46453cbfc50642fef9640d2a65e46b2860db6acb6f.png"
+      }
+    },
+    {
+      "legacy_path": "溯源空间/2026-08-20-AI最该优先改造的，可能不是最便宜的人，而是最贵的人.md",
+      "legacy_id": "SRC-42ab50bef0c4",
+      "legacy_sha256": "85971438e08fff1b6739fb163975f7545864b7723ef52bd621126aa4bb0f91d6",
+      "selected": false,
+      "action": "暂缓",
+      "copy_mode": "暂缓",
+      "target_type": "外部来源",
+      "target_id": "SRC-20260820-001",
+      "target_path": "数据/记录/外部来源/2026-08-20-001-AI最该优先改造的，可能不是最便宜的人，而是最贵的人.md",
+      "status_mapping": "完整 → 完整",
+      "removed_fields": [
+        "type",
+        "title",
+        "updated_at"
+      ],
+      "dependencies": [],
+      "decision": "不在首批 10 条内",
+      "validation": "未执行"
+    },
+    {
+      "legacy_path": "溯源空间/2026-09-04-How-to-turn-your-AI-into-a-world-class-designer.md",
+      "legacy_id": "SRC-f144a82ec34e",
+      "legacy_sha256": "c1a13cb35315891f4d58ac3e29ca86132a162b2484ff1268a8adb3e022bb6a39",
+      "selected": false,
+      "action": "暂缓",
+      "copy_mode": "暂缓",
+      "target_type": "外部来源",
+      "target_id": "SRC-20260904-001",
+      "target_path": "数据/记录/外部来源/2026-09-04-001-How to turn your AI into a world-class designer.md",
+      "status_mapping": "完整 → 完整",
+      "removed_fields": [
+        "type",
+        "title",
+        "updated_at"
+      ],
+      "dependencies": [],
+      "decision": "不在首批 10 条内",
+      "validation": "未执行"
+    },
+    {
+      "legacy_path": "溯源空间/2026-09-04-前-Apple-AI-设计专家：去除-AI-味、解锁-AI-设计创造力的-8-种技法.md",
+      "legacy_id": "SRC-f0928844c584",
+      "legacy_sha256": "15dbc153ddd4a38a1a3c6650d9faae4c13d84d7466ac23ac5e137deb4165339a",
+      "selected": false,
+      "action": "暂缓",
+      "copy_mode": "暂缓",
+      "target_type": "外部来源",
+      "target_id": "SRC-20260904-002",
+      "target_path": "数据/记录/外部来源/2026-09-04-002-前 Apple AI 设计专家：去除 AI 味、解锁 AI 设计创造力的 8 种技法.md",
+      "status_mapping": "完整 → 完整",
+      "removed_fields": [
+        "type",
+        "title",
+        "updated_at"
+      ],
+      "dependencies": [],
+      "decision": "不在首批 10 条内",
+      "validation": "未执行"
+    },
+    {
+      "legacy_path": "溯源空间/2026-09-04-苹果前-AI-设计主管复盘：如何让-AI-彻底摆脱“工业垃圾”审美，做出顶尖设计？.md",
+      "legacy_id": "SRC-774eaa267132",
+      "legacy_sha256": "f326d501627da67c151e1ecc90e1f00be9ce023c132bf574041444fbec376ca7",
+      "selected": false,
+      "action": "暂缓",
+      "copy_mode": "暂缓",
+      "target_type": "外部来源",
+      "target_id": "SRC-20260904-003",
+      "target_path": "数据/记录/外部来源/2026-09-04-003-苹果前 AI 设计主管复盘：如何让 AI 彻底摆脱“工业垃圾”审美，做出顶尖设计？.md",
+      "status_mapping": "完整 → 完整",
+      "removed_fields": [
+        "type",
+        "title",
+        "updated_at"
+      ],
+      "dependencies": [],
+      "decision": "不在首批 10 条内",
+      "validation": "未执行"
+    },
+    {
+      "legacy_path": "溯源空间/2026-09-13-10-月发布-Good-idea-·-发布物骨架（2026-09-13-讨论定稿）.md",
+      "legacy_id": "SRC-aa3232f342ea",
+      "legacy_sha256": "95f278e08b2a71b9ee8a8589b82322407e863d106cbc06a7ab81cf74a542dd0e",
+      "selected": false,
+      "action": "暂缓",
+      "copy_mode": "暂缓",
+      "target_type": "外部来源",
+      "target_id": "SRC-20260913-001",
+      "target_path": "数据/记录/外部来源/2026-09-13-001-10 月发布 Good idea · 发布物骨架（2026-09-13 讨论定稿）.md",
+      "status_mapping": "完整 → 完整",
+      "removed_fields": [
+        "type",
+        "title",
+        "updated_at"
+      ],
+      "dependencies": [],
+      "decision": "不在首批 10 条内",
+      "validation": "未执行"
+    },
+    {
+      "legacy_path": "溯源空间/2026-09-16-AI文案工坊产品构建思路分享.md",
+      "legacy_id": "SRC-c2efe21d65b9",
+      "legacy_sha256": "86f74e0b7ffc8772074eb2845207478fdec1c96d793b41310b18d9a9aa2eb85f",
+      "selected": false,
+      "action": "暂缓",
+      "copy_mode": "暂缓",
+      "target_type": "外部来源",
+      "target_id": "SRC-20260916-001",
+      "target_path": "数据/记录/外部来源/2026-09-16-001-AI文案工坊产品构建思路分享.md",
+      "status_mapping": "完整 → 完整",
+      "removed_fields": [
+        "type",
+        "title",
+        "updated_at"
+      ],
+      "dependencies": [],
+      "decision": "不在首批 10 条内",
+      "validation": "未执行"
+    }
+  ],
+  "assets": [
+    {
+      "legacy_paths": [
+        "assets/0aa1b822a3707a0ec2f9ed44481e5c3b2cf559ecb96e97a06ffe5ae86d8c6cba.png"
+      ],
+      "legacy_sha256": "0aa1b822a3707a0ec2f9ed44481e5c3b2cf559ecb96e97a06ffe5ae86d8c6cba",
+      "target_path": "数据/资产/0aa1b822a3707a0ec2f9ed44481e5c3b2cf559ecb96e97a06ffe5ae86d8c6cba.png",
+      "referenced_by": [
+        "溯源空间/2026-08-12-2026中国企业级AI-Agent发展洞察报告.md"
+      ],
+      "selected": true,
+      "action": "迁入",
+      "validation": "已通过"
+    },
+    {
+      "legacy_paths": [
+        "assets/0f13898d0209d8323e29030c6698deca4d7afb8218cf25cc5411cda507875a7e.png"
+      ],
+      "legacy_sha256": "0f13898d0209d8323e29030c6698deca4d7afb8218cf25cc5411cda507875a7e",
+      "target_path": "数据/资产/0f13898d0209d8323e29030c6698deca4d7afb8218cf25cc5411cda507875a7e.png",
+      "referenced_by": [
+        "溯源空间/2026-09-04-前-Apple-AI-设计专家：去除-AI-味、解锁-AI-设计创造力的-8-种技法.md",
+        "溯源空间/2026-09-04-苹果前-AI-设计主管复盘：如何让-AI-彻底摆脱“工业垃圾”审美，做出顶尖设计？.md"
+      ],
+      "selected": false,
+      "action": "暂缓",
+      "validation": "未执行"
+    },
+    {
+      "legacy_paths": [
+        "assets/0f230329cc267aee4e0710d6ff8c4aa22f3e15c6b2428496f47e32af0de1bba7.png"
+      ],
+      "legacy_sha256": "0f230329cc267aee4e0710d6ff8c4aa22f3e15c6b2428496f47e32af0de1bba7",
+      "target_path": "数据/资产/0f230329cc267aee4e0710d6ff8c4aa22f3e15c6b2428496f47e32af0de1bba7.png",
+      "referenced_by": [
+        "溯源空间/2026-09-04-How-to-turn-your-AI-into-a-world-class-designer.md"
+      ],
+      "selected": false,
+      "action": "暂缓",
+      "validation": "未执行"
+    },
+    {
+      "legacy_paths": [
+        "assets/0ff3369a6dd46462ece3c6bbdb9b1bb555c37e4ef9e3391e0745453be0950393.png"
+      ],
+      "legacy_sha256": "0ff3369a6dd46462ece3c6bbdb9b1bb555c37e4ef9e3391e0745453be0950393",
+      "target_path": "数据/资产/0ff3369a6dd46462ece3c6bbdb9b1bb555c37e4ef9e3391e0745453be0950393.png",
+      "referenced_by": [
+        "溯源空间/2026-09-04-苹果前-AI-设计主管复盘：如何让-AI-彻底摆脱“工业垃圾”审美，做出顶尖设计？.md"
+      ],
+      "selected": false,
+      "action": "暂缓",
+      "validation": "未执行"
+    },
+    {
+      "legacy_paths": [
+        "assets/1554b489182a0d02d86de651e351c9f1897f255e14ec6be216eb96bc19438c75.png"
+      ],
+      "legacy_sha256": "1554b489182a0d02d86de651e351c9f1897f255e14ec6be216eb96bc19438c75",
+      "target_path": "数据/资产/1554b489182a0d02d86de651e351c9f1897f255e14ec6be216eb96bc19438c75.png",
+      "referenced_by": [
+        "溯源空间/2026-09-04-前-Apple-AI-设计专家：去除-AI-味、解锁-AI-设计创造力的-8-种技法.md",
+        "溯源空间/2026-09-04-苹果前-AI-设计主管复盘：如何让-AI-彻底摆脱“工业垃圾”审美，做出顶尖设计？.md"
+      ],
+      "selected": false,
+      "action": "暂缓",
+      "validation": "未执行"
+    },
+    {
+      "legacy_paths": [
+        "assets/1784b6579de66fb819e2e9d467810fde29582c250586e85443577ea4742266e9.gif"
+      ],
+      "legacy_sha256": "1784b6579de66fb819e2e9d467810fde29582c250586e85443577ea4742266e9",
+      "target_path": "数据/资产/1784b6579de66fb819e2e9d467810fde29582c250586e85443577ea4742266e9.gif",
+      "referenced_by": [
+        "溯源空间/2026-09-04-How-to-turn-your-AI-into-a-world-class-designer.md"
+      ],
+      "selected": false,
+      "action": "暂缓",
+      "validation": "未执行"
+    },
+    {
+      "legacy_paths": [
+        "assets/1d5498bff8f0d1417903385e5c58936667ddd0c67a5e448c7186c8af608293a9.jpg"
+      ],
+      "legacy_sha256": "1d5498bff8f0d1417903385e5c58936667ddd0c67a5e448c7186c8af608293a9",
+      "target_path": "数据/资产/1d5498bff8f0d1417903385e5c58936667ddd0c67a5e448c7186c8af608293a9.jpg",
+      "referenced_by": [
+        "溯源空间/2026-09-04-How-to-turn-your-AI-into-a-world-class-designer.md"
+      ],
+      "selected": false,
+      "action": "暂缓",
+      "validation": "未执行"
+    },
+    {
+      "legacy_paths": [
+        "assets/1ed31b348a186c5f56141f365dc952fe827cd57548536e150728cdf54cfbb7bc.jpg"
+      ],
+      "legacy_sha256": "1ed31b348a186c5f56141f365dc952fe827cd57548536e150728cdf54cfbb7bc",
+      "target_path": "数据/资产/1ed31b348a186c5f56141f365dc952fe827cd57548536e150728cdf54cfbb7bc.jpg",
+      "referenced_by": [
+        "溯源空间/2026-08-12-2026中国企业级AI-Agent发展洞察报告.md"
+      ],
+      "selected": true,
+      "action": "迁入",
+      "validation": "已通过"
+    },
+    {
+      "legacy_paths": [
+        "assets/25ba4524883379ee4f562f30d5f08b35b38f1f118d99abd7d8c253f4487f7878.jpg"
+      ],
+      "legacy_sha256": "25ba4524883379ee4f562f30d5f08b35b38f1f118d99abd7d8c253f4487f7878",
+      "target_path": "数据/资产/25ba4524883379ee4f562f30d5f08b35b38f1f118d99abd7d8c253f4487f7878.jpg",
+      "referenced_by": [
+        "溯源空间/2026-09-04-前-Apple-AI-设计专家：去除-AI-味、解锁-AI-设计创造力的-8-种技法.md"
+      ],
+      "selected": false,
+      "action": "暂缓",
+      "validation": "未执行"
+    },
+    {
+      "legacy_paths": [
+        "assets/29354d5ccdc7af59f9fc9b69448af4e904b469f97139e5052d76a15d353873a7.gif"
+      ],
+      "legacy_sha256": "29354d5ccdc7af59f9fc9b69448af4e904b469f97139e5052d76a15d353873a7",
+      "target_path": "数据/资产/29354d5ccdc7af59f9fc9b69448af4e904b469f97139e5052d76a15d353873a7.gif",
+      "referenced_by": [
+        "溯源空间/2026-09-04-前-Apple-AI-设计专家：去除-AI-味、解锁-AI-设计创造力的-8-种技法.md"
+      ],
+      "selected": false,
+      "action": "暂缓",
+      "validation": "未执行"
+    },
+    {
+      "legacy_paths": [
+        "assets/2d101383e072eea9c6e5c8930d2eed2e4203ff8195a62a6ecbac86ac06b59e26.gif"
+      ],
+      "legacy_sha256": "2d101383e072eea9c6e5c8930d2eed2e4203ff8195a62a6ecbac86ac06b59e26",
+      "target_path": "数据/资产/2d101383e072eea9c6e5c8930d2eed2e4203ff8195a62a6ecbac86ac06b59e26.gif",
+      "referenced_by": [
+        "溯源空间/2026-09-04-How-to-turn-your-AI-into-a-world-class-designer.md"
+      ],
+      "selected": false,
+      "action": "暂缓",
+      "validation": "未执行"
+    },
+    {
+      "legacy_paths": [
+        "assets/325b7b20a30ac77abf22752ffe575c4bc024a61edabf7adc3b2d83c29ec89f4c.png"
+      ],
+      "legacy_sha256": "325b7b20a30ac77abf22752ffe575c4bc024a61edabf7adc3b2d83c29ec89f4c",
+      "target_path": "数据/资产/325b7b20a30ac77abf22752ffe575c4bc024a61edabf7adc3b2d83c29ec89f4c.png",
+      "referenced_by": [
+        "溯源空间/2026-09-04-前-Apple-AI-设计专家：去除-AI-味、解锁-AI-设计创造力的-8-种技法.md"
+      ],
+      "selected": false,
+      "action": "暂缓",
+      "validation": "未执行"
+    },
+    {
+      "legacy_paths": [
+        "assets/35e3514db3d71ec5841d83049bc5c4165bedffced91be18fc9ee85d17be0c838.png"
+      ],
+      "legacy_sha256": "35e3514db3d71ec5841d83049bc5c4165bedffced91be18fc9ee85d17be0c838",
+      "target_path": "数据/资产/35e3514db3d71ec5841d83049bc5c4165bedffced91be18fc9ee85d17be0c838.png",
+      "referenced_by": [
+        "溯源空间/2026-08-12-2026中国企业级AI-Agent发展洞察报告.md"
+      ],
+      "selected": true,
+      "action": "迁入",
+      "validation": "已通过"
+    },
+    {
+      "legacy_paths": [
+        "assets/3adc76861b7abe701ac55229807e74f26da02da64b75afb27e146d7524514ae2.jpg"
+      ],
+      "legacy_sha256": "3adc76861b7abe701ac55229807e74f26da02da64b75afb27e146d7524514ae2",
+      "target_path": "数据/资产/3adc76861b7abe701ac55229807e74f26da02da64b75afb27e146d7524514ae2.jpg",
+      "referenced_by": [
+        "溯源空间/2026-08-12-2026中国企业级AI-Agent发展洞察报告.md"
+      ],
+      "selected": true,
+      "action": "迁入",
+      "validation": "已通过"
+    },
+    {
+      "legacy_paths": [
+        "assets/3de114becc650d6b6a9cbf8d5ad89e97a14b716f0e3cb7f01be0858d841f95f1.png"
+      ],
+      "legacy_sha256": "3de114becc650d6b6a9cbf8d5ad89e97a14b716f0e3cb7f01be0858d841f95f1",
+      "target_path": "数据/资产/3de114becc650d6b6a9cbf8d5ad89e97a14b716f0e3cb7f01be0858d841f95f1.png",
+      "referenced_by": [
+        "溯源空间/2026-08-12-2026中国企业级AI-Agent发展洞察报告.md"
+      ],
+      "selected": true,
+      "action": "迁入",
+      "validation": "已通过"
+    },
+    {
+      "legacy_paths": [
+        "assets/3e0b2537e65d7a00c2cc94fb5123ebae6e19bb6fd62d246299ac53530753ceee.png"
+      ],
+      "legacy_sha256": "3e0b2537e65d7a00c2cc94fb5123ebae6e19bb6fd62d246299ac53530753ceee",
+      "target_path": "数据/资产/3e0b2537e65d7a00c2cc94fb5123ebae6e19bb6fd62d246299ac53530753ceee.png",
+      "referenced_by": [
+        "溯源空间/2026-08-12-2026中国企业级AI-Agent发展洞察报告.md"
+      ],
+      "selected": true,
+      "action": "迁入",
+      "validation": "已通过"
+    },
+    {
+      "legacy_paths": [
+        "assets/417bd1c56eb5355f5a4c35f57c4a39019494a2d31ba6e1aac853ed6735966166.png"
+      ],
+      "legacy_sha256": "417bd1c56eb5355f5a4c35f57c4a39019494a2d31ba6e1aac853ed6735966166",
+      "target_path": "数据/资产/417bd1c56eb5355f5a4c35f57c4a39019494a2d31ba6e1aac853ed6735966166.png",
+      "referenced_by": [
+        "溯源空间/2026-09-04-前-Apple-AI-设计专家：去除-AI-味、解锁-AI-设计创造力的-8-种技法.md"
+      ],
+      "selected": false,
+      "action": "暂缓",
+      "validation": "未执行"
+    },
+    {
+      "legacy_paths": [
+        "assets/488ee9f23987244355537321789a517e61e4e921b1736229824a0a25ec1cb08d.png"
+      ],
+      "legacy_sha256": "488ee9f23987244355537321789a517e61e4e921b1736229824a0a25ec1cb08d",
+      "target_path": "数据/资产/488ee9f23987244355537321789a517e61e4e921b1736229824a0a25ec1cb08d.png",
+      "referenced_by": [
+        "溯源空间/2026-09-04-前-Apple-AI-设计专家：去除-AI-味、解锁-AI-设计创造力的-8-种技法.md",
+        "溯源空间/2026-09-04-苹果前-AI-设计主管复盘：如何让-AI-彻底摆脱“工业垃圾”审美，做出顶尖设计？.md"
+      ],
+      "selected": false,
+      "action": "暂缓",
+      "validation": "未执行"
+    },
+    {
+      "legacy_paths": [
+        "assets/49631a903926275b36614d3ad0b001b3c7229d727abf4f8a2bf4e7025c28d271.jpg"
+      ],
+      "legacy_sha256": "49631a903926275b36614d3ad0b001b3c7229d727abf4f8a2bf4e7025c28d271",
+      "target_path": "数据/资产/49631a903926275b36614d3ad0b001b3c7229d727abf4f8a2bf4e7025c28d271.jpg",
+      "referenced_by": [
+        "溯源空间/2026-08-12-2026中国企业级AI-Agent发展洞察报告.md"
+      ],
+      "selected": true,
+      "action": "迁入",
+      "validation": "已通过"
+    },
+    {
+      "legacy_paths": [
+        "assets/4b3686686b068f3fedbdba329a8a886a5b158fce5843a890285c4e92d4e465bb.gif"
+      ],
+      "legacy_sha256": "4b3686686b068f3fedbdba329a8a886a5b158fce5843a890285c4e92d4e465bb",
+      "target_path": "数据/资产/4b3686686b068f3fedbdba329a8a886a5b158fce5843a890285c4e92d4e465bb.gif",
+      "referenced_by": [
+        "溯源空间/2026-09-04-前-Apple-AI-设计专家：去除-AI-味、解锁-AI-设计创造力的-8-种技法.md"
+      ],
+      "selected": false,
+      "action": "暂缓",
+      "validation": "未执行"
+    },
+    {
+      "legacy_paths": [
+        "assets/4d510b1e2b0a6bed93496ee9a00968b6e0fb19de8d199c3c9a76b44ef84942ac.gif"
+      ],
+      "legacy_sha256": "4d510b1e2b0a6bed93496ee9a00968b6e0fb19de8d199c3c9a76b44ef84942ac",
+      "target_path": "数据/资产/4d510b1e2b0a6bed93496ee9a00968b6e0fb19de8d199c3c9a76b44ef84942ac.gif",
+      "referenced_by": [
+        "溯源空间/2026-09-04-前-Apple-AI-设计专家：去除-AI-味、解锁-AI-设计创造力的-8-种技法.md"
+      ],
+      "selected": false,
+      "action": "暂缓",
+      "validation": "未执行"
+    },
+    {
+      "legacy_paths": [
+        "assets/522c49d2bc0e41256eaa6b0d8829e3f16ceb6af800a87476c9c5a4100911bdae.png"
+      ],
+      "legacy_sha256": "522c49d2bc0e41256eaa6b0d8829e3f16ceb6af800a87476c9c5a4100911bdae",
+      "target_path": "数据/资产/522c49d2bc0e41256eaa6b0d8829e3f16ceb6af800a87476c9c5a4100911bdae.png",
+      "referenced_by": [
+        "溯源空间/2026-08-12-2026中国企业级AI-Agent发展洞察报告.md"
+      ],
+      "selected": true,
+      "action": "迁入",
+      "validation": "已通过"
+    },
+    {
+      "legacy_paths": [
+        "assets/52eb686d234384bf42c00f531574653afa0054d77393535841f95d08fd5c9e42.gif"
+      ],
+      "legacy_sha256": "52eb686d234384bf42c00f531574653afa0054d77393535841f95d08fd5c9e42",
+      "target_path": "数据/资产/52eb686d234384bf42c00f531574653afa0054d77393535841f95d08fd5c9e42.gif",
+      "referenced_by": [
+        "溯源空间/2026-09-04-How-to-turn-your-AI-into-a-world-class-designer.md"
+      ],
+      "selected": false,
+      "action": "暂缓",
+      "validation": "未执行"
+    },
+    {
+      "legacy_paths": [
+        "assets/55141c8a321c5e8f3d35eb1c6da87a94e12b3ad9fb40dce5154f5fb2e8742c4d.png"
+      ],
+      "legacy_sha256": "55141c8a321c5e8f3d35eb1c6da87a94e12b3ad9fb40dce5154f5fb2e8742c4d",
+      "target_path": "数据/资产/55141c8a321c5e8f3d35eb1c6da87a94e12b3ad9fb40dce5154f5fb2e8742c4d.png",
+      "referenced_by": [
+        "溯源空间/2026-08-12-2026中国企业级AI-Agent发展洞察报告.md"
+      ],
+      "selected": true,
+      "action": "迁入",
+      "validation": "已通过"
+    },
+    {
+      "legacy_paths": [
+        "assets/5a8422b9abe88235f1bd165ffb8367e1bf795d3726aadcc18dfee536f44a1498.jpg"
+      ],
+      "legacy_sha256": "5a8422b9abe88235f1bd165ffb8367e1bf795d3726aadcc18dfee536f44a1498",
+      "target_path": "数据/资产/5a8422b9abe88235f1bd165ffb8367e1bf795d3726aadcc18dfee536f44a1498.jpg",
+      "referenced_by": [
+        "溯源空间/2026-08-12-2026中国企业级AI-Agent发展洞察报告.md"
+      ],
+      "selected": true,
+      "action": "迁入",
+      "validation": "已通过"
+    },
+    {
+      "legacy_paths": [
+        "assets/5b822ac522414e89f56f5883d83eb5d267d44506948a08be2c7d4f615a57b4be.png"
+      ],
+      "legacy_sha256": "5b822ac522414e89f56f5883d83eb5d267d44506948a08be2c7d4f615a57b4be",
+      "target_path": "数据/资产/5b822ac522414e89f56f5883d83eb5d267d44506948a08be2c7d4f615a57b4be.png",
+      "referenced_by": [
+        "溯源空间/2026-08-12-2026中国企业级AI-Agent发展洞察报告.md"
+      ],
+      "selected": true,
+      "action": "迁入",
+      "validation": "已通过"
+    },
+    {
+      "legacy_paths": [
+        "assets/5f80313e4b469280c54d47f14a1ed255f90ee439cebd54370f07d04daad99231.png"
+      ],
+      "legacy_sha256": "5f80313e4b469280c54d47f14a1ed255f90ee439cebd54370f07d04daad99231",
+      "target_path": "数据/资产/5f80313e4b469280c54d47f14a1ed255f90ee439cebd54370f07d04daad99231.png",
+      "referenced_by": [
+        "溯源空间/2026-08-12-2026中国企业级AI-Agent发展洞察报告.md"
+      ],
+      "selected": true,
+      "action": "迁入",
+      "validation": "已通过"
+    },
+    {
+      "legacy_paths": [
+        "assets/61af1dbdf63d4f1546a46621fa9b5f4c9819926e852c95f599f4e579352d8285.gif"
+      ],
+      "legacy_sha256": "61af1dbdf63d4f1546a46621fa9b5f4c9819926e852c95f599f4e579352d8285",
+      "target_path": "数据/资产/61af1dbdf63d4f1546a46621fa9b5f4c9819926e852c95f599f4e579352d8285.gif",
+      "referenced_by": [
+        "溯源空间/2026-09-04-How-to-turn-your-AI-into-a-world-class-designer.md"
+      ],
+      "selected": false,
+      "action": "暂缓",
+      "validation": "未执行"
+    },
+    {
+      "legacy_paths": [
+        "assets/628a712bf22fb6d79c10564c81730523837e7477fc8e11621bcd303cfd353db1.png"
+      ],
+      "legacy_sha256": "628a712bf22fb6d79c10564c81730523837e7477fc8e11621bcd303cfd353db1",
+      "target_path": "数据/资产/628a712bf22fb6d79c10564c81730523837e7477fc8e11621bcd303cfd353db1.png",
+      "referenced_by": [
+        "溯源空间/2026-09-04-How-to-turn-your-AI-into-a-world-class-designer.md"
+      ],
+      "selected": false,
+      "action": "暂缓",
+      "validation": "未执行"
+    },
+    {
+      "legacy_paths": [
+        "assets/651aaaaf60e8b681899c4c157248a915b2ce5e30136a3264e14cf0acbbe4d198.jpg"
+      ],
+      "legacy_sha256": "651aaaaf60e8b681899c4c157248a915b2ce5e30136a3264e14cf0acbbe4d198",
+      "target_path": "数据/资产/651aaaaf60e8b681899c4c157248a915b2ce5e30136a3264e14cf0acbbe4d198.jpg",
+      "referenced_by": [
+        "溯源空间/2026-08-12-2026中国企业级AI-Agent发展洞察报告.md"
+      ],
+      "selected": true,
+      "action": "迁入",
+      "validation": "已通过"
+    },
+    {
+      "legacy_paths": [
+        "assets/67c331e5592330e01d587bfec0a6b48acce2c2e9660ec11dfa6fd3e072080d68.gif"
+      ],
+      "legacy_sha256": "67c331e5592330e01d587bfec0a6b48acce2c2e9660ec11dfa6fd3e072080d68",
+      "target_path": "数据/资产/67c331e5592330e01d587bfec0a6b48acce2c2e9660ec11dfa6fd3e072080d68.gif",
+      "referenced_by": [
+        "溯源空间/2026-09-04-How-to-turn-your-AI-into-a-world-class-designer.md"
+      ],
+      "selected": false,
+      "action": "暂缓",
+      "validation": "未执行"
+    },
+    {
+      "legacy_paths": [
+        "assets/6900b05bb2506b92fabcf4476cb68a4419322c631062932d01877be0ac9ca508.gif"
+      ],
+      "legacy_sha256": "6900b05bb2506b92fabcf4476cb68a4419322c631062932d01877be0ac9ca508",
+      "target_path": "数据/资产/6900b05bb2506b92fabcf4476cb68a4419322c631062932d01877be0ac9ca508.gif",
+      "referenced_by": [
+        "溯源空间/2026-09-04-How-to-turn-your-AI-into-a-world-class-designer.md"
+      ],
+      "selected": false,
+      "action": "暂缓",
+      "validation": "未执行"
+    },
+    {
+      "legacy_paths": [
+        "assets/748ddcef9b7731c8fabd74d73e16876d7efb2351be7054e4d442a862de42935d.jpg"
+      ],
+      "legacy_sha256": "748ddcef9b7731c8fabd74d73e16876d7efb2351be7054e4d442a862de42935d",
+      "target_path": "数据/资产/748ddcef9b7731c8fabd74d73e16876d7efb2351be7054e4d442a862de42935d.jpg",
+      "referenced_by": [
+        "溯源空间/2026-08-12-2026中国企业级AI-Agent发展洞察报告.md"
+      ],
+      "selected": true,
+      "action": "迁入",
+      "validation": "已通过"
+    },
+    {
+      "legacy_paths": [
+        "assets/7cfe20c85f41b4a20d5fdd8761cfe9f581a4ad382225dd84bddd58b2bbbd3003.jpg"
+      ],
+      "legacy_sha256": "7cfe20c85f41b4a20d5fdd8761cfe9f581a4ad382225dd84bddd58b2bbbd3003",
+      "target_path": "数据/资产/7cfe20c85f41b4a20d5fdd8761cfe9f581a4ad382225dd84bddd58b2bbbd3003.jpg",
+      "referenced_by": [
+        "溯源空间/2026-08-12-2026中国企业级AI-Agent发展洞察报告.md"
+      ],
+      "selected": true,
+      "action": "迁入",
+      "validation": "已通过"
+    },
+    {
+      "legacy_paths": [
+        "assets/7f3fcddb8d6f8d92b7e36625f089dd46e766ab8f7db88ea7e32b0573d3a8b16f.png"
+      ],
+      "legacy_sha256": "7f3fcddb8d6f8d92b7e36625f089dd46e766ab8f7db88ea7e32b0573d3a8b16f",
+      "target_path": "数据/资产/7f3fcddb8d6f8d92b7e36625f089dd46e766ab8f7db88ea7e32b0573d3a8b16f.png",
+      "referenced_by": [
+        "溯源空间/2026-08-12-2026中国企业级AI-Agent发展洞察报告.md"
+      ],
+      "selected": true,
+      "action": "迁入",
+      "validation": "已通过"
+    },
+    {
+      "legacy_paths": [
+        "assets/85d0838a1ea111afdb79b352d32c339c2bb5bc3641997acba449dd417e9d823a.png"
+      ],
+      "legacy_sha256": "85d0838a1ea111afdb79b352d32c339c2bb5bc3641997acba449dd417e9d823a",
+      "target_path": "数据/资产/85d0838a1ea111afdb79b352d32c339c2bb5bc3641997acba449dd417e9d823a.png",
+      "referenced_by": [
+        "溯源空间/2026-08-12-2026中国企业级AI-Agent发展洞察报告.md"
+      ],
+      "selected": true,
+      "action": "迁入",
+      "validation": "已通过"
+    },
+    {
+      "legacy_paths": [
+        "assets/85d727818f792367444cdd71d313400420f8cc95873409b3d1496d0468fff3d5.jpg"
+      ],
+      "legacy_sha256": "85d727818f792367444cdd71d313400420f8cc95873409b3d1496d0468fff3d5",
+      "target_path": "数据/资产/85d727818f792367444cdd71d313400420f8cc95873409b3d1496d0468fff3d5.jpg",
+      "referenced_by": [
+        "溯源空间/2026-09-04-How-to-turn-your-AI-into-a-world-class-designer.md"
+      ],
+      "selected": false,
+      "action": "暂缓",
+      "validation": "未执行"
+    },
+    {
+      "legacy_paths": [
+        "assets/88e7ba02bbc6f14f66dc1e932b0c3eb7a3d850b49897b0454f5dac189f09bad6.png"
+      ],
+      "legacy_sha256": "88e7ba02bbc6f14f66dc1e932b0c3eb7a3d850b49897b0454f5dac189f09bad6",
+      "target_path": "数据/资产/88e7ba02bbc6f14f66dc1e932b0c3eb7a3d850b49897b0454f5dac189f09bad6.png",
+      "referenced_by": [
+        "溯源空间/2026-08-12-2026中国企业级AI-Agent发展洞察报告.md"
+      ],
+      "selected": true,
+      "action": "迁入",
+      "validation": "已通过"
+    },
+    {
+      "legacy_paths": [
+        "assets/8a7e907342b3b1d9d1cd0bdbdcea62f4ef947029a130c0d167c1721c360fa95c.gif"
+      ],
+      "legacy_sha256": "8a7e907342b3b1d9d1cd0bdbdcea62f4ef947029a130c0d167c1721c360fa95c",
+      "target_path": "数据/资产/8a7e907342b3b1d9d1cd0bdbdcea62f4ef947029a130c0d167c1721c360fa95c.gif",
+      "referenced_by": [
+        "溯源空间/2026-09-04-前-Apple-AI-设计专家：去除-AI-味、解锁-AI-设计创造力的-8-种技法.md"
+      ],
+      "selected": false,
+      "action": "暂缓",
+      "validation": "未执行"
+    },
+    {
+      "legacy_paths": [
+        "assets/8ca920e305030eed3c5a2473e8322b4064ef85fae9a9e021b3847d64aadf3154.gif"
+      ],
+      "legacy_sha256": "8ca920e305030eed3c5a2473e8322b4064ef85fae9a9e021b3847d64aadf3154",
+      "target_path": "数据/资产/8ca920e305030eed3c5a2473e8322b4064ef85fae9a9e021b3847d64aadf3154.gif",
+      "referenced_by": [
+        "溯源空间/2026-09-04-How-to-turn-your-AI-into-a-world-class-designer.md"
+      ],
+      "selected": false,
+      "action": "暂缓",
+      "validation": "未执行"
+    },
+    {
+      "legacy_paths": [
+        "assets/91dc83172e2d9fff45619f236e9affa237a3008dae71d91d5fef7b0cffa1448a.jpg"
+      ],
+      "legacy_sha256": "91dc83172e2d9fff45619f236e9affa237a3008dae71d91d5fef7b0cffa1448a",
+      "target_path": "数据/资产/91dc83172e2d9fff45619f236e9affa237a3008dae71d91d5fef7b0cffa1448a.jpg",
+      "referenced_by": [
+        "溯源空间/2026-09-04-How-to-turn-your-AI-into-a-world-class-designer.md"
+      ],
+      "selected": false,
+      "action": "暂缓",
+      "validation": "未执行"
+    },
+    {
+      "legacy_paths": [
+        "assets/978b5b83e3e391ea3622028d4f1e78e6bbf514a2754f1bfb098009e6f6cccf2b.png"
+      ],
+      "legacy_sha256": "978b5b83e3e391ea3622028d4f1e78e6bbf514a2754f1bfb098009e6f6cccf2b",
+      "target_path": "数据/资产/978b5b83e3e391ea3622028d4f1e78e6bbf514a2754f1bfb098009e6f6cccf2b.png",
+      "referenced_by": [
+        "溯源空间/2026-08-12-2026中国企业级AI-Agent发展洞察报告.md"
+      ],
+      "selected": true,
+      "action": "迁入",
+      "validation": "已通过"
+    },
+    {
+      "legacy_paths": [
+        "assets/9c27c9654d74ab46811cf2c1957fa42d9ee1365179d39f8a1ca25b4bdbb70219.png"
+      ],
+      "legacy_sha256": "9c27c9654d74ab46811cf2c1957fa42d9ee1365179d39f8a1ca25b4bdbb70219",
+      "target_path": "数据/资产/9c27c9654d74ab46811cf2c1957fa42d9ee1365179d39f8a1ca25b4bdbb70219.png",
+      "referenced_by": [
+        "溯源空间/2026-09-04-How-to-turn-your-AI-into-a-world-class-designer.md"
+      ],
+      "selected": false,
+      "action": "暂缓",
+      "validation": "未执行"
+    },
+    {
+      "legacy_paths": [
+        "assets/9e8de9fa5fb485c8ce9171dadfe024869532b1bb61898dabd7df32dd31caacca.jpg"
+      ],
+      "legacy_sha256": "9e8de9fa5fb485c8ce9171dadfe024869532b1bb61898dabd7df32dd31caacca",
+      "target_path": "数据/资产/9e8de9fa5fb485c8ce9171dadfe024869532b1bb61898dabd7df32dd31caacca.jpg",
+      "referenced_by": [
+        "溯源空间/2026-09-04-How-to-turn-your-AI-into-a-world-class-designer.md"
+      ],
+      "selected": false,
+      "action": "暂缓",
+      "validation": "未执行"
+    },
+    {
+      "legacy_paths": [
+        "assets/9f5f1af00a610edaed1b9a2db4807d8aacbb91da69fd8b6e118db93cbede072d.gif"
+      ],
+      "legacy_sha256": "9f5f1af00a610edaed1b9a2db4807d8aacbb91da69fd8b6e118db93cbede072d",
+      "target_path": "数据/资产/9f5f1af00a610edaed1b9a2db4807d8aacbb91da69fd8b6e118db93cbede072d.gif",
+      "referenced_by": [
+        "溯源空间/2026-09-04-How-to-turn-your-AI-into-a-world-class-designer.md"
+      ],
+      "selected": false,
+      "action": "暂缓",
+      "validation": "未执行"
+    },
+    {
+      "legacy_paths": [
+        "assets/9fcf7e54ec6ecfa20726a30c2bec99e82afff5462da7a429b56f52c06e3ff863.png"
+      ],
+      "legacy_sha256": "9fcf7e54ec6ecfa20726a30c2bec99e82afff5462da7a429b56f52c06e3ff863",
+      "target_path": "数据/资产/9fcf7e54ec6ecfa20726a30c2bec99e82afff5462da7a429b56f52c06e3ff863.png",
+      "referenced_by": [
+        "溯源空间/2026-09-04-前-Apple-AI-设计专家：去除-AI-味、解锁-AI-设计创造力的-8-种技法.md"
+      ],
+      "selected": false,
+      "action": "暂缓",
+      "validation": "未执行"
+    },
+    {
+      "legacy_paths": [
+        "assets/9fd15ebff85bc7beb7013e51d6939161d99e8f2ae7c69aaf1c0264d5e65cb774.gif"
+      ],
+      "legacy_sha256": "9fd15ebff85bc7beb7013e51d6939161d99e8f2ae7c69aaf1c0264d5e65cb774",
+      "target_path": "数据/资产/9fd15ebff85bc7beb7013e51d6939161d99e8f2ae7c69aaf1c0264d5e65cb774.gif",
+      "referenced_by": [
+        "溯源空间/2026-09-04-前-Apple-AI-设计专家：去除-AI-味、解锁-AI-设计创造力的-8-种技法.md"
+      ],
+      "selected": false,
+      "action": "暂缓",
+      "validation": "未执行"
+    },
+    {
+      "legacy_paths": [
+        "assets/a03792205792d2e8fa924d2f9e6e526bdadaed3cc61d8899bb9fe7f8fe3d6522.png"
+      ],
+      "legacy_sha256": "a03792205792d2e8fa924d2f9e6e526bdadaed3cc61d8899bb9fe7f8fe3d6522",
+      "target_path": "数据/资产/a03792205792d2e8fa924d2f9e6e526bdadaed3cc61d8899bb9fe7f8fe3d6522.png",
+      "referenced_by": [
+        "溯源空间/2026-08-12-2026中国企业级AI-Agent发展洞察报告.md"
+      ],
+      "selected": true,
+      "action": "迁入",
+      "validation": "已通过"
+    },
+    {
+      "legacy_paths": [
+        "assets/a33475420f7cdfe49b91e19b4468c705b58debd03c7dd2353e2a7fa2a25c0649.gif"
+      ],
+      "legacy_sha256": "a33475420f7cdfe49b91e19b4468c705b58debd03c7dd2353e2a7fa2a25c0649",
+      "target_path": "数据/资产/a33475420f7cdfe49b91e19b4468c705b58debd03c7dd2353e2a7fa2a25c0649.gif",
+      "referenced_by": [
+        "溯源空间/2026-09-04-How-to-turn-your-AI-into-a-world-class-designer.md"
+      ],
+      "selected": false,
+      "action": "暂缓",
+      "validation": "未执行"
+    },
+    {
+      "legacy_paths": [
+        "assets/a64277363a9fbed2d4935cbaa1dc312d7f84db62fc1bd49418853368ac2ac16f.jpg"
+      ],
+      "legacy_sha256": "a64277363a9fbed2d4935cbaa1dc312d7f84db62fc1bd49418853368ac2ac16f",
+      "target_path": "数据/资产/a64277363a9fbed2d4935cbaa1dc312d7f84db62fc1bd49418853368ac2ac16f.jpg",
+      "referenced_by": [
+        "溯源空间/2026-08-12-2026中国企业级AI-Agent发展洞察报告.md"
+      ],
+      "selected": true,
+      "action": "迁入",
+      "validation": "已通过"
+    },
+    {
+      "legacy_paths": [
+        "assets/aac80ff3b1d6f6f9eb6261fab44bc4bd292b0d564b4888982f453c9d48c105dc.jpg"
+      ],
+      "legacy_sha256": "aac80ff3b1d6f6f9eb6261fab44bc4bd292b0d564b4888982f453c9d48c105dc",
+      "target_path": "数据/资产/aac80ff3b1d6f6f9eb6261fab44bc4bd292b0d564b4888982f453c9d48c105dc.jpg",
+      "referenced_by": [
+        "溯源空间/2026-08-12-2026中国企业级AI-Agent发展洞察报告.md"
+      ],
+      "selected": true,
+      "action": "迁入",
+      "validation": "已通过"
+    },
+    {
+      "legacy_paths": [
+        "assets/ac526ffc8bebaa90e26d126cdd52198f95b92d07bfdd50f2546ac08a25113053.png"
+      ],
+      "legacy_sha256": "ac526ffc8bebaa90e26d126cdd52198f95b92d07bfdd50f2546ac08a25113053",
+      "target_path": "数据/资产/ac526ffc8bebaa90e26d126cdd52198f95b92d07bfdd50f2546ac08a25113053.png",
+      "referenced_by": [
+        "溯源空间/2026-08-13-阅读素材：曾鸣《智能商业》（第一章AI产业化的展开+第二章智能复利和黑洞效应）.md"
+      ],
+      "selected": true,
+      "action": "迁入",
+      "validation": "已通过"
+    },
+    {
+      "legacy_paths": [
+        "assets/b9c38d38bcc5078a0b9b46c9bada042b0447cc780c653a6f12fd388dab22957c.png"
+      ],
+      "legacy_sha256": "b9c38d38bcc5078a0b9b46c9bada042b0447cc780c653a6f12fd388dab22957c",
+      "target_path": "数据/资产/b9c38d38bcc5078a0b9b46c9bada042b0447cc780c653a6f12fd388dab22957c.png",
+      "referenced_by": [
+        "溯源空间/2026-09-16-AI文案工坊产品构建思路分享.md"
+      ],
+      "selected": false,
+      "action": "暂缓",
+      "validation": "未执行"
+    },
+    {
+      "legacy_paths": [
+        "assets/baa65ec6d749711a55d513eaf6115dbea0b86e445263be355d882e3381894392.gif"
+      ],
+      "legacy_sha256": "baa65ec6d749711a55d513eaf6115dbea0b86e445263be355d882e3381894392",
+      "target_path": "数据/资产/baa65ec6d749711a55d513eaf6115dbea0b86e445263be355d882e3381894392.gif",
+      "referenced_by": [
+        "溯源空间/2026-09-04-How-to-turn-your-AI-into-a-world-class-designer.md"
+      ],
+      "selected": false,
+      "action": "暂缓",
+      "validation": "未执行"
+    },
+    {
+      "legacy_paths": [
+        "assets/be3cb6af652b947320db6dd4a82f6e0987b810b945657eaf4bb3f4233bea3d7d.png"
+      ],
+      "legacy_sha256": "be3cb6af652b947320db6dd4a82f6e0987b810b945657eaf4bb3f4233bea3d7d",
+      "target_path": "数据/资产/be3cb6af652b947320db6dd4a82f6e0987b810b945657eaf4bb3f4233bea3d7d.png",
+      "referenced_by": [
+        "溯源空间/2026-08-12-2026中国企业级AI-Agent发展洞察报告.md"
+      ],
+      "selected": true,
+      "action": "迁入",
+      "validation": "已通过"
+    },
+    {
+      "legacy_paths": [
+        "assets/c849576bd7638af61e6136a1a46ac2335fc3e0b7a539ee709ca476c403ff7ca4.gif"
+      ],
+      "legacy_sha256": "c849576bd7638af61e6136a1a46ac2335fc3e0b7a539ee709ca476c403ff7ca4",
+      "target_path": "数据/资产/c849576bd7638af61e6136a1a46ac2335fc3e0b7a539ee709ca476c403ff7ca4.gif",
+      "referenced_by": [
+        "溯源空间/2026-09-04-前-Apple-AI-设计专家：去除-AI-味、解锁-AI-设计创造力的-8-种技法.md"
+      ],
+      "selected": false,
+      "action": "暂缓",
+      "validation": "未执行"
+    },
+    {
+      "legacy_paths": [
+        "assets/c98a4d16d73365ebc822f32d8ac167f901799ba7804e5b710785fd390d78876b.jpg"
+      ],
+      "legacy_sha256": "c98a4d16d73365ebc822f32d8ac167f901799ba7804e5b710785fd390d78876b",
+      "target_path": "数据/资产/c98a4d16d73365ebc822f32d8ac167f901799ba7804e5b710785fd390d78876b.jpg",
+      "referenced_by": [
+        "溯源空间/2026-08-12-2026中国企业级AI-Agent发展洞察报告.md"
+      ],
+      "selected": true,
+      "action": "迁入",
+      "validation": "已通过"
+    },
+    {
+      "legacy_paths": [
+        "assets/d4ee32d8053d349737bd8ed1cc6d3315c353ce09f7c88c8cbf3691cb3ec87d21.png"
+      ],
+      "legacy_sha256": "d4ee32d8053d349737bd8ed1cc6d3315c353ce09f7c88c8cbf3691cb3ec87d21",
+      "target_path": "数据/资产/d4ee32d8053d349737bd8ed1cc6d3315c353ce09f7c88c8cbf3691cb3ec87d21.png",
+      "referenced_by": [
+        "溯源空间/2026-08-12-2026中国企业级AI-Agent发展洞察报告.md"
+      ],
+      "selected": true,
+      "action": "迁入",
+      "validation": "已通过"
+    },
+    {
+      "legacy_paths": [
+        "assets/da41b7a1a7c607e8cedecd46453cbfc50642fef9640d2a65e46b2860db6acb6f.png"
+      ],
+      "legacy_sha256": "da41b7a1a7c607e8cedecd46453cbfc50642fef9640d2a65e46b2860db6acb6f",
+      "target_path": "数据/资产/da41b7a1a7c607e8cedecd46453cbfc50642fef9640d2a65e46b2860db6acb6f.png",
+      "referenced_by": [
+        "溯源空间/2026-08-16-北京智能体新政-解读.md"
+      ],
+      "selected": true,
+      "action": "迁入",
+      "validation": "已通过"
+    },
+    {
+      "legacy_paths": [
+        "assets/daf21f28ecde48d227c276733ce827b85b3e55daca9c869a988b1d5bd36242b1.gif"
+      ],
+      "legacy_sha256": "daf21f28ecde48d227c276733ce827b85b3e55daca9c869a988b1d5bd36242b1",
+      "target_path": "数据/资产/daf21f28ecde48d227c276733ce827b85b3e55daca9c869a988b1d5bd36242b1.gif",
+      "referenced_by": [
+        "溯源空间/2026-09-04-前-Apple-AI-设计专家：去除-AI-味、解锁-AI-设计创造力的-8-种技法.md"
+      ],
+      "selected": false,
+      "action": "暂缓",
+      "validation": "未执行"
+    },
+    {
+      "legacy_paths": [
+        "assets/dd4adadc0f105488b577963a88d538e5aa666ab103d0c53377fddc026e877dc4.png"
+      ],
+      "legacy_sha256": "dd4adadc0f105488b577963a88d538e5aa666ab103d0c53377fddc026e877dc4",
+      "target_path": "数据/资产/dd4adadc0f105488b577963a88d538e5aa666ab103d0c53377fddc026e877dc4.png",
+      "referenced_by": [
+        "溯源空间/2026-09-04-前-Apple-AI-设计专家：去除-AI-味、解锁-AI-设计创造力的-8-种技法.md"
+      ],
+      "selected": false,
+      "action": "暂缓",
+      "validation": "未执行"
+    },
+    {
+      "legacy_paths": [
+        "assets/e15438c187fc25bfdc95c4cf4a15595ccf8e64b3a4e0bbc46da20a062ad67cba.png"
+      ],
+      "legacy_sha256": "e15438c187fc25bfdc95c4cf4a15595ccf8e64b3a4e0bbc46da20a062ad67cba",
+      "target_path": "数据/资产/e15438c187fc25bfdc95c4cf4a15595ccf8e64b3a4e0bbc46da20a062ad67cba.png",
+      "referenced_by": [
+        "溯源空间/2026-08-12-2026中国企业级AI-Agent发展洞察报告.md"
+      ],
+      "selected": true,
+      "action": "迁入",
+      "validation": "已通过"
+    },
+    {
+      "legacy_paths": [
+        "assets/e3b0fa22db614e54fc000db45515337d04c37ae6cd4188899a3f7b37d09abcc9.jpg"
+      ],
+      "legacy_sha256": "e3b0fa22db614e54fc000db45515337d04c37ae6cd4188899a3f7b37d09abcc9",
+      "target_path": "数据/资产/e3b0fa22db614e54fc000db45515337d04c37ae6cd4188899a3f7b37d09abcc9.jpg",
+      "referenced_by": [
+        "溯源空间/2026-09-04-前-Apple-AI-设计专家：去除-AI-味、解锁-AI-设计创造力的-8-种技法.md"
+      ],
+      "selected": false,
+      "action": "暂缓",
+      "validation": "未执行"
+    },
+    {
+      "legacy_paths": [
+        "assets/e9ef5e6dbb49cb5616fc9409eb7aed06cd368e3af9e2f4993b1a57ce2a52779d.png"
+      ],
+      "legacy_sha256": "e9ef5e6dbb49cb5616fc9409eb7aed06cd368e3af9e2f4993b1a57ce2a52779d",
+      "target_path": "数据/资产/e9ef5e6dbb49cb5616fc9409eb7aed06cd368e3af9e2f4993b1a57ce2a52779d.png",
+      "referenced_by": [
+        "溯源空间/2026-08-12-2026中国企业级AI-Agent发展洞察报告.md"
+      ],
+      "selected": true,
+      "action": "迁入",
+      "validation": "已通过"
+    },
+    {
+      "legacy_paths": [
+        "assets/ebc30daedf4f0b233b8abc13ad688696309ecabd3b77e97e1fbf1027ac5f6cb9.png"
+      ],
+      "legacy_sha256": "ebc30daedf4f0b233b8abc13ad688696309ecabd3b77e97e1fbf1027ac5f6cb9",
+      "target_path": "数据/资产/ebc30daedf4f0b233b8abc13ad688696309ecabd3b77e97e1fbf1027ac5f6cb9.png",
+      "referenced_by": [
+        "溯源空间/2026-08-12-2026中国企业级AI-Agent发展洞察报告.md"
+      ],
+      "selected": true,
+      "action": "迁入",
+      "validation": "已通过"
+    },
+    {
+      "legacy_paths": [
+        "assets/ed50e4ead9f5ef5df0b25f6db0573012eb29d7558bc8cb0178c2e4ed34610003.jpg"
+      ],
+      "legacy_sha256": "ed50e4ead9f5ef5df0b25f6db0573012eb29d7558bc8cb0178c2e4ed34610003",
+      "target_path": "数据/资产/ed50e4ead9f5ef5df0b25f6db0573012eb29d7558bc8cb0178c2e4ed34610003.jpg",
+      "referenced_by": [
+        "溯源空间/2026-09-04-How-to-turn-your-AI-into-a-world-class-designer.md"
+      ],
+      "selected": false,
+      "action": "暂缓",
+      "validation": "未执行"
+    },
+    {
+      "legacy_paths": [
+        "assets/f2ed05d0220c07a4be7f1007da8ae05561df8a4efe95dc7e46645b43dbb7dc6d.gif"
+      ],
+      "legacy_sha256": "f2ed05d0220c07a4be7f1007da8ae05561df8a4efe95dc7e46645b43dbb7dc6d",
+      "target_path": "数据/资产/f2ed05d0220c07a4be7f1007da8ae05561df8a4efe95dc7e46645b43dbb7dc6d.gif",
+      "referenced_by": [
+        "溯源空间/2026-09-04-前-Apple-AI-设计专家：去除-AI-味、解锁-AI-设计创造力的-8-种技法.md"
+      ],
+      "selected": false,
+      "action": "暂缓",
+      "validation": "未执行"
+    },
+    {
+      "legacy_paths": [
+        "assets/f33b8f01ef63df5ed38f211311b67823d43c7fb42b9f819fd7e6796a275b343b.jpg"
+      ],
+      "legacy_sha256": "f33b8f01ef63df5ed38f211311b67823d43c7fb42b9f819fd7e6796a275b343b",
+      "target_path": "数据/资产/f33b8f01ef63df5ed38f211311b67823d43c7fb42b9f819fd7e6796a275b343b.jpg",
+      "referenced_by": [
+        "溯源空间/2026-08-12-2026中国企业级AI-Agent发展洞察报告.md"
+      ],
+      "selected": true,
+      "action": "迁入",
+      "validation": "已通过"
+    },
+    {
+      "legacy_paths": [
+        "assets/f3e8710000301bdefb5caa3c264238ba83afe5d338f7d779d1291908ff273987.gif"
+      ],
+      "legacy_sha256": "f3e8710000301bdefb5caa3c264238ba83afe5d338f7d779d1291908ff273987",
+      "target_path": "数据/资产/f3e8710000301bdefb5caa3c264238ba83afe5d338f7d779d1291908ff273987.gif",
+      "referenced_by": [
+        "溯源空间/2026-09-04-How-to-turn-your-AI-into-a-world-class-designer.md"
+      ],
+      "selected": false,
+      "action": "暂缓",
+      "validation": "未执行"
+    },
+    {
+      "legacy_paths": [
+        "assets/f4346e269d6281be9ff0a0824e463a8f97007314452b2ec56016f5679748a2fa.jpg"
+      ],
+      "legacy_sha256": "f4346e269d6281be9ff0a0824e463a8f97007314452b2ec56016f5679748a2fa",
+      "target_path": "数据/资产/f4346e269d6281be9ff0a0824e463a8f97007314452b2ec56016f5679748a2fa.jpg",
+      "referenced_by": [
+        "溯源空间/2026-09-04-How-to-turn-your-AI-into-a-world-class-designer.md"
+      ],
+      "selected": false,
+      "action": "暂缓",
+      "validation": "未执行"
+    },
+    {
+      "legacy_paths": [
+        "assets/f55b72ea83ff22e558e3693251dda6203bcf7d35098e1b5097a25745c3c0c6a9.jpg"
+      ],
+      "legacy_sha256": "f55b72ea83ff22e558e3693251dda6203bcf7d35098e1b5097a25745c3c0c6a9",
+      "target_path": "数据/资产/f55b72ea83ff22e558e3693251dda6203bcf7d35098e1b5097a25745c3c0c6a9.jpg",
+      "referenced_by": [
+        "溯源空间/2026-09-04-How-to-turn-your-AI-into-a-world-class-designer.md"
+      ],
+      "selected": false,
+      "action": "暂缓",
+      "validation": "未执行"
+    },
+    {
+      "legacy_paths": [
+        "assets/f98ae1241f0f67f76c29826c367e2baf973bfa6a84265d050dc6b35e69d4b344.gif"
+      ],
+      "legacy_sha256": "f98ae1241f0f67f76c29826c367e2baf973bfa6a84265d050dc6b35e69d4b344",
+      "target_path": "数据/资产/f98ae1241f0f67f76c29826c367e2baf973bfa6a84265d050dc6b35e69d4b344.gif",
+      "referenced_by": [
+        "溯源空间/2026-09-04-How-to-turn-your-AI-into-a-world-class-designer.md"
+      ],
+      "selected": false,
+      "action": "暂缓",
+      "validation": "未执行"
+    },
+    {
+      "legacy_paths": [
+        "assets/fa044dd546a4c54cf2f51b4487df4cd90e8a64db352227f714bd6105ddd58ca1.png"
+      ],
+      "legacy_sha256": "fa044dd546a4c54cf2f51b4487df4cd90e8a64db352227f714bd6105ddd58ca1",
+      "target_path": "数据/资产/fa044dd546a4c54cf2f51b4487df4cd90e8a64db352227f714bd6105ddd58ca1.png",
+      "referenced_by": [
+        "溯源空间/2026-08-12-2026中国企业级AI-Agent发展洞察报告.md"
+      ],
+      "selected": true,
+      "action": "迁入",
+      "validation": "已通过"
+    }
+  ],
+  "summary": {
+    "legacy_content_objects": 63,
+    "legacy_sources": 17,
+    "legacy_assets": 73,
+    "selected_by_type": {
+      "有意思": 10,
+      "闪念": 10,
+      "永久认识": 10,
+      "外部来源": 10
+    },
+    "selected_assets": 32
+  },
+  "validation": {
+    "status": "已通过",
+    "checks": [
+      "四类对象各 10 条",
+      "中文状态白名单",
+      "日期-序号-标题文件名",
+      "内部 ID 唯一且类型匹配",
+      "旧字段与绝对路径清理",
+      "正式内容哈希与迁移清单一致",
+      "图片引用可解析且复制前后 SHA-256 一致",
+      "旧输入文件哈希未变化",
+      "未创建旧原始思考会话"
+    ],
+    "errors": []
+  }
+}

@@ -1,6 +1,6 @@
 ---
 id: INS-YYYYMMDD-NNN
-status: active
+status: 有效
 created_at: YYYY-MM-DDTHH:MM:SS+08:00
 current_version: 1
 ---
@@ -33,4 +33,4 @@ current_version: 1
 
 保存当时完整判断、理由、必要边界和形成依据。
 
-后续修订追加新版本并更新 `current_version`；不要把生命周期状态改成 `revised`。停用时只把顶层状态改为 `retired`，版本历史继续保留。
+后续修订追加新版本并更新 `current_version`；不要把修订写成生命周期状态。停用时只把顶层状态改为 `已停用`，版本历史继续保留。
