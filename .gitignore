@@ -1,5 +1,14 @@
+.DS_Store
+*.swp
+*.tmp
 __pycache__/
 *.py[cod]
 .venv/
-data/.transactions/
-data/.write.lock
+
+# 机械派生数据可以重建，不进入认知事实版本历史。
+data/system/index/*
+data/system/cache/*
+data/system/background/*
+!data/system/index/.gitkeep
+!data/system/cache/.gitkeep
+!data/system/background/.gitkeep
