@@ -1,5 +1,4 @@
 ---
-id: INT-YYYYMMDD-NNN
 status: 待处理
 created_at: YYYY-MM-DDTHH:MM:SS+08:00
 ---

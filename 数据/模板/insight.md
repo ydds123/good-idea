@@ -1,5 +1,4 @@
 ---
-id: INS-YYYYMMDD-NNN
 status: 有效
 created_at: YYYY-MM-DDTHH:MM:SS+08:00
 current_version: 1
@@ -23,13 +22,11 @@ current_version: 1
 
 ### 形成依据
 
-- `SES-YYYYMMDD-NNN`
-- `FLA-YYYYMMDD-NNN`
-- 有实际外部材料时再列 `SRC-YYYYMMDD-NNN#snapshot-N`
+用自然语言说明这项认识为什么形成，并在原因中附上对应文档链接。不单独列出关联文件、独立 ID 或机械依赖。
 
 ## 版本历史
 
-### v1｜YYYY-MM-DD HH:MM｜用户认领
+### v1｜YYYY-MM-DD HH:MM｜松海认领
 
 保存当时完整判断、理由、必要边界和形成依据。
 
