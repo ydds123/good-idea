@@ -6,9 +6,9 @@ __pycache__/
 .venv/
 
 # 机械派生数据可以重建，不进入认知事实版本历史。
-data/system/index/*
-data/system/cache/*
-data/system/background/*
-!data/system/index/.gitkeep
-!data/system/cache/.gitkeep
-!data/system/background/.gitkeep
+数据/系统/索引/*
+数据/系统/缓存/*
+数据/系统/后台状态/*
+!数据/系统/索引/.gitkeep
+!数据/系统/缓存/.gitkeep
+!数据/系统/后台状态/.gitkeep

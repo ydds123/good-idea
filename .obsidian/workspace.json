@@ -1,0 +1,232 @@
+{
+  "main": {
+    "id": "64d6385efad96e77",
+    "type": "split",
+    "children": [
+      {
+        "id": "9af97fa33942801e",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "391815c2fb2d7c0c",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "数据/README.md",
+                "mode": "preview",
+                "source": false,
+                "backlinks": true,
+                "backlinkOpts": {
+                  "collapseAll": false,
+                  "extraContext": false,
+                  "sortOrder": "alphabetical",
+                  "showSearch": false,
+                  "searchQuery": "",
+                  "backlinkCollapsed": false,
+                  "unlinkedCollapsed": true
+                }
+              },
+              "icon": "lucide-file",
+              "title": "README"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "a68f6c187e3332be",
+    "type": "split",
+    "children": [
+      {
+        "id": "0827b518f01cf60b",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "3d08f0dfdc0fd924",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical",
+                "autoReveal": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-folder-closed",
+              "title": "文件列表"
+            }
+          },
+          {
+            "id": "ee9414fafb778698",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "搜索"
+            }
+          },
+          {
+            "id": "e70b7704a1a609d7",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-bookmark",
+              "title": "书签"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "d568c85bea79b6ea",
+    "type": "split",
+    "children": [
+      {
+        "id": "5bbbc61e82d47c43",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "4f5a041c5adac0f1",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "数据/README.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-coming-in",
+              "title": "反向链接"
+            }
+          },
+          {
+            "id": "494df6ef680843b0",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "file": "数据/README.md",
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "出链"
+            }
+          },
+          {
+            "id": "9165bccdf1c5900d",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-tags",
+              "title": "标签"
+            }
+          },
+          {
+            "id": "bf48fe5c69f9dc4e",
+            "type": "leaf",
+            "state": {
+              "type": "all-properties",
+              "state": {
+                "sortOrder": "frequency",
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-archive",
+              "title": "添加笔记属性"
+            }
+          },
+          {
+            "id": "a76605e3218a7d03",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "数据/README.md",
+                "followCursor": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-list",
+              "title": "大纲"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:打开快速切换": false,
+      "graph:查看关系图谱": false,
+      "canvas:新建白板": false,
+      "daily-notes:打开/创建今天的日记": false,
+      "templates:插入模板": false,
+      "command-palette:打开命令面板": false,
+      "bases:新建数据库": false
+    }
+  },
+  "active": "391815c2fb2d7c0c",
+  "lastOpenFiles": [
+    "数据/模板/source.md",
+    "数据/模板/session.md",
+    "数据/模板/flash.md",
+    "数据/模板/insight.md",
+    "验证/Skill路由验收.md",
+    "验证/README.md",
+    "验证/试运行协议.md",
+    "验证/场景推演.md",
+    "验证/试运行记录/README.md",
+    "验证/试运行记录/试运行模板.md",
+    "文档/两个核心Skill产品定义.md",
+    "数据/系统/后台状态",
+    "数据/系统/缓存",
+    "数据/系统/索引",
+    "数据/系统/操作事件",
+    "数据/系统/临时候选",
+    "数据/系统/ID登记",
+    "数据/记录/外部来源",
+    "数据/记录/永久认识",
+    "数据/记录/闪念",
+    "数据/记录/原始思考会话",
+    "数据/系统/README.md",
+    "规则/规则决策记录.md",
+    "规则/默认规则.md",
+    "规则/系统宪法.md",
+    "规则/README.md",
+    "规则/协作协议.md",
+    "规则/内容对象.md"
+  ]
+}
