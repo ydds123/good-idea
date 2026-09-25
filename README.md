@@ -19,7 +19,8 @@ Good Idea 是一个帮助用户保护思考现场、辨析闪念并沉淀阶段�
 rules/       产品语义、权责、协议与可调默认
 data/        人类可读事实和可重建的机械状态
 validation/  场景推演、试运行方法与观察结果
-skills/      当前状态说明；目前没有正式 Skill
+.agents/     两个核心 Skill 的项目级入口
+docs/        产品定义与设计背景
 ```
 
 当前没有活动 Kernel，也没有应用层。现有技术原型保存在 Git 分支
@@ -30,7 +31,7 @@ skills/      当前状态说明；目前没有正式 Skill
 - `rules/` 是产品规则的唯一权威位置。
 - `data/` 只记录事实，不定义产品语义。
 - `validation/` 只验证规则，不创造规则。
-- README、Skill 和未来实现只能引用规则，不能各自维护同义副本。
+- README、Skill、产品文档和未来实现只能引用规则，不能各自维护同义副本。
 - 原始设计方案是重建时的设计输入，不是项目运行依赖。移除设计方案后，本项目仍应完整可用。
 - 旧项目 `../good-idea` 只读保留，用于历史参考，不是本项目的地基。
 
@@ -47,10 +48,12 @@ skills/      当前状态说明；目前没有正式 Skill
 
 ## 当前工作方式
 
-1. Agent 每次先读取 `rules/constitution.md`。
-2. 根据当前任务读取 `rules/objects.md` 和 `rules/protocols.md` 的相关部分。
-3. 需要判断默认行为时读取 `rules/defaults.md`。
-4. 发生争议或规则演化时读取 `rules/decisions.md`。
+1. 新想法捕捉使用 `goodidea-capture`。
+2. 闪念辨析和认识完善使用 `goodidea-distill`。
+3. 两个 Skill 都先加载 `rules/` 中的对应权威规则。
+4. 来源登记和上下文召回是可插拔能力，不单独扩展核心 Skill 数量。
 5. 直接通过对话试运行，并按 `validation/trial-protocol.md` 保存完整记录。
 
-只有真实使用中反复出现、能够明确减少摩擦的动作，才会被考虑固化为 Kernel、Skill 或应用。
+完整产品定义见 `docs/two-core-skills.md`；它解释设计意图，但不覆盖 `rules/` 中的现行规则。
+
+两个 Skill 当前仍处于真实试运行阶段。只有反复出现、能够明确减少摩擦的机械动作，才会被考虑固化为 Kernel 或应用。
