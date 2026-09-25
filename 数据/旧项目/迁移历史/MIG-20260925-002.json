@@ -1,0 +1,951 @@
+{
+  "migration_id": "MIG-20260925-002",
+  "phase": "剩余四类正式对象全部迁移",
+  "generated_at": "2026-09-25T17:10:39+08:00",
+  "legacy_root": "/Users/apple/Documents/good-idea",
+  "legacy_commit": "9489f308f82bcc9896c11156aba673fdf5cabc8c",
+  "input_policy": "只从冻结提交读取清单中尚未迁移的正式对象；不读取或迁移旧捕捉会话和讨论日志。",
+  "objects": [
+    {
+      "legacy_path": "有意思空间/2026-09-11-VLX-VR：长视频深度推理模型（短片分析-电影级逻辑推理候选）.md",
+      "legacy_id": "INT-20260911-637e7d9c",
+      "legacy_sha256": "738571a2db7743d2d9228e182e45e3a4fb7e29fb8cfc6fd165743c201561c92e",
+      "target_type": "有意思",
+      "target_path": "数据/记录/有意思/2026-09-11-VLX-VR：长视频深度推理模型（短片分析／电影级逻辑推理候选）.md",
+      "target_sha256": "84778723357c5a205824495f4229979f6628cba3b7048dc5c49e20842dcff275",
+      "outcome": "none",
+      "transform": [
+        "remove legacy frontmatter",
+        "use human-readable filename",
+        "rename human sections only"
+      ],
+      "validation": "passed"
+    },
+    {
+      "legacy_path": "有意思空间/2026-09-14-O'Reilly《AI-Agents》配套开源代码库.md",
+      "legacy_id": "INT-20260914-77e5a7d8",
+      "legacy_sha256": "dd1a9476cd1ed871ac31d5623dcfe4975cdb2b41c9c2ad5c5c6d263660f5862d",
+      "target_type": "有意思",
+      "target_path": "数据/记录/有意思/2026-09-14-O'Reilly《AI Agents》配套开源代码库.md",
+      "target_sha256": "2d3415ecd9d35a475620b554e7e11322939d0cf25bd1326fe0f009fb9b89f7e6",
+      "outcome": "none",
+      "transform": [
+        "remove legacy frontmatter",
+        "use human-readable filename",
+        "rename human sections only"
+      ],
+      "validation": "passed"
+    },
+    {
+      "legacy_path": "有意思空间/2026-09-23-Palantir-式本体对-AI-的价值：六层机制拆解.md",
+      "legacy_id": "INT-20260923-78eebcee",
+      "legacy_sha256": "cd5bb2916d51d1aa3cc3ee7f7dbb8c4aeb27b6053cc94ff26a632e538d7b22f9",
+      "target_type": "有意思",
+      "target_path": "数据/记录/有意思/2026-09-23-Palantir 式本体对 AI 的价值：六层机制拆解.md",
+      "target_sha256": "50093a51cd237abe737e3fc006005d172cd557dc366583410959f177efc48d7e",
+      "outcome": "none",
+      "transform": [
+        "remove legacy frontmatter",
+        "use human-readable filename",
+        "rename human sections only"
+      ],
+      "validation": "passed"
+    },
+    {
+      "legacy_path": "闪念空间/2026-09-02-动态判断：贤时便用，不贤便黜.md",
+      "legacy_id": "FLA-20260902-7034f80a",
+      "legacy_sha256": "e2968966ea39a7c0a74d23fa178f3da1d1d16834465768728889d5b4e21f5276",
+      "target_type": "闪念",
+      "target_path": "数据/记录/闪念/2026-09-02-动态判断：贤时便用，不贤便黜.md",
+      "target_sha256": "084f4f5bf81ad652c11ce705346ba46f6aa7a84f82ac80b851ced7a224022eb0",
+      "outcome": "undecided; no placeholder added",
+      "transform": [
+        "remove legacy frontmatter",
+        "use human-readable filename",
+        "rename human sections only",
+        "express only real outcome in natural language"
+      ],
+      "validation": "passed"
+    },
+    {
+      "legacy_path": "闪念空间/2026-09-04-分配是价值链权重的函数：先掂量自己在链上的位置，再做.md",
+      "legacy_id": "FLA-20260904-5630d842",
+      "legacy_sha256": "87ef91d7115cede827481b65df23f490fc850bf51799103ec2920bd6290efae5",
+      "target_type": "闪念",
+      "target_path": "数据/记录/闪念/2026-09-04-分配是价值链权重的函数：先掂量自己在链上的位置，再做.md",
+      "target_sha256": "52c6978a3f2e07184a98ac62f5237328a9c8225a9754827c5e2f304c8fb2e913",
+      "outcome": "undecided; no placeholder added",
+      "transform": [
+        "remove legacy frontmatter",
+        "use human-readable filename",
+        "rename human sections only",
+        "express only real outcome in natural language"
+      ],
+      "validation": "passed"
+    },
+    {
+      "legacy_path": "闪念空间/2026-09-04-迁移的本质：把方法依赖的人性默认，翻成显式机制.md",
+      "legacy_id": "FLA-20260904-fc96c6fc",
+      "legacy_sha256": "4ee70de55f373b724f273bb35a0c3a0aa1644fc3276637170f132d63f0721f6e",
+      "target_type": "闪念",
+      "target_path": "数据/记录/闪念/2026-09-04-迁移的本质：把方法依赖的人性默认，翻成显式机制.md",
+      "target_sha256": "510782f46b79424ee24455ad66085fbb79c16a0e3fa443f51cc6693dec242fed",
+      "outcome": "undecided; no placeholder added",
+      "transform": [
+        "remove legacy frontmatter",
+        "use human-readable filename",
+        "rename human sections only",
+        "express only real outcome in natural language"
+      ],
+      "validation": "passed"
+    },
+    {
+      "legacy_path": "闪念空间/2026-09-13-10-月发布-Good-idea：终局、骨架与收口的那句问句.md",
+      "legacy_id": "FLA-20260913-ad008837",
+      "legacy_sha256": "5ad87ea8d793b258fbf9a0487e91f6b53655471e3bf4cb4f45641e1390c58a2c",
+      "target_type": "闪念",
+      "target_path": "数据/记录/闪念/2026-09-13-10 月发布 Good idea：终局、骨架与收口的那句问句.md",
+      "target_sha256": "a720e43a17d8ab19e2b3c67a7012738aad758e269227626ed497c26d620a4416",
+      "outcome": "undecided; no placeholder added",
+      "transform": [
+        "remove legacy frontmatter",
+        "use human-readable filename",
+        "rename human sections only",
+        "express only real outcome in natural language"
+      ],
+      "validation": "passed"
+    },
+    {
+      "legacy_path": "闪念空间/2026-09-16-文案工坊分享的借鉴与特色功能之问.md",
+      "legacy_id": "FLA-20260916-922b9ef7",
+      "legacy_sha256": "1a881f43cd4f7ba6de4920e50c19ef822722ee20a1e44e699668398c57daf6e3",
+      "target_type": "闪念",
+      "target_path": "数据/记录/闪念/2026-09-16-文案工坊分享的借鉴与特色功能之问.md",
+      "target_sha256": "63fc17dc1ae7062d5c26853fb995cce98b938075c94d6ab50d1a1f6dcc8b5764",
+      "outcome": "undecided; no placeholder added",
+      "transform": [
+        "remove legacy frontmatter",
+        "use human-readable filename",
+        "rename human sections only",
+        "express only real outcome in natural language"
+      ],
+      "validation": "passed"
+    },
+    {
+      "legacy_path": "闪念空间/已处理/2026-08-14-目标规划方法论：目标层级金字塔、目标系统理论（等效性-多效性）与目标特征.md",
+      "legacy_id": "FLA-20260814-f19390c3",
+      "legacy_sha256": "36535ae2b35aff096ecb3d3b4a65541a1970a07464ef519b267b225304812b95",
+      "target_type": "闪念",
+      "target_path": "数据/记录/闪念/2026-08-14-目标规划方法论：目标层级金字塔、目标系统理论（等效性／多效性）与目标特征.md",
+      "target_sha256": "d2fdda0b5548b4d288c2e0d519772560ec469b11758301f8343be91a27a1931d",
+      "outcome": "no reliable outcome; no placeholder added",
+      "transform": [
+        "remove legacy frontmatter",
+        "use human-readable filename",
+        "rename human sections only",
+        "express only real outcome in natural language"
+      ],
+      "validation": "passed"
+    },
+    {
+      "legacy_path": "闪念空间/已处理/2026-08-18-指挥-AI-是新的能力瓶颈，且需要训练.md",
+      "legacy_id": "FLA-20260818-5de3ffc0",
+      "legacy_sha256": "452e3a11de3bd51357105bcf61361f0262732dcb25d799a5176ea5a41c51bb8a",
+      "target_type": "闪念",
+      "target_path": "数据/记录/闪念/2026-08-18-指挥 AI 是新的能力瓶颈，且需要训练.md",
+      "target_sha256": "5f57626a075d2442fc95d78d27b9cc7b748fe864be1a69f80bd4546e6a8f61aa",
+      "outcome": "formed insight",
+      "transform": [
+        "remove legacy frontmatter",
+        "use human-readable filename",
+        "rename human sections only",
+        "express only real outcome in natural language"
+      ],
+      "validation": "passed"
+    },
+    {
+      "legacy_path": "闪念空间/已处理/2026-08-18-练剑人剑合一：学-AI-的正确姿势.md",
+      "legacy_id": "FLA-20260818-047d4537",
+      "legacy_sha256": "68f8b85c702b7b48ceef9a83a01be46c4c3a8c169f82a6195a91bcb11e5c9b1e",
+      "target_type": "闪念",
+      "target_path": "数据/记录/闪念/2026-08-18-练剑人剑合一：学 AI 的正确姿势.md",
+      "target_sha256": "3922b145ea9d31e2332ae20fd068c59622a3100e47c622fa9c57f9c03095d93c",
+      "outcome": "formed insight",
+      "transform": [
+        "remove legacy frontmatter",
+        "use human-readable filename",
+        "rename human sections only",
+        "express only real outcome in natural language"
+      ],
+      "validation": "passed"
+    },
+    {
+      "legacy_path": "闪念空间/已处理/2026-08-20-AI-处理琐事的价值杠杆，取决于是谁的琐事.md",
+      "legacy_id": "FLA-20260820-7592ac19",
+      "legacy_sha256": "ff4b020a75b13ab076a7e42f5608b3d0cadd6bc8b332203d3f2972871cc990f3",
+      "target_type": "闪念",
+      "target_path": "数据/记录/闪念/2026-08-20-AI 处理琐事的价值杠杆，取决于是谁的琐事.md",
+      "target_sha256": "6e4d35a1f3cb556abaabc5ccae6d64da5c8bcbaca0e55a4292c31a5f0b353e4a",
+      "outcome": "formed insight",
+      "transform": [
+        "remove legacy frontmatter",
+        "use human-readable filename",
+        "rename human sections only",
+        "express only real outcome in natural language"
+      ],
+      "validation": "passed"
+    },
+    {
+      "legacy_path": "闪念空间/已处理/2026-08-20-Hermes-回复风格机制：桌面端-CLI-与飞书（gateway）是两套独立管.md",
+      "legacy_id": "FLA-20260820-43624dca",
+      "legacy_sha256": "c28c74148d28c0738438eb97be0256e1b4a362c05e02e86915b3decbd60fd176",
+      "target_type": "闪念",
+      "target_path": "数据/记录/闪念/2026-08-20-Hermes 回复风格机制：桌面端／CLI 与飞书（gateway）是两套独立管.md",
+      "target_sha256": "c6cad24ccd5d9ad9580d467907680ee8a1c573f66fccafcad2dc8460cb7e0452",
+      "outcome": "no reliable outcome; no placeholder added",
+      "transform": [
+        "remove legacy frontmatter",
+        "use human-readable filename",
+        "rename human sections only",
+        "express only real outcome in natural language"
+      ],
+      "validation": "passed"
+    },
+    {
+      "legacy_path": "闪念空间/已处理/2026-08-21-AI-的本质：智力脱离个体，成为可反馈复利的生产要素.md",
+      "legacy_id": "FLA-20260821-35c471f6",
+      "legacy_sha256": "a45cb1c48b70a07a65cc1dc8086004f2430b6f7cece247a9b6bac6378cb04c88",
+      "target_type": "闪念",
+      "target_path": "数据/记录/闪念/2026-08-21-AI 的本质：智力脱离个体，成为可反馈复利的生产要素.md",
+      "target_sha256": "ca3577dba14fb7f4808abe49a155e6289b579900cf8d5e06aa5bbfe7b56473d1",
+      "outcome": "formed insight",
+      "transform": [
+        "remove legacy frontmatter",
+        "use human-readable filename",
+        "rename human sections only",
+        "express only real outcome in natural language"
+      ],
+      "validation": "passed"
+    },
+    {
+      "legacy_path": "闪念空间/已处理/2026-08-21-技术归因辨析：是技术本身不行，还是缺乏价值网络？.md",
+      "legacy_id": "FLA-20260821-e66a8e93",
+      "legacy_sha256": "45d0a05fb3142e166efb69392ddbb76fae104bdb263115b7be16bc22ea198c64",
+      "target_type": "闪念",
+      "target_path": "数据/记录/闪念/2026-08-21-技术归因辨析：是技术本身不行，还是缺乏价值网络？.md",
+      "target_sha256": "a14ba2a4c55206d3c2918ba83115c7f1aed71e0c6bf0bee9bafe113d5784a27a",
+      "outcome": "formed insight",
+      "transform": [
+        "remove legacy frontmatter",
+        "use human-readable filename",
+        "rename human sections only",
+        "express only real outcome in natural language"
+      ],
+      "validation": "passed"
+    },
+    {
+      "legacy_path": "闪念空间/已处理/2026-08-21-持续生成的两层结构：稳定层是-AI-吞不掉的高地.md",
+      "legacy_id": "FLA-20260821-1dba5df4",
+      "legacy_sha256": "e5e79c1987d8fefb66dbcd8d9e2f6db8cb0f00e0b22d93d26be1f19001d274dd",
+      "target_type": "闪念",
+      "target_path": "数据/记录/闪念/2026-08-21-持续生成的两层结构：稳定层是 AI 吞不掉的高地.md",
+      "target_sha256": "af06a0e11dc7e75ce9ec8d06eb190167d8e89ce618a47c136710c7a9e8951e13",
+      "outcome": "formed insight",
+      "transform": [
+        "remove legacy frontmatter",
+        "use human-readable filename",
+        "rename human sections only",
+        "express only real outcome in natural language"
+      ],
+      "validation": "passed"
+    },
+    {
+      "legacy_path": "闪念空间/已处理/2026-08-21-未来稀缺的不是智能，是围绕智能的六种能力.md",
+      "legacy_id": "FLA-20260821-84635d62",
+      "legacy_sha256": "d0c4bf8abbe885c2207d77584ecb9ded5679f7f63a2c428385f98745d2ff41d9",
+      "target_type": "闪念",
+      "target_path": "数据/记录/闪念/2026-08-21-未来稀缺的不是智能，是围绕智能的六种能力.md",
+      "target_sha256": "3cb074766edd9eb1847345a4034b48fa8f1fdc379f39bb7332d7af45cab6edd6",
+      "outcome": "formed insight",
+      "transform": [
+        "remove legacy frontmatter",
+        "use human-readable filename",
+        "rename human sections only",
+        "express only real outcome in natural language"
+      ],
+      "validation": "passed"
+    },
+    {
+      "legacy_path": "闪念空间/已处理/2026-08-22-知识库+AI-的形态：以终为始，打磨成研究域并输出.md",
+      "legacy_id": "FLA-20260822-bbeb48b0",
+      "legacy_sha256": "860819818c5424a18dcc2e38759db9f8a9c65bb9fc6e0004ae58acb4041735a0",
+      "target_type": "闪念",
+      "target_path": "数据/记录/闪念/2026-08-22-知识库+AI 的形态：以终为始，打磨成研究域并输出.md",
+      "target_sha256": "031a3250984eadd029ae3498c8af14710d359fd0194907a069cde25d61bdca6a",
+      "outcome": "formed insight",
+      "transform": [
+        "remove legacy frontmatter",
+        "use human-readable filename",
+        "rename human sections only",
+        "express only real outcome in natural language"
+      ],
+      "validation": "passed"
+    },
+    {
+      "legacy_path": "闪念空间/已处理/2026-08-23-AI-图像创作：从自娱自乐到分享出去.md",
+      "legacy_id": "FLA-20260823-51cdd36c",
+      "legacy_sha256": "3a031c16c4e8efa25fb53ca93656d807b6a07fc9b167f567a3a8db597d8fb92b",
+      "target_type": "闪念",
+      "target_path": "数据/记录/闪念/2026-08-23-AI 图像创作：从自娱自乐到分享出去.md",
+      "target_sha256": "2a124abfddf796a6c3661e389e8bc856d3cccdcfadd53db46bfa2ce2dbccfe54",
+      "outcome": "no reliable outcome; no placeholder added",
+      "transform": [
+        "remove legacy frontmatter",
+        "use human-readable filename",
+        "rename human sections only",
+        "express only real outcome in natural language"
+      ],
+      "validation": "passed"
+    },
+    {
+      "legacy_path": "闪念空间/已处理/2026-08-27-单线程深潜才有能量感.md",
+      "legacy_id": "FLA-20260827-9f1e8e20",
+      "legacy_sha256": "6f867f76941812746105a351474f8bd8620990d0f20ea7fb7a1970fa40aa9aac",
+      "target_type": "闪念",
+      "target_path": "数据/记录/闪念/2026-08-27-单线程深潜才有能量感.md",
+      "target_sha256": "93c5fa7c4271ace1eb7be842825076ccd3cbbfe01b26b57018955ae861b45d8b",
+      "outcome": "formed insight",
+      "transform": [
+        "remove legacy frontmatter",
+        "use human-readable filename",
+        "rename human sections only",
+        "express only real outcome in natural language"
+      ],
+      "validation": "passed"
+    },
+    {
+      "legacy_path": "闪念空间/已处理/2026-09-04-AI-输出同质化：讨好所有人即无辨识度风格.md",
+      "legacy_id": "FLA-20260904-9e0af55f",
+      "legacy_sha256": "d908780a9cf22dad0b59b8686f4367e7e2e613891fe6097a524235eca74644a2",
+      "target_type": "闪念",
+      "target_path": "数据/记录/闪念/2026-09-04-AI 输出同质化：讨好所有人即无辨识度风格.md",
+      "target_sha256": "24bc77ea9eceadc25afcc1c0899978e09a9162e36f47ca1cf98d660ff793d6e0",
+      "outcome": "formed insight",
+      "transform": [
+        "remove legacy frontmatter",
+        "use human-readable filename",
+        "rename human sections only",
+        "express only real outcome in natural language"
+      ],
+      "validation": "passed"
+    },
+    {
+      "legacy_path": "闪念空间/已放弃/2026-08-18-产品老炮式问题定义与主体性同构：追问原因归属权而非执行.md",
+      "legacy_id": "FLA-20260818-392c482c",
+      "legacy_sha256": "2f10292c982264a1219922c7f78592f7c4a1d09a6a1de8eed8fd2b4bb524af86",
+      "target_type": "闪念",
+      "target_path": "数据/记录/闪念/2026-08-18-产品老炮式问题定义与主体性同构：追问原因归属权而非执行.md",
+      "target_sha256": "185cd4877523c5241ca2149afc60c6abdde312810bbd9aca79e85e709ba1901c",
+      "outcome": "abandoned",
+      "transform": [
+        "remove legacy frontmatter",
+        "use human-readable filename",
+        "rename human sections only",
+        "express only real outcome in natural language"
+      ],
+      "validation": "passed"
+    },
+    {
+      "legacy_path": "永久空间/永久卡片/2026-08-20-AI-的价值杠杆取决于处理的是谁的琐事.md",
+      "legacy_id": "PER-20260820-3009cdcf",
+      "legacy_sha256": "df54f762ba6c78db26b76919081d8965893925d11364661a31f55e9a45e2282f",
+      "target_type": "永久认识",
+      "target_path": "数据/记录/永久认识/2026-08-20-AI 的价值杠杆取决于处理的是谁的琐事.md",
+      "target_sha256": "42f26c1a1833027240bd217a2b522f72e66e861f2928aa091d3f0d2471549c75",
+      "outcome": "none",
+      "transform": [
+        "remove legacy frontmatter",
+        "use human-readable filename",
+        "preserve current accepted body",
+        "rewrite legacy links to live records"
+      ],
+      "validation": "passed"
+    },
+    {
+      "legacy_path": "永久空间/永久卡片/2026-08-20-人剑合一：学-AI-的正确姿势.md",
+      "legacy_id": "PER-20260820-3d571ea5",
+      "legacy_sha256": "b925e77309a17c5c2ac63fb1775d94788cffbc3c18dac9e5ee480c615a57f3ec",
+      "target_type": "永久认识",
+      "target_path": "数据/记录/永久认识/2026-08-20-人剑合一：学 AI 的正确姿势.md",
+      "target_sha256": "0923016cdfc517ac1ca004b22c50331b5df4b6118253dd1051a6888e95a30dbd",
+      "outcome": "none",
+      "transform": [
+        "remove legacy frontmatter",
+        "use human-readable filename",
+        "preserve current accepted body",
+        "rewrite legacy links to live records"
+      ],
+      "validation": "passed"
+    },
+    {
+      "legacy_path": "永久空间/永久卡片/2026-08-20-指挥-AI-将成为人们新的能力瓶颈，且需要去训练.md",
+      "legacy_id": "PER-20260820-4c26dc06",
+      "legacy_sha256": "1418b6e6c3fd4fc009a1a278ab1384fb18468c6ed640c060c918d36422f5bd91",
+      "target_type": "永久认识",
+      "target_path": "数据/记录/永久认识/2026-08-20-指挥 AI 将成为人们新的能力瓶颈，且需要去训练.md",
+      "target_sha256": "a81d04d39dbea50e6b5210db13a0ab408de66580ce9061426df8b783757e8af7",
+      "outcome": "none",
+      "transform": [
+        "remove legacy frontmatter",
+        "use human-readable filename",
+        "preserve current accepted body",
+        "rewrite legacy links to live records"
+      ],
+      "validation": "passed"
+    },
+    {
+      "legacy_path": "永久空间/永久卡片/2026-08-23-AI-的本质：智力脱离个体，成为可反馈复利的生产要素.md",
+      "legacy_id": "PER-20260823-14676f79",
+      "legacy_sha256": "1a67224ccd3c353276ae61f0b5dbf03b96fd1db48e45cf0638bbead048ed921d",
+      "target_type": "永久认识",
+      "target_path": "数据/记录/永久认识/2026-08-23-AI 的本质：智力脱离个体，成为可反馈复利的生产要素.md",
+      "target_sha256": "1586148dfb6cc3aa9996e83d27320d1849bf1709b7501fe23ae75af919c633e0",
+      "outcome": "none",
+      "transform": [
+        "remove legacy frontmatter",
+        "use human-readable filename",
+        "preserve current accepted body",
+        "rewrite legacy links to live records"
+      ],
+      "validation": "passed"
+    },
+    {
+      "legacy_path": "永久空间/永久卡片/2026-08-23-技术归因辨析：是技术本身不行，还是缺乏价值网络？.md",
+      "legacy_id": "PER-20260823-9406d688",
+      "legacy_sha256": "bf39392c54ac7ba3040cf5e9dcf47ac04744e9065c955bb593d83b524d5485e0",
+      "target_type": "永久认识",
+      "target_path": "数据/记录/永久认识/2026-08-23-技术归因辨析：是技术本身不行，还是缺乏价值网络？.md",
+      "target_sha256": "360b2746bc032083d903a7704ec4f74ef1689c32c626ed2f50f540effd41856f",
+      "outcome": "none",
+      "transform": [
+        "remove legacy frontmatter",
+        "use human-readable filename",
+        "preserve current accepted body",
+        "rewrite legacy links to live records"
+      ],
+      "validation": "passed"
+    },
+    {
+      "legacy_path": "永久空间/永久卡片/2026-08-23-持续生成的两层结构：稳定层是-AI-吞不掉的高地.md",
+      "legacy_id": "PER-20260823-d5a27ff7",
+      "legacy_sha256": "3d18b68178acdadef48e97e69411f1d797c9dc61a4cf149efb06a04426878925",
+      "target_type": "永久认识",
+      "target_path": "数据/记录/永久认识/2026-08-23-持续生成的两层结构：稳定层是 AI 吞不掉的高地.md",
+      "target_sha256": "2181008343ccdd7cae51fb6ea6c89a5a3ee1c407f0468f56061dad9f5f37cd88",
+      "outcome": "none",
+      "transform": [
+        "remove legacy frontmatter",
+        "use human-readable filename",
+        "preserve current accepted body",
+        "rewrite legacy links to live records"
+      ],
+      "validation": "passed"
+    },
+    {
+      "legacy_path": "永久空间/永久卡片/2026-08-23-未来稀缺的不是智能，是围绕智能的六种能力.md",
+      "legacy_id": "PER-20260823-e57d3409",
+      "legacy_sha256": "5fe700e12d54113729ed40f9d18414f52d8669c5261203d4d7fe8d2317e8e9e3",
+      "target_type": "永久认识",
+      "target_path": "数据/记录/永久认识/2026-08-23-未来稀缺的不是智能，是围绕智能的六种能力.md",
+      "target_sha256": "15e26973f85ad4cb983235d657abe2586a597469f297f9e57c64a1948945566d",
+      "outcome": "none",
+      "transform": [
+        "remove legacy frontmatter",
+        "use human-readable filename",
+        "preserve current accepted body",
+        "rewrite legacy links to live records"
+      ],
+      "validation": "passed"
+    },
+    {
+      "legacy_path": "永久空间/永久卡片/2026-08-27-单线程深潜才有能量感.md",
+      "legacy_id": "PER-20260827-48166aab",
+      "legacy_sha256": "2f7098fdd168c3e2e38e2f80bba33891a8fe392f583d54774f469683b3fffc57",
+      "target_type": "永久认识",
+      "target_path": "数据/记录/永久认识/2026-08-27-单线程深潜才有能量感.md",
+      "target_sha256": "ac819e615c29b718eee383def4588ee4fc0c0ee5a95027bcf45b23588d252f58",
+      "outcome": "none",
+      "transform": [
+        "remove legacy frontmatter",
+        "use human-readable filename",
+        "preserve current accepted body",
+        "rewrite legacy links to live records"
+      ],
+      "validation": "passed"
+    },
+    {
+      "legacy_path": "永久空间/永久卡片/2026-08-27-知识库+AI-的形态：以终为始，打磨成研究域并输出.md",
+      "legacy_id": "PER-20260827-6f399470",
+      "legacy_sha256": "ddea50b23aecd06d5d0fda6ce06aff49f50bb5f82abd1b8025acb80185740b18",
+      "target_type": "永久认识",
+      "target_path": "数据/记录/永久认识/2026-08-27-知识库+AI 的形态：以终为始，打磨成研究域并输出.md",
+      "target_sha256": "081d6f852f0fdd58887774f9e33bc0862b177babf8a3025f0160104fca212fb8",
+      "outcome": "none",
+      "transform": [
+        "remove legacy frontmatter",
+        "use human-readable filename",
+        "preserve current accepted body",
+        "rewrite legacy links to live records"
+      ],
+      "validation": "passed"
+    },
+    {
+      "legacy_path": "永久空间/永久卡片/2026-09-04-如何让-AI-输出高质量内容：先想透独特性，再让扩-评-收工作流把思考沉淀下来.md",
+      "legacy_id": "PER-20260904-8abe76fb",
+      "legacy_sha256": "cc07a2906c25e13553e79b3d91d13ba745af3450ddb452cf1b4a113ac48bd000",
+      "target_type": "永久认识",
+      "target_path": "数据/记录/永久认识/2026-09-04-如何让 AI 输出高质量内容：先想透独特性，再让扩-评-收工作流把思考沉淀下来.md",
+      "target_sha256": "715e0003d352ef0a7dee699931c28cdfe73cfff3744866fa7eb39f45d89b05f0",
+      "outcome": "none",
+      "transform": [
+        "remove legacy frontmatter",
+        "use human-readable filename",
+        "preserve current accepted body",
+        "rewrite legacy links to live records"
+      ],
+      "validation": "passed"
+    },
+    {
+      "legacy_path": "永久空间/永久卡片/2026-09-07-AI-时代的主要矛盾：生产不再需要人，人仍靠-被需要-而活.md",
+      "legacy_id": "PER-20260907-0ec6679d",
+      "legacy_sha256": "4b3e59a9440bf4802628a12d383c91d9481139c59c9d03b1a15076deeef537df",
+      "target_type": "永久认识",
+      "target_path": "数据/记录/永久认识/2026-09-07-AI 时代的主要矛盾：生产不再需要人，人仍靠\"被需要\"而活.md",
+      "target_sha256": "a9516eecd97ccfa66ff538abd08cf507070c057fd33269ffa31ee596fa6626fa",
+      "outcome": "none",
+      "transform": [
+        "remove legacy frontmatter",
+        "use human-readable filename",
+        "preserve current accepted body",
+        "rewrite legacy links to live records"
+      ],
+      "validation": "passed"
+    },
+    {
+      "legacy_path": "溯源空间/2026-08-04-LLM-Wiki.md",
+      "legacy_id": "SRC-91fc906a9943",
+      "legacy_sha256": "58d114695b0cb85787af4f27f8e5fa1f634b4141ceb23a6cc09bb74475930520",
+      "target_type": "外部来源",
+      "target_path": "数据/记录/外部来源/2026-08-04-LLM Wiki.md",
+      "target_sha256": "38074940b4e4a2d9ae8cd35132d120b7cda0c5e94e73fd6d78a673a3117db327",
+      "outcome": "none",
+      "transform": [
+        "remove legacy frontmatter",
+        "use human-readable filename",
+        "retain source snapshot verbatim",
+        "rewrite only local asset paths",
+        "remove relationship/audit wrapper"
+      ],
+      "validation": "passed",
+      "source_snapshot_sha256": "cf0444ab7e1d571b6feaf908a2c1ba3539dcf2279276371c363928f83fb3d55d",
+      "rendered_snapshot_sha256": "cf0444ab7e1d571b6feaf908a2c1ba3539dcf2279276371c363928f83fb3d55d"
+    },
+    {
+      "legacy_path": "溯源空间/2026-08-20-AI最该优先改造的，可能不是最便宜的人，而是最贵的人.md",
+      "legacy_id": "SRC-42ab50bef0c4",
+      "legacy_sha256": "85971438e08fff1b6739fb163975f7545864b7723ef52bd621126aa4bb0f91d6",
+      "target_type": "外部来源",
+      "target_path": "数据/记录/外部来源/2026-08-20-AI最该优先改造的，可能不是最便宜的人，而是最贵的人.md",
+      "target_sha256": "42683f259fce88fd76d840627445564fa1d3cccfe3df2abf11b73ab518e4cbe9",
+      "outcome": "none",
+      "transform": [
+        "remove legacy frontmatter",
+        "use human-readable filename",
+        "retain source snapshot verbatim",
+        "rewrite only local asset paths",
+        "remove relationship/audit wrapper"
+      ],
+      "validation": "passed",
+      "source_snapshot_sha256": "ebce61517bf26588028f32edf4b7bd1a3b3e02312380d56b71383beee5b4b558",
+      "rendered_snapshot_sha256": "ebce61517bf26588028f32edf4b7bd1a3b3e02312380d56b71383beee5b4b558"
+    },
+    {
+      "legacy_path": "溯源空间/2026-09-04-How-to-turn-your-AI-into-a-world-class-designer.md",
+      "legacy_id": "SRC-f144a82ec34e",
+      "legacy_sha256": "c1a13cb35315891f4d58ac3e29ca86132a162b2484ff1268a8adb3e022bb6a39",
+      "target_type": "外部来源",
+      "target_path": "数据/记录/外部来源/2026-09-04-How to turn your AI into a world-class designer.md",
+      "target_sha256": "d860284fc3da21912f01c7cc4294088196a59c936d4b5a50642bfda3ba3a86a2",
+      "outcome": "none",
+      "transform": [
+        "remove legacy frontmatter",
+        "use human-readable filename",
+        "retain source snapshot verbatim",
+        "rewrite only local asset paths",
+        "remove relationship/audit wrapper"
+      ],
+      "validation": "passed",
+      "source_snapshot_sha256": "20a8123b65e9c4d79699e9eb9052341e67e59e5ba2b223b1c54ec6d707cef5ce",
+      "rendered_snapshot_sha256": "7d61fc17ec8fc9aa6890d9d5188c5e7fd4e947ed59e5009e6aee17119840ec01"
+    },
+    {
+      "legacy_path": "溯源空间/2026-09-04-前-Apple-AI-设计专家：去除-AI-味、解锁-AI-设计创造力的-8-种技法.md",
+      "legacy_id": "SRC-f0928844c584",
+      "legacy_sha256": "15dbc153ddd4a38a1a3c6650d9faae4c13d84d7466ac23ac5e137deb4165339a",
+      "target_type": "外部来源",
+      "target_path": "数据/记录/外部来源/2026-09-04-前 Apple AI 设计专家：去除 AI 味、解锁 AI 设计创造力的 8 种技法.md",
+      "target_sha256": "45940d897cff8384e0b4405aeaa91c95d5ad85e3d6962fe528ebf06eb5ec2bcb",
+      "outcome": "none",
+      "transform": [
+        "remove legacy frontmatter",
+        "use human-readable filename",
+        "retain source snapshot verbatim",
+        "rewrite only local asset paths",
+        "remove relationship/audit wrapper"
+      ],
+      "validation": "passed",
+      "source_snapshot_sha256": "1bf716392f5fa3c1fe9136bad056731f4aca1d47af8ef18d1c393d624ced5c8e",
+      "rendered_snapshot_sha256": "e314d720e7a09b3fad773852ab9e650c72d63e130181d343d5d6048ea7f77a43"
+    },
+    {
+      "legacy_path": "溯源空间/2026-09-04-苹果前-AI-设计主管复盘：如何让-AI-彻底摆脱“工业垃圾”审美，做出顶尖设计？.md",
+      "legacy_id": "SRC-774eaa267132",
+      "legacy_sha256": "f326d501627da67c151e1ecc90e1f00be9ce023c132bf574041444fbec376ca7",
+      "target_type": "外部来源",
+      "target_path": "数据/记录/外部来源/2026-09-04-苹果前 AI 设计主管复盘：如何让 AI 彻底摆脱“工业垃圾”审美，做出顶尖设计？.md",
+      "target_sha256": "e1cf91eb2c9d615c80ef8ea5dfc0c657ec8d3cc9f9980007f4ede9e51b737aac",
+      "outcome": "none",
+      "transform": [
+        "remove legacy frontmatter",
+        "use human-readable filename",
+        "retain source snapshot verbatim",
+        "rewrite only local asset paths",
+        "remove relationship/audit wrapper"
+      ],
+      "validation": "passed",
+      "source_snapshot_sha256": "9fb28e0909432888f45a8e1206e0c4dc471cac8270d68bde30c6854cb9f87083",
+      "rendered_snapshot_sha256": "dba52bd3878482a8aefdf5da60df8adc7919da7603e3ab237051e5018ab109a2"
+    },
+    {
+      "legacy_path": "溯源空间/2026-09-13-10-月发布-Good-idea-·-发布物骨架（2026-09-13-讨论定稿）.md",
+      "legacy_id": "SRC-aa3232f342ea",
+      "legacy_sha256": "95f278e08b2a71b9ee8a8589b82322407e863d106cbc06a7ab81cf74a542dd0e",
+      "target_type": "外部来源",
+      "target_path": "数据/记录/外部来源/2026-09-13-10 月发布 Good idea · 发布物骨架（2026-09-13 讨论定稿）.md",
+      "target_sha256": "2a9e64165c85fa4f91c159f89c06c8f1a434efd21b023f726fb3d82c7cfece65",
+      "outcome": "none",
+      "transform": [
+        "remove legacy frontmatter",
+        "use human-readable filename",
+        "retain source snapshot verbatim",
+        "rewrite only local asset paths",
+        "remove relationship/audit wrapper"
+      ],
+      "validation": "passed",
+      "source_snapshot_sha256": "b1c7c601f408d30fed145f88e1777dc6ad6b0672d405625f2adc57a60ac1582a",
+      "rendered_snapshot_sha256": "b1c7c601f408d30fed145f88e1777dc6ad6b0672d405625f2adc57a60ac1582a"
+    },
+    {
+      "legacy_path": "溯源空间/2026-09-16-AI文案工坊产品构建思路分享.md",
+      "legacy_id": "SRC-c2efe21d65b9",
+      "legacy_sha256": "86f74e0b7ffc8772074eb2845207478fdec1c96d793b41310b18d9a9aa2eb85f",
+      "target_type": "外部来源",
+      "target_path": "数据/记录/外部来源/2026-09-16-AI文案工坊产品构建思路分享.md",
+      "target_sha256": "9c7f94722e7478d8bffead96d5ea41db81aab422beb9b4ee53c9dab452b7084f",
+      "outcome": "none",
+      "transform": [
+        "remove legacy frontmatter",
+        "use human-readable filename",
+        "retain source snapshot verbatim",
+        "rewrite only local asset paths",
+        "remove relationship/audit wrapper"
+      ],
+      "validation": "passed",
+      "source_snapshot_sha256": "87af98662cf8d0cd2994f541280e9da1343ee3192c27d15e079766665f5f03ce",
+      "rendered_snapshot_sha256": "8b0f5f9886101ddf8c7ba41f25f8b6b5c6b590b47ae5dedfc626c37d6600e143"
+    }
+  ],
+  "assets": [
+    {
+      "legacy_path": "assets/0f13898d0209d8323e29030c6698deca4d7afb8218cf25cc5411cda507875a7e.png",
+      "target_path": "数据/资产/0f13898d0209d8323e29030c6698deca4d7afb8218cf25cc5411cda507875a7e.png",
+      "sha256": "0f13898d0209d8323e29030c6698deca4d7afb8218cf25cc5411cda507875a7e",
+      "validation": "passed"
+    },
+    {
+      "legacy_path": "assets/0f230329cc267aee4e0710d6ff8c4aa22f3e15c6b2428496f47e32af0de1bba7.png",
+      "target_path": "数据/资产/0f230329cc267aee4e0710d6ff8c4aa22f3e15c6b2428496f47e32af0de1bba7.png",
+      "sha256": "0f230329cc267aee4e0710d6ff8c4aa22f3e15c6b2428496f47e32af0de1bba7",
+      "validation": "passed"
+    },
+    {
+      "legacy_path": "assets/0ff3369a6dd46462ece3c6bbdb9b1bb555c37e4ef9e3391e0745453be0950393.png",
+      "target_path": "数据/资产/0ff3369a6dd46462ece3c6bbdb9b1bb555c37e4ef9e3391e0745453be0950393.png",
+      "sha256": "0ff3369a6dd46462ece3c6bbdb9b1bb555c37e4ef9e3391e0745453be0950393",
+      "validation": "passed"
+    },
+    {
+      "legacy_path": "assets/1554b489182a0d02d86de651e351c9f1897f255e14ec6be216eb96bc19438c75.png",
+      "target_path": "数据/资产/1554b489182a0d02d86de651e351c9f1897f255e14ec6be216eb96bc19438c75.png",
+      "sha256": "1554b489182a0d02d86de651e351c9f1897f255e14ec6be216eb96bc19438c75",
+      "validation": "passed"
+    },
+    {
+      "legacy_path": "assets/1784b6579de66fb819e2e9d467810fde29582c250586e85443577ea4742266e9.gif",
+      "target_path": "数据/资产/1784b6579de66fb819e2e9d467810fde29582c250586e85443577ea4742266e9.gif",
+      "sha256": "1784b6579de66fb819e2e9d467810fde29582c250586e85443577ea4742266e9",
+      "validation": "passed"
+    },
+    {
+      "legacy_path": "assets/1d5498bff8f0d1417903385e5c58936667ddd0c67a5e448c7186c8af608293a9.jpg",
+      "target_path": "数据/资产/1d5498bff8f0d1417903385e5c58936667ddd0c67a5e448c7186c8af608293a9.jpg",
+      "sha256": "1d5498bff8f0d1417903385e5c58936667ddd0c67a5e448c7186c8af608293a9",
+      "validation": "passed"
+    },
+    {
+      "legacy_path": "assets/25ba4524883379ee4f562f30d5f08b35b38f1f118d99abd7d8c253f4487f7878.jpg",
+      "target_path": "数据/资产/25ba4524883379ee4f562f30d5f08b35b38f1f118d99abd7d8c253f4487f7878.jpg",
+      "sha256": "25ba4524883379ee4f562f30d5f08b35b38f1f118d99abd7d8c253f4487f7878",
+      "validation": "passed"
+    },
+    {
+      "legacy_path": "assets/29354d5ccdc7af59f9fc9b69448af4e904b469f97139e5052d76a15d353873a7.gif",
+      "target_path": "数据/资产/29354d5ccdc7af59f9fc9b69448af4e904b469f97139e5052d76a15d353873a7.gif",
+      "sha256": "29354d5ccdc7af59f9fc9b69448af4e904b469f97139e5052d76a15d353873a7",
+      "validation": "passed"
+    },
+    {
+      "legacy_path": "assets/2d101383e072eea9c6e5c8930d2eed2e4203ff8195a62a6ecbac86ac06b59e26.gif",
+      "target_path": "数据/资产/2d101383e072eea9c6e5c8930d2eed2e4203ff8195a62a6ecbac86ac06b59e26.gif",
+      "sha256": "2d101383e072eea9c6e5c8930d2eed2e4203ff8195a62a6ecbac86ac06b59e26",
+      "validation": "passed"
+    },
+    {
+      "legacy_path": "assets/325b7b20a30ac77abf22752ffe575c4bc024a61edabf7adc3b2d83c29ec89f4c.png",
+      "target_path": "数据/资产/325b7b20a30ac77abf22752ffe575c4bc024a61edabf7adc3b2d83c29ec89f4c.png",
+      "sha256": "325b7b20a30ac77abf22752ffe575c4bc024a61edabf7adc3b2d83c29ec89f4c",
+      "validation": "passed"
+    },
+    {
+      "legacy_path": "assets/417bd1c56eb5355f5a4c35f57c4a39019494a2d31ba6e1aac853ed6735966166.png",
+      "target_path": "数据/资产/417bd1c56eb5355f5a4c35f57c4a39019494a2d31ba6e1aac853ed6735966166.png",
+      "sha256": "417bd1c56eb5355f5a4c35f57c4a39019494a2d31ba6e1aac853ed6735966166",
+      "validation": "passed"
+    },
+    {
+      "legacy_path": "assets/488ee9f23987244355537321789a517e61e4e921b1736229824a0a25ec1cb08d.png",
+      "target_path": "数据/资产/488ee9f23987244355537321789a517e61e4e921b1736229824a0a25ec1cb08d.png",
+      "sha256": "488ee9f23987244355537321789a517e61e4e921b1736229824a0a25ec1cb08d",
+      "validation": "passed"
+    },
+    {
+      "legacy_path": "assets/4b3686686b068f3fedbdba329a8a886a5b158fce5843a890285c4e92d4e465bb.gif",
+      "target_path": "数据/资产/4b3686686b068f3fedbdba329a8a886a5b158fce5843a890285c4e92d4e465bb.gif",
+      "sha256": "4b3686686b068f3fedbdba329a8a886a5b158fce5843a890285c4e92d4e465bb",
+      "validation": "passed"
+    },
+    {
+      "legacy_path": "assets/4d510b1e2b0a6bed93496ee9a00968b6e0fb19de8d199c3c9a76b44ef84942ac.gif",
+      "target_path": "数据/资产/4d510b1e2b0a6bed93496ee9a00968b6e0fb19de8d199c3c9a76b44ef84942ac.gif",
+      "sha256": "4d510b1e2b0a6bed93496ee9a00968b6e0fb19de8d199c3c9a76b44ef84942ac",
+      "validation": "passed"
+    },
+    {
+      "legacy_path": "assets/52eb686d234384bf42c00f531574653afa0054d77393535841f95d08fd5c9e42.gif",
+      "target_path": "数据/资产/52eb686d234384bf42c00f531574653afa0054d77393535841f95d08fd5c9e42.gif",
+      "sha256": "52eb686d234384bf42c00f531574653afa0054d77393535841f95d08fd5c9e42",
+      "validation": "passed"
+    },
+    {
+      "legacy_path": "assets/61af1dbdf63d4f1546a46621fa9b5f4c9819926e852c95f599f4e579352d8285.gif",
+      "target_path": "数据/资产/61af1dbdf63d4f1546a46621fa9b5f4c9819926e852c95f599f4e579352d8285.gif",
+      "sha256": "61af1dbdf63d4f1546a46621fa9b5f4c9819926e852c95f599f4e579352d8285",
+      "validation": "passed"
+    },
+    {
+      "legacy_path": "assets/628a712bf22fb6d79c10564c81730523837e7477fc8e11621bcd303cfd353db1.png",
+      "target_path": "数据/资产/628a712bf22fb6d79c10564c81730523837e7477fc8e11621bcd303cfd353db1.png",
+      "sha256": "628a712bf22fb6d79c10564c81730523837e7477fc8e11621bcd303cfd353db1",
+      "validation": "passed"
+    },
+    {
+      "legacy_path": "assets/67c331e5592330e01d587bfec0a6b48acce2c2e9660ec11dfa6fd3e072080d68.gif",
+      "target_path": "数据/资产/67c331e5592330e01d587bfec0a6b48acce2c2e9660ec11dfa6fd3e072080d68.gif",
+      "sha256": "67c331e5592330e01d587bfec0a6b48acce2c2e9660ec11dfa6fd3e072080d68",
+      "validation": "passed"
+    },
+    {
+      "legacy_path": "assets/6900b05bb2506b92fabcf4476cb68a4419322c631062932d01877be0ac9ca508.gif",
+      "target_path": "数据/资产/6900b05bb2506b92fabcf4476cb68a4419322c631062932d01877be0ac9ca508.gif",
+      "sha256": "6900b05bb2506b92fabcf4476cb68a4419322c631062932d01877be0ac9ca508",
+      "validation": "passed"
+    },
+    {
+      "legacy_path": "assets/85d727818f792367444cdd71d313400420f8cc95873409b3d1496d0468fff3d5.jpg",
+      "target_path": "数据/资产/85d727818f792367444cdd71d313400420f8cc95873409b3d1496d0468fff3d5.jpg",
+      "sha256": "85d727818f792367444cdd71d313400420f8cc95873409b3d1496d0468fff3d5",
+      "validation": "passed"
+    },
+    {
+      "legacy_path": "assets/8a7e907342b3b1d9d1cd0bdbdcea62f4ef947029a130c0d167c1721c360fa95c.gif",
+      "target_path": "数据/资产/8a7e907342b3b1d9d1cd0bdbdcea62f4ef947029a130c0d167c1721c360fa95c.gif",
+      "sha256": "8a7e907342b3b1d9d1cd0bdbdcea62f4ef947029a130c0d167c1721c360fa95c",
+      "validation": "passed"
+    },
+    {
+      "legacy_path": "assets/8ca920e305030eed3c5a2473e8322b4064ef85fae9a9e021b3847d64aadf3154.gif",
+      "target_path": "数据/资产/8ca920e305030eed3c5a2473e8322b4064ef85fae9a9e021b3847d64aadf3154.gif",
+      "sha256": "8ca920e305030eed3c5a2473e8322b4064ef85fae9a9e021b3847d64aadf3154",
+      "validation": "passed"
+    },
+    {
+      "legacy_path": "assets/91dc83172e2d9fff45619f236e9affa237a3008dae71d91d5fef7b0cffa1448a.jpg",
+      "target_path": "数据/资产/91dc83172e2d9fff45619f236e9affa237a3008dae71d91d5fef7b0cffa1448a.jpg",
+      "sha256": "91dc83172e2d9fff45619f236e9affa237a3008dae71d91d5fef7b0cffa1448a",
+      "validation": "passed"
+    },
+    {
+      "legacy_path": "assets/9c27c9654d74ab46811cf2c1957fa42d9ee1365179d39f8a1ca25b4bdbb70219.png",
+      "target_path": "数据/资产/9c27c9654d74ab46811cf2c1957fa42d9ee1365179d39f8a1ca25b4bdbb70219.png",
+      "sha256": "9c27c9654d74ab46811cf2c1957fa42d9ee1365179d39f8a1ca25b4bdbb70219",
+      "validation": "passed"
+    },
+    {
+      "legacy_path": "assets/9e8de9fa5fb485c8ce9171dadfe024869532b1bb61898dabd7df32dd31caacca.jpg",
+      "target_path": "数据/资产/9e8de9fa5fb485c8ce9171dadfe024869532b1bb61898dabd7df32dd31caacca.jpg",
+      "sha256": "9e8de9fa5fb485c8ce9171dadfe024869532b1bb61898dabd7df32dd31caacca",
+      "validation": "passed"
+    },
+    {
+      "legacy_path": "assets/9f5f1af00a610edaed1b9a2db4807d8aacbb91da69fd8b6e118db93cbede072d.gif",
+      "target_path": "数据/资产/9f5f1af00a610edaed1b9a2db4807d8aacbb91da69fd8b6e118db93cbede072d.gif",
+      "sha256": "9f5f1af00a610edaed1b9a2db4807d8aacbb91da69fd8b6e118db93cbede072d",
+      "validation": "passed"
+    },
+    {
+      "legacy_path": "assets/9fcf7e54ec6ecfa20726a30c2bec99e82afff5462da7a429b56f52c06e3ff863.png",
+      "target_path": "数据/资产/9fcf7e54ec6ecfa20726a30c2bec99e82afff5462da7a429b56f52c06e3ff863.png",
+      "sha256": "9fcf7e54ec6ecfa20726a30c2bec99e82afff5462da7a429b56f52c06e3ff863",
+      "validation": "passed"
+    },
+    {
+      "legacy_path": "assets/9fd15ebff85bc7beb7013e51d6939161d99e8f2ae7c69aaf1c0264d5e65cb774.gif",
+      "target_path": "数据/资产/9fd15ebff85bc7beb7013e51d6939161d99e8f2ae7c69aaf1c0264d5e65cb774.gif",
+      "sha256": "9fd15ebff85bc7beb7013e51d6939161d99e8f2ae7c69aaf1c0264d5e65cb774",
+      "validation": "passed"
+    },
+    {
+      "legacy_path": "assets/a33475420f7cdfe49b91e19b4468c705b58debd03c7dd2353e2a7fa2a25c0649.gif",
+      "target_path": "数据/资产/a33475420f7cdfe49b91e19b4468c705b58debd03c7dd2353e2a7fa2a25c0649.gif",
+      "sha256": "a33475420f7cdfe49b91e19b4468c705b58debd03c7dd2353e2a7fa2a25c0649",
+      "validation": "passed"
+    },
+    {
+      "legacy_path": "assets/b9c38d38bcc5078a0b9b46c9bada042b0447cc780c653a6f12fd388dab22957c.png",
+      "target_path": "数据/资产/b9c38d38bcc5078a0b9b46c9bada042b0447cc780c653a6f12fd388dab22957c.png",
+      "sha256": "b9c38d38bcc5078a0b9b46c9bada042b0447cc780c653a6f12fd388dab22957c",
+      "validation": "passed"
+    },
+    {
+      "legacy_path": "assets/baa65ec6d749711a55d513eaf6115dbea0b86e445263be355d882e3381894392.gif",
+      "target_path": "数据/资产/baa65ec6d749711a55d513eaf6115dbea0b86e445263be355d882e3381894392.gif",
+      "sha256": "baa65ec6d749711a55d513eaf6115dbea0b86e445263be355d882e3381894392",
+      "validation": "passed"
+    },
+    {
+      "legacy_path": "assets/c849576bd7638af61e6136a1a46ac2335fc3e0b7a539ee709ca476c403ff7ca4.gif",
+      "target_path": "数据/资产/c849576bd7638af61e6136a1a46ac2335fc3e0b7a539ee709ca476c403ff7ca4.gif",
+      "sha256": "c849576bd7638af61e6136a1a46ac2335fc3e0b7a539ee709ca476c403ff7ca4",
+      "validation": "passed"
+    },
+    {
+      "legacy_path": "assets/daf21f28ecde48d227c276733ce827b85b3e55daca9c869a988b1d5bd36242b1.gif",
+      "target_path": "数据/资产/daf21f28ecde48d227c276733ce827b85b3e55daca9c869a988b1d5bd36242b1.gif",
+      "sha256": "daf21f28ecde48d227c276733ce827b85b3e55daca9c869a988b1d5bd36242b1",
+      "validation": "passed"
+    },
+    {
+      "legacy_path": "assets/dd4adadc0f105488b577963a88d538e5aa666ab103d0c53377fddc026e877dc4.png",
+      "target_path": "数据/资产/dd4adadc0f105488b577963a88d538e5aa666ab103d0c53377fddc026e877dc4.png",
+      "sha256": "dd4adadc0f105488b577963a88d538e5aa666ab103d0c53377fddc026e877dc4",
+      "validation": "passed"
+    },
+    {
+      "legacy_path": "assets/e3b0fa22db614e54fc000db45515337d04c37ae6cd4188899a3f7b37d09abcc9.jpg",
+      "target_path": "数据/资产/e3b0fa22db614e54fc000db45515337d04c37ae6cd4188899a3f7b37d09abcc9.jpg",
+      "sha256": "e3b0fa22db614e54fc000db45515337d04c37ae6cd4188899a3f7b37d09abcc9",
+      "validation": "passed"
+    },
+    {
+      "legacy_path": "assets/ed50e4ead9f5ef5df0b25f6db0573012eb29d7558bc8cb0178c2e4ed34610003.jpg",
+      "target_path": "数据/资产/ed50e4ead9f5ef5df0b25f6db0573012eb29d7558bc8cb0178c2e4ed34610003.jpg",
+      "sha256": "ed50e4ead9f5ef5df0b25f6db0573012eb29d7558bc8cb0178c2e4ed34610003",
+      "validation": "passed"
+    },
+    {
+      "legacy_path": "assets/f2ed05d0220c07a4be7f1007da8ae05561df8a4efe95dc7e46645b43dbb7dc6d.gif",
+      "target_path": "数据/资产/f2ed05d0220c07a4be7f1007da8ae05561df8a4efe95dc7e46645b43dbb7dc6d.gif",
+      "sha256": "f2ed05d0220c07a4be7f1007da8ae05561df8a4efe95dc7e46645b43dbb7dc6d",
+      "validation": "passed"
+    },
+    {
+      "legacy_path": "assets/f3e8710000301bdefb5caa3c264238ba83afe5d338f7d779d1291908ff273987.gif",
+      "target_path": "数据/资产/f3e8710000301bdefb5caa3c264238ba83afe5d338f7d779d1291908ff273987.gif",
+      "sha256": "f3e8710000301bdefb5caa3c264238ba83afe5d338f7d779d1291908ff273987",
+      "validation": "passed"
+    },
+    {
+      "legacy_path": "assets/f4346e269d6281be9ff0a0824e463a8f97007314452b2ec56016f5679748a2fa.jpg",
+      "target_path": "数据/资产/f4346e269d6281be9ff0a0824e463a8f97007314452b2ec56016f5679748a2fa.jpg",
+      "sha256": "f4346e269d6281be9ff0a0824e463a8f97007314452b2ec56016f5679748a2fa",
+      "validation": "passed"
+    },
+    {
+      "legacy_path": "assets/f55b72ea83ff22e558e3693251dda6203bcf7d35098e1b5097a25745c3c0c6a9.jpg",
+      "target_path": "数据/资产/f55b72ea83ff22e558e3693251dda6203bcf7d35098e1b5097a25745c3c0c6a9.jpg",
+      "sha256": "f55b72ea83ff22e558e3693251dda6203bcf7d35098e1b5097a25745c3c0c6a9",
+      "validation": "passed"
+    },
+    {
+      "legacy_path": "assets/f98ae1241f0f67f76c29826c367e2baf973bfa6a84265d050dc6b35e69d4b344.gif",
+      "target_path": "数据/资产/f98ae1241f0f67f76c29826c367e2baf973bfa6a84265d050dc6b35e69d4b344.gif",
+      "sha256": "f98ae1241f0f67f76c29826c367e2baf973bfa6a84265d050dc6b35e69d4b344",
+      "validation": "passed"
+    }
+  ],
+  "summary": {
+    "migrated_by_type": {
+      "外部来源": 7,
+      "有意思": 3,
+      "永久认识": 11,
+      "闪念": 19
+    },
+    "migrated_objects": 40,
+    "migrated_assets": 41,
+    "final_counts_by_type": {
+      "有意思": 13,
+      "闪念": 29,
+      "永久认识": 21,
+      "外部来源": 17
+    },
+    "unresolved_links_converted_to_plain_text": [
+      {
+        "source": "数据/记录/永久认识/2026-09-07-AI 时代的主要矛盾：生产不再需要人，人仍靠\"被需要\"而活.md",
+        "legacy_link": ".goodidea/formation-witnesses/WIT-f41751292700",
+        "label": "本轮直接表达形成来源"
+      }
+    ]
+  },
+  "validation": {
+    "status": "passed",
+    "checks": [
+      "40 frozen legacy object hashes match manifest 001",
+      "3/19/11/7 objects rendered in current human-readable format",
+      "41 referenced assets copied byte-for-byte",
+      "only real flash outcomes expressed in natural language",
+      "source snapshots preserved; only asset paths rewritten",
+      "all legacy object links rewritten to live relative paths",
+      "legacy repository working tree unchanged"
+    ]
+  }
+}
