@@ -1,6 +1,0 @@
-{
-  "mode": "read_only_reference",
-  "project": "../../../good-idea",
-  "freeze_commit": "9489f308f82bcc9896c11156aba673fdf5cabc8c",
-  "freeze_tag": "v0.1-freeze"
-}
