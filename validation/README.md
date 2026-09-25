@@ -5,6 +5,6 @@
 - `scenario-walkthroughs.md`：九个标准场景和补充边界场景的纸面推演。
 - `skill-routing-cases.md`：两个核心 Skill 的触发、排除和交接验收。
 - `trial-protocol.md`：直接对话试运行的保存和评估方法。
-- `trials/`：每次真实试运行的观察记录；完整对话本身保存在 `data/records/sessions/`。
+- `trials/`：每次真实试运行的观察记录；捕捉类引用 `data/records/sessions/` 中的完整对话，非捕捉类在试运行记录内保存完整可见对话。
 
 验证材料可以发现规则缺口，但不能自行创造规则。需要修改规则时，先按 `rules/protocols.md` 的规则演化协议处理，再更新这里的推演结论。

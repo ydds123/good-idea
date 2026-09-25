@@ -49,7 +49,7 @@ docs/        产品定义与设计背景
 ## 当前工作方式
 
 1. 新想法捕捉使用 `goodidea-capture`。
-2. 闪念辨析和认识完善使用 `goodidea-distill`。
+2. 闪念辨析、认识形成、修订与停用使用 `goodidea-distill`。
 3. 两个 Skill 都先加载 `rules/` 中的对应权威规则。
 4. 来源登记和上下文召回是可插拔能力，不单独扩展核心 Skill 数量。
 5. 直接通过对话试运行，并按 `validation/trial-protocol.md` 保存完整记录。

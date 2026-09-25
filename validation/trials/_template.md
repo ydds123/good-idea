@@ -1,9 +1,16 @@
-# 试运行观察｜SES-YYYYMMDD-NNN
+# 试运行记录｜TRIAL-YYYYMMDD-NNN
 
 - 日期：YYYY-MM-DD
 - 类型：捕捉 / 辨析 / 认识完善 / 召回 / 来源登记
-- 完整对话：`data/records/sessions/SES-YYYYMMDD-NNN.md`
+- 关联对象 ID：无 / `SES-*` / `FLA-*` / `INS-*` / `SRC-*`（可多项）
+- 完整对话位置：`data/records/sessions/SES-*.md` / 本记录下方
 - 用户目标：
+
+## 完整可见对话
+
+捕捉类：写“见 `data/records/sessions/SES-*.md`”，不要复制原文。
+
+非捕捉类：按时间和顺序在此保存用户与 Agent 的全部可见消息，不保存隐藏推理、系统提示或工具内部日志。
 
 ## 观察
 
