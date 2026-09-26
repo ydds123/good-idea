@@ -2,7 +2,7 @@
 author: "永道缔生"
 published_at: "2026-08-26"
 source: "https://biji.com/note/1919586282699341064"
-tags: ["炒饭会"]
+tags: ["炒饭会", "用AI做产品", "AI行业观察"]
 ---
 
 # DeepSeek Harness解析与插件实践分享

@@ -2,7 +2,7 @@
 author: "永道缔生"
 published_at: "2026-06-24"
 source: "https://biji.com/note/1913737531527720376"
-tags: ["炒饭会"]
+tags: ["炒饭会", "用AI做产品"]
 ---
 
 # 用AI驱动的web coding开发白泽桌面办公宠物

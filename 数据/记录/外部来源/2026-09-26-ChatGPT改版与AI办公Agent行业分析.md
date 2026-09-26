@@ -2,7 +2,7 @@
 author: "永道缔生"
 published_at: "2026-07-22"
 source: "https://biji.com/note/1916406109599210080"
-tags: ["炒饭会"]
+tags: ["炒饭会", "AI行业观察"]
 ---
 
 # ChatGPT改版与AI办公Agent行业分析
