@@ -24,6 +24,23 @@ python3 工具/commit.py <记录路径> [--message "<提交说明>"]
 
 新建脚本只复制模板、清理占位说明、处理日期和同名后缀；提交脚本只提交指定路径。删除任一脚本后，可按 `数据/README.md`、模板和当前规则手工完成同样结果。Git 失败不影响记录写入。
 
+## 来源同步与标签体检
+
+```text
+python3 工具/sync_source.py list        [--limit 20] [--since YYYY-MM-DD]
+python3 工具/sync_source.py sync        <note_id|链接>... [--tag 名称]... [--update] [--commit] [--dry-run]
+python3 工具/sync_source.py merge       <note_id>... [--tag 名称]... [--update] [--commit] [--dry-run]
+python3 工具/sync_source.py weekly      [--since YYYY-MM-DD] [--scan-only] [--no-merge] [--dry-run]
+python3 工具/sync_source.py tags-health [--json]        # tags 是同义词
+```
+
+从得到大脑（Get笔记）取料并登记到 `数据/记录/外部来源/`：取料、去重、写入顺序见 `规则/协作协议.md` 的统一来源登记协议，格式见 `规则/内容对象.md#外部来源`；`weekly` 另含把同一晚多段录音合并成一份。
+
+- 仓库根按脚本位置解析（`Path(__file__).parents[1]`），相对路径都以仓库为基准
+- 炒饭会识别阈值（关键词、星期、起始小时、最短时长、排除内容类型）唯一来源是 `规则/标签清单.json`「炒饭会」节点的 `识别参数`，命令行参数可临时覆盖；清单缺该字段时 `weekly` 直接报错，不猜
+- 脚本只输出事实和告警：改挂、先建后引、并入、停用仍由 Agent 判断
+- 退路：取料不可用时按 `数据/模板/source.md` 与规则手工建记录（`python3 工具/new.py source "<标题>"`），再 `commit.py`；标签体检离线可跑
+
 ## 平台适配器
 
 `工具/hooks/hermes_post_turn.py` 是本机 Hermes 的默认适配器：只有它认识 Hermes 的字段和钩子机制，把每回合的用户可见消息和 Agent 最终可见回复转成通用事件数组，交给上面的捕捉契约；未登记的 session 静默旁路，失败写 `.goodidea/tools.log` 并返回非零，不阻塞回复。它不做产品判断，删掉本文件并移除钩子配置即禁用自动转录与自动提交，记录仍可读可写、由 Agent 手工补写。
