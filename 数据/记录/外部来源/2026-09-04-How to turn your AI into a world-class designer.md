@@ -2,6 +2,7 @@
 author: "Anshu Chimala"
 published_at: "2026-09-01"
 source: "https://www.lennysnewsletter.com/p/how-to-turn-your-ai-into-a-world"
+tags: ["AI设计与生图"]
 ---
 
 # How to turn your AI into a world-class designer

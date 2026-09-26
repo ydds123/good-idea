@@ -2,6 +2,7 @@
 author: "Designer阿东"
 published_at: "2026-09-02"
 source: "https://mp.weixin.qq.com/s/CUOmDOf1hYtJYo3b6dv82g"
+tags: ["AI设计与生图"]
 ---
 
 # 前 Apple AI 设计专家：去除 AI 味、解锁 AI 设计创造力的 8 种技法
