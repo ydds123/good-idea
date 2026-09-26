@@ -1,0 +1,11 @@
+.nav-folder-title[data-path^=".goodidea"],
+.nav-folder-title[data-path^=".agents"],
+.nav-folder-title[data-path="src"],
+.nav-folder-title[data-path="tests"] {
+  display: none !important;
+}
+
+.nav-file-title[data-path="AGENTS.md"],
+.nav-file-title[data-path="schema.md"] {
+  display: none !important;
+}

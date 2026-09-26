@@ -1,0 +1,294 @@
+{
+  "generated_at": "2026-08-23T14:29:48+08:00",
+  "evidence_kind": "static_description_scan",
+  "status": "static_passed",
+  "skill_count": 7,
+  "case_count": 48,
+  "skills": [
+    "goodidea-capture-flash",
+    "goodidea-connect-cards",
+    "goodidea-form-permanent",
+    "goodidea-lint",
+    "goodidea-record-literature",
+    "goodidea-review-process",
+    "goodidea-todo"
+  ],
+  "description_fingerprint": "e22c0ad768f70d3b58b7cb7a94f41fd9acee0228d504fa2864c8374510a803fb",
+  "contract_file": "tests/fixtures/skill-routing-cases.json",
+  "contract_errors": [],
+  "semantic_risk_hypotheses": [
+    {
+      "id": "permanent-entry-cluster",
+      "severity": "high",
+      "skills": [
+        "goodidea-capture-flash",
+        "goodidea-form-permanent"
+      ],
+      "hypothesis": "口述想法和草稿是共享名词；没有明确永久卡片意图时必须只由 capture 接管，只有用户主动发起后 form 才统一负责澄清、审查和形成。",
+      "case_ids": [
+        "form-permanent-spoken",
+        "review-permanent-standard",
+        "neighbor-capture-not-permanent",
+        "neighbor-spoken-thought-capture",
+        "neighbor-author-boundary-form"
+      ]
+    },
+    {
+      "id": "network-membership-vs-semantic-edge",
+      "severity": "medium",
+      "skills": [
+        "goodidea-connect-cards",
+        "goodidea-lint"
+      ],
+      "hypothesis": "检查卡片是否存在于永久空间、索引和账本属于 lint；只有寻找或确认支持、冲突、限定、例证等语义边才属于 connect。",
+      "case_ids": [
+        "connect-zero-edge",
+        "lint-integrity",
+        "neighbor-connect-not-review",
+        "neighbor-membership-lint-not-connect"
+      ]
+    },
+    {
+      "id": "linked-source-vs-unlinked-note",
+      "severity": "medium",
+      "skills": [
+        "goodidea-capture-flash",
+        "goodidea-record-literature"
+      ],
+      "hypothesis": "当前捕获阶段和用户认知意图优先于附件类型；想法附带 URL/Markdown/TXT 仍由 capture 主导，只有纯来源保存和捕获后的后台维护由 record-literature 处理。",
+      "case_ids": [
+        "source-public-article",
+        "source-local-txt",
+        "source-local-markdown",
+        "neighbor-link-with-thought",
+        "neighbor-unlinked-report-capture",
+        "no-route-read-url-only",
+        "no-route-local-pdf"
+      ]
+    },
+    {
+      "id": "content-review-vs-structural-lint",
+      "severity": "medium",
+      "skills": [
+        "goodidea-review-process",
+        "goodidea-lint"
+      ],
+      "hypothesis": "逐条让用户判断中间材料去向属于 review-process；只读检查结构、快照、索引、账本和 Git 属于 lint。",
+      "case_ids": [
+        "review-pending-flashes",
+        "lint-health-audit",
+        "neighbor-review-not-lint",
+        "compound-lint-then-review"
+      ]
+    }
+  ],
+  "recall_risk_hypotheses": [
+    {
+      "skill": "goodidea-form-permanent",
+      "missing_intent": "为正式卡片追加用户本人修订或行动反馈",
+      "case_ids": [
+        "form-action-feedback"
+      ]
+    }
+  ],
+  "static_overlap": {
+    "ok": true,
+    "threshold": 0.55,
+    "pair_scores": [
+      {
+        "skills": [
+          "goodidea-record-literature",
+          "goodidea-todo"
+        ],
+        "similarity": 0.382,
+        "above_threshold": false,
+        "declared_overlap": false
+      },
+      {
+        "skills": [
+          "goodidea-capture-flash",
+          "goodidea-record-literature"
+        ],
+        "similarity": 0.219,
+        "above_threshold": false,
+        "declared_overlap": false
+      },
+      {
+        "skills": [
+          "goodidea-capture-flash",
+          "goodidea-connect-cards"
+        ],
+        "similarity": 0.212,
+        "above_threshold": false,
+        "declared_overlap": false
+      },
+      {
+        "skills": [
+          "goodidea-connect-cards",
+          "goodidea-form-permanent"
+        ],
+        "similarity": 0.204,
+        "above_threshold": false,
+        "declared_overlap": false
+      },
+      {
+        "skills": [
+          "goodidea-review-process",
+          "goodidea-todo"
+        ],
+        "similarity": 0.199,
+        "above_threshold": false,
+        "declared_overlap": false
+      },
+      {
+        "skills": [
+          "goodidea-capture-flash",
+          "goodidea-todo"
+        ],
+        "similarity": 0.167,
+        "above_threshold": false,
+        "declared_overlap": false
+      },
+      {
+        "skills": [
+          "goodidea-connect-cards",
+          "goodidea-record-literature"
+        ],
+        "similarity": 0.166,
+        "above_threshold": false,
+        "declared_overlap": false
+      },
+      {
+        "skills": [
+          "goodidea-lint",
+          "goodidea-record-literature"
+        ],
+        "similarity": 0.166,
+        "above_threshold": false,
+        "declared_overlap": false
+      },
+      {
+        "skills": [
+          "goodidea-connect-cards",
+          "goodidea-todo"
+        ],
+        "similarity": 0.151,
+        "above_threshold": false,
+        "declared_overlap": false
+      },
+      {
+        "skills": [
+          "goodidea-connect-cards",
+          "goodidea-review-process"
+        ],
+        "similarity": 0.141,
+        "above_threshold": false,
+        "declared_overlap": false
+      },
+      {
+        "skills": [
+          "goodidea-capture-flash",
+          "goodidea-review-process"
+        ],
+        "similarity": 0.137,
+        "above_threshold": false,
+        "declared_overlap": false
+      },
+      {
+        "skills": [
+          "goodidea-capture-flash",
+          "goodidea-lint"
+        ],
+        "similarity": 0.133,
+        "above_threshold": false,
+        "declared_overlap": false
+      },
+      {
+        "skills": [
+          "goodidea-form-permanent",
+          "goodidea-record-literature"
+        ],
+        "similarity": 0.129,
+        "above_threshold": false,
+        "declared_overlap": false
+      },
+      {
+        "skills": [
+          "goodidea-lint",
+          "goodidea-review-process"
+        ],
+        "similarity": 0.121,
+        "above_threshold": false,
+        "declared_overlap": false
+      },
+      {
+        "skills": [
+          "goodidea-form-permanent",
+          "goodidea-todo"
+        ],
+        "similarity": 0.114,
+        "above_threshold": false,
+        "declared_overlap": false
+      },
+      {
+        "skills": [
+          "goodidea-connect-cards",
+          "goodidea-lint"
+        ],
+        "similarity": 0.113,
+        "above_threshold": false,
+        "declared_overlap": false
+      },
+      {
+        "skills": [
+          "goodidea-form-permanent",
+          "goodidea-lint"
+        ],
+        "similarity": 0.105,
+        "above_threshold": false,
+        "declared_overlap": false
+      },
+      {
+        "skills": [
+          "goodidea-lint",
+          "goodidea-todo"
+        ],
+        "similarity": 0.103,
+        "above_threshold": false,
+        "declared_overlap": false
+      },
+      {
+        "skills": [
+          "goodidea-record-literature",
+          "goodidea-review-process"
+        ],
+        "similarity": 0.102,
+        "above_threshold": false,
+        "declared_overlap": false
+      },
+      {
+        "skills": [
+          "goodidea-capture-flash",
+          "goodidea-form-permanent"
+        ],
+        "similarity": 0.1,
+        "above_threshold": false,
+        "declared_overlap": false
+      },
+      {
+        "skills": [
+          "goodidea-form-permanent",
+          "goodidea-review-process"
+        ],
+        "similarity": 0.095,
+        "above_threshold": false,
+        "declared_overlap": false
+      }
+    ],
+    "declared_high_overlaps": [],
+    "unapproved_high_overlaps": [],
+    "duplicate_description_groups": []
+  },
+  "runner": null,
+  "model_evaluation": null
+}

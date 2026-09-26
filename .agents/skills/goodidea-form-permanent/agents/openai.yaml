@@ -1,0 +1,4 @@
+interface:
+  display_name: "Good idea 形成永久卡片"
+  short_description: "澄清用户观点、确认形成来源并生成正式卡片候选"
+  default_prompt: "Use $goodidea-form-permanent to clarify my judgment, confirm its formation sources, and create a permanent-card proposal."

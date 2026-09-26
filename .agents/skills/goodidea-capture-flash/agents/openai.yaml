@@ -1,0 +1,4 @@
+interface:
+  display_name: "Good idea 捕捉闪念"
+  short_description: "保护多轮认知现场，和用户共同确认一张或多张闪念"
+  default_prompt: "Use $goodidea-capture-flash to preserve the cognition foreground as one or more logically coherent activation events, keep source, trigger, and activated-logic anchors, ask only capture-stage grouping or correction questions, and finalize only the latest user-approved list."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Good idea 保存来源"
+  short_description: "保存纯来源，或在闪念捕获完成后后台维护上下文快照"
+  default_prompt: "Use $goodidea-record-literature for a source-only request, or after a capture session is finalized to attach source snapshots to existing flashes."

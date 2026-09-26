@@ -1,0 +1,4 @@
+interface:
+  display_name: "Good idea 连接卡片"
+  short_description: "为已接纳卡片评估并确认有意义的额外语义连接"
+  default_prompt: "Use $goodidea-connect-cards to evaluate and propose a meaningful semantic connection for an accepted card."

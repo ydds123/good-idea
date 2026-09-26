@@ -1,0 +1,12 @@
+/* Note Database：看板列宽度自适应（2026-08-12）
+ *
+ * 覆盖插件默认的看板列固定宽度（flex: 0 0 280px）：
+ * - 列少（内容总和 < 容器宽）时：flex-grow 自动分摊剩余空间，看板不再右侧空一大块
+ * - 列多时：容器仍按列数扩展并横向滚动（插件 .db-board 的 width:max-content + min-width:100%）
+ * - 拖拽列宽手势仍然有效：flex-basis 使用插件的 --db-board-column-width 变量
+ * - max-width 防止单列过宽导致文字行过长
+ */
+.note-database-container .db-board-column {
+  flex: 1 1 var(--db-board-column-width, 280px) !important;
+  max-width: 600px;
+}

@@ -1,0 +1,83 @@
+/* ============================================================
+ * Good idea 属性面板中文化（v0.1 产品基线，2026-08-11）
+ *
+ * 原则：契约层（Frontmatter 文件）写中文枚举值；这里只负责
+ * 显示层两件事——
+ *   1. 机器字段（ID/哈希/账本 ID 列表）从默认显示中隐藏
+ *   2. 英文属性名映射为中文显示名（type→类型、created_at→创建时间…）
+ *
+ * 底层文件是机器契约，任何时刻点开属性编辑（聚焦输入框）都会
+ * 恢复显示英文原名——那是"机器控制面"的提示，不是缺陷。
+ * ============================================================ */
+
+/* ---------- 1. 隐藏账本/机器字段 ---------- */
+.metadata-property[data-property-key="id"],
+.metadata-property[data-property-key="source_ids"],
+.metadata-property[data-property-key="derived_from"],
+.metadata-property[data-property-key="formation_draft_sha256"],
+.metadata-property[data-property-key="content_sha256"],
+.metadata-property[data-property-key="snapshot_sha256"],
+.metadata-property[data-property-key="origin_sha256"],
+.metadata-property[data-property-key="image_failures"] {
+  display: none !important;
+}
+
+/* ---------- 2. 属性名显示映射 ---------- */
+.metadata-property-key {
+  position: relative;
+}
+
+/* 隐藏英文原 key：三重保险（color 透明 + text-fill 透明 + 文本移出视野）。
+   !important 防止主题对 input 的高优先级颜色规则覆盖（2026-08-11 实测
+   主题把 color 覆盖为 rgb(92,92,92)，导致中英文重叠）。 */
+.metadata-property-key-input {
+  color: transparent !important;
+  -webkit-text-fill-color: transparent !important;
+  caret-color: transparent !important;
+  text-indent: -9999px;
+}
+
+/* 聚焦（编辑态）恢复英文原名，露出机器契约 */
+.metadata-property-key:focus-within .metadata-property-key-input {
+  color: var(--text-normal) !important;
+  -webkit-text-fill-color: var(--text-normal) !important;
+  caret-color: var(--text-normal) !important;
+  text-indent: 0;
+}
+
+.metadata-property-key::after {
+  content: "";
+  position: absolute;
+  left: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+.metadata-property-key:focus-within::after {
+  display: none;
+}
+
+/* 字段名 → 中文显示名 */
+.metadata-property[data-property-key="type"] .metadata-property-key::after { content: "类型"; }
+.metadata-property[data-property-key="status"] .metadata-property-key::after { content: "状态"; }
+.metadata-property[data-property-key="title"] .metadata-property-key::after { content: "标题"; }
+.metadata-property[data-property-key="created_at"] .metadata-property-key::after { content: "创建时间"; }
+.metadata-property[data-property-key="updated_at"] .metadata-property-key::after { content: "更新时间"; }
+.metadata-property[data-property-key="authoring_mode"] .metadata-property-key::after { content: "形成方式"; }
+.metadata-property[data-property-key="capture_status"] .metadata-property-key::after { content: "捕获质量"; }
+.metadata-property[data-property-key="canonical_url"] .metadata-property-key::after { content: "规范链接"; }
+.metadata-property[data-property-key="author"] .metadata-property-key::after { content: "作者"; }
+.metadata-property[data-property-key="published_at"] .metadata-property-key::after { content: "发布时间"; }
+.metadata-property[data-property-key="fetched_at"] .metadata-property-key::after { content: "获取时间"; }
+.metadata-property[data-property-key="origin_filename"] .metadata-property-key::after { content: "原始文件名"; }
+/* ---------- 3. 来源渠道标签：隐藏编辑输入框，保留渲染与点击搜索（2026-08-13） ----------
+   tags 是来源层的可选回忆锚点，只能由 CLI 维护。隐藏值区编辑控件后
+   用户无法手改，但标签 chips 的渲染与点击搜索（tag: 聚合）完整保留。
+   data-property-key 匹配的是 frontmatter 字段名 tags。 */
+.metadata-property[data-property-key="tags"] .metadata-property-value input,
+.metadata-property[data-property-key="tags"] .metadata-property-value textarea,
+.metadata-property[data-property-key="tags"] .metadata-property-value .multi-select-input {
+  display: none !important;
+}

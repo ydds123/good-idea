@@ -1,0 +1,268 @@
+{
+  "presetAgents": {
+    "claude-code-acp": {
+      "id": "claude-code-acp",
+      "displayName": "Claude Code",
+      "apiKeySecretId": "",
+      "command": "claude-agent-acp",
+      "args": [],
+      "env": [],
+      "enabled": true
+    },
+    "codex-acp": {
+      "id": "codex-acp",
+      "displayName": "Codex",
+      "apiKeySecretId": "",
+      "command": "codex-acp",
+      "args": [],
+      "env": [],
+      "enabled": true
+    },
+    "gemini-cli": {
+      "id": "gemini-cli",
+      "displayName": "Gemini CLI",
+      "apiKeySecretId": "",
+      "command": "gemini",
+      "args": [
+        "--experimental-acp"
+      ],
+      "env": [],
+      "enabled": true
+    },
+    "mistral-vibe": {
+      "id": "mistral-vibe",
+      "displayName": "Mistral Vibe",
+      "apiKeySecretId": "",
+      "command": "vibe-acp",
+      "args": [],
+      "env": [],
+      "enabled": true
+    },
+    "opencode": {
+      "id": "opencode",
+      "displayName": "OpenCode",
+      "apiKeySecretId": "",
+      "command": "opencode",
+      "args": [
+        "acp"
+      ],
+      "env": [],
+      "enabled": true
+    },
+    "kiro-cli": {
+      "id": "kiro-cli",
+      "displayName": "Kiro",
+      "apiKeySecretId": "",
+      "command": "kiro-cli",
+      "args": [
+        "acp"
+      ],
+      "env": [],
+      "enabled": true
+    },
+    "hermes-agent": {
+      "id": "hermes-agent",
+      "displayName": "Hermes Agent",
+      "apiKeySecretId": "",
+      "command": "/Users/apple/.local/bin/hermes",
+      "args": [
+        "acp"
+      ],
+      "env": [],
+      "enabled": true
+    }
+  },
+  "customAgents": [],
+  "defaultAgentId": "hermes-agent",
+  "autoAllowPermissions": false,
+  "autoMentionActiveNote": true,
+  "expandWikilinkContext": true,
+  "enableSystemNotifications": true,
+  "promptInjection": {
+    "enabled": true,
+    "latex": true,
+    "wikiLinks": true,
+    "tables": true
+  },
+  "debugMode": true,
+  "nodePath": "",
+  "exportSettings": {
+    "defaultFolder": "Agent Client",
+    "filenameTemplate": "agent_client_{date}_{time}",
+    "autoExportOnNewChat": false,
+    "autoExportOnCloseChat": false,
+    "openFileAfterExport": true,
+    "includeImages": true,
+    "imageLocation": "obsidian",
+    "imageCustomFolder": "Agent Client",
+    "frontmatterTag": "agent-client"
+  },
+  "windowsWslMode": false,
+  "sendMessageShortcut": "enter",
+  "chatViewLocation": "right-tab",
+  "displaySettings": {
+    "autoCollapseDiffs": true,
+    "diffCollapseThreshold": 10,
+    "maxNoteLength": 10000,
+    "maxSelectionLength": 10000,
+    "showEmojis": true,
+    "fontSize": 16
+  },
+  "savedSessions": [
+    {
+      "sessionId": "40f0dda7-e70f-4f41-9a06-5d29ee097f81",
+      "agentId": "hermes-agent",
+      "cwd": "/Users/apple/Documents/good-idea",
+      "title": "嗯，我觉得我们可以讨论一下下面这个内容，因为我觉得它可以跟我们的一张卡片关联起来",
+      "createdAt": "2026-09-12T03:38:45.293Z",
+      "updatedAt": "2026-09-12T04:15:25.309Z"
+    },
+    {
+      "sessionId": "63dbb791-1ff4-4f91-9dad-114dae28895a",
+      "agentId": "hermes-agent",
+      "cwd": "/Users/apple/Documents/good-idea",
+      "title": "今天有哪些待办事项吗？",
+      "createdAt": "2026-09-06T12:57:03.448Z",
+      "updatedAt": "2026-09-06T14:52:27.442Z"
+    },
+    {
+      "sessionId": "7b3f4bc7-695d-4aa6-9e21-3d0bbca06fad",
+      "agentId": "hermes-agent",
+      "cwd": "/Users/apple/Documents/good-idea",
+      "title": "你好",
+      "createdAt": "2026-09-04T11:31:30.114Z",
+      "updatedAt": "2026-09-04T14:06:58.919Z"
+    },
+    {
+      "sessionId": "cc57e187-21b6-435c-864c-0db3d12d0c34",
+      "agentId": "hermes-agent",
+      "cwd": "/Users/apple/Documents/good-idea",
+      "title": "今天晚上有哪些事呢？",
+      "createdAt": "2026-09-04T11:21:48.036Z",
+      "updatedAt": "2026-09-04T11:21:48.042Z"
+    },
+    {
+      "sessionId": "864b4d36-f320-480e-896a-a0112a11a069",
+      "agentId": "hermes-agent",
+      "cwd": "/Users/apple/Documents/good-idea",
+      "title": "有哪些闪念是需要今天处理的呢？",
+      "createdAt": "2026-08-23T12:30:50.085Z",
+      "updatedAt": "2026-08-23T12:46:23.796Z"
+    },
+    {
+      "sessionId": "01e05f13-fb8d-408e-a521-4d77dc723592",
+      "agentId": "hermes-agent",
+      "cwd": "/Users/apple/Documents/good-idea",
+      "title": "你要记住一个原则，就比方说当我抛出一个想法或者说思路的时候，里边不是可能会包含到我们之前很多的...",
+      "createdAt": "2026-08-22T11:51:04.229Z",
+      "updatedAt": "2026-08-23T12:30:10.047Z"
+    },
+    {
+      "sessionId": "5946908e-5521-4235-b79b-0c2e7ddd9785",
+      "agentId": "hermes-agent",
+      "cwd": "/Users/apple/Documents/good-idea",
+      "title": "是这样的，今天的话我们把闪念空间里边的内容处理一下吧，就是从最前边的开始",
+      "createdAt": "2026-08-20T13:11:07.739Z",
+      "updatedAt": "2026-08-22T11:45:42.537Z"
+    },
+    {
+      "sessionId": "55cb0a53-db7d-44e8-a3cf-aa5a67157b6e",
+      "agentId": "hermes-agent",
+      "cwd": "/Users/apple/Documents/good-idea",
+      "title": "是这样的，就是我想问个问题啊，就比方说像那个代办数据库表格视图的话，我鼠标放在标题那，然后按快...",
+      "createdAt": "2026-08-16T02:00:19.104Z",
+      "updatedAt": "2026-08-16T09:25:54.105Z"
+    },
+    {
+      "sessionId": "e0747558-2a9b-423a-b871-e84495bb79ee",
+      "agentId": "hermes-agent",
+      "cwd": "/Users/apple/Documents/good-idea",
+      "title": "三次尝试都是同一结果——审批弹窗在你的 Obsidian agent-client 环境下没有...",
+      "createdAt": "2026-08-15T03:31:31.647Z",
+      "updatedAt": "2026-08-16T01:45:29.887Z"
+    },
+    {
+      "sessionId": "6f62e154-6d43-4bd5-bbaa-04b914fb6dfa",
+      "agentId": "hermes-agent",
+      "cwd": "/Users/apple/Documents/good-idea",
+      "title": "是这样的，就是我觉得应该参考这个闪念数据库，给我们也要基于待办空间，也要做一个类似的一个视图。",
+      "createdAt": "2026-08-15T02:45:08.077Z",
+      "updatedAt": "2026-08-15T03:27:24.680Z"
+    },
+    {
+      "sessionId": "3bc372ff-0435-4677-8734-3c0e8090a817",
+      "agentId": "hermes-agent",
+      "cwd": "/Users/apple/Documents/good-idea",
+      "title": "闪念数据库如果是表格视图，点击标题可以正文预览吗",
+      "createdAt": "2026-08-13T03:12:55.604Z",
+      "updatedAt": "2026-08-14T11:09:13.561Z"
+    },
+    {
+      "sessionId": "1f7aa0d2-538f-4c26-a648-011d38d6a3a4",
+      "agentId": "hermes-agent",
+      "cwd": "/Users/apple/Documents/good-idea",
+      "title": "帮我看下这张卡，值不值得加工成永久卡",
+      "createdAt": "2026-08-12T09:46:18.803Z",
+      "updatedAt": "2026-08-13T03:10:16.144Z"
+    },
+    {
+      "sessionId": "79f8b929-0c7f-49d5-ba36-451e98b58e87",
+      "agentId": "hermes-agent",
+      "cwd": "/Users/apple/Documents/good-idea",
+      "title": "你知道我勾选的卡片是哪张吗",
+      "createdAt": "2026-08-12T09:40:11.940Z",
+      "updatedAt": "2026-08-12T09:40:11.942Z"
+    },
+    {
+      "sessionId": "52e3acea-654d-4b3c-8359-830b264e80d9",
+      "agentId": "hermes-agent",
+      "cwd": "/Users/apple/Documents/good-idea",
+      "title": "帮我看看这几个有没有已经过期的",
+      "createdAt": "2026-08-12T09:30:02.632Z",
+      "updatedAt": "2026-08-12T09:32:48.138Z"
+    },
+    {
+      "sessionId": "3dd69149-9ea7-4794-a4ab-47bdcbcb321f",
+      "agentId": "hermes-agent",
+      "cwd": "/Users/apple/Documents/good-idea",
+      "title": "obsidian://open?vault=good-idea&file=Good%20ide...",
+      "createdAt": "2026-08-12T08:40:07.055Z",
+      "updatedAt": "2026-08-12T09:14:07.831Z"
+    },
+    {
+      "sessionId": "99a6d178-52b7-400f-9382-28d39b1a80d0",
+      "agentId": "hermes-agent",
+      "cwd": "/Users/apple/Documents/good-idea",
+      "title": "为什么溯源空间里面的内容，我感觉对话李继刚：让AI超越平庸表现｜读完周报再来聊聊闭门会第5期精...",
+      "createdAt": "2026-08-12T01:27:48.478Z",
+      "updatedAt": "2026-08-12T08:37:36.781Z"
+    },
+    {
+      "sessionId": "28458828-151d-4cf6-8522-eb6fdf08f02a",
+      "agentId": "hermes-agent",
+      "cwd": "/Users/apple/Documents/good-idea",
+      "title": "你好啊，知道我是谁吗",
+      "createdAt": "2026-08-11T12:35:58.054Z",
+      "updatedAt": "2026-08-11T14:47:56.643Z"
+    }
+  ],
+  "lastUsedModels": {},
+  "lastUsedModes": {
+    "hermes-agent": "accept_edits"
+  },
+  "lastUsedConfigOptions": {},
+  "enableFloatingChat": false,
+  "floatingButtonImage": "",
+  "floatingWindowSize": {
+    "width": 400,
+    "height": 500
+  },
+  "floatingWindowPosition": {
+    "x": 739,
+    "y": 322
+  },
+  "floatingButtonPosition": {
+    "x": 1737,
+    "y": 995
+  }
+}

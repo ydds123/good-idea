@@ -1,0 +1,536 @@
+{
+  "version": 1,
+  "skills": [
+    "goodidea-capture-flash",
+    "goodidea-record-literature",
+    "goodidea-review-process",
+    "goodidea-form-permanent",
+    "goodidea-connect-cards",
+    "goodidea-lint",
+    "goodidea-todo"
+  ],
+  "similarity_warning_threshold": 0.55,
+  "minimum_primary_cases_per_skill": 3,
+  "allowed_overlap_pairs": [],
+  "semantic_risk_hypotheses": [
+    {
+      "id": "permanent-entry-cluster",
+      "severity": "high",
+      "skills": [
+        "goodidea-capture-flash",
+        "goodidea-form-permanent"
+      ],
+      "hypothesis": "口述想法和草稿是共享名词；没有明确永久卡片意图时必须只由 capture 接管，只有用户主动发起后 form 才统一负责澄清、审查和形成。",
+      "case_ids": [
+        "form-permanent-spoken",
+        "review-permanent-standard",
+        "neighbor-capture-not-permanent",
+        "neighbor-spoken-thought-capture",
+        "neighbor-author-boundary-form"
+      ]
+    },
+    {
+      "id": "network-membership-vs-semantic-edge",
+      "severity": "medium",
+      "skills": [
+        "goodidea-connect-cards",
+        "goodidea-lint"
+      ],
+      "hypothesis": "检查卡片是否存在于永久空间、索引和账本属于 lint；只有寻找或确认支持、冲突、限定、例证等语义边才属于 connect。",
+      "case_ids": [
+        "connect-zero-edge",
+        "lint-integrity",
+        "neighbor-connect-not-review",
+        "neighbor-membership-lint-not-connect"
+      ]
+    },
+    {
+      "id": "linked-source-vs-unlinked-note",
+      "severity": "medium",
+      "skills": [
+        "goodidea-capture-flash",
+        "goodidea-record-literature"
+      ],
+      "hypothesis": "当前捕获阶段和用户认知意图优先于附件类型；想法附带 URL/Markdown/TXT 仍由 capture 主导，只有纯来源保存和捕获后的后台维护由 record-literature 处理。",
+      "case_ids": [
+        "source-public-article",
+        "source-local-txt",
+        "source-local-markdown",
+        "neighbor-link-with-thought",
+        "neighbor-unlinked-report-capture",
+        "no-route-read-url-only",
+        "no-route-local-pdf"
+      ]
+    },
+    {
+      "id": "content-review-vs-structural-lint",
+      "severity": "medium",
+      "skills": [
+        "goodidea-review-process",
+        "goodidea-lint"
+      ],
+      "hypothesis": "逐条让用户判断中间材料去向属于 review-process；只读检查结构、快照、索引、账本和 Git 属于 lint。",
+      "case_ids": [
+        "review-pending-flashes",
+        "lint-health-audit",
+        "neighbor-review-not-lint",
+        "compound-lint-then-review"
+      ]
+    }
+  ],
+  "recall_risk_hypotheses": [
+    {
+      "skill": "goodidea-form-permanent",
+      "missing_intent": "为正式卡片追加用户本人修订或行动反馈",
+      "case_ids": [
+        "form-action-feedback"
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "id": "capture-flash-idea",
+      "family": "unique_capture",
+      "text": "记一下：AI 原生工具的关键不是自动生成更多内容，而是帮助我持续形成判断。",
+      "expected_primary": "goodidea-capture-flash",
+      "allowed_supporting": [],
+      "required_supporting": [],
+      "expected_conflict": false
+    },
+    {
+      "id": "capture-interesting",
+      "family": "unique_capture",
+      "text": "这个现象挺有意思：团队开始用对话代替固定表单，先帮我存着。",
+      "expected_primary": "goodidea-record-literature",
+      "allowed_supporting": [],
+      "required_supporting": [],
+      "expected_conflict": false
+    },
+    {
+      "id": "capture-todo",
+      "family": "unique_capture",
+      "text": "帮我加个待办：周五回顾这周产生的闪念，不包含任何网页链接。",
+      "expected_primary": "goodidea-todo",
+      "allowed_supporting": [],
+      "required_supporting": [],
+      "expected_conflict": false
+    },
+    {
+      "id": "source-public-article",
+      "family": "unique_source",
+      "text": "保存这篇公众号文章 https://example.com/article，先读完再问我为什么想保存。",
+      "expected_primary": "goodidea-capture-flash",
+      "allowed_supporting": [],
+      "required_supporting": [],
+      "expected_conflict": false
+    },
+    {
+      "id": "source-report",
+      "family": "unique_source",
+      "text": "我转发了一份公开报告的网页链接，请把原文和图片做成 Markdown 快照。",
+      "expected_primary": "goodidea-record-literature",
+      "allowed_supporting": [],
+      "required_supporting": [],
+      "expected_conflict": false
+    },
+    {
+      "id": "source-local-txt",
+      "family": "unique_source",
+      "text": "把外部文件《控制论与科学方法论.txt》作为来源快照保存，先读完再问我为什么要留下它。",
+      "expected_primary": "goodidea-record-literature",
+      "allowed_supporting": [],
+      "required_supporting": [],
+      "expected_conflict": false
+    },
+    {
+      "id": "source-local-markdown",
+      "family": "unique_source",
+      "text": "这份外部文件《8 月 9 日可能性空间讨论.md》是完整材料，请导入溯源空间并和我的保存动机原子生成一张闪念。",
+      "expected_primary": "goodidea-record-literature",
+      "allowed_supporting": [],
+      "required_supporting": [],
+      "expected_conflict": false
+    },
+    {
+      "id": "source-refresh",
+      "family": "unique_source",
+      "text": "这篇已经保存的网页内容更新了，请先生成来源刷新候选，不要直接覆盖旧快照。",
+      "expected_primary": "goodidea-record-literature",
+      "allowed_supporting": [],
+      "required_supporting": [],
+      "expected_conflict": false
+    },
+    {
+      "id": "review-pending-flashes",
+      "family": "unique_review_process",
+      "text": "回顾一下还没处理的闪念，逐条让我决定下一步去向。",
+      "expected_primary": "goodidea-review-process",
+      "allowed_supporting": [],
+      "required_supporting": [],
+      "expected_conflict": false
+    },
+    {
+      "id": "review-interesting-todo",
+      "family": "unique_review_process",
+      "text": "看看有意思空间和待办空间现在积压了什么，先只列出来让我判断。",
+      "expected_primary": "goodidea-review-process",
+      "allowed_supporting": [],
+      "required_supporting": [],
+      "expected_conflict": false
+    },
+    {
+      "id": "review-expire",
+      "family": "unique_review_process",
+      "text": "执行一次回顾，把超过 48 小时仍未处理的闪念标记为已失效，不要删除。",
+      "expected_primary": "goodidea-review-process",
+      "allowed_supporting": [],
+      "required_supporting": [],
+      "expected_conflict": false
+    },
+    {
+      "id": "form-permanent-spoken",
+      "family": "unique_form_permanent",
+      "text": "我想写一张永久卡片，我先口述自己的想法，你一次问我一个问题。",
+      "expected_primary": "goodidea-form-permanent",
+      "allowed_supporting": [],
+      "required_supporting": [],
+      "expected_conflict": false
+    },
+    {
+      "id": "form-mother-confirmed",
+      "family": "unique_form_permanent",
+      "text": "这是我已经确认完整的母题卡片草稿，现在请按流程形成候选，等我明确要求后再正式创建。",
+      "expected_primary": "goodidea-form-permanent",
+      "allowed_supporting": [],
+      "required_supporting": [],
+      "expected_conflict": false
+    },
+    {
+      "id": "form-action-feedback",
+      "family": "unique_form_permanent",
+      "text": "给现有行动卡追加我刚刚亲自写下的现实结果和后续修正。",
+      "expected_primary": "goodidea-form-permanent",
+      "allowed_supporting": [],
+      "required_supporting": [],
+      "expected_conflict": false
+    },
+    {
+      "id": "review-permanent-standard",
+      "family": "unique_form_permanent",
+      "text": "只评估下面这张永久卡片草稿是否达到标准，不要创建，也不要改写正文。",
+      "expected_primary": "goodidea-form-permanent",
+      "allowed_supporting": [],
+      "required_supporting": [],
+      "expected_conflict": false
+    },
+    {
+      "id": "review-permanent-boundary",
+      "family": "unique_form_permanent",
+      "text": "我已经提出了一个卡片观点，但适用边界还不清楚，请一次问我一个问题帮助澄清，暂时不要写入。",
+      "expected_primary": "goodidea-form-permanent",
+      "allowed_supporting": [],
+      "required_supporting": [],
+      "expected_conflict": false
+    },
+    {
+      "id": "review-permanent-counterexample",
+      "family": "unique_form_permanent",
+      "text": "请寻找反例审查这份母题卡片草稿，审查意见只留在对话里。",
+      "expected_primary": "goodidea-form-permanent",
+      "allowed_supporting": [],
+      "required_supporting": [],
+      "expected_conflict": false
+    },
+    {
+      "id": "connect-two-cards",
+      "family": "unique_connect",
+      "text": "判断这两张正式卡片之间有没有支持关系，有的话先提出候选让我确认。",
+      "expected_primary": "goodidea-connect-cards",
+      "allowed_supporting": [],
+      "required_supporting": [],
+      "expected_conflict": false
+    },
+    {
+      "id": "connect-zero-edge",
+      "family": "unique_connect",
+      "text": "第一张永久卡片现在没有任何语义连接，它算不算已经接入卡片网络？",
+      "expected_primary": "goodidea-connect-cards",
+      "allowed_supporting": [],
+      "required_supporting": [],
+      "expected_conflict": false
+    },
+    {
+      "id": "connect-conflict-relation",
+      "family": "unique_connect",
+      "text": "给这两张已存在的正式卡片建立一条冲突关系，但先展示理由，不要直接写。",
+      "expected_primary": "goodidea-connect-cards",
+      "allowed_supporting": [],
+      "required_supporting": [],
+      "expected_conflict": false
+    },
+    {
+      "id": "lint-integrity",
+      "family": "unique_lint",
+      "text": "检查整个知识库有没有断链、快照哈希异常或索引不一致。",
+      "expected_primary": "goodidea-lint",
+      "allowed_supporting": [],
+      "required_supporting": [],
+      "expected_conflict": false
+    },
+    {
+      "id": "lint-git-ledger",
+      "family": "unique_lint",
+      "text": "验证 Git 工作区、状态账本和最近事务提交是否一致，只报告问题。",
+      "expected_primary": "goodidea-lint",
+      "allowed_supporting": [],
+      "required_supporting": [],
+      "expected_conflict": false
+    },
+    {
+      "id": "lint-health-audit",
+      "family": "unique_lint",
+      "text": "对 Good idea 做一次结构健康审计，不接受候选，也不要修改认知内容。",
+      "expected_primary": "goodidea-lint",
+      "allowed_supporting": [],
+      "required_supporting": [],
+      "expected_conflict": false
+    },
+    {
+      "id": "neighbor-link-with-thought",
+      "family": "near_neighbor",
+      "text": "保存这篇文章 https://example.com/ai，我的想法是持续生成同时带来创造和幻觉。",
+      "expected_primary": "goodidea-capture-flash",
+      "allowed_supporting": [],
+      "required_supporting": [],
+      "expected_conflict": false
+    },
+    {
+      "id": "neighbor-review-not-lint",
+      "family": "near_neighbor",
+      "text": "检查一下这些待处理闪念分别还值不值得继续思考，让我逐条做决定。",
+      "expected_primary": "goodidea-review-process",
+      "allowed_supporting": [],
+      "required_supporting": [],
+      "expected_conflict": false
+    },
+    {
+      "id": "neighbor-card-review-not-lint",
+      "family": "near_neighbor",
+      "text": "检查这张永久卡片的观点能不能脱离当前对话独立理解，不要检查仓库结构。",
+      "expected_primary": "goodidea-form-permanent",
+      "allowed_supporting": [],
+      "required_supporting": [],
+      "expected_conflict": false
+    },
+    {
+      "id": "neighbor-snapshot-lint-not-source",
+      "family": "near_neighbor",
+      "text": "检查已经保存的来源快照哈希有没有被普通编辑破坏，不要重新抓取网页。",
+      "expected_primary": "goodidea-lint",
+      "allowed_supporting": [],
+      "required_supporting": [],
+      "expected_conflict": false
+    },
+    {
+      "id": "neighbor-connect-not-review",
+      "family": "near_neighbor",
+      "text": "这张正式卡片应该和现有哪张卡片建立语义关系？先给关系候选。",
+      "expected_primary": "goodidea-connect-cards",
+      "allowed_supporting": [],
+      "required_supporting": [],
+      "expected_conflict": false
+    },
+    {
+      "id": "neighbor-capture-not-permanent",
+      "family": "near_neighbor",
+      "text": "我突然想到生成可能是一种新增长机制，先原样记成闪念，不要形成永久卡片。",
+      "expected_primary": "goodidea-capture-flash",
+      "allowed_supporting": [],
+      "required_supporting": [],
+      "expected_conflict": false
+    },
+    {
+      "id": "neighbor-spoken-thought-capture",
+      "family": "near_neighbor",
+      "text": "我刚口述了一个想法，帮我原样记一下；我没有发起永久卡片。",
+      "expected_primary": "goodidea-capture-flash",
+      "allowed_supporting": [],
+      "required_supporting": [],
+      "expected_conflict": false
+    },
+    {
+      "id": "neighbor-unlinked-report-capture",
+      "family": "near_neighbor",
+      "text": "我只是把一段报告文字粘贴在下面，没有链接也不是外部文件；把它记成有意思内容，不要建来源快照。",
+      "expected_primary": "goodidea-capture-flash",
+      "allowed_supporting": [],
+      "required_supporting": [],
+      "expected_conflict": false
+    },
+    {
+      "id": "neighbor-membership-lint-not-connect",
+      "family": "near_neighbor",
+      "text": "检查这张正式卡片是否已经进入永久空间、索引和状态账本，不要寻找语义关系。",
+      "expected_primary": "goodidea-lint",
+      "allowed_supporting": [],
+      "required_supporting": [],
+      "expected_conflict": false
+    },
+    {
+      "id": "neighbor-author-boundary-form",
+      "family": "near_neighbor",
+      "text": "根据这篇文章直接替我写一张永久卡片并保存。",
+      "expected_primary": "goodidea-form-permanent",
+      "allowed_supporting": [],
+      "required_supporting": [],
+      "expected_conflict": false
+    },
+    {
+      "id": "compound-source-then-form",
+      "family": "intentional_sequence",
+      "text": "先保存这篇文章和我的保存动机；保存完成后，我还想基于自己的理解形成一张永久卡片。",
+      "expected_primary": "goodidea-record-literature",
+      "allowed_supporting": [
+        "goodidea-form-permanent"
+      ],
+      "required_supporting": [
+        "goodidea-form-permanent"
+      ],
+      "expected_conflict": false
+    },
+    {
+      "id": "compound-review-then-form",
+      "family": "intentional_sequence",
+      "text": "先回顾待处理闪念，让我挑一条；选定以后再由我发起形成永久卡片。",
+      "expected_primary": "goodidea-review-process",
+      "allowed_supporting": [
+        "goodidea-form-permanent"
+      ],
+      "required_supporting": [
+        "goodidea-form-permanent"
+      ],
+      "expected_conflict": false
+    },
+    {
+      "id": "compound-review-card-then-form",
+      "family": "intentional_sequence",
+      "text": "先审查我的永久卡片草稿；如果达到标准，再把完整草稿交回形成卡片流程，等我确认创建。",
+      "expected_primary": "goodidea-form-permanent",
+      "allowed_supporting": [],
+      "required_supporting": [],
+      "expected_conflict": false
+    },
+    {
+      "id": "compound-lint-then-review",
+      "family": "intentional_sequence",
+      "text": "先检查仓库结构和快照是否正常；如果没有完整性问题，再回顾待处理闪念。",
+      "expected_primary": "goodidea-lint",
+      "allowed_supporting": [
+        "goodidea-review-process"
+      ],
+      "required_supporting": [
+        "goodidea-review-process"
+      ],
+      "expected_conflict": false
+    },
+    {
+      "id": "capture-active-mentions-future-permanent",
+      "family": "stage_priority",
+      "text": "我们还在继续记录这轮闪念，这个观点以后也许能形成永久卡片，但现在先继续聊。",
+      "expected_primary": "goodidea-capture-flash",
+      "allowed_supporting": [],
+      "required_supporting": [],
+      "expected_conflict": false
+    },
+    {
+      "id": "capture-review-current-list",
+      "family": "stage_priority",
+      "text": "这是本轮捕获产生的闪念清单，把前两项合并，第三项继续讨论；我还没有发起永久卡片。",
+      "expected_primary": "goodidea-capture-flash",
+      "allowed_supporting": [],
+      "required_supporting": [],
+      "expected_conflict": false
+    },
+    {
+      "id": "capture-local-context-with-thought",
+      "family": "stage_priority",
+      "text": "我结合这份本地 Markdown 突然想到，控制可能性空间比穷举提示步骤更重要；文件只是这轮想法的上下文。",
+      "expected_primary": "goodidea-capture-flash",
+      "allowed_supporting": [],
+      "required_supporting": [],
+      "expected_conflict": false
+    },
+    {
+      "id": "no-route-id-explanation",
+      "family": "no_route",
+      "text": "Good idea 里的内部 ID 到底有什么用？只给我解释，不做任何操作。",
+      "expected_primary": "no_route",
+      "allowed_supporting": [],
+      "required_supporting": [],
+      "expected_conflict": false
+    },
+    {
+      "id": "no-route-code-change",
+      "family": "no_route",
+      "text": "帮我修改 goodidea CLI 的参数解析代码并补单元测试。",
+      "expected_primary": "no_route",
+      "allowed_supporting": [],
+      "required_supporting": [],
+      "expected_conflict": false
+    },
+    {
+      "id": "no-route-open-obsidian",
+      "family": "no_route",
+      "text": "帮我打开 Obsidian 看一下这个文件夹，不要处理任何卡片。",
+      "expected_primary": "no_route",
+      "allowed_supporting": [],
+      "required_supporting": [],
+      "expected_conflict": false
+    },
+    {
+      "id": "no-route-read-url-only",
+      "family": "no_route",
+      "text": "打开这个网页告诉我主要讲了什么，但不要保存到 Good idea。",
+      "expected_primary": "no_route",
+      "allowed_supporting": [],
+      "required_supporting": [],
+      "expected_conflict": false
+    },
+    {
+      "id": "no-route-local-pdf",
+      "family": "no_route",
+      "text": "把本地文件《控制论.pdf》直接保存成 Good idea 来源快照。",
+      "expected_primary": "no_route",
+      "allowed_supporting": [],
+      "required_supporting": [],
+      "expected_conflict": false
+    },
+    {
+      "id": "no-route-ambiguous-cards",
+      "family": "ambiguous_no_route",
+      "text": "帮我检查一下这些卡片。",
+      "expected_primary": "no_route",
+      "allowed_supporting": [],
+      "required_supporting": [],
+      "expected_conflict": false
+    },
+    {
+      "id": "capture-todo-vague",
+      "family": "unique_capture",
+      "text": "记个待办……嗯，就是那个，反正提醒我一下。",
+      "expected_primary": "goodidea-todo",
+      "allowed_supporting": [],
+      "required_supporting": [],
+      "expected_conflict": false
+    },
+    {
+      "id": "capture-todo-action",
+      "family": "unique_capture",
+      "text": "帮我记一个任务：把这周的目标规划方法论整理成卡片。",
+      "expected_primary": "goodidea-todo",
+      "allowed_supporting": [],
+      "required_supporting": [],
+      "expected_conflict": false
+    }
+  ]
+}
