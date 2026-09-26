@@ -26,4 +26,24 @@ python3 工具/commit.py <记录路径> [--message "<提交说明>"]
 
 ## 平台适配器
 
-平台专有适配器预留在 `工具/hooks/`。Hermes 的事件格式、钩子注册方式和阶段 0 探针结果尚未在当前环境验证，因此没有伪造适配器或配置。
+`工具/hooks/hermes_post_turn.py` 是本机 Hermes 的默认适配器：只有它认识 Hermes 的字段和钩子机制，把每回合的用户可见消息和 Agent 最终可见回复转成通用事件数组，交给上面的捕捉契约；未登记的 session 静默旁路，失败写 `.goodidea/tools.log` 并返回非零，不阻塞回复。它不做产品判断，删掉本文件并移除钩子配置即禁用自动转录与自动提交，记录仍可读可写、由 Agent 手工补写。
+
+本机注册位置和方式（只写接入方式，不写产品规则）：
+
+```text
+~/.hermes/config.yaml                     hooks: post_llm_call 段
+~/.hermes/shell-hooks-allowlist.json      逐 (事件, 命令) 授权记录
+```
+
+```yaml
+hooks:
+  post_llm_call:
+    - command: "python3 /Users/apple/Documents/Goodidea/工具/hooks/hermes_post_turn.py"
+      timeout: 15
+```
+
+- 授权：用 `hermes chat --accept-hooks` 或 `hermes hooks` 子命令逐条记录；未授权的钩子不执行
+- 生效时机：钩子在进程启动时注册，改配置后要重启对应入口（桌面端、CLI、网关）才生效
+- 同步执行：回合结束会等钩子返回，所以适配器只做搬运，单次控制在几百毫秒内
+- 只在成功且未中断的回合触发：中断或失败回合拿不到正文，这类回合的可见消息按捕捉契约手工 `append` 补写
+- `工具/hooks/hermes_event_probe.py` 是核实事件契约用的探针，只写 `.goodidea/probe.log`，不属于执行契约
