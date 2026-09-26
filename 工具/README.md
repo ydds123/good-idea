@@ -21,7 +21,7 @@ python3 工具/capture.py stop --session <id>
 python3 工具/capture.py status --session <id>
 ```
 
-`append` 接收 JSON 数组，事件必须包含 `speaker`、`time`、`text`，可带 `turn_id`。写入前按目标记录中已有的“时间＋说话人＋原文”去重，不依赖 `.goodidea/` 状态。失败原因写入标准错误和 `.goodidea/tools.log`；能力不可用时，按原始思考记录模板手工追加可见消息。
+`append` 接收 JSON 数组，事件必须包含 `speaker`、`time`、`text`，可带 `turn_id`。写入前解析目标记录中的完整消息，按“时间＋说话人＋原文”精确去重，不依赖 `.goodidea/` 状态。失败原因写入标准错误和 `.goodidea/tools.log`；未知会话也会记录日志。能力不可用时，按原始思考记录模板手工追加可见消息。
 
 ## 版本提交能力（可选）
 
