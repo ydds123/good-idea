@@ -20,7 +20,7 @@ Good Idea 是一个帮助松海保护思考现场、辨析闪念卡片并沉淀�
 数据/       人类可读的 Markdown 事实
 验证/       场景推演、试运行方法与观察结果
 文档/       产品定义与设计背景
-.agents/    项目技能：两个核心 Skill（捕捉、提炼）＋ 运维手册（goodidea-ops、goodidea-source-sync）
+.agents/    项目技能：两个核心 Skill（捕捉、提炼）＋ 来源同步手册（goodidea-source-sync）
 工具/       可选的执行能力实现，不是规则来源；删除后仍可按规则和模板手工完成
 ```
 
