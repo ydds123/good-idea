@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 from __future__ import annotations
-
 import argparse
 import json
 import shutil
@@ -23,15 +22,11 @@ def load_state() -> dict:
         return value if isinstance(value, dict) else {}
     except (OSError, json.JSONDecodeError):
         return {}
-
-
 def save_state(state: dict) -> None:
     STATE.parent.mkdir(parents=True, exist_ok=True)
     temporary = STATE.with_suffix(".tmp")
     temporary.write_text(json.dumps(state, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     temporary.replace(STATE)
-
-
 def record_path(stem: str) -> Path:
     candidate = TARGET / f"{stem}.md"
     number = 2
@@ -39,8 +34,6 @@ def record_path(stem: str) -> Path:
         candidate = TARGET / f"{stem}-{number}.md"
         number += 1
     return candidate
-
-
 def start(args: argparse.Namespace) -> int:
     state = load_state()
     if args.session in state:
@@ -65,12 +58,8 @@ def start(args: argparse.Namespace) -> int:
     save_state(state)
     print(path.relative_to(ROOT))
     return 0
-
-
 def message_block(event: dict) -> str:
     return f"### {event['time']}｜{event['speaker']}\n\n{event['text']}\n"
-
-
 def append(args: argparse.Namespace) -> int:
     state = load_state()
     session = state.get(args.session)
