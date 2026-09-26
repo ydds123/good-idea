@@ -1,6 +1,4 @@
 #!/usr/bin/env python3
-"""Append visible conversation events to an original-thought record."""
-
 from __future__ import annotations
 
 import argparse
@@ -70,10 +68,7 @@ def start(args: argparse.Namespace) -> int:
 
 
 def message_block(event: dict) -> str:
-    speaker = event["speaker"]
-    time = event["time"]
-    text = event["text"]
-    return f"### {time}｜{speaker}\n\n{text}\n"
+    return f"### {event['time']}｜{event['speaker']}\n\n{event['text']}\n"
 
 
 def append(args: argparse.Namespace) -> int:
@@ -93,7 +88,7 @@ def append(args: argparse.Namespace) -> int:
     content = path.read_text(encoding="utf-8")
     added = []
     for event in events:
-        if not all(isinstance(event.get(key), str) and event[key] for key in ("speaker", "time", "text")):
+        if not all(isinstance(event.get(k), str) and event[k] for k in ("speaker", "time", "text")):
             print("事件缺少 speaker、time 或 text", file=sys.stderr)
             return 2
         block = message_block(event)
@@ -132,16 +127,14 @@ def status(args: argparse.Namespace) -> int:
         1 for line in text.splitlines()
         if line.startswith("### ") and "YYYY-MM-DD" not in line
     )
-    result = {"path": session["path"], "status": session["status"], "messages": count, "exists": path.exists()}
-    print(json.dumps(result, ensure_ascii=False))
+    print(json.dumps({"path": session["path"], "status": session["status"], "messages": count, "exists": path.exists()}, ensure_ascii=False))
     return 0
 
 
 def main() -> int:
     parser = argparse.ArgumentParser()
     sub = parser.add_subparsers(dest="command", required=True)
-    p = sub.add_parser("start")
-    p.add_argument("--session", required=True); p.add_argument("--title", required=True); p.add_argument("--resume")
+    p = sub.add_parser("start"); p.add_argument("--session", required=True); p.add_argument("--title", required=True); p.add_argument("--resume")
     p.set_defaults(fn=start)
     p = sub.add_parser("append"); p.add_argument("--session", required=True); p.set_defaults(fn=append)
     p = sub.add_parser("stop"); p.add_argument("--session", required=True); p.set_defaults(fn=stop)
