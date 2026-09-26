@@ -1,8 +1,10 @@
 ---
-author: "作者"
-published_at: "YYYY-MM-DD"
 source: "原始链接或原始文件名"
+# author: "作者"
+# published_at: "YYYY-MM-DD"
 ---
+
+> 对象语义以 [`内容对象.md#外部来源`](../../规则/内容对象.md#外部来源) 为准；本模板只展示 Markdown 文件形状。
 
 # 外部来源标题
 

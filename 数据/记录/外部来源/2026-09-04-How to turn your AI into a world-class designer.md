@@ -19,15 +19,15 @@ Let’s get into it.
 
 A conversational calorie tracker, built in three prompts with Claude Fable 5:
 
-![图1](../../资产/8ca920e305030eed3c5a2473e8322b4064ef85fae9a9e021b3847d64aadf3154.gif)
+![图1](../../assets/8ca920e305030eed3c5a2473e8322b4064ef85fae9a9e021b3847d64aadf3154.gif)
 
 A space exploration game, built in two prompts with Claude Opus 5:
 
-![图2](../../资产/baa65ec6d749711a55d513eaf6115dbea0b86e445263be355d882e3381894392.gif)
+![图2](../../assets/baa65ec6d749711a55d513eaf6115dbea0b86e445263be355d882e3381894392.gif)
 
 A dynamic landing page, built in three prompts with Claude Opus 5 + GPT-5.6 Sol:
 
-![图3](../../资产/f98ae1241f0f67f76c29826c367e2baf973bfa6a84265d050dc6b35e69d4b344.gif)
+![图3](../../assets/f98ae1241f0f67f76c29826c367e2baf973bfa6a84265d050dc6b35e69d4b344.gif)
 
 I often post AI design demos like these on X. Every time I do, someone inevitably asks, “Why does the model create all this incredible stuff for you, but when I try, I only get generic slop? It’s like you’re using a completely different model.”
 
@@ -43,7 +43,7 @@ Great design, on the other hand, starts with feeling and aims to create an emoti
 
 However, if we can get the model to reach beyond the most predictable choices, we can access a vast landscape of creative ideas that most people miss out on.
 
-![图4](../../资产/f4346e269d6281be9ff0a0824e463a8f97007314452b2ec56016f5679748a2fa.jpg)
+![图4](../../assets/f4346e269d6281be9ff0a0824e463a8f97007314452b2ec56016f5679748a2fa.jpg)
 
 This is a lesson I learned from managing human designers, before I was managing AI ones. For most of my career at Apple, I led an R&D team designing exploratory future AI products. Early on, our preconceived notions about how user interfaces should work limited our creativity and kept us returning to the same old ideas. Through rigor and new processes, we learned to stop re-creating what’s comfortable and instead look to the fringes of what’s possible, to generate something new. We became experts at polishing the little details to an Apple level of quality.
 
@@ -85,7 +85,7 @@ Build me a landing page for my productivity app.
 
 Claude Opus 5:
 
-![图5](../../资产/91dc83172e2d9fff45619f236e9affa237a3008dae71d91d5fef7b0cffa1448a.jpg)
+![图5](../../assets/91dc83172e2d9fff45619f236e9affa237a3008dae71d91d5fef7b0cffa1448a.jpg)
 
 Almost every time, we get a
 
@@ -99,7 +99,7 @@ Build me a landing page for my productivity app. Give me something totally uniqu
 
 Claude Opus 5:
 
-![图6](../../资产/9e8de9fa5fb485c8ce9171dadfe024869532b1bb61898dabd7df32dd31caacca.jpg)
+![图6](../../assets/9e8de9fa5fb485c8ce9171dadfe024869532b1bb61898dabd7df32dd31caacca.jpg)
 
 The results are different from before, but they’re still not varied. The model always uses the same color scheme, structure, and even the same awkward pottery metaphors. It’s predicting tokens that
 
@@ -125,7 +125,7 @@ Don’t reveal the string in the design. It’s only for your inspiration.
 
 Claude Opus 5:
 
-![图7](../../资产/1d5498bff8f0d1417903385e5c58936667ddd0c67a5e448c7186c8af608293a9.jpg)
+![图7](../../assets/1d5498bff8f0d1417903385e5c58936667ddd0c67a5e448c7186c8af608293a9.jpg)
 
 Suddenly the outputs are much more varied! Now we’re seeing different color schemes, fonts, and new ideas. The previous designs were ones that any Claude user could get. These designs are one-of-a-kind; no two runs ever produce the same result.
 
@@ -135,21 +135,21 @@ Another approach to giving a model a strong push is to get more specific and wil
 
 “Build me a landing page for my productivity app, with a bold pixel art theme and stunning graphics. Each section should feel like a still from a video game, yet somehow it should all function as a landing page.”
 
-![图8](../../资产/f3e8710000301bdefb5caa3c264238ba83afe5d338f7d779d1291908ff273987.gif)
+![图8](../../assets/f3e8710000301bdefb5caa3c264238ba83afe5d338f7d779d1291908ff273987.gif)
 
 “Build me a landing page for my productivity app, set in an isometric living 3D city, where different features are somehow represented by neighborhoods or buildings.”
 
-![图9](../../资产/6900b05bb2506b92fabcf4476cb68a4419322c631062932d01877be0ac9ca508.gif)
+![图9](../../assets/6900b05bb2506b92fabcf4476cb68a4419322c631062932d01877be0ac9ca508.gif)
 
 “Build me a landing page for my productivity app, with a radically asymmetric layout, dissonant colors and typography, and uncomfortable negative space. Break all the rules but still make it look good.”
 
-![图10](../../资产/1784b6579de66fb819e2e9d467810fde29582c250586e85443577ea4742266e9.gif)
+![图10](../../assets/1784b6579de66fb819e2e9d467810fde29582c250586e85443577ea4742266e9.gif)
 
 Of course, the hard part is coming up with original ideas to ask for. AI can help with this too, but if you simply ask it for ideas, you’ll get the same average ones everyone else gets. Here’s a system I use to find unique prompt ideas with AI:
 
 I want to come up with a bold, unique design language for my product. Can you list as many ideas as you can, with short, high-level descriptions? Go broad, not deep.
 
-![图11](../../资产/9c27c9654d74ab46811cf2c1957fa42d9ee1365179d39f8a1ca25b4bdbb70219.png)
+![图11](../../assets/9c27c9654d74ab46811cf2c1957fa42d9ee1365179d39f8a1ca25b4bdbb70219.png)
 
 Industrial Control Panel:
 
@@ -163,11 +163,11 @@ Gray gradients would look boring. Need more texture. Maybe we can incorporate so
 
 Can you sharpen this one based on my tastes?
 
-![图12](../../资产/628a712bf22fb6d79c10564c81730523837e7477fc8e11621bcd303cfd353db1.png)
+![图12](../../assets/628a712bf22fb6d79c10564c81730523837e7477fc8e11621bcd303cfd353db1.png)
 
 Can you write a concise prompt that an AI agent could use to build an initial POC page with this?
 
-![图13](../../资产/0f230329cc267aee4e0710d6ff8c4aa22f3e15c6b2428496f47e32af0de1bba7.png)
+![图13](../../assets/0f230329cc267aee4e0710d6ff8c4aa22f3e15c6b2428496f47e32af0de1bba7.png)
 
 If you just paste AI-generated ideas back into AI, it’s hard to get something unique. After all, anyone else could have done the same thing. However, when you actively steer the design direction, you end up with something only you could have created.
 
@@ -181,7 +181,7 @@ So far, we’ve looked at how to explore a broad set of ideas and hopefully land
 
 For example, look at the designs we came up with using seed strings:
 
-![图14](../../资产/1d5498bff8f0d1417903385e5c58936667ddd0c67a5e448c7186c8af608293a9.jpg)
+![图14](../../assets/1d5498bff8f0d1417903385e5c58936667ddd0c67a5e448c7186c8af608293a9.jpg)
 
 These have promise, but they’re still relying heavily on the same stale patterns: text on the left with a CTA button below, nav bar up top, graphic on the right.
 
@@ -227,7 +227,7 @@ Your work is only complete when the critic independently deems it 9/10 or higher
 
 Claude Opus 5:
 
-![图15](../../资产/85d727818f792367444cdd71d313400420f8cc95873409b3d1496d0468fff3d5.jpg)
+![图15](../../assets/85d727818f792367444cdd71d313400420f8cc95873409b3d1496d0468fff3d5.jpg)
 
 Instead of the same cookie-cutter layout over and over, each design now has its own identity—but still maintains its original high-level aesthetic.
 
@@ -273,13 +273,13 @@ Verify that your work looks right frame-by-frame in the browser.
 
 Claude Opus 5 (before and after):
 
-![图16](../../资产/52eb686d234384bf42c00f531574653afa0054d77393535841f95d08fd5c9e42.gif)
+![图16](../../assets/52eb686d234384bf42c00f531574653afa0054d77393535841f95d08fd5c9e42.gif)
 
-![图17](../../资产/67c331e5592330e01d587bfec0a6b48acce2c2e9660ec11dfa6fd3e072080d68.gif)
+![图17](../../assets/67c331e5592330e01d587bfec0a6b48acce2c2e9660ec11dfa6fd3e072080d68.gif)
 
-![图18](../../资产/9f5f1af00a610edaed1b9a2db4807d8aacbb91da69fd8b6e118db93cbede072d.gif)
+![图18](../../assets/9f5f1af00a610edaed1b9a2db4807d8aacbb91da69fd8b6e118db93cbede072d.gif)
 
-![图19](../../资产/2d101383e072eea9c6e5c8930d2eed2e4203ff8195a62a6ecbac86ac06b59e26.gif)
+![图19](../../assets/2d101383e072eea9c6e5c8930d2eed2e4203ff8195a62a6ecbac86ac06b59e26.gif)
 
 Images and effects like these can quickly add a lot of personality and make a design less obviously AI-generated, since they demonstrate more than surface-level effort.
 
@@ -325,7 +325,7 @@ Find appropriate recent models for video generation and background removal.
 
 GPT-5.6 Sol (before and after):
 
-![图20](../../资产/a33475420f7cdfe49b91e19b4468c705b58debd03c7dd2353e2a7fa2a25c0649.gif)
+![图20](../../assets/a33475420f7cdfe49b91e19b4468c705b58debd03c7dd2353e2a7fa2a25c0649.gif)
 
 This is a much richer effect than you can get with code: interesting caustic reflections, glassy refraction effects, and complex physical motion.
 
@@ -351,7 +351,7 @@ Use a video model with strong physics and consistency, like Seedance 2.5.
 
 GPT-5.6 Sol:
 
-![图21](../../资产/61af1dbdf63d4f1546a46621fa9b5f4c9819926e852c95f599f4e579352d8285.gif)
+![图21](../../assets/61af1dbdf63d4f1546a46621fa9b5f4c9819926e852c95f599f4e579352d8285.gif)
 
 The transitions between pages scrub fluidly with the user’s scrolling and are fun to play with. Design like this makes the user
 
@@ -367,7 +367,7 @@ AI loves to add more, but it rarely takes away. One of the biggest signs that a 
 
 When polishing AI designs, most of my effort goes into removing things. For example, when I was building my calorie tracking app, this was my initial design from Claude:
 
-![图22](../../资产/ed50e4ead9f5ef5df0b25f6db0573012eb29d7558bc8cb0178c2e4ed34610003.jpg)
+![图22](../../assets/ed50e4ead9f5ef5df0b25f6db0573012eb29d7558bc8cb0178c2e4ed34610003.jpg)
 
 I’d described the app’s functionality and specifically asked for a “clean, minimalist design.” The results weren’t bad, and were certainly impressive for being fully AI-generated. However, despite my asking for minimalism, a lot in the design wasn’t adding value:
 
@@ -389,7 +389,7 @@ Aim for a truly minimalist aesthetic that feels Apple-native
 
 This was the result:
 
-![图23](../../资产/f55b72ea83ff22e558e3693251dda6203bcf7d35098e1b5097a25745c3c0c6a9.jpg)
+![图23](../../assets/f55b72ea83ff22e558e3693251dda6203bcf7d35098e1b5097a25745c3c0c6a9.jpg)
 
 To my trained eye, the result is
 
