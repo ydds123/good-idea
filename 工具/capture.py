@@ -34,10 +34,19 @@ def unique_path(title):
         path = RECORD_DIR / f"{dt.date.today().isoformat()}-{title}-{n}.md"
         n += 1
     return path
+
+
+def valid_title(title):
+    return bool(title.strip()) and Path(title).name == title and title not in {".", ".."}
 def start(args):
     records = state()
     if args.session in records:
+        log(f"start rejected: session already exists {args.session}")
         print("session already exists", file=sys.stderr)
+        return 2
+    if not valid_title(args.title):
+        log(f"invalid title: {args.title!r}")
+        print("标题不能包含路径分隔符", file=sys.stderr)
         return 2
     RECORD_DIR.mkdir(parents=True, exist_ok=True)
     if args.resume:
@@ -52,7 +61,7 @@ def start(args):
         template = ROOT / "数据/模板/original-thought.md"
         text = template.read_text(encoding="utf-8")
         text = text.replace("../../规则/", "../../../规则/")
-        text = re.sub(r"^> .*本模板只展示 Markdown 文件形状。\n?", "", text, flags=re.M)
+        text = re.sub(r"；本模板只展示 Markdown 文件形状。", "。", text)
         text = re.sub(r"\n### YYYY-MM-DD HH:MM｜松海\n\n消息原文。\n", "\n", text)
         text = re.sub(r"\n### YYYY-MM-DD HH:MM｜Agent\n\n消息原文。\n", "\n", text)
         text = re.sub(r"\n## 去向\n[\s\S]*$", "\n", text)
@@ -84,7 +93,7 @@ def append(args):
         existing = set(messages(original))
         additions = []
         for event in incoming:
-            key = (str(event["time"]), str(event["speaker"]), str(event["text"]))
+            key = (str(event["time"]), str(event["speaker"]), str(event["text"]).strip("\n"))
             if key not in existing:
                 additions.append(key)
                 existing.add(key)
@@ -94,6 +103,8 @@ def append(args):
             original = original[:marker.start()] + block + "\n" + original[marker.start():] if marker else original.rstrip() + "\n\n" + block
             path.write_text(original.rstrip() + "\n", encoding="utf-8")
             item["turns"] = item.get("turns", 0) + len(additions)
+        if item.get("status") == "closing":
+            del records[args.session]
         save(records)
         return 0
     except Exception as exc:

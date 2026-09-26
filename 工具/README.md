@@ -13,7 +13,7 @@ python3 工具/capture.py status --session <id>
 
 事件必须包含 `speaker`、`time`、`text`；可选 `turn_id` 只用于上游排查。写入按“时间＋说话人＋原文”精确去重，失败写 stderr 和 `.goodidea/tools.log`。未登记的 session 静默返回 0，便于适配器安全旁路。
 
-`stop` 只标记 closing，仍可接收最后一回合事件；当前没有平台适配器时，Agent 可手工调用 `append`，脚本也不可用时按模板写入同样的 Markdown 记录。
+`stop` 标记 closing；下一次 `append`（即使事件全部重复）处理完后自动注销 session。当前没有平台适配器时，Agent 可手工调用 `append`，脚本也不可用时按模板写入同样的 Markdown 记录。
 
 ## 新建和提交
 
