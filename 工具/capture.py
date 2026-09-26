@@ -132,14 +132,16 @@ def status(args: argparse.Namespace) -> int:
         1 for line in text.splitlines()
         if line.startswith("### ") and "YYYY-MM-DD" not in line
     )
-    print(json.dumps({"path": session["path"], "status": session["status"], "messages": count, "exists": path.exists()}, ensure_ascii=False))
+    result = {"path": session["path"], "status": session["status"], "messages": count, "exists": path.exists()}
+    print(json.dumps(result, ensure_ascii=False))
     return 0
 
 
 def main() -> int:
     parser = argparse.ArgumentParser()
     sub = parser.add_subparsers(dest="command", required=True)
-    p = sub.add_parser("start"); p.add_argument("--session", required=True); p.add_argument("--title", required=True); p.add_argument("--resume")
+    p = sub.add_parser("start")
+    p.add_argument("--session", required=True); p.add_argument("--title", required=True); p.add_argument("--resume")
     p.set_defaults(fn=start)
     p = sub.add_parser("append"); p.add_argument("--session", required=True); p.set_defaults(fn=append)
     p = sub.add_parser("stop"); p.add_argument("--session", required=True); p.set_defaults(fn=stop)
