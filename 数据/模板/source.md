@@ -2,6 +2,7 @@
 source: "原始链接或原始文件名"
 # author: "作者"
 # published_at: "YYYY-MM-DD"
+# tags: ["标签树.md 里的节点名"]
 ---
 
 > 对象语义以 [`内容对象.md#外部来源`](../../规则/内容对象.md#外部来源) 为准；本模板只展示 Markdown 文件形状。
